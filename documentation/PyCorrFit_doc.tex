@@ -1,0 +1,171 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+%Wir arbeiten mit PDF-Latex.
+%Bei Texmaker unter Werkzeuge > PDFLaTeX (F6)
+
+\usepackage[utf8x]{inputenc}
+\usepackage{tipa}
+%Für deutsche Schriften:
+%\usepackage[ngerman]{babel}
+%\usepackage{sistyle}
+%\SIstyle{German}
+%\usepackage{icomma} % Komma als Dezimaltrenner (im Mathe Modus)
+		    % Standardmäßig läßt LaTeX im Mathe Modus immer etwas 
+		    % Platz nach einem Komma, für 3,45 etc. ist das falsch.
+		    % Mit icomma gilt:
+		    % Wenn auf das Komma ein Leerzeichen folgt, soll auch
+		    % eins kommen, wenn nicht, schreibe es als Operator:
+		    % z.B. $f(x, y) = 3,45$
+
+%Für englische Schriften:
+\usepackage[english]{babel}
+\usepackage{sistyle}
+
+
+\usepackage[top = 2cm, left = 2.5cm, right = 2cm, bottom = 2.5cm]{geometry}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+
+\usepackage{cite} %Für Zitate und Quellen
+\usepackage{url}
+\urlstyle{tt}
+
+%\usepackage{longtable} % mehrseitige Tabellen
+%\usepackage{multirow} %Zusammenfassen von Spalten/Zeilen
+
+
+
+\usepackage{subfig} % Vereinen von Bildern in gesamte Figure
+
+%Schönere Unterschriften für Bilder und Tabellen
+%Setze captions mit Kommas und Beschriftungen
+\DeclareCaptionLabelFormat{mycaption}{#1 #2}
+\DeclareCaptionLabelSeparator{comma}{, }
+\captionsetup{font=small,labelfont=bf,labelformat=mycaption,labelsep=comma}
+\setcapindent{0pt} % Zeileneinzug ab zweiter Zeile
+
+\newcommand{\mycaption}[2]{\caption[~#1]{\textbf{#1:} #2}}
+
+\usepackage{textcomp} % Sonderzeichen
+\usepackage{wrapfig}
+
+\usepackage{fancyvrb}
+\usepackage[svgnames]{xcolor} %Farben wie DarkBlue
+
+%%
+%%
+%% Definitionen für schöne Links innerhalb des Dokuments
+  %%% graphicx: support for graphics
+  \usepackage[pdftex]{graphicx}
+
+
+  \pdfcompresslevel=9
+
+  %%% hyperref (hyperlinks in PDF): for more options or more detailed
+  %%%          explanations, see the documentation of the hyperref-package
+  \usepackage[%
+    %%% general options
+    pdftex=true,      %% sets up hyperref for use with the pdftex program
+    %plainpages=false, %% set it to false, if pdflatex complains: ``destination with same identifier already exists''
+    %
+    pdfstartview={XYZ 0 0 1.0} , %% Startet das PDF mit 100% Zoom, also Originalgroesse
+    %%% extension options
+    backref,      %% adds a backlink text to the end of each item in the bibliography
+    pagebackref=false, %% if true, creates backward references as a list of page numbers in the bibliography
+    colorlinks=true,   %% turn on colored links (true is better for on-screen reading, false is better for printout versions)
+    linkcolor=DarkBlue,		%% Aendern der Linkfarbe
+    urlcolor=DarkBlue,		%% Aendern der Url-Linkfarbe und andere serioese Farben
+    anchorcolor = black,
+    citecolor = DarkGreen,
+    filecolor = black,
+    urlcolor = DarkBlue,
+    breaklinks=false,
+    %
+    %%% PDF-specific display options
+    bookmarks=true,          %% if true, generate PDF bookmarks (requires two passes of pdflatex)
+    bookmarksopen=true,     %% if true, show all PDF bookmarks expanded
+    bookmarksnumbered=false, %% if true, add the section numbers to the bookmarks
+    %pdfstartpage={1},        %% determines, on which page the PDF file is opened
+    %pdfpagemode=None         %% None, UseOutlines (=show bookmarks), UseThumbs (show thumbnails), FullScreen
+  ]{hyperref}
+  %%% provide all graphics (also) in this format, so you don't have
+  %%% to add the file extensions to the \includegraphics-command
+  %%% and/or you don't have to distinguish between generating
+  %%% dvi/ps (through latex) and pdf (through pdflatex)
+%  \DeclareGraphicsExtensions{.pdf}
+%%
+%%
+
+%\newcommand{\kommentar}[1]{\marginpar{\textcolor{red}{#1}}}  % Kommentarkommando
+%\newcommand{\fehler}[3]{\SI{(#1}{}\SI{\pm #2)}{#3}} % Fehlerkommando
+
+%Ort für mögliche Bilddateien (Unterordner)
+\graphicspath{{bilder/}{messwerte/}{auswertung/}}
+
+%Neue Befehle
+\newcommand{\hyref}[2]{\hyperref[#2]{#1~\ref{#2}}} %Schönerer link statt "link zu Bild \ref{im:bild}" -> "\hyref{link zu Bild}{im:bild}"
+
+\newcommand{\mytilde}{\raisebox{-0.9ex}{\~{ }}}
+
+\setcounter{page}{1}
+
+% Tell latex how to break the program names
+\hyphenation{Py-Corr-Fit Py-Scan-FCS}
+
+\begin{document}
+
+
+
+\vspace{-5em}
+\begin{flushleft}
+	\includegraphics[angle=0,width=60mm]{Images/SchwilleLogo} \hspace{10em}
+	\includegraphics[angle=0,width=60mm]{Images/TU_Logo_SW} 
+\end{flushleft}
+%\vspace{-3em}
+\begin{center}\rule{\textwidth}{0.1ex}\par\end{center}
+%\vspace{-4em}
+%\begin{center}\rule{\textwidth}{0.1ex}\par\end{center}
+
+
+
+\vspace{1em}
+
+\noindent\begin{tabular}{ll}
+ PyCorrFit - Generic cross-platform FCS fitting tool\\
+ Software Guide \\
+ Paul Müller \\
+ Schwille Lab -- Biotec, TU Dresden \\
+ Date: \today 
+ 
+\end{tabular}
+
+\vspace{2em}
+
+\tableofcontents
+
+
+\newpage
+
+\graphicspath{{Images/}}
+\include{PyCorrFit_doc_content}
+
+
+\section*{Acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
+I thank André Scholich (TU Dresden, Germany) for initial proof reading of the manuscript and Grzegorz Chwastek, Franziska Thomas and Thomas Weidemann (Biotec, TU Dresden, Germany) for critical feedback on PyCorrFit.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Literaturverzeichnis
+
+\pagestyle{plain}             % nur Nummerierung in der Fuzeile
+
+\bibliographystyle{unsrt}  % Zitierstil: alphadin = [Nam88] apt-get install bibtex-extras
+\bibliography{Bibliography}      % BibTeX-Datei name.bib ohne .bib hier einfgen
+%\nocite{*}                    % Listet alle Eintrge der Datei auf, wenn aktiv
+
+
+
+\end{document}

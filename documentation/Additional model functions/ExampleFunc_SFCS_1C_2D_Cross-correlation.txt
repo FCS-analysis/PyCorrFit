@@ -1,0 +1,32 @@
+﻿# 2D SFCS CC
+# 2D on component correlation function for perpendiculat SFCS.
+# Model function for PyCorrFit.
+# http://fcstools.dyndns.org/pycorrfit/
+# http://fcstools.dyndns.org/pyscanfcs/
+# The detection profile is eliptical, as the focus passes the membrane
+# perpendicular to its axis of symmetry.
+# The axis ratio / strucure parameter is defined as:
+# kappa = semi-major-axis / semi-minor-axis (wz/w0)
+# This model describes the cross-correlation for two-focus FCS
+
+## Parameters
+# Number of particles
+Nob = 40.0
+# Diffusion time
+taudiff [ms] = 1.0
+# axis ratio / structural parameter
+kappa = 5
+# Beam waist radius
+w0 [100nm] = 2.3
+# Distance between the foci
+d [100nm] = 5.0
+
+gFirst = 1/sqrt(1+tau/taudiff)
+gSecond = 1/sqrt(1+tau/(taudiff*kappa**2))
+
+gac = 1/Nob * gFirst * gSecond
+# Diffusion coefficient:
+gD = w0**2/(4*taudiff)
+gcc = exp(-d**2/(w0**2+4*gD*tau))
+
+G = gac*gcc

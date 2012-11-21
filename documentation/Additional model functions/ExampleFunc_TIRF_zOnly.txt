@@ -1,0 +1,38 @@
+# Axial diffusion (TIRF)
+# This model function describes fictional one-dimensional diffusion
+# in TIR-FCS setups. It demonstrates the mathematical functions  available
+# in PyCorrFit.
+# Visit http://fcstools.dyndns.org/pycorrfit/ for more information.
+# The first line of this file will be treated as the name of the model
+# inside PyCorrFit. PyCorrFit will enumerate user imported models with  IDs 
+# starting at 7001. You can save a session and the user defined models 
+# like this one will be saved as well. Lines starting with a hash "#"
+# are treated as comments. Empty lines and lines with only white space
+# characters are ignored.
+
+## Definition of parameters:
+# First, define the parameters and their starting values for you model
+# function. If the parameter has a unit of measurement, then it may be
+# added separated by a white space before the "=" sign. The starting
+# value should be a floating point number. You may use abbreviations
+# like "1e-3" instead of "0.001".
+# Note that PyCorrFit has it's own unit system:
+#  unit of time        : 1 ms
+#  unit of inverse time: 1000 /s
+#  unit of distance    : 100 nm
+#  unit of diff.coeff  : 10 µm²/s
+#  unit of inverse area: 100 /µm²
+#  unit of inv. volume : 1000 /µm³
+
+D [10 µm²/s] = 5e-5
+d [100 nm] = 1.0
+
+# The final line with the correlation function should start with a "G"
+# before the "=" sign. You may use all common mathematical functions,
+# such as "sqrt()" or "exp()". For convenience, "pi" and "e" may also
+# be used. If you need to use the faddeeva function you can do so by
+# typing "wofz()". A common used version with an imaginary argument is
+# also available: wofz(i*x) = wixi(x)
+
+G = (sqrt(D*tau/pi) - (2*D*tau/d**2 - 1)/(2/d) * wixi(sqrt(D*tau)/d))/d**2
+

@@ -1,0 +1,85 @@
+# CS-FCS 2D+2D+S+T (Confocal)
+
+# Circular Scanninf FCS model function for two 2D-diffusing species
+# including triplet component.
+
+# Further reading:
+#  Precise Measurement of Diffusion Coefficients using Scanning 
+#  Fluorescence Correlation Spectroscopy
+#  Petrasek and Schwille, BiophysJ 2008, 1437-1448
+#  http://dx.doi.org/10.1529/biophysj.107.108811
+
+# Visit http://fcstools.dyndns.org/pyscanfcs/ for more information.
+# The first line of this file will be treated as the name of the model
+# inside PyCorrFit. PyCorrFit will enumerate user imported models with  IDs 
+# starting at 7001. You can save a session and the user defined models 
+# like this one will be saved as well. Lines starting with a hash "#"
+# are treated as comments. Empty lines and lines with only white space
+# characters are ignored.
+
+# Note that if your code does not work, it might be that some variables
+# have other meaning. This includes using "n" instead of "N".
+# If you get some Syntax Error it might be that your starting variables
+# are not set to a reasonable starting function. PyCorrFit is testing the
+# function with sympy (for safety) and calculates the function for 
+# different values of tau.
+
+## Definition of parameters:
+# First, define the parameters and their starting values for you model
+# function. If the parameter has a unit of measurement, then it may be
+# added separated by a white space before the "=" sign. The starting
+# value should be a floating point number. You may use abbreviations
+# like "1e-3" instead of "0.001".
+# Note that PyCorrFit has it's own unit system:
+#  unit of time        : 1 ms
+#  unit of inverse time: 1000 /s
+#  unit of distance    : 100 nm
+#  unit of diff.coeff  : 10 µm²/s
+#  unit of inverse area: 100 /µm²
+#  unit of inv. volume : 1000 /µm³
+
+# Diffusion coefficient of first component
+D1 [10 µm²/s] = 200.0
+
+# Diffusion coefficient of second component
+D2 [10 µm²/s] = 20.0
+
+# Fraction of species One
+F1 = 1.0
+
+# Half waist of the lateral detection area (w0 = 2*a)
+a [100 nm] = 1.0
+
+# Particle number
+n = 5.0
+
+# Scan radius
+R [100 nm] = 3.850
+
+# Frequency
+f [kHz] = .2
+
+# Triplet fraction
+T = 0.1
+
+# Triplet time
+tautrip [ms] = 0.001
+
+# You may choose to substitute certain parts of the correlation function
+# with other values for easy reading. This can be done by using the
+# prefix "g". You may use all common mathematical functions,
+# such as "sqrt()" or "exp()". For convenience, "pi" and "e" may also
+# be used. If you are paranoid, you always use float numbers with a dot "."
+# to be sure the program doesn't accidently do integer division.
+
+gTriplet = 1. + T/(1-T)*exp(-tau/tautrip)
+gScan1 = exp(-(R*sin(pi*f*tau))**2/(a**2+D1*tau))
+gScan2 = exp(-(R*sin(pi*f*tau))**2/(a**2+D2*tau))
+gTwoD1 = F1/(1.+D1*tau/a**2)
+gTwoD2 = (1-F1)/(1.+D2*tau/a**2)
+
+# The final line with the correlation function should start with a "G"
+# before the "=" sign.
+
+G = 1./n * (gTwoD1 * gScan1 + gTwoD2 * gScan2) * gTriplet
+

@@ -1,0 +1,20 @@
+# 3D+T (Gauss)
+# Autocorrelation function for 3D diffusion + Triplet
+
+## Parameters
+# Particle number
+n = 10.0
+
+# Triplet fraction
+T = 0.2
+
+# Triplet time
+tautrip [ms] = 0.02
+
+# Diffusion time
+taudiff [ms] = 0.4
+
+# Structural parameter
+SP = 5
+
+G = 1/( n*(1+tau/taudiff) * sqrt(1 + tau/(SP**2*taudiff)) ) * ( 1+T/(1.-T)*exp(-tau/tautrip) )

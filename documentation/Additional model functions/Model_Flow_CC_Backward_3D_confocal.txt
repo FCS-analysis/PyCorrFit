@@ -1,0 +1,49 @@
+# CC bw flow 3D (gauss)
+# Backward cross-correlation function including flow for confocal setups with
+# a free 3D diffusing species. 
+# This file was gladly provided by Thomas Kuckert, Schwille Lab, Biotec,
+# Tatzberg 47-51, 1307 Dresden, Germany.
+
+# For more information about this model function, see:
+#    Staroske, Wolfgang:
+#    In Vitro and In Vivo Applications of Fluorescence
+#    Cross-Correlation Spectroscopy, TU Dresden, Diss., June 2010#
+#
+#    Brinkmeier, M. ; Dörre, K. ; Stephan, J. ; Eigen, M.: Two-beam cross-
+#    correlation: A method to characterize transport phenomena in micrometer-
+#    sized structures. In: Anal Chem 71 (1999), Feb, Nr. 3, 609?616. http://dx.
+#    doi.org/10.1021/ac980820i. ? DOI 10.1021/ac980820i
+
+## Parameters
+# Diffusion coefficient
+D [10 µm²/s] = 10.0
+
+# Structural parameter
+w = 6.5
+
+# Waist of the lateral detection area
+a [100 nm] = 3.25
+
+# Particle number
+n = 10.0
+
+# Focal distance
+R [100 nm] = 5.0
+
+# Flow velocity
+v [100 µm/s] = 0.5
+
+#angular difference to Flow for Foci Vector
+alpha = 0.0000001
+
+## Calculation fo correlation function
+gFlowT = (v**2)*(tau**2)+R**2
+gAng = 2*R*v*tau*cos(alpha)
+gC2Flow = exp(-(gFlowT+gAng)/(a**2+4*D*tau))
+gTwoD = 1./(1.+D*tau/a**2)
+gOneD = 1./sqrt(1.+D*tau/(w*a)**2)
+gThrD = gTwoD * gOneD
+
+
+G = 1./n * gThrD * gC2Flow
+

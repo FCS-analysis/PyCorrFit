@@ -1,0 +1,135 @@
+# -*- coding: utf-8 -*-
+import os
+import csv
+import numpy as np
+
+import platform
+if platform.system() == 'Linux':
+    from IPython.Shell import IPythonShellEmbed
+    ipshell = IPythonShellEmbed()
+   #ipshell()
+
+def openCSV(dirname, filename):
+    """ Read relevant data from a file looking like this:
+        [...]
+        # Comment
+        # Data type: Autocorrelation
+        [...]
+        1.000000e-006 , 3.052373e-001
+        1.020961e-006 , 3.052288e-001
+        1.042361e-006 , 3.052201e-001
+        1.064209e-006 , 3.052113e-001
+        1.086516e-006 , 3.052023e-001
+        1.109290e-006 , 3.051931e-001
+        [...]
+        # BEGIN TRACE
+        [...]
+        10.852761 	,31.41818
+        12.058624 	,31.1271
+        13.264486 	,31.27305
+        14.470348 	,31.33442
+        15.676211 	,31.15861
+        16.882074 	,31.08564
+        18.087936 	,31.21335
+        [...]
+
+        Data type:
+        If Data type is "Cross-correlation", we will try to import
+        two traces after "# BEGIN SECOND TRACE"
+
+        1st section:
+         First column denotes tau in seconds and the second row the
+         correlation signal.
+        2nd section:
+         First column denotes tau in seconds and the second row the
+         intensity trace in kHz.
+
+
+        Returns:
+        1. A list with tuples containing two elements:
+           1st: tau in ms
+           2nd: corresponding correlation signal
+        2. None - usually is the trace, but the trace is not saved in
+                  the PyCorrFit .csv format.
+        3. A list with one element, indicating, that we are opening only
+           one orrelation curve.
+    """
+    # Define what will happen to the file
+    timefactor = 1000 # because we want ms instead of s
+    csvfile = open(os.path.join(dirname, filename), 'r')
+    readdata = csv.reader(csvfile, delimiter=',')
+    data = list()
+    trace = None
+    traceA = None
+    DataType="AC" # May be changed
+    numtraces = 0
+    for row in readdata:
+        if len(row) == 0 or len(str(row[0]).strip()) == 0:
+            # Do nothing with empty/whitespace lines
+            papst = 0
+            # Beware that the len(row) statement has to be called first
+            # (before the len(str(row[0]).strip()) ). Otherwise some
+            # error would be raised.
+        elif str(row[0])[0:30] == '# Data type: Cross-correlation':
+            # We will later try to import a second trace
+            DataType="CC"
+            DataType += row[0][30:].strip()
+        elif str(row[0])[0:28] == '# Data type: Autocorrelation':
+            # We will later try to import a second trace
+            DataType="AC"
+            DataType += row[0][28:].strip()         
+        elif str(row[0])[0:13] == '# BEGIN TRACE':
+            # Correlation is over. We have a trace
+            corr = np.array(data)
+            data=list()
+            numtraces = 1
+        elif str(row[0])[0:20] == '# BEGIN SECOND TRACE':
+            # First trace is over. We have a second trace
+            traceA = np.array(data)
+            data = list()
+            numtraces = 2
+        # Exclude commentaries
+        elif str(row[0])[0:1] != '#':
+            # Read the 1st section
+            # On Windows we had problems importing nan values that
+            # had some white-spaces around them. Therefore: strip()
+            data.append((np.float(row[0].strip())*timefactor, 
+                         np.float(row[1].strip())))
+
+    # Collect the rest of the trace, if there is any:
+    rest = np.array(data)
+    if numtraces == 0:
+        corr = rest
+    elif numtraces >= 1:
+        trace = rest
+
+    del data
+    ## Remove any NaN numbers from thearray
+    # Explanation:
+    # np.isnan(data)
+    #  finds the position of NaNs in the array (True positions); 2D array, bool
+    # any(1)
+    #  finds the rows that have True in them; 1D array, bool
+    # ~
+    #  negates them and is given as an argument (array type bool) to
+    #  select which items we want.
+    corr = corr[~np.isnan(corr).any(1)]
+    # Also check for infinities.
+    corr = corr[~np.isinf(corr).any(1)]
+    csvfile.close()
+    
+    Traces=list()
+    # Set correct trace data for import
+    if numtraces == 1 and DataType[:2] == "AC":
+        Traces.append(trace)
+    elif numtraces == 2 and DataType[:2] == "CC":
+        Traces.append([traceA, trace])
+    elif numtraces == 1 and DataType[:2] == "CC":
+        # Should not happen, but for convenience:
+        Traces.append([trace, trace])
+    else:
+        Traces.append(None)
+
+    # [correlation data], [trace data], [some kind of name]
+
+    return [[corr], Traces, [DataType]]

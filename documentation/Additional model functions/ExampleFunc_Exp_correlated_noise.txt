@@ -1,0 +1,16 @@
+﻿# Exponentially correlated noise
+# Model function for PyCorrFit.
+# http://fcstools.dyndns.org/pycorrfit/
+# This is a test function used to check decay times of exponentially
+# correlated noise.
+
+# Fraction
+Purity = 0.5
+
+# Exp time
+tauexp [ms] = 2.0
+
+gTrip = Purity/(1-Purity)*exp(-tau/tauexp)
+
+G = gTrip
+
