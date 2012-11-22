@@ -22,10 +22,10 @@ import os
 from info import InfoClass
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class Stat(wx.Frame):

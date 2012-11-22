@@ -22,10 +22,10 @@ import models as mdls
 from scipy import optimize as spopt
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class GlobalFit(wx.Frame):

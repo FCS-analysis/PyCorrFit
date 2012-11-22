@@ -30,10 +30,10 @@ import numpy as np                  # NumPy
 import platform
 import sys
 
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 

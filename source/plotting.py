@@ -37,10 +37,10 @@ import models as mdls
 
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def greek2tex(char):
     """ Converts greek UTF-8 letters to latex """

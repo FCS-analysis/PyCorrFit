@@ -41,10 +41,10 @@ import scipy.special as sps
 
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class CorrFunc(object):

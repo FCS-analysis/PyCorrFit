@@ -4,10 +4,10 @@ import csv
 import numpy as np
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def openSIN(dirname, filename):
     """ Read data from a .SIN file, usually created by
@@ -102,7 +102,7 @@ def openSIN(dirname, filename):
     # Find out where the correlation function and trace are
     for i in np.arange(len(Alldata)):
         if Alldata[i][0:4] == "Mode":
-            #ipshell()
+         
             Mode = Alldata[i].split("=")[1].strip()
         if Alldata[i][0:21] == "[CorrelationFunction]":
             StartC = i+1
@@ -144,7 +144,7 @@ def openSIN(dirname, filename):
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
-        #ipshell()
+     
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
         curvelist.append("CC")
@@ -159,7 +159,7 @@ def openSIN(dirname, filename):
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
-        #ipshell()
+     
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Dual Auto":
         curvelist.append("AC1")
@@ -178,7 +178,7 @@ def openSIN(dirname, filename):
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
-        #ipshell()
+     
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
     elif Mode == "Dual Cross":
@@ -198,7 +198,7 @@ def openSIN(dirname, filename):
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
-        #ipshell()
+     
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Quad":

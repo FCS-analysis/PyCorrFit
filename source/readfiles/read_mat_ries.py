@@ -27,10 +27,10 @@ with warnings.catch_warnings():
 import os
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def openMAT(dirname, filename):
     # initiate lists

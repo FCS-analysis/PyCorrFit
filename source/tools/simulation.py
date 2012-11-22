@@ -22,10 +22,10 @@ import numpy as np
 import edclasses                    # Cool stuf like better floatspin
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class Slide(wx.Frame):
@@ -165,7 +165,7 @@ class Slide(wx.Frame):
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinA)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinB)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinOp)
-        #ipshell()
+     
         self.SetValues()
         ## Sizers
         self.topSizer = wx.BoxSizer(wx.VERTICAL)

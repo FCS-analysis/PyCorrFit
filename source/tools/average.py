@@ -22,10 +22,10 @@ import models as mdls
 import doc
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class Average(wx.Frame):

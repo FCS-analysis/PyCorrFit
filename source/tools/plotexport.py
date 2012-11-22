@@ -20,10 +20,10 @@ import numpy as np
 import models as mdls
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class Tool(wx.Frame):

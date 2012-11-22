@@ -18,10 +18,10 @@ import wx.html
 import doc                          # Documentation/some texts
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class UpdateDlg(wx.Frame):

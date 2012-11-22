@@ -18,10 +18,10 @@ import wx
 import numpy as np
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 import models as mdls
 

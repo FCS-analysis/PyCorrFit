@@ -25,10 +25,10 @@ from scipy import optimize as spopt
 import warnings
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 # If we use this module with PyCorrFit, we can plot things with latex using
 # our own special thing.

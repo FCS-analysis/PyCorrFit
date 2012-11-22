@@ -26,10 +26,10 @@ import yaml
 import zipfile
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 # To add a filetype add it here and in the

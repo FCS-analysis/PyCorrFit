@@ -19,10 +19,10 @@ import numpy as np
 import wx.lib.plot as plot    
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class ShowTrace(wx.Frame):

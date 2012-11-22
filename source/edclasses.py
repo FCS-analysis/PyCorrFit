@@ -20,10 +20,10 @@ from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 

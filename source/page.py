@@ -26,10 +26,10 @@ import numpy as np                      # NumPy
 import sys                              # System stuff
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 # PyCorrFit modules
 import doc
@@ -498,7 +498,7 @@ class FittingPanel(wx.Panel):
             Parameters:
         """
         # Title
-        #ipshell()
+     
         # Create empty tab title
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
                                     size=(self.sizepanelx, -1))

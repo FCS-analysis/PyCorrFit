@@ -36,10 +36,10 @@ from readfiles import Filetypes
 from readfiles import BGFiletypes
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def ImportParametersYaml(parent, dirname):
     """ Import the parameters from a parameters.yaml file

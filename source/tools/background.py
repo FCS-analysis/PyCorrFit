@@ -27,10 +27,10 @@ import doc
 import openfile as opf                     # How to treat an opened file
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 
 class BackgroundCorrection(wx.Frame):

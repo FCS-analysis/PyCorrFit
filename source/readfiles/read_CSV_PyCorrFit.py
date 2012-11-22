@@ -4,10 +4,10 @@ import csv
 import numpy as np
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def openCSV(dirname, filename):
     """ Read relevant data from a file looking like this:

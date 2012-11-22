@@ -25,10 +25,10 @@ import traceback                        # for Error handling
 
 # ipshell for development
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 # PyCorrFit modules
 

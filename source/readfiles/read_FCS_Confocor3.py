@@ -8,10 +8,10 @@ import csv
 import numpy as np
 
 import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
+
+
+
+
 
 def openFCS(dirname, filename):
     """ The AIM software can save data as multiple or single data files.

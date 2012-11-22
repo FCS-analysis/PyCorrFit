@@ -19,6 +19,7 @@ from distutils.version import LooseVersion
 import sys
 import numpy as np                  # NumPy
 import os
+import platform
 import scipy
 try:
     import sympy
@@ -36,14 +37,6 @@ except ImportError:
 # somehow unicode characters will not be displayed correctly on windows.
 # import wx
 import yaml
-
-
-import platform
-if platform.system() == 'Linux':
-    from IPython.Shell import IPythonShellEmbed
-    ipshell = IPythonShellEmbed()
-   #ipshell()
-
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
@@ -105,7 +98,7 @@ if hasattr(sys, 'frozen'):
     else:
         arg = ""
 elif len(sys.argv) >= 2:
-    # We have something like "python Scriptname.py Argument"
+    # We have something like "python Scriptname.py argument"
     arg = sys.argv[1]
 else:
     arg = ""
