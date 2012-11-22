@@ -10,7 +10,7 @@
 
 # Making different sized subplots
 import matplotlib
-matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets - done in doc
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 import numpy as np
 import os

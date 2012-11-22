@@ -4,6 +4,7 @@
 
     Module plotting
     Everything about plotting with matplotlib is located here.
+    Be sure to install texlive-science and texlive-math-extra
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -16,29 +17,32 @@
 import codecs
 import numpy as np
 
-# Making different sized subplots
 import matplotlib
+# We do this further below, catching a warnings:
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+
+import os
+import platform
+import sys
+import unicodedata
+
+import warnings
+
+# Catch warnings, if plotting is called multiple times
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 # Text rendering with matplotlib
 from matplotlib import rcParams
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 
-import os
-import sys
-import unicodedata
-
 # PyCorrFit models
 import edclasses
 # NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
 from misc import findprogram
 import models as mdls
-
-
-import platform
-
-
 
 
 
