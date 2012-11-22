@@ -41,16 +41,27 @@ Install latest python packages into that environment:
 Windows (XP/7)
 -------------------
 
-If you are having problems compiling with pyInstaller on windows, try to rename
+Download and install Python 2.7.3
 
-C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.py to something else, like
-C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.pyQQQ
+	http://www.python.org/download/releases/2.7.3/
 
-This is aproblem caused by syntax differences of python3 and python2 which pyInstaller cannot yet tell
-(exec_py3 is not python2 syntax).
-http://code.google.com/p/mpmath/issues/detail?id=204 
+Download and install setuptools (for Python 2.7)
 
-Extended plotting features:
-Windows:
-http://www.miktex.org/
-  Install with automatic package download!
+	http://pypi.python.org/pypi/setuptools#windows
+
+Add to path:
+
+	C:\Python27;C:\Python27\Scripts
+
+Then in a command line execute:
+
+	easy_install numpy pyfits pyyaml 
+
+matplotlib, scipy, sympy, and wxpython (unicode) have to be manually installed (for Python 2.7)
+	http://sourceforge.net/projects/matplotlib/files/matplotlib/
+	http://sourceforge.net/projects/scipy/files/scipy/
+	http://code.google.com/p/sympy/downloads/list
+	http://www.wxpython.org/download.php
+	
+In order to use the Latex-plotting features of PyCorrFit, install MikTex with (!) automatic apckage download.
+	http://www.miktex.org/
