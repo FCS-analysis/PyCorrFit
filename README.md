@@ -58,10 +58,12 @@ Then in a command line execute:
 	easy_install numpy pyfits pyyaml 
 
 matplotlib, scipy, sympy, and wxpython (unicode) have to be manually installed (for Python 2.7)
+
 	http://sourceforge.net/projects/matplotlib/files/matplotlib/
 	http://sourceforge.net/projects/scipy/files/scipy/
 	http://code.google.com/p/sympy/downloads/list
 	http://www.wxpython.org/download.php
 	
 In order to use the Latex-plotting features of PyCorrFit, install MikTex with (!) automatic apckage download.
+
 	http://www.miktex.org/
