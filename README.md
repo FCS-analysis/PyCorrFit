@@ -9,16 +9,16 @@ LINUX
 
 On a standard Ubuntu-Linux 12.04 installation, install the following packages:
 
+	python-matplotlib
 	python-numpy
 	python-scipy
 	python-sympy
 	python-yaml
 	python-wxtools
 	python-wxgtk2.8-dbg
-	python-matplotlib
 
-
-For bleeding-edge packages, you want to run from a virtualenv. Perform the following tasks (wxPython currently not working):
+The following steps are optional but might solve some bugs that are present in packages from the Ubuntu-repositories.
+Perform the following tasks (wxPython currently not working):
 
 	sudo apt-get install gfortran g++ liblapack-dev libblas-dev libpng12-dev libxft-dev make python-dev python-pip python-virtualenv
 
