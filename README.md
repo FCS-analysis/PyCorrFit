@@ -1,8 +1,15 @@
 PyCorrFit
 =========
 
-data analysis software for fluorescence correlation spectroscopy (FCS)
-
+In current research, fluorescence correlation spectrsocopy (FCS) is  applied to
+characterize dynamical processes in vitro and in vivo.  Commercial FCS setups only
+permit data analysis that is limited to  a specific instrument by the use of in-house
+file formats or a  finite number of implemented correlation model functions.
+PyCorrFit is a general-purpose FCS evaluation software that,  amongst other formats,
+supports the established ConfoCor3 ~.fcs  file format and which comes with several
+built-in model functions,  covering a wide range of application including multiple
+diffusional  species or total internal reflection (TIR-) FCS.
+Also visit the official homepage at http://fcstools.dyndns.org/pycorrfit.
 
 Ubuntu-Linux
 -------------------
@@ -32,9 +39,13 @@ Activate the virtual environment (Perform this step before executing "python PyC
 
 Install latest python packages into that environment:
 
-	pip install -U numpy scipy matplotlib sympy
+	pip install -U numpy scipy sympy
 
+In order to use the Latex-plotting features of PyCorrFit, install
 
+	texlive-latex-extra
+	texlive-math-extra
+	texlive-science
 
 
 Windows (XP/7)
