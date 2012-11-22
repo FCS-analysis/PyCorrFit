@@ -20,12 +20,8 @@ import doc                          # Documentation/some texts
 import platform
 
 
-
-
-
-
 class UpdateDlg(wx.Frame):
-    def __init__(self, parent, description, homepage, changelog):
+    def __init__(self, parent, description, homepage, githome, changelog):
         pos = parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update", 
@@ -37,10 +33,12 @@ class UpdateDlg(wx.Frame):
             "<b> PyCorrFit <br></b>" +\
             description[0]+"<br>" +\
             description[1]+"<br>" +\
-            description[2]+"<br>"
+            description[2]+"<br><p><b>"
 
         if len(homepage) != 0:
-            string = string + '<p><b><a href="'+homepage+'">Homepage</a>'
+            string = string + '<a href="'+homepage+'">Homepage</a><br>'
+        if len(githome) != 0:
+            string = string + '<a href="'+githome+'">Repository</a>'
 
         if len(changelog) != 0:
             string = string + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + '<a href="'+changelog+'">Change Log</a>'
@@ -85,20 +83,54 @@ def findprogram(program):
 
 def Update(parent):
         changelog = ""
+        hpversion = None
         # I created this TXT record to keep track of the current web presence.
         try:
             urlopener = urllib2.urlopen(doc.HomePage, timeout=2)
             homepage = urlopener.geturl()
         except:
             homepage = doc.HomePage
+            
         try:
-            response = urllib2.urlopen(homepage+doc.ChangeLog, timeout=2)
+            urlopener2 = urllib2.urlopen(doc.GitHome, timeout=2)
+            githome = urlopener2.geturl()
         except:
-            newversion = "unknown"
-            action = "(check internet connection)"
+            githome = ""
+            
+        # Find the changelog file
+        try:
+            responseCL = urllib2.urlopen(homepage+doc.ChangeLog, timeout=2)
+        except:
+            CLfile = doc.GitChangeLog
         else:
-            changelog = response.read()
+            fileresponse = responseCL.read()
+            CLlines = fileresponse.splitlines()
+            # We have a transition between ChangeLog.txt on the homepage
+            # containing the actual changelog or containing a link to
+            # the ChangeLog file.
+            if len(CLlines) == 1:
+                CLfile = CLlines[0]
+            else:
+                hpversion = CLlines[0]
+                CLfile = doc.GitChangeLog
+                
+        # Continue version comparison if True
+        continuecomp = False
+        try:
+            responseVer = urllib2.urlopen(CLfile, timeout=2)
+        except:
+            if hpversion == None:
+                newversion = "unknown"
+                action = "(cannot connect to server)"
+            else:
+                newversion = hpversion
+                continuecomp = True
+        else:
+            continuecomp = True
+            changelog = responseVer.read()
             newversion = changelog.splitlines()[0]
+            
+        if continuecomp:
             new = LooseVersion(newversion)
             old = LooseVersion(parent.version)
             if new > old:
@@ -120,7 +152,7 @@ def Update(parent):
         else:
             changelogfile=""
 
-        dlg = UpdateDlg(parent, description, homepage, changelogfile)
+        dlg = UpdateDlg(parent, description, homepage, githome, changelogfile)
         dlg.Show()
 
 

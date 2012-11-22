@@ -242,6 +242,9 @@ import. """
 HomePage = "http://fcstools.dyndns.org/pycorrfit/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
+# Github homepage
+GitChangeLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
+GitHome = "https://github.com/paulmueller/PyCorrFit"
 
 
 
