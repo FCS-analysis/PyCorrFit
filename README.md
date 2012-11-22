@@ -18,9 +18,7 @@ On a standard Ubuntu-Linux 12.04 installation, install the following packages:
 	python-matplotlib
 
 
-For blleding-edge packages, you want to run from a virtualenv. Perform the following tasks (wxPython currently not working):
-
-Install the base packages for installation of up-to-date python packages.
+For bleeding-edge packages, you want to run from a virtualenv. Perform the following tasks (wxPython currently not working):
 
 	sudo apt-get install gfortran g++ liblapack-dev libblas-dev libpng12-dev libxft-dev make python-dev python-pip python-virtualenv
 
