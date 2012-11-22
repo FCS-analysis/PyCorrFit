@@ -18,30 +18,23 @@ On a standard Ubuntu-Linux 12.04 installation, install the following packages:
 	python-wxgtk2.8-dbg
 
 The following steps are optional but might solve some bugs that are present in packages from the Ubuntu-repositories.
-Perform the following tasks (wxPython currently not working):
+Perform the following tasks in addition to the ones above:
 
 	sudo apt-get install gfortran g++ liblapack-dev libblas-dev libpng12-dev libxft-dev make python-dev python-pip python-virtualenv
 
-Create your own python environment
+Create a virtual python environment with the system-site-packages option.
 
-	virtualenv PyCorrFit_env
+	virtualenv PyCorrFit_env --system-site-packages
 
-Activate the environment
+Activate the virtual environment (Perform this step before executing "python PyCorrFit.py").
 
-	cd PyCorrFit_env
+	cd PyCorrFit_env 
 	source bin/activate
 
 Install latest python packages into that environment:
 
-	pip install -U matplotlib
-	pip install -U numpy
-	pip install -U scipy
-	pip install -U sympy
-	pip install pyyaml 
+	pip install -U numpy scipy matplotlib sympy
 
-Not working:
-
-	pip install wxPython
 
 
 
