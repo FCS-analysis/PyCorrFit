@@ -49,7 +49,7 @@ Download and install setuptools (for Python 2.7)
 
 	http://pypi.python.org/pypi/setuptools#windows
 
-Add to path:
+Add the following to your Windows PATH variable:
 
 	C:\Python27;C:\Python27\Scripts
 
