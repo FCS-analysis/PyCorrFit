@@ -4,7 +4,7 @@ PyCorrFit
 data analysis software for fluorescence correlation spectroscopy (FCS)
 
 
-LINUX
+Ubuntu-Linux
 -------------------
 
 On a standard Ubuntu-Linux 12.04 installation, install the following packages:
@@ -45,7 +45,7 @@ Not working:
 
 
 
-WINDOWS
+Windows (XP/7)
 -------------------
 
 If you are having problems compiling with pyInstaller on windows, try to rename
@@ -59,5 +59,5 @@ http://code.google.com/p/mpmath/issues/detail?id=204
 
 Extended plotting features:
 Windows:
-- http://www.miktex.org/
+http://www.miktex.org/
   Install with automatic package download!
