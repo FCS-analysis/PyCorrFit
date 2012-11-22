@@ -7,7 +7,7 @@ data analysis software for fluorescence correlation spectroscopy (FCS)
 Ubuntu-Linux
 -------------------
 
-On a standard Ubuntu-Linux 12.04 installation, install the following packages:
+On a standard Ubuntu-Linux 12.04 installation, install these packages:
 
 	python-matplotlib
 	python-numpy
@@ -17,8 +17,7 @@ On a standard Ubuntu-Linux 12.04 installation, install the following packages:
 	python-wxtools
 	python-wxgtk2.8-dbg
 
-The following steps are optional but might solve some bugs that are present in packages from the Ubuntu-repositories.
-Perform the following tasks in addition to the ones above:
+The following steps are optional but might increase performance. Up-to-date python packages can easily be installed using pip.
 
 	sudo apt-get install gfortran g++ liblapack-dev libblas-dev libpng12-dev libxft-dev make python-dev python-pip python-virtualenv
 
@@ -64,6 +63,6 @@ matplotlib, scipy, sympy, and wxpython (unicode) have to be manually installed (
 	http://code.google.com/p/sympy/downloads/list
 	http://www.wxpython.org/download.php
 	
-In order to use the Latex-plotting features of PyCorrFit, install MikTex with (!) automatic apckage download.
+In order to use the Latex-plotting features of PyCorrFit, install MikTex with (!) automatic package download.
 
 	http://www.miktex.org/
