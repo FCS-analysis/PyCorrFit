@@ -14,6 +14,9 @@ diffusional  species or total internal reflection (TIR-) FCS. For more informati
 This repository contains the source scripts of PyCorrFit. The Python language enables the program to be run on many different platforms. If you do not want to install Python on your system, checkout http://fcstools.dyndns.org/pycorrfit for potentially pre-compiled binaries.
 If you want to compile the sources for your own system using [PyInstaller](http://www.pyinstaller.org), take a look at [README_PyInstaller.mdm](https://github.com/paulmueller/PyCorrFit/blob/master/README_PyInstaller.md).
 
+To run PyCorrFit from source, download the contents of this repository and execute
+
+	python PyCorrFit/source/PyCorrFit.py
 
 Ubuntu-Linux
 -------------------
