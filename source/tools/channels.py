@@ -87,7 +87,11 @@ class SelectChannels(wx.Frame):
         # Checkbox
         self.fixcheck = wx.CheckBox(panel, -1,
              label="Fix channel selection for all (new) pages.")
+        self.Bind(wx.EVT_CHECKBOX, self.OnCheckbox, self.fixcheck)
+
         text3 = wx.StaticText(panel, label=doc.channelsel)
+        
+        
         
         topSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -192,13 +196,26 @@ class SelectChannels(wx.Frame):
         """ Called, whenever data range in channels is changed. This updates
             the data range in seconds in the window.
         """
+        N = len(self.Page.taufull)
         start = self.spinstart.Value
         end = self.spinend.Value
+        # If the initial boundaries are outside of the experimental
+        # data array of length N, change the start and end variables.
+        start = start*(start < N-2)
+        end = min(end, N-1)
         t1 = 1.*self.Page.taufull[start]
         t2 = 1.*self.Page.taufull[end]
         self.TextTimesStart.SetLabel("%.4e" % t1)
         self.TextTimesEnd.SetLabel("%.4e" % t2)
 
+    def OnCheckbox(self, event=None):
+        """ Set the correct value in the spincontrol, if the checkbox
+            is not checked.
+        """
+        #state = self.fixcheck.GetValue()
+        #if state == False:
+        self.OnPageChanged(self.Page)
+            
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
@@ -216,7 +233,6 @@ class SelectChannels(wx.Frame):
         if state == True:
             # We do not need to run Calc_init
             self.Page = page
-            self.SetValues()
 
         else:
             # We will run it
