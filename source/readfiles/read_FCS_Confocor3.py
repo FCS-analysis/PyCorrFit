@@ -84,7 +84,8 @@ def openFCS_Multiple(dirname, filename):
                 # Start importing the trace. This is a little difficult, since
                 # traces in those files are usually very large. We will bin
                 # the trace and import a lighter version of it.
-                tracelength = int(Alldata[i].partition("=")[2].strip().partition(" ")[0])
+                tracelength = \
+                     int(Alldata[i].partition("=")[2].strip().partition(" ")[0])
                 if tracelength != 0:
                     tracedata = Alldata.__getslice__(i+1, i+tracelength+1)
                     # Jump foward in the index
@@ -94,7 +95,8 @@ def openFCS_Multiple(dirname, filename):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append( (np.float(row[3])*1000, np.float(row[4])/1000) )
+                        trace.append( (np.float(row[3])*1000,
+                                       np.float(row[4])/1000) )
                     trace = np.array(trace)
                     # The trace is too big. Wee need to bin it.
                     if len(trace) >= 500:
@@ -105,7 +107,8 @@ def openFCS_Multiple(dirname, filename):
                         newsignal = np.zeros(newlength)
                         # Simultaneously sum over all intervals
                         for j in np.arange(teiler):
-                            newsignal = newsignal+trace[j:newlength*teiler:teiler][:,1]
+                            newsignal = \
+                                 newsignal+trace[j:newlength*teiler:teiler][:,1]
                         newsignal = 1.* newsignal / teiler
                         newtimes = trace[teiler-1:newlength*teiler:teiler][:,0]
                         if len(trace)%teiler != 0:
@@ -114,27 +117,31 @@ def openFCS_Multiple(dirname, filename):
                             rest = trace[newlength*teiler:][:,1]
                             lrest = len(rest)
                             rest = np.array([sum(rest)/lrest])
-                            newsignal = np.concatenate((newsignal, rest), axis=0)
+                            newsignal = np.concatenate((newsignal, rest),
+                                                       axis=0)
                             timerest = np.array([trace[-1][0]])
-                            newtimes = np.concatenate((newtimes, timerest), axis=0)
+                            newtimes = np.concatenate((newtimes, timerest),
+                                                      axis=0)
                         newtrace=np.zeros((len(newtimes),2))
                         newtrace[:,0] = newtimes
                         newtrace[:,1] = newsignal
                     else:
-                        # Declare newtrace - otherwise we have a problem down three lines ;)
+                        # Declare newtrace -
+                        # otherwise we have a problem down three lines ;)
                         newtrace = trace
                     # Finally add the trace to the list
                     traces.append(newtrace)
                     if FoundType[:2] != "AC":
                         # For every trace there is an entry in aclist
-                        print "Trace data saved in CC section. I cannot handle that."
+                        print "Trace data saved in CC section."+ \
+                              "I cannot handle that."
                     gottrace = True
             if Alldata[i].partition("=")[0].strip() == "CorrelationArraySize":
                 # Get the correlation information
                 corrlength = int(Alldata[i].partition("=")[2].strip())
                 if corrlength !=0:
-                    # For cross correlation or something sometimes there is no trace
-                    # information.
+                    # For cross correlation or something sometimes
+                    # there is no trace information.
                     if gottrace == False and FoundType[:2] =="AC":
                         # We think we know that there is no trace in CC curves
                         traces.append(None)
@@ -145,7 +152,8 @@ def openFCS_Multiple(dirname, filename):
                     corr = list()
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append( (np.float(row[3])*1000, np.float(row[4])-1) )
+                        corr.append( (np.float(row[3])*1000,
+                                      np.float(row[4])-1)    )
                     if FoundType[:2] == "AC":
                         ac_correlations.append(np.array(corr))
                     elif FoundType[:2] == "CC":
@@ -336,7 +344,8 @@ def openFCS_Single(dirname, filename):
                         newsignal = np.zeros(newlength)
                         # Simultaneously sum over all intervals
                         for j in np.arange(teiler):
-                            newsignal = newsignal+trace[j:newlength*teiler:teiler][:,1]
+                            newsignal = \
+                                 newsignal+trace[j:newlength*teiler:teiler][:,1]
                         newsignal = 1.* newsignal / teiler
                         newtimes = trace[teiler-1:newlength*teiler:teiler][:,0]
                         if len(trace)%teiler != 0:
@@ -345,14 +354,17 @@ def openFCS_Single(dirname, filename):
                             rest = trace[newlength*teiler:][:,1]
                             lrest = len(rest)
                             rest = np.array([sum(rest)/lrest])
-                            newsignal = np.concatenate((newsignal, rest), axis=0)
+                            newsignal = np.concatenate((newsignal, rest),
+                                                       axis=0)
                             timerest = np.array([trace[-1][0]])
-                            newtimes = np.concatenate((newtimes, timerest), axis=0)
+                            newtimes = np.concatenate((newtimes, timerest),
+                                                      axis=0)
                         newtrace=np.zeros((len(newtimes),2))
                         newtrace[:,0] = newtimes
                         newtrace[:,1] = newsignal
                     else:
-                        # Declare newtrace - otherwise we have a problem down three lines ;)
+                        # Declare newtrace -
+                        # otherwise we have a problem down three lines ;)
                         newtrace = trace
                 tracecurve = False
 

@@ -71,9 +71,9 @@ def openSIN(dirname, filename):
         2. We are also interested in the "[IntensityHistory]" section.
         If we are only interested in autocorrelation functions: An email
         from Jixiang Zhu - Correlator.com (2012-01-22) said, that
-        "For autocorrelation mode, the 2nd and 3 column represent the same intensity
-        series with slight delay.  Therefore, they are statistically the same but
-        numerically different."
+        "For autocorrelation mode, the 2nd and 3 column represent the same
+        intensity series with slight delay.  Therefore, they are statistically
+        the same but numerically different."
         It is therefore perfectly fine to just use the 2nd column.
 
         Different acquisition modes:
@@ -143,7 +143,8 @@ def openSIN(dirname, filename):
         trace = list()
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
+            trace.append((np.float(row[0])*timefactor,
+                         np.float(row[1])/timedivfac))
      
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
@@ -157,8 +158,10 @@ def openSIN(dirname, filename):
         trace2 = list()
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
+            trace1.append((np.float(row[0])*timefactor,
+                           np.float(row[1])/timedivfac))
+            trace2.append((np.float(row[0])*timefactor,
+                           np.float(row[2])/timedivfac))
      
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Dual Auto":
@@ -176,8 +179,10 @@ def openSIN(dirname, filename):
         trace2 = list()
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
+            trace1.append((np.float(row[0])*timefactor,
+                           np.float(row[1])/timedivfac))
+            trace2.append((np.float(row[0])*timefactor,
+                           np.float(row[2])/timedivfac))
      
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
@@ -196,8 +201,10 @@ def openSIN(dirname, filename):
         trace2 = list()
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
+            trace1.append((np.float(row[0])*timefactor,
+                           np.float(row[1])/timedivfac))
+            trace2.append((np.float(row[0])*timefactor,
+                           np.float(row[2])/timedivfac))
      
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
@@ -224,8 +231,10 @@ def openSIN(dirname, filename):
         trace2 = list()
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor, np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor, np.float(row[2])/timedivfac))
+            trace1.append((np.float(row[0])*timefactor,
+                           np.float(row[1])/timedivfac))
+            trace2.append((np.float(row[0])*timefactor,
+                           np.float(row[2])/timedivfac))
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
         traces.append([np.array(trace1), np.array(trace2)])

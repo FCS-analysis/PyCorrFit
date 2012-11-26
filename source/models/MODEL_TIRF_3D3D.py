@@ -59,9 +59,11 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
     # Axial correlation    
     x1 = np.sqrt(D_3D1*tau)*kappa
     w_ix1 = wixi(x1)
-    gz1 = np.sqrt(D_3D1*tau/np.pi) - (2*D_3D1*tau*kappa**2 - 1)/(2*kappa) * w_ix1
+    gz1 = np.sqrt(D_3D1*tau/np.pi) - (2*D_3D1*tau*kappa**2 - 1)/(2*kappa) * \
+          w_ix1
     # Lateral correlation
-    gx1_1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D1*tau) * ( np.exp(-a**2/(4*(sigma**2+D_3D1*tau))) -1 )
+    gx1_1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D1*tau) * \
+            ( np.exp(-a**2/(4*(sigma**2+D_3D1*tau))) -1 )
     gx2_1 = 1/a * sps.erf( a / (2*np.sqrt(sigma**2 + D_3D1*tau))) 
     gx1 =  gx1_1 + gx2_1
     gxy1 = gx1**2
@@ -72,9 +74,11 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
     # Axial correlation    
     x2 = np.sqrt(D_3D2*tau)*kappa
     w_ix2 = wixi(x2)
-    gz2 = np.sqrt(D_3D2*tau/np.pi) - (2*D_3D2*tau*kappa**2 - 1)/(2*kappa) * w_ix2
+    gz2 = np.sqrt(D_3D2*tau/np.pi) - (2*D_3D2*tau*kappa**2 - 1)/(2*kappa) * \
+          w_ix2
     # Lateral correlation
-    gx1_2 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D2*tau) * ( np.exp(-a**2/(4*(sigma**2+D_3D2*tau))) -1 )
+    gx1_2 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D2*tau) * \
+            ( np.exp(-a**2/(4*(sigma**2+D_3D2*tau))) -1 )
     gx2_2 = 1/a * sps.erf( a / (2*np.sqrt(sigma**2 + D_3D2*tau))) 
     gx2 =  gx1_2 + gx2_2
     gxy2 = gx2**2
@@ -88,7 +92,8 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
 
 
 # 3D-3D Model TIR
-m_tir_3d_3d_mix_6023 = [6023, u"3D+3D (□xσ/exp)","Separate 3D diffusion, 3D TIR",
+m_tir_3d_3d_mix_6023 = [6023, u"3D+3D (□xσ/exp)",
+                        "Separate 3D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d3d]
 labels_6023 = ["D"+u"\u2081"+u" [10 µm²/s]",
                 "D"+u"\u2082"+u" [10 µm²/s]",

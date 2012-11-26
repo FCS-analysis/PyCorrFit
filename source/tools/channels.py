@@ -51,8 +51,9 @@ class SelectChannels(wx.Frame):
         text1 = wx.StaticText(panel, label=u"The lag times τ are stored as an "+
                                            u"array of length ")
         self.textend = wx.StaticText(panel, label="%d." % self.lentau)
-        text2 = wx.StaticText(panel, label=u"You may wish to confine this array. "+
-                                           u"This can be done here.")
+        text2 = wx.StaticText(panel,
+                              label=u"You may wish to confine this array. "+
+                                    u"This can be done here.")
 
         ##Spincontrols:
         FlexSpinSizer = wx.FlexGridSizer(rows=2, cols=4, vgap=5, hgap=5)
@@ -130,7 +131,8 @@ class SelectChannels(wx.Frame):
 
     def Calc_init(self, parent):
         ## Variables
-        # Parent should be the fitting panel - The tab, where the fitting is done.
+        # Parent should be the fitting panel -
+        # The tab, where the fitting is done.
         self.Page = parent
         if self.Page.dataexpfull is not None:
             taufull = self.Page.dataexpfull[:,0]
@@ -159,7 +161,7 @@ class SelectChannels(wx.Frame):
 
     def OnApplyAll(self, event=None):
         start = self.spinstart.GetValue()
-        end = self.spinend.GetValue() + 1 # +1, because arrays are accessed like this
+        end = self.spinend.GetValue() + 1 # +1, [sic]
         if start > end:
             # swap the variables, we are not angry at the user
             start, end = end, start

@@ -89,7 +89,8 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
     x = np.sqrt(D3D*tau)*kappa
     w_ix = wixi(x)
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
-    gz = kappa * (np.sqrt(D3D*tau/np.pi) - (2*D3D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
+    gz = kappa * (np.sqrt(D3D*tau/np.pi) - 
+         (2*D3D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
     particle3D = alpha**2*F * g2D3D * gz
 
     ### triplet

@@ -159,7 +159,8 @@ class Average(wx.Frame):
                     newsignal = np.zeros(newlength)
                     # Simultaneously sum over all intervals
                     for k in np.arange(teiler):
-                        newsignal = newsignal+tracej[k:newlength*teiler:teiler][:,1]
+                        newsignal = \
+                                newsignal+tracej[k:newlength*teiler:teiler][:,1]
                     newsignal = 1.* newsignal / teiler
                     newtimes = tracej[teiler-1:newlength*teiler:teiler][:,0]
                     if len(tracej)%teiler != 0:
@@ -175,7 +176,8 @@ class Average(wx.Frame):
                     newtrace[:,0] = newtimes
                     newtrace[:,1] = newsignal
                 else:
-                    # Declare newtrace - otherwise we have a problem down three lines ;)
+                    # Declare newtrace -
+                    # otherwise we have a problem down three lines ;)
                     newtrace = tracej
                 newtraces.append(newtrace)
         else:

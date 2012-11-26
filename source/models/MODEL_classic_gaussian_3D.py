@@ -199,7 +199,8 @@ def MoreInfo_1C(parms, countrate):
 
 
 # 3D Model blink gauss
-m_3dblink6011 = [6011, "3D+T (Gauß)","Simple 3D diffusion w/ triplet", CF_Gxyz_blink]
+m_3dblink6011 = [6011, "3D+T (Gauß)","Simple 3D diffusion w/ triplet", 
+                 CF_Gxyz_blink]
 labels_6011 = ["n","T","τ_trip [ms]", "τ_diff [ms]", "SP", "offset"]
 values_6011 = [4.0, 0.2, 0.07, 0.4, 5.0, 0.0]
 valuestofit_6011 = [True, True, True, True, False, False]

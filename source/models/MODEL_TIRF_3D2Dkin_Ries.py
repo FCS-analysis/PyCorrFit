@@ -223,13 +223,16 @@ def CF_gz_AA(parms, tau, wixi=wixi):
     # Calculate return function
     Sum1 = d * nps.sqrt( Re*tau/np.pi )
     Sum2 = -d/2*(2*tau*Re -1) * wixi(np.sqrt(tau*Re))
-    Sum3Mult1 = - eta_2D * Conc_2D * k_d / ( eta_3D * Conc_3D * (sqrtR1 - sqrtR2) )
+    Sum3Mult1 = - eta_2D * Conc_2D * k_d / ( eta_3D * Conc_3D * 
+                                            (sqrtR1 - sqrtR2) )
     S3M2S1M1 = sqrtR1/R3
     S3M2S1M2S1 = wixi(-nps.sqrt(tau*R1)) + -2*nps.sqrt(tau*R3/np.pi)
-    S3M2S1M2S2 = ( 2*tau*sqrtR1*nps.sqrt(Re) + 2*tau*Re -1 ) * wixi(nps.sqrt(tau*Re))
+    S3M2S1M2S2 = ( 2*tau*sqrtR1*nps.sqrt(Re) + 2*tau*Re -1 ) * \
+                 wixi(nps.sqrt(tau*Re))
     S3M2S2M1 = -sqrtR2/R4
     S3M2S2M2S1 = wixi(-nps.sqrt(tau*R2)) + -2*nps.sqrt(tau*R4/np.pi)
-    S3M2S2M2S2 = ( 2*tau*sqrtR2*nps.sqrt(Re) + 2*tau*Re -1 ) * wixi(nps.sqrt(tau*Re))
+    S3M2S2M2S2 = ( 2*tau*sqrtR2*nps.sqrt(Re) + 2*tau*Re -1 ) * \
+                 wixi(nps.sqrt(tau*Re))
     Sum3 = Sum3Mult1 * ( S3M2S1M1 * (S3M2S1M2S1 + S3M2S1M2S2) + 
                          S3M2S2M1 * (S3M2S2M2S1 + S3M2S2M2S2) )
     Sum = Sum1 + Sum2 + Sum3
@@ -307,7 +310,8 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
     parms_xy_3D = [D_3D, sigma, a]
     # Here we go.
     gAA = gAAz(parms, tau) * gxy(parms_xy_3D, tau)
-    gAC = gACz(parms, tau) * nps.sqrt( gxy(parms_xy_3D, tau) * gxy(parms_xy_2D, tau) )
+    gAC = gACz(parms, tau) * nps.sqrt( gxy(parms_xy_3D, tau) *
+                                       gxy(parms_xy_2D, tau) )
     gCC = gCCz(parms, tau) * gxy(parms_xy_2D, tau)
     # Nonnormalized correlation function
     g = eta_3D * Conc_3D * ( gAA + 2*gAC + gCC )
@@ -327,7 +331,8 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
 
 
 # 3D-2D binding Model TIR
-m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin (□xσ/exp)","Surface binding and unbinding, 3D TIR",
+m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin (□xσ/exp)",
+                        "Surface binding and unbinding, 3D TIR",
                         CF_Gxyz_TIR_square_ubibi]
 labels_6021 = [u"D_3D [10 µm²/s]",
                 u"D_2D [10 µm²/s]",
@@ -354,7 +359,8 @@ values_6021 = [
                 0.00001,  # k_a [µm³/s]
                 0.000064  # k_d [10³ /s]
                 ]        
-valuestofit_6021 = [False, True, False, False, False, False, True, False, False, False, False]
+valuestofit_6021 = [False, True, False, False, False, False, True, False,
+                    False, False, False]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6021 = ["D_3D [µm²/s]",

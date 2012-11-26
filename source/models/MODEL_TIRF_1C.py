@@ -84,7 +84,8 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
     gz = np.sqrt(D*tau/np.pi) - (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix
 
     # Lateral correlation
-    gx1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D*tau) * ( np.exp(-a**2/(4*(sigma**2+D*tau))) -1 )
+    gx1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D*tau) * \
+          ( np.exp(-a**2/(4*(sigma**2+D*tau))) -1 )
     gx2 = 1/a * sps.erf( a / (2*np.sqrt(sigma**2 + D*tau))) 
     gx =  gx1 + gx2
     gxy = gx**2
@@ -185,24 +186,30 @@ def MoreInfo_6010(parms, countrate):
 
 
 # 2D Model Square
-m_twodsq6000 = [6000, u"2D (□xσ)",u"2D diffusion w/ square pinhole", CF_Gxy_TIR_square]
-labels_6000 = [u"D [10 µm²/s]",u"σ [100 nm]","a [100 nm]", u"conc.2D [100 /µm²]"]
-values_6000 = [0.1, 2.3, 7.5, .6]                      # [D,lamb,NA,a,conc]
+m_twodsq6000 = [6000, u"2D (□xσ)", u"2D diffusion w/ square pinhole",
+                CF_Gxy_TIR_square]
+labels_6000 = [u"D [10 µm²/s]", u"σ [100 nm]", "a [100 nm]",
+               u"conc.2D [100 /µm²]"]
+values_6000 = [0.1, 2.3, 7.5, .6] # [D,lamb,NA,a,conc]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6000 = [u"D [µm²/s]",u"σ [nm]","a [nm]",u"conc.2D [1/µm²]"]
+labels_human_readable_6000 = [u"D [µm²/s]", u"σ [nm]", "a [nm]",
+                              u"conc.2D [1/µm²]"]
 values_factor_human_readable_6000 = [10, 100, 100, 100]
 valuestofit_6000 = [True, False, False, True]      # Use as fit parameter?
 parms_6000 = [labels_6000, values_6000, valuestofit_6000,
               labels_human_readable_6000, values_factor_human_readable_6000]
 
 # 3D Model TIR square
-m_3dtirsq6010 = [6010, u"3D (□xσ/exp)","Simple 3D diffusion w/ TIR", CF_Gxyz_TIR_square]
-labels_6010 = [u"D [10 µm²/s]",u"σ [100 nm]","a [100 nm]", "d_eva [100 nm]", u"conc.3D [1000 /µm³]"]
+m_3dtirsq6010 = [6010, u"3D (□xσ/exp)", "Simple 3D diffusion w/ TIR",
+                 CF_Gxyz_TIR_square]
+labels_6010 = [u"D [10 µm²/s]", u"σ [100 nm]","a [100 nm]", "d_eva [100 nm]",
+               u"conc.3D [1000 /µm³]"]
 values_6010 = [0.0005420, 2.3, 7.5, 1.0, .0216]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6010 = [u"D [µm²/s]",u"σ [nm]","a [nm]", "d_eva [nm]", u"conc.3D [1/µm³]"]
+labels_human_readable_6010 = [u"D [µm²/s]", u"σ [nm]", "a [nm]", "d_eva [nm]",
+                              u"conc.3D [1/µm³]"]
 values_factor_human_readable_6010 = [10, 100, 100, 100, 1000]
 valuestofit_6010 = [True, False, False, False, True]
 parms_6010 = [labels_6010, values_6010, valuestofit_6010,

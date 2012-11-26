@@ -71,7 +71,8 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
     w_ix = wixi(x)
     gz = np.sqrt(D_3D*tau/np.pi) - (2*D_3D*tau*kappa**2 - 1)/(2*kappa) * w_ix
     # Lateral correlation
-    gx1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D*tau) * ( np.exp(-a**2/(4*(sigma**2+D_3D*tau))) -1 )
+    gx1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D_3D*tau) * \
+          ( np.exp(-a**2/(4*(sigma**2+D_3D*tau))) -1 )
     gx2 = 1/a * sps.erf( a / (2*np.sqrt(sigma**2 + D_3D*tau))) 
     gx =  gx1 + gx2
     gxy = gx**2
@@ -85,7 +86,8 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
 
 
 # 3D-2D Model TIR
-m_tir_3d_2d_mix_6020 = [6020, u"3D+2D (□xσ/exp)","Separate 3D and 2D diffusion, 3D TIR",
+m_tir_3d_2d_mix_6020 = [6020, u"3D+2D (□xσ/exp)",
+                        "Separate 3D and 2D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d2d]
 labels_6020 = [u"D_3D [10 µm²/s]",
                 u"D_2D [10 µm²/s]",

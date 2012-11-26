@@ -91,7 +91,8 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
     x1 = np.sqrt(D1*tau)*kappa
     w_ix1 = wixi(x1)
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
-    gz1 = kappa * (np.sqrt(D1*tau/np.pi) - (2*D1*tau*kappa**2 - 1)/(2*kappa) * w_ix1)
+    gz1 = kappa * (np.sqrt(D1*tau/np.pi) -
+                   (2*D1*tau*kappa**2 - 1)/(2*kappa) * w_ix1)
     particle1 = F * g2D1 * gz1
 
     ### 2nd species
@@ -103,7 +104,8 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
     x2 = np.sqrt(D2*tau)*kappa
     w_ix2 = wixi(x2)
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
-    gz2 = kappa * (np.sqrt(D2*tau/np.pi) - (2*D2*tau*kappa**2 - 1)/(2*kappa) * w_ix2)
+    gz2 = kappa * (np.sqrt(D2*tau/np.pi) -
+                   (2*D2*tau*kappa**2 - 1)/(2*kappa) * w_ix2)
     particle2 = alpha**2*(1-F) * g2D2 * gz2
 
     ### triplet

@@ -40,7 +40,7 @@ class EditComment(wx.Frame):
                         size=initial_sizec, value=self.parent.SessionComment)
 
         text = wx.StaticText(self.panel, 
-                             label="Session comments will be saved in the  session file.")
+                   label="Session comments will be saved in the  session file.")
         btnclose = wx.Button(self.panel, wx.ID_ANY, 'Close')
         btnokay = wx.Button(self.panel, wx.ID_ANY, 'OK')
         self.Bind(wx.EVT_BUTTON, self.OnClose, btnclose)

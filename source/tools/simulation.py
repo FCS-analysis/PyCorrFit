@@ -90,7 +90,8 @@ class Slide(wx.Frame):
         dropsizer.Add(self.dropop)
         dropsizer.Add(self.droppB)
 
-        textfix = wx.StaticText(self.panel, label="\nSelect intervals and slide.\n")
+        textfix = wx.StaticText(self.panel,
+                                label="\nSelect intervals and slide.\n")
 
         # Parameter A
         slidesizer = wx.FlexGridSizer(rows=3, cols=5, vgap=5, hgap=5)
@@ -100,8 +101,8 @@ class Slide(wx.Frame):
         self.startspinA = edclasses.FloatSpin(self.panel, digits=7,
                                             increment=.1)
         slidesizer.Add(self.startspinA)
-        self.sliderA = wx.Slider(self.panel, -1, self.slidestart, 0, self.slidemax,
-                                 wx.DefaultPosition, (250, -1),
+        self.sliderA = wx.Slider(self.panel, -1, self.slidestart, 0,
+                                 self.slidemax, wx.DefaultPosition, (250, -1),
                                  wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderA)
         self.endspinA = edclasses.FloatSpin(self.panel, digits=7,
@@ -115,8 +116,8 @@ class Slide(wx.Frame):
         self.startspinB = edclasses.FloatSpin(self.panel, digits=7,
                                             increment=.1)
         slidesizer.Add(self.startspinB)
-        self.sliderB = wx.Slider(self.panel, -1, self.slidestart, 0, self.slidemax,
-                                 wx.DefaultPosition, (250, -1),
+        self.sliderB = wx.Slider(self.panel, -1, self.slidestart, 0,
+                                 self.slidemax, wx.DefaultPosition, (250, -1),
                                  wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderB)
         self.endspinB = edclasses.FloatSpin(self.panel, digits=7,
@@ -130,14 +131,15 @@ class Slide(wx.Frame):
         self.startspinOp = edclasses.FloatSpin(self.panel, digits=7,
                                             increment=.1)
         slidesizer.Add(self.startspinOp)
-        self.sliderOp = wx.Slider(self.panel, -1, self.slidestart, 0, self.slidemax,
-                                 wx.DefaultPosition, (250, -1),
-                                 wx.SL_HORIZONTAL)
+        self.sliderOp = wx.Slider(self.panel, -1, self.slidestart, 0,
+                                  self.slidemax, wx.DefaultPosition, (250, -1),
+                                  wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderOp)
         self.endspinOp = edclasses.FloatSpin(self.panel, digits=7,
                                         increment=.1)
         slidesizer.Add(self.endspinOp)
-        self.textvalueOp = wx.StaticText(self.panel,label= "%.5e" % self.valueOp)
+        self.textvalueOp = wx.StaticText(self.panel,
+                                         label= "%.5e" % self.valueOp)
         slidesizer.Add(self.textvalueOp)
 
 
@@ -227,8 +229,10 @@ class Slide(wx.Frame):
         self.opdict["A*B"] = [lambda A,B: A*B, lambda A,C: C/A]
         self.opdict["A+B"] = [lambda A,B: A+B, lambda A,C: C-A]
         self.opdict["A-B"] = [lambda A,B: A-B, lambda A,C: A-C]
-        self.opdict["A*exp(B)"] = [lambda A,B: A*np.exp(B), lambda A,C: np.log(C/A)]
-        self.opdict["B*exp(A)"] = [lambda A,B: B*np.exp(A), lambda A,C: C/np.exp(A)]
+        self.opdict["A*exp(B)"] = [lambda A,B: A*np.exp(B),
+                                   lambda A,C: np.log(C/A)]
+        self.opdict["B*exp(A)"] = [lambda A,B: B*np.exp(A),
+                                   lambda A,C: C/np.exp(A)]
 
 
     def OnClose(self, event=None):
@@ -318,7 +322,8 @@ class Slide(wx.Frame):
             endOp = self.endspinOp.GetValue()
             self.valueOp = startOp + (endOp-startOp)*slideOp/idmax
 
-        self.valueB, self.valueOp = self.CalcFct(self.valueA, self.valueB, self.valueOp)
+        self.valueB, self.valueOp = self.CalcFct(self.valueA, self.valueB,
+                                                 self.valueOp)
         self.textvalueB.SetLabel( "%.5e" % self.valueB)
         self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
 

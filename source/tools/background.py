@@ -76,8 +76,10 @@ class BackgroundCorrection(wx.Frame):
                                             increment=.1)
         self.spinctrl.Enable(False)
         # Verbose text
-        self.textfile = wx.StaticText(panel, label="No blank measurement file selected.")
-        textmeanavg = wx.StaticText(panel, label="Average background signal [kHz]: ")
+        self.textfile = wx.StaticText(panel,
+                                    label="No blank measurement file selected.")
+        textmeanavg = wx.StaticText(panel,
+                                    label="Average background signal [kHz]: ")
         self.textmean = wx.StaticText(panel, label="")
 
         # name

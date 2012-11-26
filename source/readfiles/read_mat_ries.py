@@ -2,7 +2,8 @@
 """
 Read mat files that Jonas Ries used in his programs.
 For opening .mat files, this helped a lot:
-http://stackoverflow.com/questions/7008608/scipy-io-loadmat-nested-structures-i-e-dictionaries
+http://stackoverflow.com/questions/7008608/
+scipy-io-loadmat-nested-structures-i-e-dictionaries
 
 The structure has been derived from "corrSFCS.m" from the SFCS.m program
 from Jonas Ries.
