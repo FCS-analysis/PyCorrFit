@@ -180,7 +180,8 @@ class UserModel(object):
                 if var == "G":
                     # Create a fuction that calculates G
                     funcstring = val.strip()
-                    self.FuncClass = CorrFunc(labels, values, substitutes, funcstring)
+                    self.FuncClass = CorrFunc(labels, values, substitutes,
+                                              funcstring)
                     func = self.FuncClass.GetFunction()
                     doc = code[0].strip()
                     # Add whitespaces in model string (looks nicer)
@@ -249,7 +250,8 @@ class UserModel(object):
             # the imported model.
             mdls.modeltypes[self.UserStr].append(Defs[0])
             menuentry = menu.Append(Defs[0], Defs[1], Defs[2])
-            self.parent.Bind(wx.EVT_MENU, self.parent.add_fitting_tab, menuentry)
+            self.parent.Bind(wx.EVT_MENU, self.parent.add_fitting_tab,
+                             menuentry)
 
     def TestFunction(self):
         """ Convenience function to test self.FuncClass """
@@ -317,7 +319,10 @@ evalfuncdict["wixi"] = evalwixi
 evalfuncdict["I"] = 1j
 
 scipyfuncs = ['wofz', 'erf', 'erfc']
-numpyfuncs = ['abs', 'arccos', 'arcsin', 'arctan', 'arctan2', 'ceil', 'cos', 'cosh', 'degrees', 'e', 'exp', 'fabs', 'floor', 'fmod', 'frexp', 'hypot', 'ldexp', 'log', 'log10', 'modf', 'pi', 'power', 'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh']
+numpyfuncs = ['abs', 'arccos', 'arcsin', 'arctan', 'arctan2', 'ceil', 'cos',
+              'cosh', 'degrees', 'e', 'exp', 'fabs', 'floor', 'fmod', 'frexp',
+              'hypot', 'ldexp', 'log', 'log10', 'modf', 'pi', 'power',
+              'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh']
 
 
 for func in scipyfuncs:

@@ -16,8 +16,8 @@
 
 import csv
 import numpy as np
-
 import os
+import platform
 import shutil
 import sys
 import tempfile
@@ -34,11 +34,6 @@ from tools import info
 # This contains all the information necessary to import data files:
 from readfiles import Filetypes
 from readfiles import BGFiletypes
-
-import platform
-
-
-
 
 
 def ImportParametersYaml(parent, dirname):
@@ -391,9 +386,10 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         # Only do the Yaml thing for safe operations.
         # Make the yaml dump
         parmsfilename = "Parameters.yaml"
-        # Parameters have to be floats in lists in order for yaml.safe_load to work        
+        # Parameters have to be floats in lists
+        # in order for yaml.safe_load to work.     
         for idparm in np.arange(len(Parms)):
-            Parms[idparm][2] = np.array(Parms[idparm][2], dtype="float").tolist()
+            Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
         yaml.dump( Parms,
                      open(parmsfilename, "wb") )
         Arc.write(parmsfilename)
@@ -406,8 +402,8 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
             Arc.write(funcfilename)
         # Save (dataexp and tau)s into separate csv files.
         for i in np.arange(len(Array)):
-            # Since *Array* and *Parms* are in the same order, which is the
-            # Page order, we will identify the filename by the Page title number.
+            # Since *Array* and *Parms* are in the same order (the page order),
+            # we will identify the filename by the Page title number.
             number = str(Parms[i][0])
             expfilename = "data"+number[1:len(number)-2]+".csv"
             expfile = open(expfilename, 'wb')
@@ -435,7 +431,8 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         # Save traces into separate csv files.
         for i in np.arange(len(Trace)):
             # Since *Trace* and *Parms* are in the same order, which is the
-            # Page order, we will identify the filename by the Page title number.
+            # Page order, we will identify the filename by the Page title 
+            # number.
             if Trace[i] is not None:
                 number = str(Parms[i][0])
                 if Parms[i][7] is True:

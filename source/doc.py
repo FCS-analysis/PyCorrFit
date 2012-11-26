@@ -98,8 +98,8 @@ def info(version):
 
     
 def licence():
-    return """PyCorrFit is free software: you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published 
+    return """PyCorrFit is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published 
 by the Free Software Foundation, either version 2 of the License, 
 or (at your option) any later version.
 
@@ -114,7 +114,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 def saveCSVinfo(parent):
-    a = "# This file was created using PyCorrFit version "+parent.version+".\n#\n"
+    a = "# This file was created using PyCorrFit version "+\
+        parent.version+".\n#\n"
     b = """# Lines starting with a '#' are treated as comments.
 # The data is stored as CSV below this comment section.
 # Data usually consists of lag times (channels) and
@@ -172,7 +173,8 @@ Parameters.yaml
       - {List of parameters}
       - {List of checked parameters (for fitting)}
       - [{Min channel selected}, {Max channel selected}]
-      - [{Weighted fit enabled}, {No. of bins from left and right}, {No. of knots (e.g. spline fitting)}]
+      - [{Weighted fit enabled}, {No. of bins from left and right}, 
+         {No. of knots (e.g. spline fitting)}]
       - [{Background to use (line in backgrounds.csv)}]
       - Data type is Cross-correlation?
 
@@ -243,7 +245,7 @@ HomePage = "http://fcstools.dyndns.org/pycorrfit/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
 # Github homepage
-GitChangeLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
+GitChLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
 GitHome = "https://github.com/paulmueller/PyCorrFit"
 
 

@@ -59,7 +59,7 @@ class ChoicesDialog(wx.Dialog):
         #pos = self.parent.GetPosition()
         #pos = (pos[0]+100, pos[1]+100)
         #wx.Frame.__init__(self, parent=parent, title=title,
-        #         pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+        #   pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
 
         #self.Filename = None
         ## Controls

@@ -16,17 +16,14 @@
 
 
 import numpy as np
+import platform
 import sys
-import traceback                        # for Error handling
+import traceback           # for Error handling
 import wx
 
-import openfile as opf                     # How to treat an opened file
+# PyCorrFit modules
+import openfile as opf     # How to treat an opened file
 import models as mdls
-
-import platform
-
-
-
 
 
 class BatchCtrl(wx.Frame):
@@ -131,7 +128,8 @@ class BatchCtrl(wx.Frame):
         # Fit all pages with right modelid
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
-            if OtherPage.modelid == modelid and OtherPage.dataexpfull is not None:
+            if (OtherPage.modelid == modelid and
+                OtherPage.dataexpfull is not None):
                 #Fit
                 OtherPage.Fit_function()
 
@@ -152,8 +150,8 @@ class BatchCtrl(wx.Frame):
     def OnRadioThere(self, event=None):
         # If user clicks on pages in main program, we do not want the list
         # to be changed.
-        self.YamlParms, dirname, filename = opf.ImportParametersYaml(self.parent, 
-                                                             self.parent.dirname)
+        self.YamlParms, dirname, filename = \
+                      opf.ImportParametersYaml(self.parent, self.parent.dirname)
         if filename == None:
             # User did not select any sesion file
             self.rbtnhere.SetValue(True)
@@ -201,7 +199,8 @@ class BatchImport(wx.Frame):
         keys.sort()
         for modeltype in keys:
             for modelid in mdls.modeltypes[modeltype]:
-                self.ModelDropdown.append(modeltype + ": "+ mdls.modeldict[modelid][1])
+                self.ModelDropdown.append(modeltype + ": "+ 
+                                          mdls.modeldict[modelid][1])
                 self.modellist.append(mdls.modeldict[modelid])
 
             
@@ -289,6 +288,10 @@ class BatchImport(wx.Frame):
         OpenFile = opf.Filetypes[self.Filetype]
         numf = len(self.Filenames)
         # Show a nice progress dialog:
+        
+        # Here, perform the separation into
+        # a) load the curves
+        # b) let the user choose which curves to import
         style=wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
         dlga = wx.ProgressDialog("Import", "Loading pages..."
         , maximum = numf, parent=self, style=style)
@@ -316,6 +319,8 @@ class BatchImport(wx.Frame):
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
                 dlga.Destroy()
+                # Do not return here, but tell the user that this file does
+                # not contain a correlation curve
                 return
             else:
                 dataexp = Stuff[0]

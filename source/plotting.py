@@ -128,7 +128,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     fit = Page.datacorr
     tabtitle = Page.tabtitle.GetValue()
     fitlabel = ur"applied fit"
-    labels, parms = mdls.GetHumanReadableParms(Page.modelid, Page.active_parms[1])
+    labels, parms = mdls.GetHumanReadableParms(Page.modelid,
+                                               Page.active_parms[1])
     parmids = np.where(Page.active_parms[2])[0]
     labels = np.array(labels)[parmids]
     parms = np.array(parms)[parmids]
@@ -172,7 +173,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         #    ax = plt.axes()
     ax.semilogx()
     if dataexp is not None:
-        plt.plot(dataexp[:,0], dataexp[:,1], 'o', color="white", label = tabtitle)
+        plt.plot(dataexp[:,0], dataexp[:,1], 'o', color="white", label=tabtitle)
     else:
         plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel,
@@ -194,8 +195,9 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     # Add some nice text:
     if uselatex == True and len(parms) != 0:
         text = r""
-        text += r'\[' #every line is a separate raw string...
-        text += r'\begin{split}' #...but they are all concatenated by the  interpreter :-)
+        text += r'\['            #every line is a separate raw string...
+        text += r'\begin{split}' # ...but they are all concatenated
+                                 # by the interpreter :-)
         for i in np.arange(len(parms)):
 
             text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
@@ -222,7 +224,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
 
         #ax2 = plt.axes()
         ax2.semilogx()
-        plt.plot(resid[:,0], resid[:,1], 'o', color="white", label = 'Residuals')
+        plt.plot(resid[:,0], resid[:,1], 'o', color="white", label='Residuals')
         plt.xlabel(r'lag time $\tau$ [ms]')
         plt.ylabel('Residuals')
         minx = np.min(resid[:,0])

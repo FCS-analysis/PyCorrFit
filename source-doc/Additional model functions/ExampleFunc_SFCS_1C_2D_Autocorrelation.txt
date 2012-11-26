@@ -6,7 +6,7 @@
 # The detection profile is eliptical, as the focus passes the membrane
 # perpendicular to its axis of symmetry.
 # The axis ratio / strucure parameter is defined as:
-# kappa = semi-major-axis / semi-minor-axis (wz/w0)
+# SP = semi-major-axis / semi-minor-axis (wz/w0)
 
 ## Parameters
 # Number of particles
@@ -14,10 +14,10 @@ Nob = 40.0
 # Diffusion time
 taudiff [ms] = 1.0
 # Axis ratio / structural parameter
-kappa = 5
+SP = 5
 
 gFirst = 1/sqrt(1+tau/taudiff)
-gSecond = 1/sqrt(1+tau/(taudiff*kappa**2))
+gSecond = 1/sqrt(1+tau/(taudiff*SP**2))
 
 # Correlation function
 G = 1/Nob * gFirst * gSecond

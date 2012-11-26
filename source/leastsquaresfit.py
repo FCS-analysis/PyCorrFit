@@ -288,7 +288,8 @@ class Fit(object):
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
         # Do not forget to subtract experimental data ;)
-        return (self.function(self.values, x) - self.data) / np.sqrt(self.variances)
+        return (self.function(self.values, x) - self.data) / \
+               np.sqrt(self.variances)
 
 
     def least_square(self):

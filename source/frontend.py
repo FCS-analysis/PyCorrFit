@@ -20,19 +20,11 @@ import os
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
 import numpy as np                      # NumPy
+import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
 
-# ipshell for development
-import platform
-
-
-
-
-
 # PyCorrFit modules
-
-
 import doc                          # Documentation/some texts
 import edclasses
 try:
@@ -54,6 +46,7 @@ import usermodel
 if platform.system() == 'Windows':
     reload(sys)
     sys.setdefaultencoding('utf-8')
+# ~paulmueller
 
 
 ###########################################################
@@ -62,7 +55,6 @@ class FlatNotebookDemo(fnb.FlatNotebook):
     Flatnotebook class
     """
 
-    #----------------------------------------------------------------------
     def __init__(self, parent):
         """Constructor"""
         self.fnb = fnb.FlatNotebook.__init__(self, parent, wx.ID_ANY,
@@ -155,8 +147,10 @@ class MyFrame(wx.Frame):
         self.Show()
         
         # Notebook Handler
-        self.notebook.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CLOSED, self.OnFNBClosedPage)
-        self.notebook.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED, self.OnFNBPageChanged)
+        self.notebook.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CLOSED, 
+                           self.OnFNBClosedPage)
+        self.notebook.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED, 
+                           self.OnFNBPageChanged)
 
         # If user hits the "x", ask if he wants to save
         self.Bind(wx.EVT_CLOSE, self.OnExit)
@@ -181,7 +175,8 @@ class MyFrame(wx.Frame):
             modelid = event.GetId()
         if counter is not None:
             # Set the tabcounter right, so the tabs are counted continuously.
-            self.tabcounter = max( int(counter[1:len(counter)-2]), self.tabcounter)
+            self.tabcounter = max(int(counter[1:len(counter)-2]), 
+                                  self.tabcounter)
         counter = "#"+str(self.tabcounter)+": "
         # Get the model for the page together
         valuepack = mdls.valuedict[modelid]
@@ -191,7 +186,8 @@ class MyFrame(wx.Frame):
         active_parms = [active_labels, active_values, active_fitting]
         model = mdls.modeldict[modelid][1]
         # Create New Tab
-        Newtab = page.FittingPanel(self, counter, modelid, active_parms, self.tau)
+        Newtab = page.FittingPanel(self, counter, modelid, active_parms,
+                                   self.tau)
         self.notebook.AddPage(Newtab, counter+model, select=True)
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
@@ -258,7 +254,7 @@ class MyFrame(wx.Frame):
                             "Enables/Disables usage of Latex for image saving.",
                             kind=wx.ITEM_CHECK)
         self.MenuVerbose = prefmenu.Append(wx.ID_ANY, "Verbose mode",
-                            "Enables/Disables output of additional information.",
+                           "Enables/Disables output of additional information.",
                             kind=wx.ITEM_CHECK)
 
         # toolmenu
@@ -330,7 +326,7 @@ class MyFrame(wx.Frame):
         self.menuBar.Append(prefmenu,"&Preferences") 
         self.menuBar.Append(helpmenu,"&Help")
 
-        self.SetMenuBar(self.menuBar)  # Adding the MenuBar to the Frame content.
+        self.SetMenuBar(self.menuBar) # Adding the MenuBar to the Frame content.
 
         self.EnableToolCurrent(False)
 
@@ -641,7 +637,8 @@ class MyFrame(wx.Frame):
                 # pages title.
                 num = len(curvelist) 
                 # Show a nice progress dialog:
-                style=wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+                style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
+                        wx.PD_CAN_ABORT
                 dlg = wx.ProgressDialog("Import", "Loading pages..."
                 , maximum = num, parent=self, style=style)
                 for i in np.arange(num):
@@ -759,7 +756,7 @@ class MyFrame(wx.Frame):
         keys.sort()
         for modeltype in keys:
             for modelid in mdls.modeltypes[modeltype]:
-                dropdownlist.append(modeltype + ": "+ mdls.modeldict[modelid][1])
+                dropdownlist.append(modeltype +": "+ mdls.modeldict[modelid][1])
                 modelids.append(modelid)
         ## Name and text of the Dialog
         title = "Select model"
@@ -792,7 +789,8 @@ class MyFrame(wx.Frame):
             # session.
             return "abort"
         Function_parms, Function_array, Function_trace, Background, \
-         Preferences, Comments, ExternalFunctions, self.dirname, filename = opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
+         Preferences, Comments, ExternalFunctions, self.dirname, filename = \
+         opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
         # Check, if a file has been opened
         if filename is not None:
             # Reset all Pages. We already gave the user the possibility to
@@ -819,7 +817,8 @@ class MyFrame(wx.Frame):
             # Reset tabcounter
             self.tabcounter = 0
             # Show a nice progress dialog:
-            style=wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+            style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
+                    wx.PD_CAN_ABORT
             dlg = wx.ProgressDialog("Import", "Loading pages..."
             , maximum = N, parent=self, style=style)
             for i in np.arange(N):
@@ -890,7 +889,8 @@ class MyFrame(wx.Frame):
         uselatex = self.MenuUseLatex.IsChecked()
         verbose = self.MenuVerbose.IsChecked()
         Page = self.notebook.GetCurrentPage()
-        plotting.savePlotCorrelation(self, self.dirname, Page, uselatex, verbose)
+        plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
+                                     verbose)
         
     def OnSavePlotTrace(self, e=None):
         """ make some output """

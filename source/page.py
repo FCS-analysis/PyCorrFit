@@ -127,7 +127,8 @@ class FittingPanel(wx.Panel):
         self.panelsettings = wx.Panel(self.sp, size=sizepanel)
 
         ## Setting up Plot (correlation + chi**2)
-        self.spcanvas = wx.SplitterWindow(self.sp, size=sizecanvas, style=wx.SP_3DSASH)
+        self.spcanvas = wx.SplitterWindow(self.sp, size=sizecanvas,
+                                          style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.spcanvas.SetMinimumPaneSize(1)
         # y difference in pixels between Auocorrelation and Residuals
@@ -152,9 +153,11 @@ class FittingPanel(wx.Panel):
         self.canvaserr.setLogScale((True, False))
         self.canvaserr.SetEnableZoom(True)
         self.canvaserr.SetSize((canvasx, size[1]-cupsizey))
-        self.spcanvas.SplitHorizontally(self.canvascorr, self.canvaserr, cupsizey)
+        self.spcanvas.SplitHorizontally(self.canvascorr, self.canvaserr,
+                                        cupsizey)
 
-        self.sp.SplitVertically(self.panelsettings, self.spcanvas, self.sizepanelx)
+        self.sp.SplitVertically(self.panelsettings, self.spcanvas,
+                                self.sizepanelx)
 
         ## Check out the DEMO option and make change the plot:
         try:
@@ -288,7 +291,7 @@ class FittingPanel(wx.Panel):
         elif self.Fitbox[1].GetSelection() == 2:
             Fitting.fittype = "model function"
             self.parent.StatusBar.SetStatusText("This is iterative. Press"+
-                    " 'Fit' multiple times. If it does not converge, use splines.")
+                 " 'Fit' multiple times. If it does not converge, use splines.")
         else:
             self.parent.StatusBar.SetStatusText("")
         Fitting.function = self.active_fct
@@ -473,9 +476,10 @@ class FittingPanel(wx.Panel):
             self.resid = np.zeros((len(self.tau), 2))
             self.resid[:, 0] = self.tau
             self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
-            lineres = plot.PolyLine(self.resid, legend='', colour=colfit, width=width)
-            PlotRes = plot.PlotGraphics([linezero, lineres], xLabel='Lag time τ [ms]', 
-                                     yLabel='Residuals')
+            lineres = plot.PolyLine(self.resid, legend='', colour=colfit,
+                                    width=width)
+            PlotRes = plot.PlotGraphics([linezero, lineres], 
+                                   xLabel='Lag time τ [ms]', yLabel='Residuals')
             self.canvaserr.Draw(PlotRes)
 
             # Also check if chi squared has been calculated. This is not the

@@ -6,7 +6,7 @@
 # The detection profile is eliptical, as the focus passes the membrane
 # perpendicular to its axis of symmetry.
 # The axis ratio / strucure parameter is defined as:
-# kappa = semi-major-axis / semi-minor-axis (wz/w0)
+# SP = semi-major-axis / semi-minor-axis (wz/w0)
 # This model describes the cross-correlation for two-focus FCS
 
 ## Parameters
@@ -15,14 +15,14 @@ Nob = 40.0
 # Diffusion time
 taudiff [ms] = 1.0
 # axis ratio / structural parameter
-kappa = 5
+SP = 5
 # Beam waist radius
 w0 [100nm] = 2.3
 # Distance between the foci
 d [100nm] = 5.0
 
 gFirst = 1/sqrt(1+tau/taudiff)
-gSecond = 1/sqrt(1+tau/(taudiff*kappa**2))
+gSecond = 1/sqrt(1+tau/(taudiff*SP**2))
 
 gac = 1/Nob * gFirst * gSecond
 # Diffusion coefficient:

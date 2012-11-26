@@ -41,7 +41,8 @@ class UpdateDlg(wx.Frame):
             string = string + '<a href="'+githome+'">Repository</a>'
 
         if len(changelog) != 0:
-            string = string + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + '<a href="'+changelog+'">Change Log</a>'
+            string = string + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + \
+                     '<a href="'+changelog+'">Change Log</a>'
         string = string+'</b></p>'
         html.SetPage(string)
         self.Bind(wx.EVT_CLOSE, self.Close)
@@ -101,7 +102,7 @@ def Update(parent):
         try:
             responseCL = urllib2.urlopen(homepage+doc.ChangeLog, timeout=2)
         except:
-            CLfile = doc.GitChangeLog
+            CLfile = doc.GitChLog
         else:
             fileresponse = responseCL.read()
             CLlines = fileresponse.splitlines()
@@ -112,7 +113,7 @@ def Update(parent):
                 CLfile = CLlines[0]
             else:
                 hpversion = CLlines[0]
-                CLfile = doc.GitChangeLog
+                CLfile = doc.GitChLog
                 
         # Continue version comparison if True
         continuecomp = False

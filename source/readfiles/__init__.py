@@ -62,7 +62,7 @@ def openAny(dirname, filename):
     """ Using the defined Filetypes and BGFiletypes, open the given file """
     wildcard = filename.split(".")[-1]
     for key in Filetypes.keys():
-        # Recurs into the wildcards
+        # Recurse into the wildcards
         wildcardstring = key.split("|")
         # We do not want to recurse
         if wildcardstring[0] != Allsupfilesstring:
@@ -70,7 +70,7 @@ def openAny(dirname, filename):
             for string in otherwcs:
                 if string[-3:] == wildcard:
                     return Filetypes[key](dirname, filename)
-    # I we could not find the correct function in Filetypes, try again
+    # If we could not find the correct function in Filetypes, try again
     # in BGFiletypes:
     for key in BGFiletypes.keys():
         wildcardstring = key.split("|")
@@ -86,7 +86,7 @@ def openAny(dirname, filename):
 
 def openZIP(dirname, filename):
     """ 
-        Get everything inside a .zip file that could be an fcs curve.
+        Get everything inside a .zip file that could be an FCS curve.
         Will use any wildcard in Filetypes dictionary.
     """
     #    It's a rather lengthy import of the session file. The code is copied
@@ -103,7 +103,7 @@ def openZIP(dirname, filename):
     if len(filename)>19 and filename[-19:] == fcsfitwildcard:
         # Get the yaml parms dump:
         yamlfile = Arc.open("Parameters.yaml")
-        # Parms: Fitting and drawing parameters of correlation curve
+        # Parms: Fitting and drawing parameters of the correlation curve
         # The *yamlfile* is responsible for the order of the Pages #i.
         # The parameters are actually useless to us right now.
         Parms = yaml.safe_load(yamlfile)
@@ -180,8 +180,8 @@ def openZIP(dirname, filename):
                 Trace.append(None)
     else:
         # We are not importing from a session but from a zip file with
-        # probably a mix of all filetypes we know. Tihs works recursively.
-        # (e.g. a zip file in a zipfile)
+        # probably a mix of all filetypes we know. This works 
+        # recursively (e.g. a zip file in a zipfile).
         allfiles = Arc.namelist()
         # Extract data to temporary folder
         tempdir = tempfile.mkdtemp()
