@@ -33,13 +33,13 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_3D: 3D Diffusion coefficient (species A)
         [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_3D: 3-dimensional concentration of species A
-        [7] Conc_2D: 2-dimensional concentration of species C
-        [8] alpha: relative molecular brightness of 3D particle
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_3D: 3-dimensional concentration of species A
+        [6] Conc_2D: 2-dimensional concentration of species C
+        [7] alpha: relative molecular brightness of 3D particle
                    compared to 2D particle (alpha = q3D/q2D)
         *tau*: time differences from multiple tau correlator
 
@@ -48,15 +48,12 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
     """
     D_3D = parms[0]
     D_2D = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    a = parms[4]
-    kappa = 1/parms[5]
-    Conc_3D = parms[6]
-    Conc_2D = parms[7]
-    alpha = parms[8]
-
-    sigma = 0.21*lamb/NA
+    sigma = parms[2]
+    a = parms[3]
+    kappa = 1/parms[4]
+    Conc_3D = parms[5]
+    Conc_2D = parms[6]
+    alpha = parms[7]
 
     ## First the 2D-diffusion at z=0
     var1 = sigma**2+D_2D*tau
@@ -92,8 +89,7 @@ m_tir_3d_2d_mix_6020 = [6020, u"3D+2D (□xσ/exp)","Separate 3D and 2D diffusio
                         CF_Gxyz_TIR_square_3d2d]
 labels_6020 = [u"D_3D [10 µm²/s]",
                 u"D_2D [10 µm²/s]",
-                u"λ [100 nm]",
-                "NA",
+                u"σ [100 nm]",
                 "a [100 nm]", 
                 "d_eva [100 nm]", 
                 u"conc.3D [1000 /µm³]", 
@@ -103,37 +99,35 @@ labels_6020 = [u"D_3D [10 µm²/s]",
 values_6020 = [
                 9.0,     # D_3D [10 µm²/s]
                 0.01,    # D_2D [10 µm²/s]
-                5.19,   # λ [100 nm]
-                1.45,    # NA
+                2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
                 1.0,     # d_eva [100 nm]
                 0.01,    # conc.3D [1000 /µm³]
                 0.03,    # conc.2D [100 /µm²]
-                1       # alpha
+                1        # alpha
                 ]        
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6020 = ["D_3D [µm²/s]",
                 u"D_2D [µm²/s]",
-                u"λ [nm]",
-                "NA",
+                u"σ [nm]",
                 "a [nm]", 
                 "d_eva [nm]", 
                 u"conc.3D [1/µm³]", 
                 u"conc.2D [1/µm²]", 
                 u"\u03b1"+" (q3D/q2D)"
                 ]
-values_factor_human_readable_6020 = [10, # "D_3D [µm²/s]",
+values_factor_human_readable_6020 = [
+                10,     # D_3D [µm²/s]
                 10,     # D_2D [10 µm²/s]
-                100,    # λ [100 nm]
-                1,      # NA
+                100,    # σ [100 nm]
                 100,    # a [100 nm]
                 100,    # d_eva [100 nm]
                 1000,   # conc.3D [1000 /µm³]
                 100,    # conc.2D [100 /µm²]
                 1       # alpha
                 ]
-valuestofit_6020 = [False, True, False, False, False, False, False, True, False]
+valuestofit_6020 = [False, True, False, False, False, False, True, False]
 parms_6020 = [labels_6020, values_6020, valuestofit_6020, 
               labels_human_readable_6020, values_factor_human_readable_6020]
 

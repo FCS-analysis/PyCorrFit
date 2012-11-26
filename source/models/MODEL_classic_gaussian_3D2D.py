@@ -31,7 +31,6 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         [5] alpha: relative molecular brightness of particle
                    3D compared to particle 2D (alpha = q3D/q2D)
         [6] tautrip: characteristic residence time in triplet state
-                     tautrip = min(tautrip,taud2D*0.9,taud3D*0.9)
         [7] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [8] offset
@@ -66,8 +65,11 @@ def Checkme(parms):
     tautrip=np.abs(parms[6])
     T=parms[7]
     off=parms[8]
-    # Force triplet component to be smaller than diffusion times
-    tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
+    
+    # REMOVED (issue #2)
+     ## Force triplet component to be smaller than diffusion times
+     #tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
+     
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one

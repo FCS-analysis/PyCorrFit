@@ -33,13 +33,13 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_2D1: 2D Diffusion coefficient (species 1)
         [1] D_2D2: 2D Diffusion coefficient of bound species 2
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_2D1: 2-dimensional concentration of species 1
-        [7] Conc_2D2: 2-dimensional concentration of species 2
-        [8] alpha: relative molecular brightness of particle
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_2D1: 2-dimensional concentration of species 1
+        [6] Conc_2D2: 2-dimensional concentration of species 2
+        [7] alpha: relative molecular brightness of particle
                    2 compared to 1 (alpha = q2/q1)
         *tau*: time differences from multiple tau correlator
 
@@ -48,15 +48,12 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
     """
     D_2D1 = parms[0]
     D_2D2 = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    a = parms[4]
-    kappa = 1/parms[5]
-    Conc_2D1 = parms[6]
-    Conc_2D2 = parms[7]
-    alpha = parms[8]
-
-    sigma = 0.21*lamb/NA
+    sigma = parms[2]
+    a = parms[3]
+    kappa = 1/parms[4]
+    Conc_2D1 = parms[5]
+    Conc_2D2 = parms[6]
+    alpha = parms[7]
 
     ## First the 2D-diffusion of species 1
     var1 = sigma**2+D_2D1*tau
@@ -89,8 +86,7 @@ m_tir_2d_2d_mix_6022 = [6022, u"2D+2D (□xσ)","Separate 2D diffusion, TIR",
                         CF_Gxy_TIR_square_2d2d]
 labels_6022 = [ "D"+u"\u2081"+u" [10 µm²/s]",
                 "D"+u"\u2082"+u" [10 µm²/s]",
-                u"λ [100 nm]",
-                "NA",
+                u"σ [100 nm]",
                 "a [100 nm]", 
                 "d_eva [100 nm]", 
                 "C"+u"\u2081"+u" [100 /µm²]", 
@@ -100,37 +96,36 @@ labels_6022 = [ "D"+u"\u2081"+u" [10 µm²/s]",
 values_6022 = [
                 9.0,     # D_2D₁ [10 µm²/s]
                 0.01,    # D_2D₂ [10 µm²/s]
-                5.19,   # λ [100 nm]
-                1.45,    # NA
+                2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
                 1.0,     # d_eva [100 nm]
                 0.01,    # conc.2D₁ [100 /µm²]
                 0.03,    # conc.2D₂ [100 /µm²]
-                1       # alpha
+                1        # alpha
                 ]        
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6022 = ["D"+u"\u2081"+u" [µm²/s]",
+labels_human_readable_6022 = [
+                "D"+u"\u2081"+u" [µm²/s]",
                 "D"+u"\u2082"+u" [µm²/s]",
-                u"λ [nm]",
-                "NA",
+                u"σ [nm]",
                 "a [nm]", 
                 "d_eva [nm]", 
                 "C"+u"\u2081"+u" [1/µm²]", 
                 "C"+u"\u2082"+u" [1/µm²]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
-values_factor_human_readable_6022 = [10, # D_2D₁ [10 µm²/s],
+values_factor_human_readable_6022 = [
+                10, # D_2D₁ [10 µm²/s],
                 10,     # D_2D₂ [10 µm²/s]
-                100,    # λ [100 nm]
-                1,      # NA
+                100,    # σ [100 nm]
                 100,    # a [100 nm]
                 100,    # d_eva [100 nm]
                 100,    # conc.2D₁ [100 /µm²]
                 100,    # conc.2D₂ [100 /µm²]
                 1
                 ]
-valuestofit_6022 = [False, True, False, False, False, False, False, True, False]
+valuestofit_6022 = [False, True, False, False, False, False, True, False]
 parms_6022 = [labels_6022, values_6022, valuestofit_6022, 
               labels_human_readable_6022, values_factor_human_readable_6022]
 

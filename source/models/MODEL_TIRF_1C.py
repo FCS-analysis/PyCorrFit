@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" This file contains TIR one component models + Triplet
+""" This file contains TIR one component models
 """
 import numpy as np                  # NumPy
 import scipy.special as sps
@@ -27,21 +27,19 @@ def CF_Gxy_TIR_square(parms, tau):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] lamb (λ): wavelength of the Laser used
-        [2] NA: numerical aperture of the detection setup
-        [3] a: side size of the square pinhole
-        [4] Conc (Conc.2D): 2-dimensional concentration 
+        [1] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [2] a: side size of the square pinhole
+        [3] Conc (Conc.2D): 2-dimensional concentration 
         *tau*: time differences from multiple tau correlator
 
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
     D = parms[0]
-    lamb = parms[1]
-    NA = parms[2]
-    a = parms[3]
-    Conc = parms[4]
-    # Calculate sigma: width of the gaussian approximation of the PSF
-    sigma = 0.21*lamb/NA
+    sigma = parms[1]
+    a = parms[2]
+    Conc = parms[3]
+
     var1 = sigma**2+D*tau
     AA = 2*np.sqrt(var1)/(a**2*np.sqrt(np.pi))
     BB = np.exp(-a**2/(4*(var1))) - 1
@@ -63,24 +61,21 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] lamb (λ): wavelength of the Laser used
-        [2] NA: numerical aperture of the detection setup
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc (conc.3D): 3-dimensional concentration 
+        [1] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [2] a: side size of the square pinhole
+        [3] d_eva: evanescent decay length (decay to 1/e)
+        [4] Conc (conc.3D): 3-dimensional concentration 
         *tau*: time differences from multiple tau correlator
 
         Returns: 3D correlation function for TIR-FCS w/square pinhole
     """
     D = parms[0]
-    lamb = parms[1]
-    NA = parms[2]
-    a = parms[3]
-    kappa = 1/parms[4]
-    Conc = parms[5]
+    sigma = parms[1]
+    a = parms[2]
+    kappa = 1/parms[3]
+    Conc = parms[4]
     ### Calculate gxy
-    ## Calculate sigma: width of the gaussian approximation of the PSF
-    sigma = 0.21*lamb/NA
 
     # Axial correlation    
     x = np.sqrt(D*tau)*kappa
@@ -111,19 +106,15 @@ def MoreInfo_6000(parms, countrate):
           A_eff  = a**2
          Effective particle number in detection area:
           N_eff = A_eff * conc.2D
-         Sigma (wide field fluorescence microscope):
-          σ = 0.21*λ/NA
          For a>>sigma, the correlation function at tau=0 corresponds to:
           G(tau=0) = 1/(N_eff) * (1-2*sigma/(sqrt(pi)*a))^2
     """
     D = parms[0]
-    lamb = parms[1]
-    NA = parms[2]
-    a = parms[3]
-    Conc = parms[4]
+    sigma = parms[1]
+    a = parms[2]
+    Conc = parms[3]
     Info=list()
-    # Sigma
-    sigma = 0.21*lamb/NA
+
     # Detection area:
     Aeff = a**2 
     # Particel number
@@ -132,12 +123,11 @@ def MoreInfo_6000(parms, countrate):
     G_0 = CF_Gxy_TIR_square(parms, 0)
 
     Info.append(["G(0)", G_0])
-    # σ * 100nm *10**(-3)µm/nm = σ * 0.1 *µm
-    Info.append(["σ [µm]", sigma/10])
+
     # 10 000 nm² = 0.01 µm²
     # Aeff * 10 000 nm² * 10**(-6)µm²/nm² = Aeff * 0.01 * µm²
     # Have to divide Aeff by 100
-    Info.append(["A_eff [µm²]", Aeff / 100])
+    Info.append([u"A_eff [µm²]", Aeff / 100])
     Info.append(["N_eff", Neff])
     if countrate is not None:
         # CPP
@@ -155,21 +145,18 @@ def MoreInfo_6010(parms, countrate):
           V_eff = a**2 * d_eva
          Effective particle number:
           N_eff = V_eff * conc.3D
-         Sigma (wide field fluorescence microscope):
-          σ = 0.21*λ/NA
          For a>>sigma, the correlation function at tau=0 corresponds to:
           G(tau=0) = 1/(2*N_eff) * (1-2*sigma/(sqrt(pi)*a))**2
     """
     # 3D Model TIR square
     # 3D TIR (□xσ/exp),Simple 3D diffusion w/ TIR, fct.CF_Gxyz_square_tir
-    # D [10 µm²/s],λ [100 nm],NA,a [100 nm],d_eva [100 nm],[conc.] [1000 /µm³]
-    lamb = parms[1]
-    NA = parms[2]
-    a = parms[3]
-    d_eva = parms[4]
-    conc = parms[5]
+    # D [10 µm²/s],σ [100 nm],a [100 nm],d_eva [100 nm],[conc.] [1000 /µm³]
+    sigma = parms[1]
+    a = parms[2]
+    d_eva = parms[3]
+    conc = parms[4]
     # Sigma
-    sigma = 0.21 * lamb / NA
+
     Info = list()
     # Molarity [nM]:
     # 1000/(µm³)*10**15µm³/l * mol /(6.022*10^23) * 10^9 n
@@ -182,8 +169,7 @@ def MoreInfo_6010(parms, countrate):
     G_0 = CF_Gxyz_TIR_square(parms, 0)
 
     Info.append(["G(0)", G_0])
-    # σ * 100nm *10**(-3)µm/nm = σ * 0.1 *µm
-    Info.append([u"σ [µm]", sigma / 10])
+
     Info.append(["conc.3D [nM]", cmol])
     # atto liters
     # 1 000 000 nm³ = 1 al
@@ -199,25 +185,25 @@ def MoreInfo_6010(parms, countrate):
 
 # 2D Model Square
 m_twodsq6000 = [6000, u"2D (□xσ)",u"2D diffusion w/ square pinhole", CF_Gxy_TIR_square]
-labels_6000 = [u"D [10 µm²/s]",u"λ [100 nm]","NA","a [100 nm]", u"conc.2D [100 /µm²]"]
-values_6000 = [0.1, 5.19, 1.45, 7.5, .6]                      # [D,lamb,NA,a,conc]
+labels_6000 = [u"D [10 µm²/s]",u"σ [100 nm]","a [100 nm]", u"conc.2D [100 /µm²]"]
+values_6000 = [0.1, 2.3, 7.5, .6]                      # [D,lamb,NA,a,conc]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6000 = [u"D [µm²/s]",u"λ [nm]","NA","a [nm]",u"conc.2D [1/µm²]"]
-values_factor_human_readable_6000 = [10, 100, 1, 100, 100]
-valuestofit_6000 = [True, False, False, False, True]      # Use as fit parameter?
+labels_human_readable_6000 = [u"D [µm²/s]",u"σ [nm]","a [nm]",u"conc.2D [1/µm²]"]
+values_factor_human_readable_6000 = [10, 100, 100, 100]
+valuestofit_6000 = [True, False, False, True]      # Use as fit parameter?
 parms_6000 = [labels_6000, values_6000, valuestofit_6000,
               labels_human_readable_6000, values_factor_human_readable_6000]
 
 # 3D Model TIR square
 m_3dtirsq6010 = [6010, u"3D (□xσ/exp)","Simple 3D diffusion w/ TIR", CF_Gxyz_TIR_square]
-labels_6010 = [u"D [10 µm²/s]",u"λ [100 nm]","NA","a [100 nm]", "d_eva [100 nm]", u"conc.3D [1000 /µm³]"]
-values_6010 = [0.0005420, 5.19, 1.45, 7.5, 1.0, .0216]
+labels_6010 = [u"D [10 µm²/s]",u"σ [100 nm]","a [100 nm]", "d_eva [100 nm]", u"conc.3D [1000 /µm³]"]
+values_6010 = [0.0005420, 2.3, 7.5, 1.0, .0216]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6010 = [u"D [µm²/s]",u"λ [nm]","NA","a [nm]", "d_eva [nm]", u"conc.3D [1/µm³]"]
-values_factor_human_readable_6010 = [10, 100, 1, 100, 100, 1000]
-valuestofit_6010 = [True, False, False, False, False, True]
+labels_human_readable_6010 = [u"D [µm²/s]",u"σ [nm]","a [nm]", "d_eva [nm]", u"conc.3D [1/µm³]"]
+values_factor_human_readable_6010 = [10, 100, 100, 100, 1000]
+valuestofit_6010 = [True, False, False, False, True]
 parms_6010 = [labels_6010, values_6010, valuestofit_6010,
               labels_human_readable_6010, values_factor_human_readable_6010]
 

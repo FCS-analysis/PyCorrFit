@@ -31,10 +31,6 @@ import platform
 import sys
 
 
-
-
-
-
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
 # http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
@@ -50,7 +46,7 @@ import MODEL_classic_gaussian_3D2D
 import MODEL_TIRF_gaussian_1C
 import MODEL_TIRF_gaussian_3D2D
 import MODEL_TIRF_gaussian_3D3D
-import MODEL_TIRF_1CT
+import MODEL_TIRF_1C
 import MODEL_TIRF_2D2D
 import MODEL_TIRF_3D2D
 import MODEL_TIRF_3D3D
@@ -220,7 +216,7 @@ AppendNewModel(MODEL_TIRF_gaussian_3D2D.Modelarray)
 # 6034
 AppendNewModel(MODEL_TIRF_gaussian_3D3D.Modelarray) 
 # 6000 6010
-AppendNewModel(MODEL_TIRF_1CT.Modelarray) 
+AppendNewModel(MODEL_TIRF_1C.Modelarray) 
 # 6022
 AppendNewModel(MODEL_TIRF_2D2D.Modelarray) 
 # 6020

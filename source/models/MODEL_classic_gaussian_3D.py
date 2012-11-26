@@ -61,7 +61,6 @@ def CF_Gxyz_blink(parms, tau):
         [1] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [2] tautrip: characteristic residence time in Triplett state
-                     tautrip = min(tautrip,taud1*0.9,taud2*0.9)
         [3] taudiff: characteristic residence time (Diffusion)
         [4] SP: =z0/r0 describes the shape of the detection/excitation volume
         [5] offset
@@ -89,8 +88,11 @@ def Check_6011(parms):
     parms[3] = taudiff = np.abs(parms[3])
     parms[4] = np.abs(parms[4])
     off = parms[5]
-    # Force triplet component to be smaller than diffusion
-    tautrip = min(tautrip, 0.9*taudiff)
+    
+    # REMOVED (issue #2)
+     ## Force triplet component to be smaller than diffusion
+     #tautrip = min(tautrip, 0.9*taudiff)
+     
     # Triplet fraction is between 0 and one.
     T = (0.<=T<1.)*T + .999999999*(T>=1)
 
@@ -129,7 +131,6 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
         [5] alpha: relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
         [6] tautrip: characteristic residence time in triplet state
-                     tautrip = min(tautrip,taud1*0.9,taud2*0.9)
         [7] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [8] offset
@@ -166,8 +167,11 @@ def Check_3D3DT(parms):
     tautrip=np.abs(parms[6])
     T=parms[7]
     off=parms[8]
-    # Force triplet component to be smaller than diffusion times
-    tautrip = min(tautrip,taud1*0.9, taud2*0.9)
+    
+    # REMOVED (issue #2)
+     # Force triplet component to be smaller than diffusion times
+     #tautrip = min(tautrip,taud1*0.9, taud2*0.9)
+    
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one

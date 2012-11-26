@@ -39,19 +39,17 @@ def CF_gxy_square(parms, tau):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] lamb: wavelength of the Laser used
-        [2] NA: numerical aperture of the detection setup
-        [3] a: side size of the square pinhole
+        [1] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [2] a: side size of the square pinhole
         *tau*: time differences from multiple tau correlator
 
         Returns: Nonnormalized Lateral correlation function w/square pinhole.
     """
     D = parms[0]
-    lamb = parms[1]
-    NA = parms[2]
-    a = parms[3]
-    # Calculate sigma: width of the gaussian approximation of the PSF
-    sigma = 0.21*lamb/NA
+    sigma = parms[1]
+    a = parms[2]
+
     var1 = sigma**2+D*tau
     AA = 2*np.sqrt(var1)/(a**2*np.sqrt(np.pi))
     BB = np.exp(-a**2/(4*(var1))) - 1
@@ -70,30 +68,29 @@ def CF_gz_CC(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_3D: 3D Diffusion coefficient (species A)
         [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_3D: 3-dimensional concentration of species A
-        [7] Conc_2D: 2-dimensional concentration of species C
-        [8] eta_3D: molecular brightness of species A
-        [9] eta_2D: molecular brightness of species C
-        [10] k_a : Surface association rate constant
-        [11] k_d : Surface dissociation rate constant
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_3D: 3-dimensional concentration of species A
+        [6] Conc_2D: 2-dimensional concentration of species C
+        [7] eta_3D: molecular brightness of species A
+        [8] eta_2D: molecular brightness of species C
+        [9] k_a : Surface association rate constant
+        [10] k_d : Surface dissociation rate constant
         *tau*: time differences from multiple tau correlator
     """
     D = parms[0]
     # D_2D = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    # a = parms[4]
-    d_eva = parms[5]
-    Conc_3D = parms[6]      # ligand concentration in solution
-    Conc_2D = parms[7]
-    eta_3D = parms[8]
-    eta_2D = parms[9]
-    k_a = parms[10]
-    k_d = parms[11]
+    sigma = parms[2]
+    # a = parms[3]
+    d_eva = parms[4]
+    Conc_3D = parms[5]      # ligand concentration in solution
+    Conc_2D = parms[6]
+    eta_3D = parms[7]
+    eta_2D = parms[8]
+    k_a = parms[9]
+    k_d = parms[10]
     # Define some other constants:
     K = k_a/k_d              # equilibrium constant
     Beta = 1/(1 + K*Conc_3D) # This is wrong in the Ries paper
@@ -124,30 +121,29 @@ def CF_gz_AC(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_3D: 3D Diffusion coefficient (species A)
         [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_3D: 3-dimensional concentration of species A
-        [7] Conc_2D: 2-dimensional concentration of species C
-        [8] eta_3D: molecular brightness of species A
-        [9] eta_2D: molecular brightness of species C
-        [10] k_a : Surface association rate constant
-        [11] k_d : Surface dissociation rate constant
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_3D: 3-dimensional concentration of species A
+        [6] Conc_2D: 2-dimensional concentration of species C
+        [7] eta_3D: molecular brightness of species A
+        [8] eta_2D: molecular brightness of species C
+        [9] k_a : Surface association rate constant
+        [10] k_d : Surface dissociation rate constant
         *tau*: time differences from multiple tau correlator
     """
     D = parms[0]
     # D_2D = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    # a = parms[4]
-    d_eva = parms[5]
-    Conc_3D = parms[6]      # ligand concentration in solution
-    Conc_2D = parms[7]
-    eta_3D = parms[8]
-    eta_2D = parms[9]
-    k_a = parms[10]
-    k_d = parms[11]
+    sigma = parms[2]
+    # a = parms[3]
+    d_eva = parms[4]
+    Conc_3D = parms[5]      # ligand concentration in solution
+    Conc_2D = parms[6]
+    eta_3D = parms[7]
+    eta_2D = parms[8]
+    k_a = parms[9]
+    k_d = parms[10]
     # Define some other constants:
     K = k_a/k_d             # equilibrium constant
     Beta = 1/(1 + K*Conc_3D)
@@ -184,30 +180,29 @@ def CF_gz_AA(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_3D: 3D Diffusion coefficient (species A)
         [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_3D: 3-dimensional concentration of species A
-        [7] Conc_2D: 2-dimensional concentration of species C
-        [8] eta_3D: molecular brightness of species A
-        [9] eta_2D: molecular brightness of species C
-        [10] k_a : Surface association rate constant
-        [11] k_d : Surface dissociation rate constant
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_3D: 3-dimensional concentration of species A
+        [6] Conc_2D: 2-dimensional concentration of species C
+        [7] eta_3D: molecular brightness of species A
+        [8] eta_2D: molecular brightness of species C
+        [9] k_a : Surface association rate constant
+        [10] k_d : Surface dissociation rate constant
         *tau*: time differences from multiple tau correlator
     """
     D = parms[0]
     # D_2D = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    # a = parms[4]
-    d_eva = parms[5]
-    Conc_3D = parms[6]      # ligand concentration in solution
-    Conc_2D = parms[7]
-    eta_3D = parms[8]
-    eta_2D = parms[9]
-    k_a = parms[10]
-    k_d = parms[11]
+    sigma = parms[2]
+    # a = parms[3]
+    d_eva = parms[4]
+    Conc_3D = parms[5]      # ligand concentration in solution
+    Conc_2D = parms[6]
+    eta_3D = parms[7]
+    eta_2D = parms[8]
+    k_a = parms[9]
+    k_d = parms[10]
     # Define some other constants:
     d = d_eva
     K = k_a/k_d             # equilibrium constant
@@ -257,16 +252,16 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
         Parameters (parms[i]):
         [0] D_3D: 3D Diffusion coefficient (species A)
         [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] lamb: wavelength of the Laser used
-        [3] NA: numerical aperture of the detection setup
-        [4] a: side size of the square pinhole
-        [5] d_eva: evanescent decay length (decay to 1/e)
-        [6] Conc_3D: 3-dimensional concentration of species A
-        [7] Conc_2D: 2-dimensional concentration of species C
-        [8] eta_3D: molecular brightness of species A
-        [9] eta_2D: molecular brightness of species C
-        [10] k_a : Surface association rate constant
-        [11] k_d : Surface dissociation rate constant
+        [2] sigma: lateral size of the point spread function
+                   sigma = simga_0 * lambda / NA
+        [3] a: side size of the square pinhole
+        [4] d_eva: evanescent decay length (decay to 1/e)
+        [5] Conc_3D: 3-dimensional concentration of species A
+        [6] Conc_2D: 2-dimensional concentration of species C
+        [7] eta_3D: molecular brightness of species A
+        [8] eta_2D: molecular brightness of species C
+        [9] k_a : Surface association rate constant
+        [10] k_d : Surface dissociation rate constant
         *tau*: time differences from multiple tau correlator
 
         Returns: 3D correlation function for TIR-FCS w/square pinhole and
@@ -280,16 +275,15 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
     """
     D_3D = parms[0]
     D_2D = parms[1]
-    lamb = parms[2]
-    NA = parms[3]
-    a = parms[4]
-    kappa = 1/parms[5]
-    Conc_3D = parms[6]
-    Conc_2D = parms[7]
-    eta_3D = parms[8]
-    eta_2D = parms[9]
-    k_a = parms[10]
-    k_d = parms[11]
+    sigma = parms[2]
+    a = parms[3]
+    kappa = 1/parms[4]
+    Conc_3D = parms[5]
+    Conc_2D = parms[6]
+    eta_3D = parms[7]
+    eta_2D = parms[8]
+    k_a = parms[9]
+    k_d = parms[10]
     ## We now need to copmute a real beast:
     # Inter species non-normalized correlation functions
     # gAA = gAAz * gxy(D_3D)
@@ -307,11 +301,10 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
     # The gxy function needs two different sets of parameters, depending
     # on the diffusion constant used.
     #    [0] D: Diffusion coefficient
-    #    [1] lamb: wavelength of the Laser used
-    #    [2] NA: numerical aperture of the detection setup
+    #    [1] sigma: lateral size of the point spread function
     #    [3] a: side size of the square pinhole
-    parms_xy_2D = [D_2D, lamb, NA, a]
-    parms_xy_3D = [D_3D, lamb, NA, a]
+    parms_xy_2D = [D_2D, sigma, a]
+    parms_xy_3D = [D_3D, sigma, a]
     # Here we go.
     gAA = gAAz(parms, tau) * gxy(parms_xy_3D, tau)
     gAC = gACz(parms, tau) * nps.sqrt( gxy(parms_xy_3D, tau) * gxy(parms_xy_2D, tau) )
@@ -338,8 +331,7 @@ m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin (□xσ/exp)","Surface binding and unb
                         CF_Gxyz_TIR_square_ubibi]
 labels_6021 = [u"D_3D [10 µm²/s]",
                 u"D_2D [10 µm²/s]",
-                u"λ [100 nm]",
-                "NA",
+                u"σ [100 nm]",
                 "a [100 nm]", 
                 "d_eva [100 nm]", 
                 u"conc.3D [1000 /µm³]", 
@@ -352,8 +344,7 @@ labels_6021 = [u"D_3D [10 µm²/s]",
 values_6021 = [
                 9.0,      # D_3D [10 µm²/s]
                 0.0,      # D_2D [10 µm²/s]
-                5.19,    # λ [100 nm]
-                1.45,     # NA
+                2.3,      # σ [100 nm]
                 7.50,     # a [100 nm]
                 1.0,      # d_eva [100 nm]
                 0.01,     # conc.3D [1000 /µm³]
@@ -363,13 +354,12 @@ values_6021 = [
                 0.00001,  # k_a [µm³/s]
                 0.000064  # k_d [10³ /s]
                 ]        
-valuestofit_6021 = [False, True, False, False, False, False, False, True, False, False, False, False]
+valuestofit_6021 = [False, True, False, False, False, False, True, False, False, False, False]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6021 = ["D_3D [µm²/s]",
                 u"D_2D [µm²/s]",
-                u"λ [nm]",
-                "NA",
+                u"σ [nm]",
                 "a [nm]", 
                 "d_eva [nm]", 
                 u"conc.3D [1/µm³]", 
@@ -381,8 +371,7 @@ labels_human_readable_6021 = ["D_3D [µm²/s]",
                 ]
 values_factor_human_readable_6021 = [10, # "D_3D [µm²/s]",
                 10,     # D_2D [10 µm²/s]
-                100,    # λ [100 nm]
-                1,      # NA
+                100,    # σ [100 nm]
                 100,    # a [100 nm]
                 100,    # d_eva [100 nm]
                 1000,   # conc.3D [1000 /µm³]
