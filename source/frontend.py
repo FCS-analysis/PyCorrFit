@@ -1032,6 +1032,26 @@ class MyFrame(wx.Frame):
             return
         active_values = Parms[2]
         active_fitting = Parms[3]
+        
+        # As of version 0.7.0, square pinhole TIR-FCS models
+        # use sigma instead of lambda, NA and sigma_0. This
+        # is for backwards compatibility:
+        changeTIRF = False
+        if modelid in [6000, 6010]:
+            lindex = 1
+            changeTIRF = True
+        elif modelid in [6020, 6021, 6022, 6023]:
+            lindex = 2
+            changeTIRF = True
+        if changeTIRF:
+            lamb = active_values[lindex]
+            NA = active_values[lindex+1]
+            sigma = 0.21*lamb/NA
+            active_values[lindex] = sigma
+            active_values = np.delete(active_values,lindex+1)
+            active_fitting = np.delete(active_fitting, lindex+1)
+            
+        
         # Cropping: What part of dataexp should be displayed.
         [cropstart, cropend] = Parms[4]
         # Add parameters and fitting to the created page.

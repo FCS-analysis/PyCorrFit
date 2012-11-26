@@ -20,6 +20,7 @@ def wixi(x):
     return np.real_if_close(wixi)
 
 def CF_Gxy_TIR_square(parms, tau):
+    # Model 6000
     """ 2D free diffusion measured with a square pinhole.
         For the square pinhole, the correlation function can readily be
         calculated for a TIR-FCS setup.

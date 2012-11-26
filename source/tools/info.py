@@ -172,7 +172,7 @@ class InfoClass(object):
             if somuch >= 1:
                 fitted = ""
                 for i in np.arange(len(Page.active_parms[2])):
-                    if Page.active_parms[2][i] is True:
+                    if np.bool(Page.active_parms[2][i]) is True:
                         fitted=fitted+Page.active_parms[0][i]+ ", "
                 fitted = fitted[:-2] # remove trailing comma
                 Fitting.append(["fit par.", fitted])
