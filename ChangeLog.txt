@@ -8,5 +8,6 @@
  - Bug fix: Channel selection window causes crash on file import (#1).
  - Bug fix: Hidden feature changes fixed parameters during fitting (#2).
  - Feature: Convert TIR model function parameters lambda and NA to sigma (#3).
+ - Code cleanup: Opening data files is now handled internally differently.
 0.6.9
  - Initital GitHub commit
