@@ -65,6 +65,13 @@ def openAny(dirname, filename):
                     return Filetypes[key](dirname, filename)
     # If we could not find the correct function in Filetypes, try again
     # in BGFiletypes:
+    return openAnyBG(dirname, filename)
+    
+    ## For convenience in openZIP
+    #return None # already in openAnyBG
+
+def openAnyBG(dirname, filename):
+    wildcard = filename.split(".")[-1]
     for key in BGFiletypes.keys():
         wildcardstring = key.split("|")
         # We do not want to recurse
@@ -73,9 +80,9 @@ def openAny(dirname, filename):
             for string in otherwcs:
                 if string[-3:] == wildcard:
                     return BGFiletypes[key](dirname, filename)
-                else:
-                    # For convenience in openZIP
-                    return None
+    # For convenience in openZIP
+    return None
+    
 
 def openZIP(dirname, filename):
     """ 
@@ -122,8 +129,8 @@ def openZIP(dirname, filename):
                     if (str(row[0])[0:1] != '#'):
                         dataexp.append((float(row[0]), float(row[1])))
                 dataexp = np.array(dataexp)
-            Correlations.append(dataexp)
-            ImportedNum.append(i)
+                Correlations.append(dataexp)
+                ImportedNum.append(i)
             del readdata
             expfile.close()
         # Get the Traces
@@ -225,7 +232,8 @@ Filetypes = AddAllWildcard(Filetypes)
 BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "Correlator ALV-6000 (*.ASC)|*.ASC" : openASC,
                 "PyCorrFit (*.csv)|*.csv" : openCSV,
-                "Confocor3 (*.fcs)|*.fcs" : openFCS
+                "Confocor3 (*.fcs)|*.fcs" : openFCS,
+                "zip files (*.zip)|*.zip" : openZIP
               }
 BGFiletypes = AddAllWildcard(BGFiletypes)
 

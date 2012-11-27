@@ -14,8 +14,7 @@
     unit of inv. volume : 1000 /µm³
 """
 
-
-
+# python modules
 import numpy as np
 import sys
 import traceback                        # for Error handling
@@ -23,15 +22,10 @@ import wx
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot    
 
+# PyCorrFit modules
 import doc
-import openfile as opf                     # How to treat an opened file
-
-import platform
-
-
-
-
-
+import openfile as opf                  # How to treat an opened file
+import readfiles
 
 class BackgroundCorrection(wx.Frame):
     def __init__(self, parent):
@@ -207,7 +201,16 @@ class BackgroundCorrection(wx.Frame):
             # Set Page 
             Page = self.parent.notebook.GetPage(i)
             Page.bgselected = item - 1
-            Page.PlotAll()
+            try:
+                Page.PlotAll()
+            except OverflowError:
+                errstr = "Could not apply background to Page "+Page.counter+\
+                 ". \n Check the value of the trace average and the background."
+                dlg = wx.MessageDialog(self, errstr, "Error", 
+                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                dlg.ShowModal()
+                Page.bgselected = None
+                
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
@@ -234,15 +237,9 @@ class BackgroundCorrection(wx.Frame):
             dirname = dlg.GetDirectory()
             # Set parent dirname for user comfort
             self.parent.dirname = dirname
-            filterindex = dlg.GetFilterIndex()
-            Filetype = SupFiletypes[filterindex]
-            # This is the function we will use to import the data
-            # opf.Filetypes is a dictionary with that has a key *self.Filetype*
-            # which points to our import function:
-            OpenFile = opf.BGFiletypes[Filetype]
             try:
                 # [data, trace, curvelist]
-                stuff = OpenFile(dirname, filename)
+                stuff = readfiles.openAnyBG(dirname, filename)
             except:
                 # The file does not seem to be what it seems to be.
                 info = sys.exc_info()
@@ -256,18 +253,47 @@ class BackgroundCorrection(wx.Frame):
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
                 return
-            # Usually we will get a bunch of traces. We assume, that we should
-            # take the first one. We might want to change this in the future.
 
-            # If we accidentally recorded a cross correlation curve
-            # as the background, take the first trace:
-            if stuff[2][0][0:2] == "CC":
-                trace = stuff[1][0][0]
+            # Usually we will get a bunch of traces. Let the user select which
+            # one to take.
+            if len(stuff["Filename"]) > 1:
+                choices = list()
+                for i in np.arange(len(stuff["Filename"])):
+                    choices.append(str(i)+". " + stuff["Filename"][i] + " " +
+                                   stuff["Type"][i])
+                dlg = wx.SingleChoiceDialog(self, "Choose a curve",
+                                            "Curve selection", choices=choices)
+                if dlg.ShowModal() == wx.ID_OK:
+                    selindex = dlg.GetSelection()
+                else:
+                    return
             else:
-                trace = stuff[1][0]
+                selindex = 0
+            
+            # If we accidentally recorded a cross correlation curve
+            # as the background, let the user choose which trace he wants:
+            channelindex = None
+            if stuff["Type"][selindex][0:2] == "CC":
+                choices = ["Channel 1", "Channel 2"]
+                label = "From which channel do you want to use the trace?"
+                dlg = wx.SingleChoiceDialog(self, label,
+                                "Curve selection", choices=choices)
+                if dlg.ShowModal() == wx.ID_OK:
+                    channelindex = dlg.GetSelection()
+                    trace = stuff["Trace"][selindex][channelindex]
+                else:
+                    return
+            else:
+                trace = stuff["Trace"][selindex]
+
             # Display filename and some of the directory
             self.textfile.SetLabel("File: ..."+dirname[-10:]+"/"+filename)
-            self.bgname.SetValue(filename)
+            name = str(selindex)+". "+stuff["Filename"][selindex]+" "+\
+                   stuff["Type"][selindex]
+            if channelindex is not None:
+                name += " "+str(channelindex+1)
+            self.bgname.SetValue(name)
+            
             self.trace = trace
             # Calculate average
             self.average = self.trace[:,1].mean()

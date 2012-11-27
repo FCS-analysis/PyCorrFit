@@ -15,9 +15,11 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# We may import different things from throughout the program:
-import wx
+# python modules
 import numpy as np
+import wx
+
+# PyCorrFit modules
 import models as mdls
 import doc
 
@@ -83,32 +85,48 @@ class ChooseImportTypesModel(wx.Dialog):
             title="Choose types", size=(250, 200))
 
         self.curvedict = curvedict
-        self.keys = list()
+        # List of keys that will be imported by our *parent*
+        self.typekeys = list()
         # Dictionary of modelids corresponding to indices in curvedict
         self.modelids = dict()
+        
          ## Content
         self.panel = wx.Panel(self)
-
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.boxes = dict()
-
-        textinit = wx.StaticText(self.panel, label=doc.chooseimport)
+        textinit = wx.StaticText(self.panel, label=doc.chooseimportmulti)
         self.sizer.Add(textinit)
-        thekeys = curvedict.keys()
-        thekeys.sort()
+        curvekeys = curvedict.keys()
+        curvekeys.sort()
 
-        for key in thekeys:
-            label = key + " (" + str(len(curvedict[key])) + " curves)"
-            check = wx.CheckBox(self.panel, label=label)
-            self.boxes[key] = check
-            self.sizer.Add(check)
-            self.Bind(wx.EVT_CHECKBOX, self.OnSetkeys, check)
-
-
+        # Dropdown model selections:
+        DropdownList = ["No model selected"] # Contains string in model dropdown
+        self.DropdownIndex = [None]          # Contains corresponsing model
+        modelkeys = mdls.modeltypes.keys()
+        modelkeys.sort()
+        for modeltype in modelkeys:
+            for modelid in mdls.modeltypes[modeltype]:
+                DropdownList.append(modeltype+": "+mdls.modeldict[modelid][1])
+                self.DropdownIndex.append(modelid)
+        
+        self.ModelDropdown = dict()
+        dropsizer = wx.FlexGridSizer(rows=len(modelkeys), cols=3, vgap=5, hgap=5)
+        for key in curvekeys:
+            # Text with keys and numer of curves
+            dropsizer.Add( wx.StaticText(self.panel, label=str(key)) )
+            dropsizer.Add( wx.StaticText(self.panel,
+                           label=" ("+str(len(curvedict[key]))+" curves)") )
+            # Model selection dropdown
+            dropdown = wx.ComboBox(self.panel, -1, DropdownList[0], (15,30),
+               wx.DefaultSize, DropdownList, wx.CB_DROPDOWN|wx.CB_READONLY)
+            dropsizer.Add( dropdown )
+            self.ModelDropdown[key] = dropdown
+            self.Bind(wx.EVT_COMBOBOX, self.OnSetkeys, dropdown)
+        self.sizer.Add(dropsizer)
+        
         btnok = wx.Button(self.panel, wx.ID_OK, 'OK')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnClose, btnok)
-       
         self.sizer.Add(btnok)
 
         self.panel.SetSizer(self.sizer)
@@ -123,13 +141,21 @@ class ChooseImportTypesModel(wx.Dialog):
         #self.Destroy()
 
     def OnSetkeys(self, event = None):
-        self.keys = list()
-        for key in self.boxes.keys():
-            if self.boxes[key].Value == True:
-                self.keys.append(key)
+        # initiate objects
+        self.typekeys = list()
         self.modelids = dict()
+        # iterate through all given keys (AC1, AC2, CC12, etc.)
         for key in self.curvedict.keys():
-            if self.boxes[key].Value == True:
+            # get the dropdown selection for a given key
+            modelindex = self.ModelDropdown[key].GetSelection()
+            # modelindex is -1 or 0, if no model has been chosen
+            if modelindex > 0:
+                # Append the key to a list of to be imported types
+                self.typekeys.append(key)
+                # Append the modelid to a dictionary that has indexes
+                # belonging to the imported curves in *parent*
+                modelid = self.DropdownIndex[modelindex]
                 for index in self.curvedict[key]:
                     # Set different model id for the curves
-                    self.modelids[index] = 6000
+                    self.modelids[index] = modelid
+        self.typekeys.sort()

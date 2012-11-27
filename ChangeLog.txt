@@ -1,2 +1,12 @@
+0.7.0
+ - File import dialog was enhanced (#4, #5 - subsequently #7, #8):
+    - Now there is only one "load data" dialog in the file menu.
+    - The model function is chosen for each type of data that is 
+       to be imported (AC, CC, etc.).
+    - Loading files that do not contain data a pointed out to the
+      user and the program continues with the other files.
+ - Bug fix: Channel selection window causes crash on file import (#1).
+ - Bug fix: Hidden feature changes fixed parameters during fitting (#2).
+ - Feature: Convert TIR model function parameters lambda and NA to sigma (#3).
 0.6.9
  - Initital GitHub commit

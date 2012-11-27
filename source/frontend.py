@@ -87,7 +87,8 @@ class MyFrame(wx.Frame):
         self.filename = None
 
         # Session Comment - may be edited and saved later
-        self.SessionComment = "You may enter some information here."
+        self.SessionComment = "This is a session comment. It will be saved" +\
+                              " as the session is saved."
 
         ## Set variables
         # The model module that can be changed by importing user defined
@@ -790,11 +791,21 @@ class MyFrame(wx.Frame):
                     Trace.append(Stuff["Trace"][i])
                     Type.append(Stuff["Type"][i])
                     Filename.append(Stuff["Filename"][i])
+        # If there are any BadFiles, we will let the user know.
+        if len(BadFiles) > 0:
+            # The file does not seem to be what it seems to be.
+            errstr = "The following files could not be processed:\n"
+            for item in BadFiles:
+                errstr += " "+item
+            dlg = wx.MessageDialog(self, errstr, "Error", 
+                style=wx.ICON_WARNING|wx.OK|wx.CANCEL|wx.STAY_ON_TOP)
+            if dlg.ShowModal() == wx.ID_CANCEL:
+                return
 
-        # If *Type* is a list with more than one item, we are
-        # importing more than one curve per file. Therefore, we
-        # need to create more pages for this file.
-        
+        # Abort, if there are no curves left
+        if len(Type) == 0:
+            return
+
         # We want to give the user the possibility to choose from
         # several types of input functions. If curvelist contains
         # more than one type of data, like "AC1", "AC2", "CC1", ...
@@ -819,7 +830,7 @@ class MyFrame(wx.Frame):
         newFilename = list()
         modelList = list()
         if Chosen.ShowModal() == wx.ID_OK:
-            keys = Chosen.keys
+            keys = Chosen.typekeys
             # modelids is a dictionary with chosen modelids.
             # The keys of modelids are indices in the *Type* etc. lists.
             modelids = Chosen.modelids
