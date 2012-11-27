@@ -3,11 +3,6 @@ import os
 import csv
 import numpy as np
 
-import platform
-
-
-
-
 
 def openCSV(dirname, filename):
     """ Read relevant data from a file looking like this:
@@ -52,7 +47,7 @@ def openCSV(dirname, filename):
         2. None - usually is the trace, but the trace is not saved in
                   the PyCorrFit .csv format.
         3. A list with one element, indicating, that we are opening only
-           one orrelation curve.
+           one correlation curve.
     """
     # Define what will happen to the file
     timefactor = 1000 # because we want ms instead of s
@@ -130,6 +125,9 @@ def openCSV(dirname, filename):
     else:
         Traces.append(None)
 
-    # [correlation data], [trace data], [some kind of name]
-
-    return [[corr], Traces, [DataType]]
+    dictionary = dict()
+    dictionary["Correlation"] = [corr]
+    dictionary["Trace"] = Traces
+    dictionary["Type"] = [DataType]
+    dictionary["Filename"] = [filename]
+    return dictionary

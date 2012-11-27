@@ -27,12 +27,6 @@ with warnings.catch_warnings():
         print "        Try upgrading python-scipy."
 import os
 
-import platform
-
-
-
-
-
 def openMAT(dirname, filename):
     # initiate lists
     correlations = list()
@@ -178,7 +172,15 @@ def openMAT(dirname, filename):
                         curvelist.append("CC dual color two foci "+str(i+1))
                         traces.append(None)
 
-    return [correlations, traces, curvelist]
+    dictionary = dict()
+    dictionary["Correlation"] = correlations
+    dictionary["Trace"] = traces
+    dictionary["Type"] = curvelist
+    filelist = list()
+    for i in curvelist:
+        filelist.append(filename)
+    dictionary["Filename"] = filelist
+    return dictionary
 
 def loadmat(filename):
     '''

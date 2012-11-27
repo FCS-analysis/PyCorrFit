@@ -281,9 +281,16 @@ def openFCS_Multiple(dirname, filename):
                     tracelist.append([traces[i-1], traces[i]])
             else:
                 traclist.append(None)
-
-    return [corrlist, tracelist, curvelist]
-
+                
+    dictionary = dict()
+    dictionary["Correlation"] = corrlist
+    dictionary["Trace"] = tracelist
+    dictionary["Type"] = curvelist
+    filelist = list()
+    for i in curvelist:
+        filelist.append(filename)
+    dictionary["Filename"] = filelist
+    return dictionary
 
 def openFCS_Single(dirname, filename):
     """ Load data from Zeiss Confocor3
@@ -385,8 +392,11 @@ def openFCS_Single(dirname, filename):
                     corr = np.array(corr)
                 fcscurve = False
 
-    # return as an array
     openfile.close()
-    # The traces are too long and there seems to be some memory problem with
-    # importing them as an array.
-    return [[corr], [newtrace], [""]]
+
+    dictionary = dict()
+    dictionary["Correlation"] = [corr]
+    dictionary["Trace"] = [newtrace]
+    dictionary["Type"] = [""]
+    dictionary["Filename"] = [filename]
+    return dictionary

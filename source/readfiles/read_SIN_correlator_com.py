@@ -3,12 +3,6 @@ import os
 import csv
 import numpy as np
 
-import platform
-
-
-
-
-
 def openSIN(dirname, filename):
     """ Read data from a .SIN file, usually created by
         the software using correlators from correlator.com.
@@ -240,4 +234,12 @@ def openSIN(dirname, filename):
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
 
-    return [correlations, traces, curvelist]
+    dictionary = dict()
+    dictionary["Correlation"] = correlations
+    dictionary["Trace"] = traces
+    dictionary["Type"] = curvelist
+    filelist = list()
+    for i in curvelist:
+        filelist.append(filename)
+    dictionary["Filename"] = filelist
+    return dictionary

@@ -154,4 +154,12 @@ def openASC(dirname, filename):
 
     # return as an array
     openfile.close()
-    return [np.array(data), np.array(trace), curvelist]
+    dictionary = dict()
+    dictionary["Correlation"] = np.array(data)
+    dictionary["Trace"] = np.array(trace)
+    dictionary["Type"] = curvelist
+    filelist = list()
+    for i in curvelist:
+        filelist.append(filename)
+    dictionary["Filename"] = filelist
+    return dictionary

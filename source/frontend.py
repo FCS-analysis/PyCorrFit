@@ -36,6 +36,7 @@ import models as mdls
 import openfile as opf              # How to treat an opened file
 import page
 import plotting
+import readfiles
 import tools                        # Some tools
 import usermodel
 
@@ -192,6 +193,7 @@ class MyFrame(wx.Frame):
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
         self.EnableToolCurrent(True)
+        return Newtab
 
 
 
@@ -229,10 +231,10 @@ class MyFrame(wx.Frame):
 
         # wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         # self.filemenu
-        menuLoadSingle = self.filemenu.Append(wx.ID_ANY, 
-                                   "&Load single data file", "Load a data file")
+        #menuLoadSingle = self.filemenu.Append(wx.ID_ANY, 
+        #                          "&Load single data file", "Load a data file")
         menuLoadBatch = self.filemenu.Append(wx.ID_ANY, 
-                        "Load &multiple data files", "Load multiple data files")
+                         "&Load data files", "Loads one or multiple data files")
         menuAddModel = self.filemenu.Append(wx.ID_ANY, 
                           "&Import model function", "Add a user defined model.")
         self.filemenu.AppendSeparator()
@@ -333,7 +335,7 @@ class MyFrame(wx.Frame):
 		
         ## Set events
         #File
-        self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
+        #self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
         self.Bind(wx.EVT_MENU, self.OnLoadBatch, menuLoadBatch)
         self.Bind(wx.EVT_MENU, self.OnAddModel, menuAddModel)
         self.Bind(wx.EVT_MENU, self.OnCommSession, self.menuComm)
@@ -544,7 +546,7 @@ class MyFrame(wx.Frame):
     def OnImportData(self,e=None):
         """Import experimental data from a all filetypes specified in 
            *opf.Filetypes*.
-            Is called by the curmenu.
+           Is called by the curmenu and applies to currently opened model.
         """
         # Open a data file
         # Get Data
@@ -564,14 +566,14 @@ class MyFrame(wx.Frame):
             # The filename the page will get
             self.filename = dlg.GetFilename()
             self.dirname = dlg.GetDirectory()
-            filterindex = dlg.GetFilterIndex()
-            Filetype = SupFiletypes[filterindex]
-            # This is the function we will use to import the data
-            # opf.Filetypes is a dictionary with that has a key *self.Filetype*
-            # which points to our import function:
-            OpenFile = opf.Filetypes[Filetype]
+          #  filterindex = dlg.GetFilterIndex()
+          #  Filetype = SupFiletypes[filterindex]
+          #  # This is the function we will use to import the data
+          #  # opf.Filetypes is a dictionary with that has a key *self.Filetype*
+          #  # which points to our import function:
+          #  OpenFile = opf.Filetypes[Filetype]
             try:
-                Stuff = OpenFile(self.dirname, self.filename)
+                Stuff = readfiles.openAny(self.dirname, self.filename)
             except:
                 # The file does not seem to be what it seems to be.
                 info = sys.exc_info()
@@ -586,9 +588,11 @@ class MyFrame(wx.Frame):
                 dlg.ShowModal() == wx.ID_OK
                 return
             else:
-                dataexp = Stuff[0]
-                trace = Stuff[1]
-                curvelist = Stuff[2]
+                dataexp = Stuff["Correlation"]
+                trace = Stuff["Trace"]
+                curvelist = Stuff["Type"]
+                filename = Stuff["Filename"]
+                
                 # If curvelist is a list with more than one item, we are
                 # importing more than one curve per file. Therefore, we
                 # need to create more pages for this file.
@@ -612,28 +616,32 @@ class MyFrame(wx.Frame):
                 if len(keys) > 1:
                     Chosen = tools.ChooseImportTypes(self, curvetypes)
                     newcurvelist = list()
+                    newfilename = list()
                     newdataexp = list()
                     newtrace = list()
-                    
                     if Chosen.ShowModal() == wx.ID_OK:
                         keys = Chosen.keys
                         if len(keys) == 0:
+                            # do not do anything
                             return
                         for key in keys:
+                            # create a new curvelist with the selected curves
                             for index in curvetypes[key]:
                                 newcurvelist.append(curvelist[index])
+                                newfilename.append(filename[index])
                                 newdataexp.append(dataexp[index])
                                 newtrace.append(trace[index])
-                        trace = newtrace
-                        dataexp = newdataexp
                         curvelist = newcurvelist
+                        filename = newfilename
+                        dataexp = newdataexp
+                        trace = newtrace
                     else:
                         return
                     Chosen.Destroy()
 
                 # curvelist is a list of numbers or labels that correspond
-                # to each item in dataexp or trace. Each curvlist item
-                # will be converted to a string and then added to the
+                # to each item in dataexp or trace. Each curvelist/filename
+                # item will be converted to a string and then added to the
                 # pages title.
                 num = len(curvelist) 
                 # Show a nice progress dialog:
@@ -641,23 +649,24 @@ class MyFrame(wx.Frame):
                         wx.PD_CAN_ABORT
                 dlg = wx.ProgressDialog("Import", "Loading pages..."
                 , maximum = num, parent=self, style=style)
+                
+                CurPage = self.notebook.GetCurrentPage()
                 for i in np.arange(num):
                     # Fill Page with data
-                    CurPage = self.notebook.GetCurrentPage()
-                    if i == 0:
-                        # The tab title still holds the old filename
-                        # We do not want this:
-                        # *filename* is always a string
-                        M = len(CurPage.filename)
-                        text = CurPage.tabtitle.GetValue()
-                        if text[0:M] == CurPage.filename:
-                            CurPage.tabtitle.SetValue(text[M:])
-                    # Now we may change the filename.
-                    CurPage.filename = self.filename+" "+str(curvelist[i])
-                    # Strip leading or trailing white spaces.
-                    CurPage.filename = CurPage.filename.strip()
-                    
-                    self.ImportData(dataexp[i], trace[i], curvelist[i])
+                 #   #if i == 0:
+                 #   #    # The tab title still holds the old filename
+                 #   #    # We do not want this:
+                 #   #    # *filename* is always a string
+                 #   ##    M = len(CurPage.filename)
+                 #   #    text = CurPage.tabtitle.GetValue()
+                 #   #    if text[0:M] == CurPage.filename:
+                 #   #        CurPage.tabtitle.SetValue(text[M:])
+                 #   # Now we may change the filename.
+                 #   #CurPage.filename = str(filename[i])+" "+str(curvelist[i])
+                 #   # Strip leading or trailing white spaces.
+                 #   #CurPage.filename = CurPage.filename.strip()
+                    self.ImportData(CurPage, dataexp[i], trace[i],
+                                    curvelist[i], filename[i])
                     # Let the user abort, if he wants to:
                     # We want to do this here before an empty page is added
                     # to the notebok.
@@ -667,7 +676,7 @@ class MyFrame(wx.Frame):
                     if i+1 != num:
                         # Create new page.
                         # (Add n-1 pages while importing.)
-                        self.add_fitting_tab(event=None, 
+                        CurPage = self.add_fitting_tab(event=None, 
                                              modelid=CurPage.modelid,
                                              counter=None)
                 # We are finished here:
@@ -679,60 +688,59 @@ class MyFrame(wx.Frame):
             return
 
 
-    def ImportData(self, dataexp, trace, curvetype="AC"):
-        # Check, if a file has been opened
-        if self.filename is not None:
-            ## Get current Page and write data, call functions
-            CurPage = self.notebook.GetCurrentPage()
-            # Import traces. Traces are usually put into a list, even if there
-            # is only on trace. The reason is, that for cross correlation, we 
-            # have two traces and thus we have to import both.
-            # In case of cross correlation, save that list of (two) traces
-            # in the page.tracecc variable. Else, save the trace for auto-
-            # correlations directly into the page.trace variable. We are
-            # doing this in order to keep data types clean.
-            if curvetype[0:2] == "CC":
-                # For cross correlation, the trace has two components
-                CurPage.IsCrossCorrelation = True
-                CurPage.tracecc = trace
-                CurPage.trace = None
-            else:
-                CurPage.IsCrossCorrelation = False
-                CurPage.tracecc = None
-                if trace is not None:
-                    CurPage.trace = trace
-                    CurPage.traceavg = trace[:,1].mean()
-            # Import correlation function
-            CurPage.dataexpfull = dataexp
-            # We need this to be able to work with the data.
-            # It actually does nothing to the data right now.
-            CurPage.startcrop = None
-            CurPage.endcrop = None
-            # It might be possible, that we want the channels to be
-            # fixed to some interval. This is the case if the 
-            # checkbox on the "Channel selection" dialog is checked.
-            self.OnFNBPageChanged()
-            # Enable Fitting Button
-            CurPage.Fit_enable_fitting()
-            # Set Title
-            N = len(CurPage.modelname)
-            M = len(CurPage.filename)
-            text = CurPage.tabtitle.GetValue()
-            # Set new tabtitle value and strip leading or trailing
-            # white spaces.
-            if text[0:N] == CurPage.modelname:
-                CurPage.tabtitle.SetValue(CurPage.filename+" "+
-                                          CurPage.modelname+text[N:-1].strip())
-            elif text[0:M] == CurPage.filename:
-                CurPage.tabtitle.SetValue(CurPage.filename+text[M:].strip())
-            else:
-                CurPage.tabtitle.SetValue(CurPage.filename+" "+text.strip())
-            # Plot everything
-            CurPage.PlotAll()
-            # Call this function to allow the "Channel Selection" window that
-            # might be open to update itself.
-            # We are ware of the fact, that we just did that
-            self.OnFNBPageChanged()
+    def ImportData(self, Page, dataexp, trace, curvetype="", filename=""):
+        CurPage = Page
+        # Import traces. Traces are usually put into a list, even if there
+        # is only on trace. The reason is, that for cross correlation, we 
+        # have two traces and thus we have to import both.
+        # In case of cross correlation, save that list of (two) traces
+        # in the page.tracecc variable. Else, save the trace for auto-
+        # correlations directly into the page.trace variable. We are
+        # doing this in order to keep data types clean.
+        if curvetype[0:2] == "CC":
+            # For cross correlation, the trace has two components
+            CurPage.IsCrossCorrelation = True
+            CurPage.tracecc = trace
+            CurPage.trace = None
+        else:
+            CurPage.IsCrossCorrelation = False
+            CurPage.tracecc = None
+            if trace is not None:
+                CurPage.trace = trace
+                CurPage.traceavg = trace[:,1].mean()
+        # Import correlation function
+        CurPage.dataexpfull = dataexp
+        # We need this to be able to work with the data.
+        # It actually does nothing to the data right now.
+        CurPage.startcrop = None
+        CurPage.endcrop = None
+        # It might be possible, that we want the channels to be
+        # fixed to some interval. This is the case if the 
+        # checkbox on the "Channel selection" dialog is checked.
+        self.OnFNBPageChanged()
+        # Enable Fitting Button
+        CurPage.Fit_enable_fitting()
+   #     # Set Title
+   #    # N = len(CurPage.modelname)
+   #    # M = len(CurPage.filename)
+   #    # text = CurPage.tabtitle.GetValue()
+        # Set new tabtitle value and strip leading or trailing
+        # white spaces.
+        title = filename+" "+curvetype
+        CurPage.tabtitle.SetValue(title.strip())
+   #    # if text[0:N] == CurPage.modelname:
+   #    #     CurPage.tabtitle.SetValue(CurPage.filename+" "+
+   #    #                               CurPage.modelname+text[N:-1].strip())
+   #    # elif text[0:M] == CurPage.filename:
+   #    #     CurPage.tabtitle.SetValue(CurPage.filename+text[M:].strip())
+   #    # else:
+   #    #     CurPage.tabtitle.SetValue(CurPage.filename+" "+text.strip())
+        # Plot everything
+        CurPage.PlotAll()
+        # Call this function to allow the "Channel Selection" window that
+        # might be open to update itself.
+        # We are aware of the fact, that we just did that
+        self.OnFNBPageChanged()
 
 
     def OnLoadBatch(self, e):
@@ -740,41 +748,127 @@ class MyFrame(wx.Frame):
             We will create a new window where the user may decide which
             model to use.
         """
-        a = tools.BatchImport(self)
+        ## Browse the file system
+        SupFiletypes = opf.Filetypes.keys()
+        # Sort them so we have "All suported filetypes" up front
+        SupFiletypes.sort()
+        filters = ""
+        for i in np.arange(len(SupFiletypes)):
+            # Add to the filetype filter
+            filters = filters+SupFiletypes[i]
+            if i+1 != len(SupFiletypes):
+                # Add a separator if item is not last item
+                filters = filters+"|"
+        dlg = wx.FileDialog(self, "Choose data files", 
+            self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
+        if dlg.ShowModal() == wx.ID_OK:
+            Datafiles = dlg.GetFilenames()
+            self.dirname = dlg.GetDirectory()
+            dlg.Destroy()
+        else:
+            dlg.Destroy()
+            return
 
+        ## Get information from the data files and let the user choose
+        ## which type of curves to load and the corresponding model.
+        # List of filenames that could not be opened
+        BadFiles = list()
+        # Lists for correlation, trace, type and names
+        Correlation = list()
+        Trace = list()
+        Type = list()
+        Filename = list() # there might be zipfiles with additional name info
+        for afile in Datafiles:
+            try:
+                Stuff = readfiles.openAny(self.dirname, afile)
+            except:
+                # The file does not seem to be what it seems to be.
+                BadFiles.append(afile)
+            else:
+                for i in np.arange(len(Stuff["Type"])):
+                    Correlation.append(Stuff["Correlation"][i])
+                    Trace.append(Stuff["Trace"][i])
+                    Type.append(Stuff["Type"][i])
+                    Filename.append(Stuff["Filename"][i])
 
-    def OnLoadSingle(self, e):
-        """ Opens a file opening dialog and lets the user decide which model to
-            use.
-        """
-        ## Create Modellist
-        dropdownlist = list()
-        # A list with all the models in the same order as in self.ModelDropdown
-        modelids = list()
-        # Use the key to label each available model
-        keys = mdls.modeltypes.keys()
-        keys.sort()
-        for modeltype in keys:
-            for modelid in mdls.modeltypes[modeltype]:
-                dropdownlist.append(modeltype +": "+ mdls.modeldict[modelid][1])
-                modelids.append(modelid)
-        ## Name and text of the Dialog
-        title = "Select model"
-        text = "First, choose a model function\nto be used for "+\
-               "fitting of your data file."
+        # If *Type* is a list with more than one item, we are
+        # importing more than one curve per file. Therefore, we
+        # need to create more pages for this file.
         
-        ## Open a dialog for the user to choose a model.
-        Dlg = edclasses.ChoicesDialog(self, dropdownlist, title, text)
-        Dlg.dropdown.SetSelection(3)
-        if Dlg.ShowModal() == wx.ID_OK:
-            # User pressed ok.
-            modelid = modelids[Dlg.SelcetedID]
-            # Create new page
-            self.add_fitting_tab(modelid=modelid)
-            # Ask for the file
-            self.OnImportData()
-        Dlg.Destroy()
-       
+        # We want to give the user the possibility to choose from
+        # several types of input functions. If curvelist contains
+        # more than one type of data, like "AC1", "AC2", "CC1", ...
+        # then the user may wish to only import "AC1" or "AC2"
+        # functions.
+        curvetypes = dict()
+        for i in np.arange(len(Type)):
+            try:
+                curvetypes[Type[i]].append(i)
+            except KeyError:
+                curvetypes[Type[i]] = [i]
+        # Now we have a dictionary curvetypes with keys that name
+        # items in *Type* and which point to indices in *Type*.
+        # We will display a dialog that let's the user choose what
+        # to import.
+        keys = curvetypes.keys()
+        # Start the dialog for choosing types and model functions
+        Chosen = tools.ChooseImportTypesModel(self, curvetypes)
+        newCorrelation = list()
+        newTrace = list()
+        newType = list()
+        newFilename = list()
+        modelList = list()
+        if Chosen.ShowModal() == wx.ID_OK:
+            keys = Chosen.keys
+            # modelids is a dictionary with chosen modelids.
+            # The keys of modelids are indices in the *Type* etc. lists.
+            modelids = Chosen.modelids
+            if len(keys) == 0:
+                # do not do anything
+                return
+            for key in keys:
+                # create a new curvelist with the selected curves
+                for index in curvetypes[key]:
+                    newCorrelation.append(Correlation[index])
+                    newTrace.append(Trace[index])
+                    newType.append(Type[index])
+                    newFilename.append(Filename[index])
+                    modelList.append(modelids[index])
+            Correlation = newCorrelation
+            Trace = newTrace
+            Type = newType
+            Filename = newFilename
+        else:
+            return
+        Chosen.Destroy()
+
+        ## Import the data into new pages
+        # curvelist is a list of numbers or labels that correspond
+        # to each item in dataexp or trace. Each curvelist/filename
+        # item will be converted to a string and then added to the
+        # pages title.
+        num = len(Type) 
+        # Show a nice progress dialog:
+        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
+                wx.PD_CAN_ABORT
+        dlg = wx.ProgressDialog("Import", "Loading pages..."
+        , maximum = num, parent=self, style=style)
+        
+        for i in np.arange(num):
+            # create a new page
+            CurPage = self.add_fitting_tab(event=None, 
+                                     modelid=modelList[i],
+                                     counter=None)
+            # Fill Page with data
+            self.ImportData(CurPage, Correlation[i], Trace[i],
+                            Type[i], Filename[i])
+            # Let the user abort, if he wants to:
+            # We want to do this here before an empty page is added
+            # to the notebok.
+            if dlg.Update(i+1, "Loading pages...")[0] == False:
+                dlg.Destroy()
+                return        
+
 
     def OnOpenSession(self,e=None,sessionfile=None):
         """Open a previously saved session. 

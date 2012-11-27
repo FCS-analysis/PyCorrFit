@@ -25,13 +25,6 @@ import tempfile
 import yaml
 import zipfile
 
-import platform
-
-
-
-
-
-
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.
 from read_ASC_ALV_6000 import openASC
@@ -97,6 +90,7 @@ def openZIP(dirname, filename):
     Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
     Correlations = list() # Correlation information
     Curvelist = list()    # Type information
+    Filelist = list()     # List of filenames corresponding to *Curvelist*
     Trace = list()        # Corresponding traces
     ## First test, if we are opening a session file
     fcsfitwildcard = ".fcsfit-session.zip"
@@ -114,6 +108,7 @@ def openZIP(dirname, filename):
             # The *number* is used to identify the correct file
             number = str(Parms[i][0])
             expfilename = "data"+number[1:len(number)-2]+".csv"
+            Filelist.append(filename+"/#"+number[1:len(number)-2])
             expfile = Arc.open(expfilename, 'r')
             readdata = csv.reader(expfile, delimiter=',')
             dataexp = list()
@@ -189,16 +184,25 @@ def openZIP(dirname, filename):
             Arc.extract(afile, path=tempdir)
             ReturnValue = openAny(tempdir, afile)
             if ReturnValue is not None:
-                [cs, ts, ls] = ReturnValue
+                cs = ReturnValue["Correlation"]
+                ts = ReturnValue["Trace"]
+                ls = ReturnValue["Type"]
+                fs = ReturnValue["Filename"]
                 for i in np.arange(len(cs)):
                     Correlations.append(cs[i])
                     Trace.append(ts[i])
                     Curvelist.append(ls[i])
+                    Filelist.append(filename+"/"+fs[i])
             # Delte file
             os.remove(os.path.join(tempdir,afile))
         os.removedirs(tempdir)
     Arc.close()
-    return [Correlations, Trace, Curvelist]
+    dictionary = dict()
+    dictionary["Correlation"] = Correlations
+    dictionary["Trace"] = Trace
+    dictionary["Type"] = Curvelist
+    dictionary["Filename"] = Filelist
+    return dictionary
 
 
 # The string that is shown when opening all supported files

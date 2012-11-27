@@ -20,14 +20,7 @@
 # imported by PyCorrFit or other people.
 
 import numpy as np                  # NumPy
-import platform
 import sys
-
-import platform
-
-
-
-
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
@@ -51,8 +44,8 @@ from simulation import Slide
 # from example import Tool
 
 # This is in the file menu and not needed in the dictionaries below.
-from batch import BatchImport
 from chooseimport import ChooseImportTypes
+from chooseimport import ChooseImportTypesModel
 from comment import EditComment
 
 
