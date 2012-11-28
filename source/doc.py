@@ -208,7 +208,7 @@ def SoftwareUsed():
            "\n - wxPython "+wx.__version__+\
            "\n - yaml "+yaml.__version__
     if hasattr(sys, 'frozen'):
-        pyinst = "\n\nThis executable has been created using PyInstaller 1.5.1"
+        pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
     return text
 # Text that is displayed once someone wishes to average all his curves
