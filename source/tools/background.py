@@ -227,7 +227,7 @@ class BackgroundCorrection(wx.Frame):
         for i in np.arange(len(SupFiletypes)):
             # Add to the filetype filter
             filters = filters+SupFiletypes[i]
-            if i != len(SupFiletypes):
+            if i+1 != len(SupFiletypes):
                 # Add a separator
                 filters = filters+"|"
         dlg = wx.FileDialog(self, "Choose a data file", 
