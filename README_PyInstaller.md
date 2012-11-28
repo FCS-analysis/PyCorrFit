@@ -10,17 +10,19 @@ To create a single binary file, go to the unpacked pyinstaller directory and exe
 Known problems
 -------------------
 
-PyInstaller does not yet seem to work with scipy version 0.11.0. Instead, use scipy version 0.10.1 (http://sourceforge.net/projects/scipy/files/scipy/). 
+- On Windows, PyInstaller v.2.0 might complain about a "_core_" module. This has been fixed in a later dev version (pyinstaller-6ca4af8 is working).
 
-If you are getting errors involving "_py3.py" files, try try to rename these files, e.g.
+- PyInstaller does not yet seem to work with scipy version 0.11.0. Instead, use scipy version 0.10.1 (http://sourceforge.net/projects/scipy/files/scipy/). 
 
-    C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.py 
+- If you are getting errors involving "_py3.py" files, try try to rename these files, e.g.
+
+        C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.py 
     
-to something else, like
+    to something else, like
 
-    C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.pyELSE
+        C:\Python26\Lib\site-packages\sympy\mpmath\libmp\exec_py3.pyELSE
 
-This is a problem caused by syntax differences of python3 and python2 which pyInstaller cannot yet tell (exec_py3 is not python2 syntax). http://code.google.com/p/mpmath/issues/detail?id=204 
+    This is a problem caused by syntax differences of python3 and python2 which pyInstaller cannot yet tell (exec_py3 is not python2 syntax). http://code.google.com/p/mpmath/issues/detail?id=204 
 
 
 Windows (XP)
