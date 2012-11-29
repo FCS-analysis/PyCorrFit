@@ -74,11 +74,11 @@ Windows (XP/7)
 - Download and install setuptools (for Python 2.7):   
 	http://pypi.python.org/pypi/setuptools#windows
 
-- Add the following to your Windows PATH variable:   
+- Add the following to your [Windows PATH variable](http://www.computerhope.com/issues/ch000549.htm):   
 
 		C:\Python27;C:\Python27\Scripts
 
-- Then in a command line execute:   
+- In a [command line](http://www.computerhope.com/issues/chdos.htm), execute:   
 
 		easy_install numpy pyfits pyyaml 
 
