@@ -37,8 +37,8 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
                    sigma = simga_0 * lambda / NA
         [3] a: side size of the square pinhole
         [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_2D1: 2-dimensional concentration of species 1
-        [6] Conc_2D2: 2-dimensional concentration of species 2
+        [5] C_2D1: 2-dimensional concentration of species 1
+        [6] C_2D2: 2-dimensional concentration of species 2
         [7] alpha: relative molecular brightness of particle
                    2 compared to 1 (alpha = q2/q1)
         *tau*: time differences from multiple tau correlator

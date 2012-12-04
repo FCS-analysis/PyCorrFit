@@ -37,8 +37,8 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
                    sigma = simga_0 * lambda / NA
         [3] a: side size of the square pinhole
         [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D1: 3-dimensional concentration of species 1
-        [6] Conc_2D2: 3-dimensional concentration of species 2
+        [5] C_3D1: 3-dimensional concentration of species 1
+        [6] C_3D2: 3-dimensional concentration of species 2
         [7] alpha: relative molecular brightness of particle
                    2 compared to 1 (alpha = q2/q1)
         *tau*: time differences from multiple tau correlator
@@ -96,13 +96,13 @@ m_tir_3d_3d_mix_6023 = [6023, u"3D+3D (□xσ/exp)",
                         "Separate 3D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d3d]
 labels_6023 = ["D"+u"\u2081"+u" [10 µm²/s]",
-                "D"+u"\u2082"+u" [10 µm²/s]",
-                u"σ [100 nm]",
-                "a [100 nm]", 
-                "d_eva [100 nm]", 
-                "C"+u"\u2081"+u" [1000 /µm³]", 
-                "C"+u"\u2082"+u" [1000 /µm³]", 
-                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
+               "D"+u"\u2082"+u" [10 µm²/s]",
+               u"σ [100 nm]",
+               "a [100 nm]", 
+               "d_eva [100 nm]", 
+               "C"+u"\u2081"+u" [1000 /µm³]", 
+               "C"+u"\u2082"+u" [1000 /µm³]", 
+               u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_6023 = [
                 9.0,     # D_3D₁ [10 µm²/s]

@@ -1,3 +1,8 @@
+0.7.1
+ - Bugfix: Saving image was not performed using WXAgg
+ - Bugfix: Notebook pages were drag'n'dropable
+ - Update function now works in its own thread
+ - Code cleanup: documentation of model functions
 0.7.0
  - File import dialog was enhanced (#4, #5 - subsequently #7, #8):
     - Now there is only one "load data" dialog in the file menu.
@@ -5,8 +10,8 @@
        to be imported (AC, CC, etc.).
     - Loading files that do not contain data a pointed out to the
       user and the program continues with the other files.
- - Bug fix: Channel selection window causes crash on file import (#1).
- - Bug fix: Hidden feature changes fixed parameters during fitting (#2).
+ - Bugfix: Channel selection window causes crash on file import (#1).
+ - Bugfix: Hidden feature changes fixed parameters during fitting (#2).
  - Feature: Convert TIR model function parameters lambda and NA to sigma (#3).
  - Code cleanup: Opening data files is now handled internally differently.
 0.6.9

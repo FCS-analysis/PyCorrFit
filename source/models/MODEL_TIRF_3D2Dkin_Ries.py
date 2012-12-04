@@ -259,8 +259,8 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
                    sigma = simga_0 * lambda / NA
         [3] a: side size of the square pinhole
         [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D: 3-dimensional concentration of species A
-        [6] Conc_2D: 2-dimensional concentration of species C
+        [5] C_3D: 3-dimensional concentration of species A
+        [6] C_2D: 2-dimensional concentration of species C
         [7] eta_3D: molecular brightness of species A
         [8] eta_2D: molecular brightness of species C
         [9] k_a : Surface association rate constant
@@ -339,8 +339,8 @@ labels_6021 = [u"D_3D [10 µm²/s]",
                 u"σ [100 nm]",
                 "a [100 nm]", 
                 "d_eva [100 nm]", 
-                u"conc.3D [1000 /µm³]", 
-                u"conc.2D [100 /µm²]", 
+                u"C_3D [1000 /µm³]", 
+                u"C_2D[100 /µm²]", 
                 u"η_3D", 
                 u"η_2D", 
                 u"k_a [µm³/s]", 
@@ -363,13 +363,14 @@ valuestofit_6021 = [False, True, False, False, False, False, True, False,
                     False, False, False]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6021 = ["D_3D [µm²/s]",
+labels_human_readable_6021 = [
+                u"D_3D [µm²/s]",
                 u"D_2D [µm²/s]",
                 u"σ [nm]",
                 "a [nm]", 
                 "d_eva [nm]", 
-                u"conc.3D [1/µm³]", 
-                u"conc.2D [1/µm²]", 
+                u"C_3D [1/µm³]", 
+                u"C_2D [1/µm²]", 
                 u"η_3D", 
                 u"η_2D", 
                 u"k_a [µm³/s]", 

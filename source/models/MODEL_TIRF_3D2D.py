@@ -25,8 +25,8 @@ def wixi(x):
 def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
     """ 3D diffusion measured with a square pinhole in a TIR-FCS setup and
         considering two species:
-        - Surface bound species C
-        - Freely diffusing species A
+        - Surface bound species C (2D)
+        - Freely diffusing species A (3D)
         without binding/unbinding.
 
         *parms* - a list of parameters.
@@ -37,8 +37,8 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
                    sigma = simga_0 * lambda / NA
         [3] a: side size of the square pinhole
         [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D: 3-dimensional concentration of species A
-        [6] Conc_2D: 2-dimensional concentration of species C
+        [5] C_3D: 3-dimensional concentration of species A
+        [6] C_2D: 2-dimensional concentration of species C
         [7] alpha: relative molecular brightness of 3D particle
                    compared to 2D particle (alpha = q3D/q2D)
         *tau*: time differences from multiple tau correlator
@@ -94,8 +94,8 @@ labels_6020 = [u"D_3D [10 µm²/s]",
                 u"σ [100 nm]",
                 "a [100 nm]", 
                 "d_eva [100 nm]", 
-                u"conc.3D [1000 /µm³]", 
-                u"conc.2D [100 /µm²]", 
+                u"C_3D [1000 /µm³]", 
+                u"C_2D [100 /µm²]", 
                 u"\u03b1"+" (q3D/q2D)"
                 ]
 values_6020 = [
@@ -115,8 +115,8 @@ labels_human_readable_6020 = ["D_3D [µm²/s]",
                 u"σ [nm]",
                 "a [nm]", 
                 "d_eva [nm]", 
-                u"conc.3D [1/µm³]", 
-                u"conc.2D [1/µm²]", 
+                u"C_3D [1/µm³]", 
+                u"C_2D [1/µm²]", 
                 u"\u03b1"+" (q3D/q2D)"
                 ]
 values_factor_human_readable_6020 = [

@@ -10,27 +10,26 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         laser beam defines excitation volume.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
-        *tautrip* is always smaller than 0.9*taud3D* or 0.9*taud2D*
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle2D = (1-F)/ (1+tau/taud2D) 
-        particle3D = alpha²*F/( (1+tau/taud3D) * sqrt(1+tau/(taud3D*SP²)))
-        triplet = 1 + T/(1-T)*exp(-tau/tautrip)
+        particle2D = (1-F)/ (1+tau/τ_2D) 
+        particle3D = alpha²*F/( (1+tau/τ_3D) * sqrt(1+tau/(τ_3D*SP²)))
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
         norm = (1-F + alpha*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] taud2D: diffusion time of surface bound particle species
-        [2] taud3D: diffusion time of 3D diffusing particle species
+        [1] τ_2D: diffusion time of surface bound particle species
+        [2] τ_3D: diffusion time of 3D diffusing particle species
         [3] F: fraction of molecules of 3D diffusing species 1 (n3D = n*F)
                0 <= F <= 1
         [4] SP: structural parameter z0/r0, describes the shape of the 
                 detection/excitation volume
         [5] alpha: relative molecular brightness of particle
                    3D compared to particle 2D (alpha = q3D/q2D)
-        [6] tautrip: characteristic residence time in triplet state
+        [6] τ_trip: characteristic residence time in triplet state
         [7] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [8] offset

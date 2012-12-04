@@ -9,18 +9,18 @@ def CF_Gxy_gauss(parms, tau):
     """ 2D free diffusion with a Gaussian laser profile.
         Single molecule fluorescence spectroscopy.
 
-        G(tau) = offset + 1/( n * (1+tau/taudiff) )
+        G(tau) = offset + 1/( n * (1+tau/τ_diff) )
     
         Calculation of diffusion coefficient and concentration
         from the effective radius of the detection profile (r0 = 2*sigma):
-        D = r0²/(4*taudiff)
+        D = r0²/(4*τ_diff)
         Conc = n/(pi*r0²)
 
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation area.
-        [1] taudiff: characteristic residence time (Diffusion).
+        [1] τ_diff: characteristic residence time (diffusion).
         [3] offset
         *tau*: time differences from multiple tau correlator
     """
@@ -44,13 +44,13 @@ def CF_Gxy_T_gauss(parms, tau):
     """ 2D free diffusion with a Gaussian laser profile.
         Single molecule fluorescence spectroscopy.
 
-        triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
 
-        G(tau) = offset + 1/( n * (1+tau/taudiff) )*triplet
+        G(tau) = offset + 1/( n * (1+tau/τ_diff) )*triplet
     
         Calculation of diffusion coefficient and concentration
         from the effective radius of the detection profile (r0 = 2*sigma):
-        D = r0²/(4*taudiff)
+        D = r0²/(4*τ_diff)
         Conc = n/(pi*r0²)
 
             
@@ -58,8 +58,8 @@ def CF_Gxy_T_gauss(parms, tau):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation area.
-        [1] taudiff: characteristic residence time (Diffusion).
-        [2] tautrip: characteristic residence time in triplet state
+        [1] τ_diff: characteristic residence time (Diffusion).
+        [2] τ_trip: characteristic residence time in triplet state
         [3] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [4] offset
@@ -106,24 +106,24 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         laser beam defines excitation volume.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F/( 1+tau/taud1 )
-        particle2 = alpha²*(1-F)/( 1+tau/taud2 )
-        triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+        particle1 = F/( 1+tau/τ_1 )
+        particle2 = alpha²*(1-F)/( 1+tau/τ_2 )
+        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
         norm = (F + alpha*(1-F))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume (n = n1+n2)
-        [1] taud1: diffusion time of particle species 1
-        [2] taud2: diffusion time of particle species 2
+        [1] τ_1: diffusion time of particle species 1
+        [2] τ_2: diffusion time of particle species 2
         [3] F: fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
         [4] alpha: relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [5] tautrip: characteristic residence time in triplet state
+        [5] τ_trip: characteristic residence time in triplet state
         [6] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [7] offset

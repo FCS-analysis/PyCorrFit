@@ -31,33 +31,33 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         *tautrip* is always smaller than 0.9*taud3D* or 0.9*taud2D*
 
 
-        taud3D = r0²/(4*D3D)
-        x = sqrt(D3D*tau)*kappa
+        taud3D = r0²/(4*D_3D)
+        x = sqrt(D_3D*tau)*kappa
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa * 
-             [ sqrt(D3D*tau/pi) - (2*D3D*tau*kappa² - 1)/(2*kappa) * w(i*x) ]
+             [ sqrt(D_3D*tau/pi) - (2*D_3D*tau*kappa² - 1)/(2*kappa) * w(i*x) ]
         g2D3D = 1 / [ 1.+tau/taud3D ]
         particle3D = alpha²*F * g2D3D * gz
 
-        taud2D = r0²/(4*D2D)
+        taud2D = r_0²/(4*D_2D)
         particle2D = (1-F)/ (1+tau/taud2D) 
 
-        triplet = 1 + T/(1-T)*exp(-tau/tautrip)
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
         norm = (1-F + alpha*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] D2D: diffusion coefficient  of surface bound particle species
-        [2] D3D: diffusion coefficient of 3D diffusing particle species
+        [1] D_2D: diffusion coefficient  of surface bound particle species
+        [2] D_3D: diffusion coefficient of 3D diffusing particle species
         [3] F: fraction of molecules of 3D diffusing species 1 (n3D = n*F)
                0 <= F <= 1
-        [4] r0: radius of the detection profile (FWHM)
+        [4] r_0: radius of the detection profile (FWHM)
         [5] d_eva: evanescent wave depth
         [6] alpha: relative molecular brightness of particle
                    3D compared to particle 2D (alpha = q3D/q2D)
-        [7] tautrip: characteristic residence time in triplet state
+        [7] τ_trip: characteristic residence time in triplet state
                      tautrip = min(tautrip,taud2D*0.9,taud3D*0.9)
         [8] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
@@ -154,8 +154,8 @@ def MoreInfo(parms, countrate):
     G_0 = CF_Gxyz_3d2dT_gauss(parms, 0)
     Info.append(["G(0)", G_0])
     Info.append(["V_eff [al]", Veff])
-    Info.append(["Conc.2D [1/µm²]", C2D * 100])
-    Info.append(["Conc.3D [nM]", C3D * 10000/6.0221415])
+    Info.append(["C_2D [1/µm²]", C2D * 100])
+    Info.append(["C_3D [nM]", C3D * 10000/6.0221415])
 
     if countrate is not None:
         # CPP
@@ -172,10 +172,10 @@ labels  = ["n",
                 "D_2D [10 µm²/s]",
                 "D_3D [10 µm²/s]",
                 "F_3D", 
-                "r0 [100 nm]",
-                "deva [100 nm]",
+                "r_0 [100 nm]",
+                "d_eva [100 nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -196,10 +196,10 @@ labelshr  = ["n",
                 "D_2D [µm²/s]",
                 "D_3D [µm²/s]",
                 "F_3D", 
-                "r0 [nm]",
-                "deva [nm]",
+                "r_0 [nm]",
+                "d_eva [nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ] 

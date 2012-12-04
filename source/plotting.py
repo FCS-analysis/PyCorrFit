@@ -254,12 +254,11 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
             fig.canvas.toolbar.save()
         except AttributeError:
             fig.canvas.toolbar.save_figure()
-            
-    # Close all other plots before commencing
-    try:
-        plt.close()
-    except:
-        pass
+        # Close all other plots before commencing
+        try:
+            plt.close()
+        except:
+            pass
 
 
 def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
@@ -349,13 +348,11 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
             fig.canvas.toolbar.save()
         except AttributeError:
             fig.canvas.toolbar.save_figure()
-
-    # Close all other plots before commencing
-    try:
-        plt.close()
-    except:
-        pass
-
+        # Close all other plots before commencing
+        try:
+            plt.close()
+        except:
+            pass
 
 
 def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):

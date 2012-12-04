@@ -8,20 +8,25 @@
 from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
+import platform
 import sys
 import tempfile
 import urllib2
 import webbrowser
 import wx                               # GUI interface wxPython
 import wx.html
+import wx.lib.delayedresult as delayedresult
 
 import doc                          # Documentation/some texts
 
-import platform
-
-
 class UpdateDlg(wx.Frame):
-    def __init__(self, parent, description, homepage, githome, changelog):
+    def __init__(self, parent, valuedict):
+        
+        description = valuedict["Description"]
+        homepage = valuedict["Homepage"]
+        githome = valuedict["Homepage_GIT"]
+        changelog = valuedict["Changelog"]
+        
         pos = parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update", 
@@ -31,9 +36,9 @@ class UpdateDlg(wx.Frame):
         html = wxHTML(self)
         string =             '' +\
             "<b> PyCorrFit <br></b>" +\
-            description[0]+"<br>" +\
-            description[1]+"<br>" +\
-            description[2]+"<br><p><b>"
+            "Your version: " + description[0]+"<br>" +\
+            "Latest version: " + description[1]+"<br>" +\
+            "(" + description[2]+")<br><p><b>"
 
         if len(homepage) != 0:
             string = string + '<a href="'+homepage+'">Homepage</a><br>'
@@ -59,8 +64,6 @@ class wxHTML(wx.html.HtmlWindow):
          webbrowser.open(link.GetHref())
 
 
-
-
 def findprogram(program):
     """ Uses the systems PATH variable find executables"""
     path = os.environ['PATH']
@@ -80,9 +83,20 @@ def findprogram(program):
 
 
 
-
-
 def Update(parent):
+    """ This is a thread for _Update """
+    parent.StatusBar.SetStatusText("Connecting to server...")
+    delayedresult.startWorker(_UpdateConsumer, _UpdateWorker,
+                              wargs=(parent,), cargs=(parent,))
+
+def _UpdateConsumer(delayedresult, parent):
+    results = delayedresult.get()
+    dlg = UpdateDlg(parent, results)
+    dlg.Show()
+    parent.StatusBar.SetStatusText("...update status: "+results["Description"][2])
+
+
+def _UpdateWorker(parent):
         changelog = ""
         hpversion = None
         # I created this TXT record to keep track of the current web presence.
@@ -122,7 +136,7 @@ def Update(parent):
         except:
             if hpversion == None:
                 newversion = "unknown"
-                action = "(cannot connect to server)"
+                action = "cannot connect to server"
             else:
                 newversion = hpversion
                 continuecomp = True
@@ -135,15 +149,13 @@ def Update(parent):
             new = LooseVersion(newversion)
             old = LooseVersion(parent.version)
             if new > old:
-                action = "(update available)"
+                action = "update available"
             elif new < old:
-                action = "(whoop you rock!)"
+                action = "whoop you rock!"
             else:
-                action = "(state of the art)"
+                action = "state of the art"
 
-        description = ["Your version: "+parent.version,
-                       "Newest version: "+newversion,
-                       action]
+        description = [parent.version, newversion, action]
 
         if len(changelog) != 0:
             changelogfile = tempfile.mktemp()+"_PyCorrFit_ChangeLog"+".txt"
@@ -153,7 +165,12 @@ def Update(parent):
         else:
             changelogfile=""
 
-        dlg = UpdateDlg(parent, description, homepage, githome, changelogfile)
-        dlg.Show()
+        results = dict()
+        results["Description"] = description
+        results["Homepage"] = homepage
+        results["Homepage_GIT"] = githome
+        results["Changelog"] = changelogfile
+
+        return results
 
 

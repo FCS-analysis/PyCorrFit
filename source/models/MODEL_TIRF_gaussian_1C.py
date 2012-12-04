@@ -24,21 +24,21 @@ def CF_Gxyz_TIR_gauss(parms, tau):
         and an exponentially decaying profile in axial direction.
 
         x = sqrt(D*tau)*kappa
-        taudiff = r0²/(4*D)
-        kappa = 1/deva
+        taudiff = r_0²/(4*D)
+        kappa = 1/d_eva
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa² * 
              [ sqrt(D*tau/pi) - (2*D*tau*kappa² - 1)/(2*kappa) * w(i*x) ]
-        g2D = 1 / [ pi*r0² * (1.+tau/taudiff) ]
-        G = 1/Conc * g2D * gz
+        g2D = 1 / [ pi*r_0² * (1.+tau/taudiff) ]
+        G = 1/C_3D * g2D * gz
 
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] r0: radius of the detection profile (FWHM)
+        [1] r_0: radius of the detection profile (FWHM)
         [2] d_eva: evanescent wave depth
-        [2] Conc.3D : 3D Concentration
+        [2] C_3D : 3D Concentration
         *tau*: time differences from multiple tau correlator
 
         Returns: Normalized 3D correlation function for TIRF.
@@ -82,9 +82,9 @@ def MoreInfo_6013(parms, countrate):
         Supplementary variables:
         Beware that the effective volume is chosen arbitrarily.
          Effective detection volume:         
-          V_eff  = np.pi * r0**2 * d_eva
+          V_eff  = np.pi * r_0**2 * d_eva
          Effective particle number:
-          Neff = Conc.3D * Veff
+          Neff = C_3D * Veff
     """
     D = parms[0]
     r0 = parms[1]
@@ -98,7 +98,7 @@ def MoreInfo_6013(parms, countrate):
     G_0 = CF_Gxyz_TIR_gauss(parms, 0)
     Info.append(["G(0)", G_0])
     Info.append(["V_eff [al]", Veff])
-    Info.append(["Conc.3D [nM]", Conc * 10000/6.0221415])
+    Info.append(["C_3D [nM]", Conc * 10000/6.0221415])
     if countrate is not None:
         # CPP
         cpp = countrate/Neff
@@ -108,11 +108,11 @@ def MoreInfo_6013(parms, countrate):
 
 # 3D Model TIR gaussian
 m_3dtirsq6013 = [6013, "3D (Gauß/exp)","Simple 3D diffusion w/ TIR", CF_Gxyz_TIR_gauss]
-labels_6013 = ["D [10 µm²/s]","r0 [100 nm]", "d_eva [100 nm]", "Conc.3D [1000/µm³)"]
+labels_6013 = ["D [10 µm²/s]","r_0 [100 nm]", "d_eva [100 nm]", "C_3D [1000/µm³)"]
 values_6013 = [0.0005420, 9.44, 1.0, .03011]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6013 = ["D [µm²/s]", "r0 [nm]", "d_eva [nm]", "Conc.3D [1/µm³]"]
+labels_human_readable_6013 = ["D [µm²/s]", "r_0 [nm]", "d_eva [nm]", "C_3D [1/µm³]"]
 values_factor_human_readable_6013 = [10, 100, 100, 1000]
 valuestofit_6013 = [True, False, False, True]
 parms_6013 = [labels_6013, values_6013, valuestofit_6013,

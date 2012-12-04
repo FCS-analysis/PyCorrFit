@@ -9,12 +9,12 @@ def CF_Gxyz_gauss(parms, tau):
     """ 3D free diffusion with a Gaussian laser profile (eliptical).
         Single molecule fluorescence spectroscopy.
 
-        G(tau) = offset + 1/( n*(1+tau/taudiff) * sqrt(1 + tau/(SP²*taudiff)) )
+        G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
 
 
         Calculation of diffusion coefficient and concentration
         from the effective radius of the detection profile:
-        D = r0²/(4*taudiff)
+        D = r0²/(4*τ_diff)
         Conc = n/( sqrt(pi³)*r0²*z0 )
 
             r0   lateral detection radius (waist of lateral gaussian)
@@ -26,7 +26,7 @@ def CF_Gxyz_gauss(parms, tau):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume.
-        [1] taudiff: characteristic residence time (Diffusion).
+        [1] τ_diff: characteristic residence time (diffusion).
         [2] SP: SP=z0/r0 describes the shape of the detection volume
         [3] offset
         *tau*: time differences from multiple tau correlator
@@ -50,18 +50,18 @@ def CF_Gxyz_blink(parms, tau):
         fluorescent molecules can be observed.
         (This is *CF_Gxyz_gauss* + blinking.
         See *CF_Gxyz_gauss* for more information)
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        G(tau) = offset + 1/( n*(1+tau/taudiff) * sqrt(1 + tau/(SP²*taudiff)) )
-                    * ( 1+T/(1.-T)*exp(-tau/tautrip) )
+        G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
+                    * ( 1+T/(1.-T)*exp(-tau/τ_trip) )
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume
         [1] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
-        [2] tautrip: characteristic residence time in Triplett state
-        [3] taudiff: characteristic residence time (Diffusion)
+        [2] τ_diff: characteristic residence time in Triplett state
+        [3] τ_trip: characteristic residence time (Diffusion)
         [4] SP: =z0/r0 describes the shape of the detection/excitation volume
         [5] offset
         *tau*: time differences from multiple tau correlator
@@ -111,26 +111,25 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
-        *tautrip* is always smaller than 0.9*taud1* or 0.9*taud2*
 
-        particle1 = F/( (1+tau/taud1) * np.sqrt(1+tau/(taud1*SP²)))
-        particle2 = alpha²*(1-F)/( (1+tau/taud2) * np.sqrt(1+tau/(taud2*SP²)))
-        triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+        particle1 = F/( (1+tau/τ_1) * np.sqrt(1+tau/(τ_1*SP²)))
+        particle2 = alpha²*(1-F)/( (1+tau/τ_2) * np.sqrt(1+tau/(τ_2*SP²)))
+        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
         norm = (F + alpha*(1-F))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume (n = n1+n2)
-        [1] taud1: diffusion time of particle species 1
-        [2] taud2: diffusion time of particle species 2
+        [1] τ_1: diffusion time of particle species 1
+        [2] τ_2: diffusion time of particle species 2
         [3] F: fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
         [4] SP: structural parameter z0/r0, describes the shape of the 
                 detection/excitation volume
         [5] alpha: relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [6] tautrip: characteristic residence time in triplet state
+        [6] τ_trip: characteristic residence time in triplet state
         [7] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [8] offset

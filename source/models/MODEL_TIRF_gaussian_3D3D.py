@@ -31,37 +31,37 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
         *tautrip* is always smaller than 0.9*tauD1* or 0.9*tauD2*
 
         w(i*x) = exp(x²)*erfc(x)
-        taud1 = r0²/(4*D1)
-        x1 = sqrt(D1*tau)*kappa
+        taud1 = r_0²/(4*D_1)
+        x1 = sqrt(D_1*tau)*kappa
         gz1 = kappa * 
-             [ sqrt(D1*tau/pi) - (2*D1*tau*kappa² - 1)/(2*kappa) * w(i*x1) ]
+             [ sqrt(D_1*tau/pi) - (2*D_1*tau*kappa² - 1)/(2*kappa) * w(i*x1) ]
         g2D1 = 1 / [ 1.+tau/taud1 ]
         particle1 = F * g2D1 * gz1
 
-        taud2 = r0²/(4*D2)
-        x2 = sqrt(D2*tau)*kappa
+        taud2 = r_0²/(4*D_2)
+        x2 = sqrt(D_2*tau)*kappa
         gz2 = kappa * 
-             [ sqrt(D2*tau/pi) - (2*D2*tau*kappa² - 1)/(2*kappa) * w(i*x2) ]
+             [ sqrt(D_2*tau/pi) - (2*D_2*tau*kappa² - 1)/(2*kappa) * w(i*x2) ]
         g2D2 = 1 / [ 1.+tau/taud2 ]
         particle2 =  alpha²*(1-F) * g2D2 * gz2
 
 
-        triplet = 1 + T/(1-T)*exp(-tau/tautrip)
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
         norm = (1-F + alpha*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] D1: diffusion coefficient first particle species
-        [2] D2: diffusion coefficient second particle species
+        [1] D_1: diffusion coefficient first particle species
+        [2] D_2: diffusion coefficient second particle species
         [3] F: fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
-        [4] r0: radius of the detection profile (FWHM)
+        [4] r_0: radius of the detection profile (FWHM)
         [5] d_eva: evanescent wave depth
         [6] alpha: relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [7] tautrip: characteristic residence time in triplet state
+        [7] τ_trip: characteristic residence time in triplet state
                      tautrip = min(tautrip,tauD2*0.9,tauD1*0.9)
         [8] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
@@ -131,10 +131,12 @@ def Checkme(parms):
     T=parms[8]
     off=parms[9]
 
-    tauD2 = r0**2/(4*D2)
-    tauD1 = r0**2/(4*D1)
-    # Force triplet component to be smaller than diffusion times
-    tautrip = min(tautrip,tauD2*0.9, tauD1*0.9)
+    # REMOVED (issue #2)
+    ## Force triplet component to be smaller than diffusion times
+    #tauD2 = r0**2/(4*D2)
+    #tauD1 = r0**2/(4*D1)
+    #tautrip = min(tautrip,tauD2*0.9, tauD1*0.9)
+
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one
@@ -187,10 +189,10 @@ labels  = ["n",
                 "D"+u"\u2081"+" [10 µm²/s]",
                 "D"+u"\u2082"+" [10 µm²/s]",
                 "F"+u"\u2081", 
-                "r0 [100 nm]",
-                "deva [100 nm]",
+                "r_0 [100 nm]",
+                "d_eva [100 nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -211,10 +213,10 @@ labelshr  = ["n",
                 "D"+u"\u2081"+" [µm²/s]",
                 "D"+u"\u2082"+" [µm²/s]",
                 "F"+u"\u2081", 
-                "r0 [nm]",
-                "deva [nm]",
+                "r_0 [nm]",
+                "d_eva [nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ]
