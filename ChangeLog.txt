@@ -1,4 +1,5 @@
 0.7.1
+ - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg
  - Bugfix: Notebook pages were drag'n'dropable
  - Update function now works in its own thread

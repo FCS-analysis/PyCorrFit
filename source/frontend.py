@@ -19,6 +19,7 @@
 import os
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
+import wx.py.shell
 import numpy as np                      # NumPy
 import platform
 import sys                              # System stuff
@@ -314,8 +315,10 @@ class MyFrame(wx.Frame):
         menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About",
                                     "Information about this program")
         menuUpdate = helpmenu.Append(wx.ID_ANY, "&Update",
-                                    "Check for new version of PyCorrFit"+
+                                    "Check for new version"+
                                      " (Web access required)")
+        menuShell = helpmenu.Append(wx.ID_ANY, "S&hell",
+                                    "A Python shell")
 
 
         # Creating the menubar.
@@ -355,11 +358,13 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSoftware, menuSoftw)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_MENU, self.OnUpdate, menuUpdate)
+        self.Bind(wx.EVT_MENU, self.OnShell, menuShell)
+
 
 
 
     #Help
-    def OnAbout(self, event):
+    def OnAbout(self, event=None):
         # Show About Information
         description = doc.description()
         licence = doc.licence()
@@ -374,6 +379,7 @@ class MyFrame(wx.Frame):
         info.AddDeveloper('Paul Müller')
         info.AddDocWriter('Paul Müller')
         wx.AboutBox(info)
+        
 
     def OnAddModel(self, event=None):
         """ Import a model from an external .txt file. See example model
@@ -1060,7 +1066,13 @@ class MyFrame(wx.Frame):
         self.SetTitleFCS(self.filename)
 
 
-    #Help
+    def OnShell(self, e=None):
+        Shell = wx.py.shell.ShellFrame(self, title="PyCorrFit Shell",
+                 style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
+                 locals=locals())
+        Shell.Show(True)
+        
+
     def OnSoftware(self, event=None):
         # Show About Information
         text = doc.SoftwareUsed()

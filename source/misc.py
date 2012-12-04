@@ -43,10 +43,10 @@ class UpdateDlg(wx.Frame):
         if len(homepage) != 0:
             string = string + '<a href="'+homepage+'">Homepage</a><br>'
         if len(githome) != 0:
-            string = string + '<a href="'+githome+'">Repository</a>'
+            string = string + '<a href="'+githome+'">Repository</a><br>'
 
         if len(changelog) != 0:
-            string = string + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + \
+            string = string + \
                      '<a href="'+changelog+'">Change Log</a>'
         string = string+'</b></p>'
         html.SetPage(string)
@@ -55,8 +55,9 @@ class UpdateDlg(wx.Frame):
 
     def Close(self, event):
         if len(self.changelog) != 0:
-            # Cleanup downloaded file
-            os.remove(self.changelog)
+            # Cleanup downloaded file, if it was downloaded
+            if self.changelog != doc.StaticChangeLog:
+                os.remove(self.changelog)
         self.Destroy()
 
 class wxHTML(wx.html.HtmlWindow):
@@ -163,7 +164,7 @@ def _UpdateWorker(parent):
             clfile.write(changelog)
             clfile.close()            
         else:
-            changelogfile=""
+            changelogfile=doc.StaticChangeLog
 
         results = dict()
         results["Description"] = description

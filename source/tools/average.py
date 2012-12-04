@@ -21,12 +21,6 @@ import numpy as np
 import models as mdls
 import doc
 
-import platform
-
-
-
-
-
 
 class Average(wx.Frame):
     # This tool is derived from a wx.frame.

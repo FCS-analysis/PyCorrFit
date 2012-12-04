@@ -247,6 +247,15 @@ chooseimportmulti = """Select a fitting model for each type of data found.
 HomePage = "http://fcstools.dyndns.org/pycorrfit/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
+if hasattr(sys, 'frozen'):
+    StaticChangeLog = os.path.join(sys._MEIPASS, "doc/"+ChangeLog)
+else:
+    StaticChangeLog = os.path.join(os.path.dirname(sys.argv[0]), "../"+ChangeLog)
+
+clfile = open(StaticChangeLog, 'r')
+__version__ = clfile.readline().strip()
+clfile.close()     
+
 # Github homepage
 GitChLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
 GitHome = "https://github.com/paulmueller/PyCorrFit"

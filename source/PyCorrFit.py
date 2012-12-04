@@ -47,6 +47,7 @@ if platform.system() == 'Windows':
     sys.setdefaultencoding('utf-8')
 
 ## Continue with the import:
+import doc
 import frontend as gui              # The actual program
 
 
@@ -69,7 +70,8 @@ def CheckVersion(given, required, name):
 
 
 ## VERSION
-version = "0.7.0"
+version = doc.__version__
+__version__ = version
 
 print gui.doc.info(version)
 
