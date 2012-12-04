@@ -18,30 +18,31 @@ import codecs
 import numpy as np
 
 import matplotlib
-# We do this further below, catching a warnings:
-#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 
-import os
-import platform
-import sys
-import unicodedata
-
+# We do catch warnings about performing this before matplotlib.backends stuff
 import warnings
-
-# Catch warnings, if plotting is called multiple times
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+    
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 # Text rendering with matplotlib
 from matplotlib import rcParams
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
+## In edclasses, we edited the wxWidgets version of the NavigationToolbar2Wx.
+## This hack enables us to remember directories.
+# import edclasses
+# NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
+
+import os
+import sys
+import unicodedata
+
+# For finding latex tools
+from misc import findprogram
 
 # PyCorrFit models
-import edclasses
-# NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
-from misc import findprogram
 import models as mdls
 
 
@@ -118,7 +119,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         for saving the final figure. We wanted save in the same directory
         as PyCorrFit was working and the filename should be the tabtitle.
     """
-    # This is a dirty hack
+    # Close all other plots before commencing
     try:
         plt.close()
     except:
@@ -237,6 +238,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         ticks = ax2.get_yticks()
         ax2.set_yticks([ticks[0], ticks[-1], 0])
 
+    ## # Hack removed
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
@@ -246,8 +248,18 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     if verbose == True:
         plt.show()
     else:
-        fig.canvas.toolbar.save()
-
+        # If WXAgg is not used for some reason, then our hack does not work
+        # and we must use e.g. TkAgg
+        try:
+            fig.canvas.toolbar.save()
+        except AttributeError:
+            fig.canvas.toolbar.save_figure()
+            
+    # Close all other plots before commencing
+    try:
+        plt.close()
+    except:
+        pass
 
 
 def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
@@ -261,7 +273,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         for saving the final figure. We wanted save in the same directory
         as PyCorrFit was working and the filename should be the tabtitle.
     """
-    # This is a dirty hack
+    # Close all other plots before commencing
     try:
         plt.close()
     except:
@@ -321,6 +333,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     # Add some more stuff to the text and append data to a .txt file
     plt.legend()
 
+    ## Hack removed
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
@@ -330,7 +343,18 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     if verbose == True:
         plt.show()
     else:
-        fig.canvas.toolbar.save()
+        # If WXAgg is not used for some reason, then our hack does not work
+        # and we must use e.g. TkAgg
+        try:
+            fig.canvas.toolbar.save()
+        except AttributeError:
+            fig.canvas.toolbar.save_figure()
+
+    # Close all other plots before commencing
+    try:
+        plt.close()
+    except:
+        pass
 
 
 

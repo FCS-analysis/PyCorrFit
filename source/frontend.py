@@ -55,14 +55,13 @@ class FlatNotebookDemo(fnb.FlatNotebook):
     """
     Flatnotebook class
     """
-
     def __init__(self, parent):
         """Constructor"""
         self.fnb = fnb.FlatNotebook.__init__(self, parent, wx.ID_ANY,
-        style=fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
+        agwStyle=fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
               fnb.FNB_DROPDOWN_TABS_LIST|fnb.FNB_NODRAG|\
-              fnb.FNB_TABS_BORDER_SIMPLE)
-
+              fnb.FNB_TABS_BORDER_SIMPLE|\
+              fnb.FNB_HIDE_ON_SINGLE_TAB)
 
 
 ###########################################################

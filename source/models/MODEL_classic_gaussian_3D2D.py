@@ -106,7 +106,7 @@ labels  = ["n",
                 "F_3D", 
                 "SP",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ]

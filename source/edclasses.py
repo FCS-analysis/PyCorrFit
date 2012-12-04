@@ -8,9 +8,16 @@
 
 """
 
-# Making different sized subplots
+# Matplotlib plotting capabilities
 import matplotlib
-#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets - done in doc
+
+# We do catch warnings about performing this before matplotlib.backends stuff
+#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 import numpy as np
 import os
@@ -18,15 +25,6 @@ import sys
 import traceback
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
-
-import platform
-
-
-
-
-
-
-
 
 class FloatSpin(floatspin.FloatSpin):
     def __init__(self, parent, digits=10, increment=.01):
@@ -163,10 +161,12 @@ def save_figure(self, evt=None):
             dlg3 = wx.MessageDialog(parent, errstr, "Error", 
                 style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             dlg3.ShowModal() == wx.ID_OK
+    else:
+        dirname = dlg.GetDirectory()
     try:
         parent.dirname = dirname
     except:
         pass
-#plt.close()
-NavigationToolbar2Wx.save = save_figure
 
+# Add the save_figure function to the standard class for wx widgets.
+matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure

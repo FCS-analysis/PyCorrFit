@@ -199,7 +199,7 @@ parms_6001 = [labels_6001, values_6001, valuestofit_6001]
 # 2D Model Gauss with Triplet
 m_twodga6002 = [6002, "2D+T (Gauß)","2D confocal diffusion with triplet", 
                 CF_Gxy_T_gauss]
-labels_6002 = ["n", "τ_diff [ms]",  "τ trip [ms]", "T", "offset"]
+labels_6002 = ["n", "τ_diff [ms]",  "τ_trip [ms]", "T", "offset"]
 values_6002 = [4.0, 0.4, 0.001, 0.01, 0.0]
 valuestofit_6002 = [True, True, True, True, False]
 parms_6002 = [labels_6002, values_6002, valuestofit_6002]
@@ -214,7 +214,7 @@ labels_6031  = ["n",
                 "τ"+u"\u2082"+" [ms]",
                 "F"+u"\u2081", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ trip [ms]",
+                "τ_trip [ms]",
                 "T",
                 "offset"
                 ]
