@@ -1082,7 +1082,7 @@ class MyFrame(wx.Frame):
                  locals=locals())
         try:
 	    ico = misc.getMainIcon()
-            wx.Frame.SetIcon(self, ico)
+            wx.Frame.SetIcon(Shell, ico)
         except:
             pass
         Shell.Show(True)
