@@ -129,7 +129,7 @@ def save_figure(self, evt=None):
         fieltypestring += formats[key]+"(*."+key+")|*."+key+"|"
     # remove last |
     fieltypestring = fieltypestring[:-1]
-    dlg = wx.FileDialog(parent, "Choose a data file", dirname, filename, 
+    dlg = wx.FileDialog(parent, "Save figure", dirname, filename, 
            fieltypestring, wx.SAVE|wx.OVERWRITE_PROMPT)
 
     # png is default

@@ -28,6 +28,9 @@ import traceback                        # for Error handling
 # PyCorrFit modules
 import doc                          # Documentation/some texts
 import edclasses
+# The icon file was created with
+# img2py -i -n Main Icon.png icon.py
+import icon                         # Contains the program icon
 try:
     import misc
 except ImportError:
@@ -156,6 +159,10 @@ class MyFrame(wx.Frame):
 
         # If user hits the "x", ask if he wants to save
         self.Bind(wx.EVT_CLOSE, self.OnExit)
+
+        # Set window icon
+        ico = icon.getMainIcon()
+        self.SetIcon(ico)
         
 
 
@@ -387,7 +394,7 @@ class MyFrame(wx.Frame):
         """
         # Add a model using the dialog.
         filters = "text file (*.txt)|*.txt"
-        dlg = wx.FileDialog(self, "Choose a model file", 
+        dlg = wx.FileDialog(self, "Open model file", 
                             self.dirname, "", filters, wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             NewModel = usermodel.UserModel(self)
@@ -566,7 +573,7 @@ class MyFrame(wx.Frame):
                 # Add a separator, but not behind the last entry
                 # This is wx widgets stuff.
                 filters = filters+"|"
-        dlg = wx.FileDialog(self, "Choose a data file", 
+        dlg = wx.FileDialog(self, "Open data file", 
             self.dirname, "", filters, wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # The filename the page will get
@@ -765,7 +772,7 @@ class MyFrame(wx.Frame):
             if i+1 != len(SupFiletypes):
                 # Add a separator if item is not last item
                 filters = filters+"|"
-        dlg = wx.FileDialog(self, "Choose data files", 
+        dlg = wx.FileDialog(self, "Open data files", 
             self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
         if dlg.ShowModal() == wx.ID_OK:
             Datafiles = dlg.GetFilenames()
@@ -921,7 +928,6 @@ class MyFrame(wx.Frame):
                 # each string is one line
                 NewModel.AddModel(ExternalFunctions[key].splitlines())
                 NewModel.ImportModel()
-
             # Internal functions:
             N = len(Function_parms)
             # Reset tabcounter
@@ -993,6 +999,7 @@ class MyFrame(wx.Frame):
         # If no file has been selected, self.filename will be set to 'None'.
         self.dirname, self.filename = opf.saveCSV(self, self.dirname, Page)
 
+
     def OnSavePlotCorr(self, e=None):
         """ make some output """
         # Saving dialog box.
@@ -1001,7 +1008,8 @@ class MyFrame(wx.Frame):
         Page = self.notebook.GetCurrentPage()
         plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
                                      verbose)
-        
+
+
     def OnSavePlotTrace(self, e=None):
         """ make some output """
         # Saving dialog box.
@@ -1070,8 +1078,11 @@ class MyFrame(wx.Frame):
         Shell = wx.py.shell.ShellFrame(self, title="PyCorrFit Shell",
                  style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
                  locals=locals())
+        # Set window icon
+        ico = icon.getMainIcon()
+        Shell.SetIcon(ico)
         Shell.Show(True)
-        
+
 
     def OnSoftware(self, event=None):
         # Show About Information

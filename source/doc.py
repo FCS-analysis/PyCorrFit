@@ -50,9 +50,14 @@ import readfiles
 
 
 def description():
-    return """PyCorrFit is a data displaying, fitting and processing
+    return """PyCorrFit is a data displaying, fitting and evaluat
 tool, targeted at fluorescence correlation
 spectroscopy. PyCorrFit is written in Python."""
+
+def description():
+    return """PyCorrFit displays and processes data
+from fluorescence correlation spectroscopy
+measurements. PyCorrFit is written in Python."""
 
 def info(version):
     """ Returns a little info about our program and what it can do.

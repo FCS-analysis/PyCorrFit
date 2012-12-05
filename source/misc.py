@@ -18,6 +18,7 @@ import wx.html
 import wx.lib.delayedresult as delayedresult
 
 import doc                          # Documentation/some texts
+import icon                         # Contains the program icon
 
 class UpdateDlg(wx.Frame):
     def __init__(self, parent, valuedict):
@@ -51,6 +52,9 @@ class UpdateDlg(wx.Frame):
         string = string+'</b></p>'
         html.SetPage(string)
         self.Bind(wx.EVT_CLOSE, self.Close)
+        # Set window icon
+        ico = icon.getMainIcon()
+        self.SetIcon(ico)
 
 
     def Close(self, event):

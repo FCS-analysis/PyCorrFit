@@ -40,7 +40,7 @@ def ImportParametersYaml(parent, dirname):
     """ Import the parameters from a parameters.yaml file
         from an PyCorrFit session.
     """
-    dlg = wx.FileDialog(parent, "Choose a session file", dirname, "", 
+    dlg = wx.FileDialog(parent, "Open session file", dirname, "", 
                                 "*.fcsfit-session.zip", wx.OPEN)
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
@@ -67,7 +67,7 @@ def OpenSession(parent, dirname, sessionfile=None):
     """
     fcsfitwildcard = ".fcsfit-session.zip"
     if sessionfile is None:
-        dlg = wx.FileDialog(parent, "Choose a session file", dirname, "", 
+        dlg = wx.FileDialog(parent, "Open session file", dirname, "", 
                         "*"+fcsfitwildcard, wx.OPEN)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
@@ -254,7 +254,7 @@ def saveCSV(parent, dirname, Page):
         *Page*     Page containing all necessary variables
     """
     filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]
-    dlg = wx.FileDialog(parent, "Choose a data file", dirname, filename, 
+    dlg = wx.FileDialog(parent, "Save curve", dirname, filename, 
           "Correlation with trace (*.csv)|*.csv;*.CSV"+\
           "|Correlation only (*.csv)|*.csv;*.CSV",
            wx.SAVE|wx.FD_OVERWRITE_PROMPT)
@@ -368,7 +368,7 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         *Comments* on the session and on each page
         We will also write a Readme.txt
     """
-    dlg = wx.FileDialog(parent, "Choose a data file", dirname, "",
+    dlg = wx.FileDialog(parent, "Save session file", dirname, "",
                      "*.fcsfit-session.zip", wx.SAVE|wx.FD_OVERWRITE_PROMPT)
     if dlg.ShowModal() == wx.ID_OK:
         filename = dlg.GetFilename()
