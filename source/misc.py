@@ -53,7 +53,7 @@ class UpdateDlg(wx.Frame):
         html.SetPage(string)
         self.Bind(wx.EVT_CLOSE, self.Close)
         # Set window icon
-        ico = icon.getMainIcon()
+        ico = getMainIcon()
         self.SetIcon(ico)
 
 
@@ -68,6 +68,15 @@ class wxHTML(wx.html.HtmlWindow):
     def OnLinkClicked(parent, link):
          webbrowser.open(link.GetHref())
 
+def getMainIcon():
+    # Set window icon
+    iconBMP = icon.getMainBitmap()
+    # scale
+    image = wx.ImageFromBitmap(iconBMP)
+    image = image.Scale(32, 32, wx.IMAGE_QUALITY_HIGH)
+    iconBMP = wx.BitmapFromImage(image)
+    iconICO = wx.IconFromBitmap(iconBMP)
+    return iconICO
 
 def findprogram(program):
     """ Uses the systems PATH variable find executables"""
