@@ -161,9 +161,11 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnExit)
 
         # Set window icon
-        ico = icon.getMainIcon()
-        self.SetIcon(ico)
-        
+        try:
+	    ico = misc.getMainIcon()
+            wx.Frame.SetIcon(self, ico)
+        except:
+            pass
 
 
     def add_fitting_tab(self, event=None, modelid=None, counter=None):
@@ -1078,9 +1080,11 @@ class MyFrame(wx.Frame):
         Shell = wx.py.shell.ShellFrame(self, title="PyCorrFit Shell",
                  style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
                  locals=locals())
-        # Set window icon
-        ico = icon.getMainIcon()
-        Shell.SetIcon(ico)
+        try:
+	    ico = misc.getMainIcon()
+            wx.Frame.SetIcon(self, ico)
+        except:
+            pass
         Shell.Show(True)
 
 
