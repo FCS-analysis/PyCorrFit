@@ -54,8 +54,7 @@ class UpdateDlg(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.Close)
         # Set window icon
         ico = getMainIcon()
-        self.SetIcon(ico)
-
+        wx.Frame.SetIcon(self, ico)
 
     def Close(self, event):
         if len(self.changelog) != 0:
