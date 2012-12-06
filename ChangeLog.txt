@@ -1,4 +1,8 @@
 0.7.1
+ (This will be 0.7.2)
+ - Bugfix: fixed issue #10; we now have a goodness of the fit, if wieghted
+           fitting was performed
+0.7.1
  - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg
  - Bugfix: Notebook pages were drag'n'dropable

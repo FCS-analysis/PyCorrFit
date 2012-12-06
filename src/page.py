@@ -255,19 +255,13 @@ class FittingPanel(wx.Panel):
         self.Fitbox[1].Enable()
         self.Fitbox[-1].Enable()
 
-
-    def Fit_function(self, event=None):
-        """ Call the fit function. """
-        # Make a busy cursor
-        wx.BeginBusyCursor()
-        # Apply parameters
-        # This also applies the background correction, if present
-        self.apply_parameters()
-
+    def Fit_create_instance(self, noplots=False):
+        """ *noplots* prohibits plotting (e.g. splines) """
         ## Start fitting class and fill with information.
         Fitting = fit.Fit()
         # Verbose mode?
-        Fitting.verbose = self.parent.MenuVerbose.IsChecked()
+        if noplots is False:
+            Fitting.verbose = self.parent.MenuVerbose.IsChecked()
         Fitting.uselatex = self.parent.MenuUseLatex.IsChecked()
         Fitting.check_parms = self.check_parms
         Fitting.dataexpfull = self.CorrectDataexp(self.dataexpfull)
@@ -300,6 +294,18 @@ class FittingPanel(wx.Panel):
         Fitting.valuestofit = 1*self.active_parms[2]
         Fitting.weights = self.Fitbox[5].GetValue()
         Fitting.ApplyParameters()
+        return Fitting
+
+        
+    def Fit_function(self, event=None):
+        """ Call the fit function. """
+        # Make a busy cursor
+        wx.BeginBusyCursor()
+        # Apply parameters
+        # This also applies the background correction, if present
+        self.apply_parameters()
+        # Create instance of fitting class
+        Fitting = self.Fit_create_instance()
         try:
             Fitting.least_square()
         except ValueError:
@@ -486,7 +492,9 @@ class FittingPanel(wx.Panel):
             # case when a session has been loaded. Do it.
             # (Usually it is done right after fitting)
             if self.chi2 is None:
-                self.chi2 = sum( (self.resid[:,1])**2 )
+                Fitting = self.Fit_create_instance(noplots=True)
+                Fitting.parmoptim = Fitting.fitparms
+                self.chi2 = Fitting.get_chi_squared()
 
         else:
             linecorr = plot.PolyLine(self.datacorr, legend='', colour='blue',

@@ -288,8 +288,23 @@ class Fit(object):
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
         # Do not forget to subtract experimental data ;)
-        return (self.function(self.values, x) - self.data) / \
-               np.sqrt(self.variances)
+        #return (self.function(self.values, x) - self.data) / \
+        #       np.sqrt(self.variances)
+        return (self.function(self.values, x) - self.data) / self.variances
+
+
+    def get_chi_squared(self):
+        # Calculate Chi**2
+        # We have two cases here:
+        #  a) we do not have any weights (self.variances = 1.)
+        #  b) we have weights and can calculate the reduces Chi**2
+        if len(np.atleast_1d(self.variances)) == 1 :
+            return np.sum( (self.fit_function(self.parmoptim, self.x))**2)
+        else:
+            # Divide by degrees of freedom
+            degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
+            return np.sum( (self.fit_function(self.parmoptim, self.x))**2) / \
+                       degrees_of_freedom
 
 
     def least_square(self):
@@ -316,11 +331,6 @@ class Fit(object):
                 index = index + 1
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
-        # Calculate Chi**2
-        # Do not forget to remove the variances we used for minimization
-        # with the weighted fitting.
-        self.chi = np.sum( (self.fit_function(self.parmoptim, self.x) * 
-                        np.sqrt(self.variances))**2                  )
+        self.chi = self.get_chi_squared()
         # Write optimal parameters back to this class.
         self.valuesoptim = 1*self.values # This is actually a redundance array
-

@@ -148,6 +148,7 @@ class InfoClass(object):
         
 
         # Fitting
+        variances_were_calculated = (Page.Fitbox[1].GetSelection() > 0)
         weightedfit = Page.Fitbox[1].GetValue()
         fittingbins = Page.Fitbox[5].GetValue() # from left and right
         Fitting = list()
@@ -158,6 +159,11 @@ class InfoClass(object):
             else:
                 Title.append(["Data type", "Autocorrelation" ]) 
             Fitting.append([ u"\u03c7"+"²", Page.chi2 ])
+            if variances_were_calculated:
+                Chi2type = "reduced"
+            else:
+                Chi2type = "sum of squares only"
+            Fitting.append([ u"\u03c7"+"²-type", Chi2type ])
             Fitting.append([ "Weighted fit", weightedfit ])
             if weightedfit is True:
                 Fitting.append([ "No. channels", 2*fittingbins+1 ])
