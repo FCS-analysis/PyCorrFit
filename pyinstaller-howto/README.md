@@ -1,11 +1,15 @@
 PyCorrFit - creating binaries with PyInstaller
 =========
 
+Usage
+-------------------
+
 Download PyInstaller v.2.0 from http://www.pyinstaller.org/
 To create a single binary file, go to the unpacked pyinstaller directory and execute
 
     python pyinstaller.py /Path/To/PyCorrFit.py
 
+Alternatively, there are ~.spec files and scripts for Windows XP / Ubuntu12.04 in this directory for bundling binary files.
 
 Known problems
 -------------------
