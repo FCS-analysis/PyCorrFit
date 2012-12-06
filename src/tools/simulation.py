@@ -189,6 +189,10 @@ class Slide(wx.Frame):
         #self.panel.SetSize(newsize)
         #self.SetSize(newsize)
 
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
         # Disable lowest slieder

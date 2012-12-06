@@ -185,6 +185,10 @@ class BackgroundCorrection(wx.Frame):
         self.sp.SetMinimumPaneSize(sashsize)
         self.sp.SplitHorizontally(panel, self.canvas, sashsize)
 
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+
 
     def OnApply(self, event):
         Page = self.parent.notebook.GetCurrentPage()

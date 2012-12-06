@@ -80,6 +80,11 @@ class BatchCtrl(wx.Frame):
 
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
+        
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
 
     def OnApply(self, event):

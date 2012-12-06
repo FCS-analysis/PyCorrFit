@@ -58,6 +58,11 @@ class EditComment(wx.Frame):
 
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
 

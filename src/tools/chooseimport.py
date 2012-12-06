@@ -60,6 +60,11 @@ class ChooseImportTypes(wx.Dialog):
 
         self.panel.SetSizer(self.sizer)
         self.sizer.Fit(self)
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
 
     def OnClose(self, event=None):

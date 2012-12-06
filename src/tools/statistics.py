@@ -97,6 +97,11 @@ class Stat(wx.Frame):
         #self.panel.SetSizer(self.topSizer)
         #self.SetSize(newsize)
         #self.Layout()
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
 

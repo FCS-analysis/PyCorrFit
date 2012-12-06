@@ -2,8 +2,9 @@
 """ PyCorrFit
     Paul Müller, Biotec - TU Dresden
 
-    Module tools - plotexport
-    Let the user create nice plots of our data.
+    Module tools - example
+    This is an example tool. You will need to edit __init__.py inside this
+    folder to activate it.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -34,7 +35,7 @@ class Tool(wx.Frame):
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
-        wx.Frame.__init__(self, parent=self.parent, title="Example Tool",
+        wx.Frame.__init__(self, parent=self.parent, title="Example tool",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
 
         ## MYID
@@ -50,7 +51,7 @@ class Tool(wx.Frame):
         self.SetSize(initial_size)
          ## Content
         self.panel = wx.Panel(self)
-        btnexample = wx.Button(self.panel, wx.ID_ANY, 'Example button')
+        btncopy = wx.Button(self.panel, wx.ID_ANY, 'Example button')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnClose, btncopy)
         
@@ -61,6 +62,11 @@ class Tool(wx.Frame):
 
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
 

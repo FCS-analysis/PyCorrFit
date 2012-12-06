@@ -21,13 +21,6 @@ import numpy as np
 import models as mdls
 from scipy import optimize as spopt
 
-import platform
-
-
-
-
-
-
 class GlobalFit(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
@@ -46,10 +39,6 @@ class GlobalFit(wx.Frame):
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
 
-        initial_size = (450,300)
-        initial_sizec = (initial_size[0]-6, initial_size[1]-30)
-        self.SetMinSize((200,200))
-        self.SetSize(initial_size)
          ## Content
         self.panel = wx.Panel(self)
         
@@ -82,8 +71,18 @@ check parameters on each page and start 'Global fit'.
         self.Bind(wx.EVT_BUTTON, self.OnFit, btnfit)
         self.topSizer.Add(btnfit)
 
+        psize = self.panel.GetBestSize()
+        initial_size = (psize[0],psize[1]+200)
+        self.SetSize(initial_size)
+        sashsize = psize[1]+3
+        
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
 
     

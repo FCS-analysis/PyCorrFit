@@ -125,6 +125,10 @@ class SelectChannels(wx.Frame):
         # Get times.
         self.OnChangeChannels()
 
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+
         # Show window
         self.Show(True)
 

@@ -49,6 +49,11 @@ class ShowTrace(wx.Frame):
         self.OnDraw()
         initial_size = (350,150)
         self.SetSize(initial_size)
+
+        #Icon
+        if parent.MainIcon is not None:
+            wx.Frame.SetIcon(self, parent.MainIcon)
+            
         self.Show(True)
 
     def OnClose(self, event=None):
