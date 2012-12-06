@@ -169,7 +169,11 @@ class InfoClass(object):
                 Fitting.append([ "No. channels", 2*fittingbins+1 ])
             # Fitting range:
             t1 = 1.*Page.taufull[Page.startcrop]
-            t2 = 1.*Page.taufull[Page.endcrop-1]
+            try:
+                t2 = 1.*Page.taufull[Page.endcrop-1]
+            except:
+                import IPython
+                IPython.embed()
             Fitting.append([ "Interval start [ms]", "%.4e" % t1 ])
             Fitting.append([ "Interval end [ms]", "%.4e" % t2 ])
 

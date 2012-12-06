@@ -394,12 +394,6 @@ class FittingPanel(wx.Panel):
         - Apply Parameters (separate function)
         - Drawing of plots
         """
-        ## Channel selection
-        # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
-        # and assigns the result to *self.dataexp*. If *start* and *end* are 
-        # equal (or not given), *self.dataexp* will be equal to 
-        # *self.dataexpfull*.
-        self.parent.OnFNBPageChanged(e=None, Page=self)
         if self.dataexpfull is not None:
             if self.startcrop == self.endcrop:
                 # self.bgcorrect is background correction
@@ -417,6 +411,14 @@ class FittingPanel(wx.Panel):
                 if len(self.tau) == 0:
                     self.tau = 1*self.taufull
                     self.dataexp = 1*self.dataexpfull
+            try:
+                self.taufull[self.startcrop]
+                self.taufull[self.endcrop-1]
+            except:
+                self.startcrop = 0
+                self.endcrop = len(self.taufull)
+                self.tau = 1*self.taufull
+                self.dataexp = 1*self.dataexpfull
         else:
             # We have to check if the startcrop and endcrop parameters are
             # inside the taufull array.
@@ -426,12 +428,20 @@ class FittingPanel(wx.Panel):
                 # Raises TypeError if self.endcrop is not an int.
                 self.taufull[self.endcrop-1]
             except (IndexError, TypeError):
-                self.tau = 1*self.taufull   
+                self.tau = 1*self.taufull
+                self.endcrop = len(self.taufull)
+                self.startcrop = 0
             else:
                 self.tau = 1*self.taufull[self.startcrop:self.endcrop]
+
+        ## ## Channel selection
+        ## # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
+        ## # and assigns the result to *self.dataexp*. If *start* and *end* are 
+        ## # equal (or not given), *self.dataexp* will be equal to 
+        ## # *self.dataexpfull*.
+        ## self.parent.OnFNBPageChanged(e=None, Page=self)
+
         ## Calculate trace average
-
-
         if self.trace is not None:
             # Average of the current pages trace
             self.traceavg = self.trace[:,1].mean()
@@ -495,7 +505,6 @@ class FittingPanel(wx.Panel):
                 Fitting = self.Fit_create_instance(noplots=True)
                 Fitting.parmoptim = Fitting.fitparms
                 self.chi2 = Fitting.get_chi_squared()
-
         else:
             linecorr = plot.PolyLine(self.datacorr, legend='', colour='blue',
                                      width=1)
