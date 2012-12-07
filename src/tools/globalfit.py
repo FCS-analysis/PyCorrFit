@@ -2,9 +2,8 @@
 """ PyCorrFit
     Paul Müller, Biotec - TU Dresden
 
-    Module tools - example
-    This is an example tool. You will need to edit __init__.py inside this
-    folder to activate it.
+    Module tools - globalfit
+    Perform global fitting on pages which share parameters.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -15,11 +14,13 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# We may import different things from throughout the program:
+
 import wx
 import numpy as np
-import models as mdls
 from scipy import optimize as spopt
+
+import models as mdls
+
 
 class GlobalFit(wx.Frame):
     # This tool is derived from a wx.frame.
@@ -31,25 +32,19 @@ class GlobalFit(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Gobal fitting",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-
-         ## Content
+        ## Content
         self.panel = wx.Panel(self)
-        
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-
         textinit = """Fitting of multiple data sets with different models.
 Parameter names have to match. Select pages (e.g. 1,3-5,7),
 check parameters on each page and start 'Global fit'. 
 """
         self.topSizer.Add(wx.StaticText(self.panel, label=textinit))
-
         ## Page selection
         self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
         # Find maximum page number
@@ -61,28 +56,40 @@ check parameters on each page and start 'Global fit'.
             self.WXTextPages.SetValue("0-"+str(j))
         else:
             self.WXTextPages.SetValue("0")
-
         self.topSizer.Add(self.WXTextPages)
-
+        ## Weighted fitting
+        # The weighted fit of the current page will be applied to
+        # all other pages.
+        self.weightedfitdrop = wx.ComboBox(self.panel)
+        weightlist = self.Page.weightlist
+        # Do not display knot number for spline. May be different for each page.
+        # Remove everything after a "(" in the weightlist string.
+        # This way, e.g. the list does not show the knotnumber, which
+        # we don't use anyhow.
+        # We are doing this for all elements, because in the future, other (?)
+        # weighting methods might be implemented.
+        for i in np.arange(len(weightlist)):
+            weightlist[1] = weightlist[1].split("(")[0].strip()
+        self.weightedfitdrop.SetItems(weightlist)
+        self.Page.Fit_create_instance(noplots=True)
+        FitTypeSelection = Page.Fitbox[1].GetSelection()
+        self.weightedfitdrop.SetSelection(FitTypeSelection)
+        ## Knotnumber: we don't want to interfere
+        # The user might want to edit the knotnumbers.
+        # self.FitKnots = Page.FitKnots   # 5 by default
+        ## Bins from left and right: We also don't edit that.
+        self.topSizer.Add(self.weightedfitdrop)
         ## Button
-
         btnfit = wx.Button(self.panel, wx.ID_ANY, 'Global fit')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnFit, btnfit)
         self.topSizer.Add(btnfit)
-
-        psize = self.panel.GetBestSize()
-        initial_size = (psize[0],psize[1]+200)
-        self.SetSize(initial_size)
-        sashsize = psize[1]+3
-        
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-
-        #Icon
+        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-            
         self.Show(True)
 
     
@@ -121,7 +128,9 @@ check parameters on each page and start 'Global fit'.
             # Calculate resulting correlation function
             # corr = function(item.values, item.x)
             # Subtract data. This is the function we want to minimize
-            minimize.append(function(values, item["x"]) - item["data"])
+            minimize.append(
+                (function(values, item["x"]) - item["data"]) / item["variances"]
+                           )
 
         # Flatten the list and make an array out of it.
         return np.array([item for sublist in minimize for item in sublist])
@@ -135,7 +144,7 @@ check parameters on each page and start 'Global fit'.
         self.Destroy()
 
     def OnFit(self, e=None):
-        # string like this: 1,2,4-9,10
+        # process a string like this: "1,2,4-9,10"
         strFull = self.WXTextPages.GetValue()
         listFull = strFull.split(",")
         PageNumbers = list()
@@ -145,7 +154,7 @@ check parameters on each page and start 'Global fit'.
             end = int(pagerange[-1].strip())
             for i in np.arange(end-start+1)+start:
                 PageNumbers.append(i)
-        # Remove duplicates (not necessary)
+        # Remove duplicates is not necessary, because we are accessing a dict.
         # PageNumbers = dict.fromkeys(PageNumbers).keys()
         ## Get the corresponding pages, if they exist:
         self.PageData = dict()
@@ -165,6 +174,12 @@ check parameters on each page and start 'Global fit'.
                     dataset["modelid"] = Page.modelid
                     Page.apply_parameters()
                     dataset["values"] = Page.active_parms[1]
+                    # Get weights
+                    Page.Fitbox[1].SetSelection(
+                                            self.weightedfitdrop.GetSelection())
+                    Page.Fit_WeightedFitCheck()
+                    Fitting = Page.Fit_create_instance(noplots=True)
+                    dataset["variances"] = Fitting.variances
                     self.PageData[j] = dataset
 
                     # Get the parameters to fit from that page
@@ -214,7 +229,10 @@ check parameters on each page and start 'Global fit'.
             # Subtract data. This is the function we want to minimize
             residual = function(values, item["x"]) - item["data"]
             # Calculate chi**2
-            Page.chi2 = np.sum(residual**2)
+            Fitting = Page.Fit_create_instance(noplots=True)
+            Fitting.parmoptim = Fitting.fitparms
+            Page.chi2 = Fitting.get_chi_squared()
+            del Fitting
             Page.apply_parameters_reverse()
             Page.PlotAll()
 

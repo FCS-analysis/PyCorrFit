@@ -14,16 +14,12 @@
     unit of inv. volume : 1000 /µm³
 """
 
+
 import wx
 import numpy as np
 
-import platform
-
-
-
-
-
 import doc
+
 
 class SelectChannels(wx.Frame):
     def __init__(self, parent):
@@ -34,30 +30,22 @@ class SelectChannels(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Data range selection",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
-
         self.Calc_init(self.Page)
         ## Start drawing
-
         panel = wx.Panel(self)
-
-
         text1 = wx.StaticText(panel, label=u"The lag times τ are stored as an "+
                                            u"array of length ")
         self.textend = wx.StaticText(panel, label="%d." % self.lentau)
         text2 = wx.StaticText(panel,
                               label=u"You may wish to confine this array. "+
                                     u"This can be done here.")
-
         ##Spincontrols:
         FlexSpinSizer = wx.FlexGridSizer(rows=2, cols=4, vgap=5, hgap=5)
-
         FlexSpinSizer.Add(wx.StaticText(panel, label="Channels:"))
         self.spinstart = wx.SpinCtrl(panel, -1, initial=self.left, 
                                      min=self.start0, max=self.end0-1)
@@ -66,69 +54,49 @@ class SelectChannels(wx.Frame):
         self.spinend = wx.SpinCtrl(panel, -1, initial=self.right, 
                                    min=self.start0+1, max=self.end0)
         FlexSpinSizer.Add(self.spinend)
-
         FlexSpinSizer.Add(wx.StaticText(panel, label="Times [ms]:"))
         self.TextTimesStart = wx.StaticText(panel, label="None")
         FlexSpinSizer.Add(self.TextTimesStart)
         FlexSpinSizer.Add(wx.StaticText(panel, label=" - "))
         self.TextTimesEnd = wx.StaticText(panel, label="None")
         FlexSpinSizer.Add(self.TextTimesEnd)
-
-
-
         # Buttons
         btnapply = wx.Button(panel, wx.ID_ANY, 'Apply')
         btnapplyall = wx.Button(panel, wx.ID_ANY, 'Apply to all pages')
         self.Bind(wx.EVT_BUTTON, self.OnApply, btnapply)
         self.Bind(wx.EVT_BUTTON, self.OnApplyAll, btnapplyall)
-
         self.Bind(wx.EVT_SPINCTRL, self.OnChangeChannels, self.spinend)
         self.Bind(wx.EVT_SPINCTRL, self.OnChangeChannels, self.spinstart)
-
         # Checkbox
         self.fixcheck = wx.CheckBox(panel, -1,
              label="Fix channel selection for all (new) pages.")
         self.Bind(wx.EVT_CHECKBOX, self.OnCheckbox, self.fixcheck)
-
+        # Text
         text3 = wx.StaticText(panel, label=doc.channelsel)
-        
-        
-        
+        # Sizer
         topSizer = wx.BoxSizer(wx.VERTICAL)
-
-
-
-
         buttonsizer = wx.BoxSizer(wx.HORIZONTAL)
-
-
         buttonsizer.Add(btnapply, 1)
         buttonsizer.Add(btnapplyall, 1)
-
         text1sizer = wx.BoxSizer(wx.HORIZONTAL)
         text1sizer.Add(text1)
         text1sizer.Add(self.textend)
-
         topSizer.Add(text1sizer)
         topSizer.Add(text2)
         topSizer.AddSpacer(5)
         topSizer.Add(FlexSpinSizer)
         topSizer.Add(self.fixcheck)
-
         topSizer.Add(text3)
         topSizer.AddSpacer(5)
         topSizer.Add(buttonsizer)
-
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
-
+        self.SetMinSize(topSizer.GetMinSizeTuple())
         # Get times.
         self.OnChangeChannels()
-
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-
         # Show window
         self.Show(True)
 
@@ -159,9 +127,11 @@ class SelectChannels(wx.Frame):
         else:
             self.right -=1
 
+
     def OnApply(self, event=None):
         self.SetValues()
         self.Page.PlotAll()
+
 
     def OnApplyAll(self, event=None):
         start = self.spinstart.GetValue()
@@ -214,6 +184,7 @@ class SelectChannels(wx.Frame):
         self.TextTimesStart.SetLabel("%.4e" % t1)
         self.TextTimesEnd.SetLabel("%.4e" % t2)
 
+
     def OnCheckbox(self, event=None):
         """ Set the correct value in the spincontrol, if the checkbox
             is not checked.
@@ -239,7 +210,6 @@ class SelectChannels(wx.Frame):
         if state == True:
             # We do not need to run Calc_init
             self.Page = page
-
         else:
             # We will run it
             self.Calc_init(page)
@@ -248,7 +218,6 @@ class SelectChannels(wx.Frame):
             self.spinend.SetRange(self.start0+1, self.end0)
             self.spinend.SetValue(self.right)
             self.textend.SetLabel("%d." % self.lentau)
-
         self.OnChangeChannels()
 
 
@@ -260,6 +229,3 @@ class SelectChannels(wx.Frame):
             start, end = end, start
         self.Page.startcrop = start
         self.Page.endcrop = end + 1 # +1, because arrays are accessed like this
-
-
-

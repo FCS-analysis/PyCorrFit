@@ -152,7 +152,7 @@ There are a number of files within this archive,
 depending on what was done during the session.
 
 backgrounds.csv
- - Contains the list of backgrounds used
+ - Contains the list of backgrounds used and
  - Averaged intensities in [kHz]
 
 bg_trace*.csv (where * is an integer)
@@ -178,8 +178,8 @@ Parameters.yaml
       - {List of parameters}
       - {List of checked parameters (for fitting)}
       - [{Min channel selected}, {Max channel selected}]
-      - [{Weighted fit enabled}, {No. of bins from left and right}, 
-         {No. of knots (e.g. spline fitting)}]
+      - [{Weighted fit method (0=None, 1=Spline, 2=Model function)}, 
+          {No. of bins from left and right}, {No. of knots (of e.g. spline)}]
       - [{Background to use (line in backgrounds.csv)}]
       - Data type is Cross-correlation?
 

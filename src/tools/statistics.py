@@ -2,9 +2,9 @@
 """ PyCorrFit
     Paul Müller, Biotec - TU Dresden
 
-    Module tools - example
-    This is an example tool. You will need to edit __init__.py inside this
-    folder to activate it.
+    Module tools - statistics
+    Provide the user with tab-separated statistics of their curves.
+    Values are sorted according to the page number.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -15,17 +15,12 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# We may import different things from throughout the program:
+
 import wx
 import numpy as np
 import os
+
 from info import InfoClass
-
-import platform
-
-
-
-
 
 
 class Stat(wx.Frame):
@@ -38,21 +33,11 @@ class Stat(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Statistics",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-
-        initial_size = (250,300)
-        initial_sizec = (initial_size[0]-6, initial_size[1]-30)
-        self.SetMinSize((200,200))
-		
-
-        self.SetSize(initial_size)
-
         ## Content
         # We will display a dialog that conains all the settings
         # - Which model we want statistics on
@@ -81,29 +66,20 @@ class Stat(wx.Frame):
         self.OnChooseValues()
         self.btnSave = wx.Button(self.panel, wx.ID_ANY, 'Save')
         self.Bind(wx.EVT_BUTTON, self.OnSaveTable, self.btnSave)
-
-
+        # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(text)
         self.topSizer.Add(self.boxsizer)
         self.topSizer.Add(self.btnSave)
+        # Set size of window
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-
-        # Sometimes a model has more variables and the window
-        # needs to be resized.
-        #(xmin1, ymin1 ) = self.topSizer.GetMinSizeTuple()
-        #newsize = (xmin1, ymin1)
-        #self.panel.SetSizer(self.topSizer)
-        #self.SetSize(newsize)
-        #self.Layout()
-
-        #Icon
+        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        ## Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-            
         self.Show(True)
-        wx.EVT_SIZE(self, self.OnSize)
+
 
     def OnChooseValues(self, event=None):
         self.InfoClass.CurPage = self.Page
@@ -118,12 +94,14 @@ class Stat(wx.Frame):
                     self.Checkboxes.append(checkbox)
                     self.Checklabels.append(subitem[0])
 
+
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
+
 
     def OnPageChanged(self, page):
         # When parent changes
@@ -132,6 +110,7 @@ class Stat(wx.Frame):
         # of the notebook changes.
         # Just close it. It's the easiest way.
         self.OnClose()
+
 
     def OnSaveTable(self, event=None):
         dirname = self.parent.dirname
@@ -150,7 +129,6 @@ class Stat(wx.Frame):
             modelid = self.Page.modelid
             # This creates self.SaveInfo:
             self.GetWantedParameters()
-
             for atuple in self.SaveInfo[0]:
                 openedfile.write(atuple[0]+"\t")
             openedfile.write("\r\n")
@@ -181,11 +159,11 @@ class Stat(wx.Frame):
         self.InfoClass.Pagelist = pages
         AllInfo = self.InfoClass.GetAllInfo()
         self.SaveInfo = list()
-
-
         # Some nasty iteration through the dictionaries.
         # Collect all checked variables.
-        for Info in AllInfo:
+        pagekeys = AllInfo.keys()
+        pagekeys.sort()
+        for Info in pagekeys:
             pageinfo = list()
             for item in AllInfo[Info]:
                 for subitem in AllInfo[Info][item]:
@@ -195,8 +173,3 @@ class Stat(wx.Frame):
                                 pageinfo.append(subitem)
 
             self.SaveInfo.append(pageinfo)
-
-    def OnSize(self, event):
-        size = event.GetSize()
-        sizec = (size[0]-5, size[1]-30)
-        self.panel.SetSize(size)

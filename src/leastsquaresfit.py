@@ -24,11 +24,6 @@ from scipy import interpolate as spintp
 from scipy import optimize as spopt
 import warnings
 
-import platform
-
-
-
-
 
 # If we use this module with PyCorrFit, we can plot things with latex using
 # our own special thing.

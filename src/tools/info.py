@@ -14,16 +14,12 @@
     unit of inv. volume : 1000 /µm³
 """
 
+
 import wx
 import numpy as np
 
-import platform
-
-
-
-
-
 import models as mdls
+
 
 class InfoClass(object):
     """ This class get's all the Info possible from a Page and
@@ -35,6 +31,7 @@ class InfoClass(object):
         # The current page we are looking at:
         self.CurPage = CurPage
 
+
     def GetAllInfo(self):
         """ Get a dictionary with page titles and an InfoDict as value.
         """
@@ -44,15 +41,18 @@ class InfoClass(object):
             MultiInfo[Page.counter[:-2]] = self.GetPageInfo(Page)
         return MultiInfo
 
+
     def GetCurInfo(self):
         """ Get all the information about the current Page.
             Added for convenience. You may use GetPageInfo.
         """
         return self.GetPageInfo(self.CurPage)
 
+
     def GetCurFancyInfo(self):
         """ For convenience. """
         return self.GetFancyInfo(self.CurPage)
+
 
     def GetFancyInfo(self, Page):
         """ Get a nice string representation of the Info """
@@ -96,10 +96,10 @@ class InfoClass(object):
             SupDoc = InfoDict["modelsupdoc"][0]
         except KeyError:
             SupDoc = ""
-
         PageInfo = Version+Title+Parameters+Supplement+Fitting+Background+\
                    ModelDoc+SupDoc
         return PageInfo
+
 
     def GetPageInfo(self, Page):
         """ Needs a Page and gets all information from it """
@@ -110,9 +110,7 @@ class InfoClass(object):
         model = [Page.model, Page.tabtitle.GetValue(), Page.modelid]
         parms = Page.active_parms[1]
         fct = Page.active_fct.__name__
-
         InfoDict["version"] = [Page.parent.version]
-        
         Title = list()
         Title.append(["Function used", fct ]) 
         Title.append(["Model name", model[0] ]) 
@@ -120,8 +118,7 @@ class InfoClass(object):
         Title.append(["User title", model[1] ]) 
         Title.append(["Page number", Page.counter[1:-2] ]) 
         InfoDict["title"] = Title
-        
-        # Parameters
+        ## Parameters
         Parameters = list()
         # Use this function to determine human readable parameters, if possible
         Units, Newparameters = mdls.GetHumanReadableParms(model[2], parms)
@@ -129,7 +126,6 @@ class InfoClass(object):
         for i in np.arange(len(parms)):
             Parameters.append([ Units[i], Newparameters[i] ])
         InfoDict["parameters"] = Parameters
-
         # Add some more information if available
         # Info is a dictionary or None
         MoreInfo = mdls.GetMoreInfo(model[2], Page)
@@ -145,9 +141,7 @@ class InfoClass(object):
                 a=0
             else:
                 InfoDict["modelsupdoc"] = [func_info .func_doc]
-        
-
-        # Fitting
+        ## Fitting
         variances_were_calculated = (Page.Fitbox[1].GetSelection() > 0)
         weightedfit = Page.Fitbox[1].GetValue()
         fittingbins = Page.Fitbox[5].GetValue() # from left and right
@@ -176,7 +170,6 @@ class InfoClass(object):
                 IPython.embed()
             Fitting.append([ "Interval start [ms]", "%.4e" % t1 ])
             Fitting.append([ "Interval end [ms]", "%.4e" % t2 ])
-
             # Fittet parameters
             somuch = sum(Page.active_parms[2])
             if somuch >= 1:
@@ -187,9 +180,7 @@ class InfoClass(object):
                 fitted = fitted[:-2] # remove trailing comma
                 Fitting.append(["fit par.", fitted])
             InfoDict["fitting"] = Fitting
-
-
-        # Background
+        ## Background
         bgselected = Page.bgselected # Selected Background
         Background = list()
         if bgselected is not None:
@@ -198,13 +189,9 @@ class InfoClass(object):
             Background.append([ "bg name", bgname ])
             Background.append([ "bg rate [kHz]", bgrate ])
             InfoDict["background"] = Background
-
-        # Function doc string
+        ## Function doc string
         InfoDict["modeldoc"] = [Page.active_fct.func_doc]
-
         return InfoDict
-
-
 
 
 class ShowInfo(wx.Frame):
@@ -216,44 +203,34 @@ class ShowInfo(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Info",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
-        
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
-
+        # Size
         initial_size = wx.Size(450,300)
         initial_sizec = (initial_size[0]-6, initial_size[1]-30)
         self.SetMinSize(wx.Size(200,200))
         self.SetSize(initial_size)
          ## Content
         self.panel = wx.Panel(self)
-
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE, 
                         size=initial_sizec)
         btncopy = wx.Button(self.panel, wx.ID_CLOSE, 'Copy to clipboard')
         self.Bind(wx.EVT_BUTTON, self.OnCopy, btncopy)
-        
-
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-
         self.topSizer.Add(btncopy)
         self.topSizer.Add(self.control)
-
-
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-            
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
         self.Content()
+
 
     def Content(self):
         # Fill self.control with content.
@@ -263,10 +240,12 @@ class ShowInfo(wx.Frame):
         PageInfo = InfoMan.GetCurFancyInfo()
         self.control.SetValue(PageInfo)
 
+
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
+
 
     def OnCopy(self, event):
         if not wx.TheClipboard.IsOpened():
@@ -278,15 +257,15 @@ class ShowInfo(wx.Frame):
         else:
             print "Other application has lock on clipboard."
 
+
     def OnPageChanged(self, page):
         # When parent changes
         self.Page = page
         self.Content()
+
 
     def OnSize(self, event):
         size = event.GetSize()
         sizec = wx.Size(size[0]-5, size[1]-30)
         self.panel.SetSize(size)
         self.control.SetSize(sizec)
-
-

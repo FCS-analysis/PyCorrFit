@@ -80,7 +80,7 @@ print "\n\nChecking module versions..."
 CheckVersion(csv.__version__, "1.0", "csv")
 CheckVersion(np.__version__, "1.5.1", "NumPy")
 CheckVersion(scipy.__version__, "0.8.0", "SciPy")
-CheckVersion(sympy.__version__, "0.7.1", "sympy")
+CheckVersion(sympy.__version__, "0.7.2", "sympy")
 CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
 CheckVersion(yaml.__version__, "3.09", "yaml")
 
@@ -110,7 +110,7 @@ if len(arg) >= 18:
     print "\nLoading Session "+arg
     frame.OnOpenSession(sessionfile=arg)
 elif len(arg) != 0:
-    print "\nI do not know what to do with argument: "+arg
+    print "\nI do not know what to do with this argument: "+arg
 # Now start the app
 app.MainLoop()
 

@@ -15,17 +15,11 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# We may import different things from throughout the program:
+
 import wx
 import numpy as np
 
-import edclasses                    # Cool stuf like better floatspin
-
-import platform
-
-
-
-
+import edclasses  # edited floatspin
 
 
 class Slide(wx.Frame):
@@ -38,38 +32,28 @@ class Slide(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Simulation",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
         # Starting positions/factors for spinctrls and sliders
         self.slidemax = 1000
         self.slidestart = 500
         self.spinstartfactor = 0.1
         self.spinendfactor = 1.9
-
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-
-
-
         ## Content
         self.panel = wx.Panel(self)
-
         self.rbtnB = wx.RadioButton (self.panel, -1, 'Fix parameter B', 
                                         style = wx.RB_GROUP)
         self.rbtnOp = wx.RadioButton (self.panel, -1, 'Fix operation result')
-
         # Set starting variables
         self.SetStart()
-
+        # Populate panel
         dropsizer = wx.FlexGridSizer(rows=2, cols=3, vgap=5, hgap=5)
-
         dropsizer.Add( wx.StaticText(self.panel, label="Parameter A"))
         dropsizer.Add( wx.StaticText(self.panel, label="Operator"))
         dropsizer.Add( wx.StaticText(self.panel, label="Parameter B"))
-
         self.droppA = wx.ComboBox(self.panel, -1, self.labelA, (15, 20),
                      wx.DefaultSize, self.parmAlist,
                      wx.CB_DROPDOWN|wx.CB_READONLY)
@@ -89,13 +73,10 @@ class Slide(wx.Frame):
         dropsizer.Add(self.droppA)
         dropsizer.Add(self.dropop)
         dropsizer.Add(self.droppB)
-
         textfix = wx.StaticText(self.panel,
                                 label="\nSelect intervals and slide.\n")
-
         # Parameter A
         slidesizer = wx.FlexGridSizer(rows=3, cols=5, vgap=5, hgap=5)
-
         self.textstartA = wx.StaticText(self.panel, label=self.labelA)
         slidesizer.Add(self.textstartA)
         self.startspinA = edclasses.FloatSpin(self.panel, digits=7,
@@ -141,16 +122,14 @@ class Slide(wx.Frame):
         self.textvalueOp = wx.StaticText(self.panel,
                                          label= "%.5e" % self.valueOp)
         slidesizer.Add(self.textvalueOp)
-
-
+        # Bindings for slider
         self.Bind(wx.EVT_SLIDER, self.OnSlider, self.sliderA)
         self.Bind(wx.EVT_SLIDER, self.OnSlider, self.sliderB)
         self.Bind(wx.EVT_SLIDER, self.OnSlider, self.sliderOp)
-
         # Bindings for radiobuttons
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, self.rbtnB)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, self.rbtnOp)
-
+        # Bindings for spin controls
         # Our self-made spin controls alread have wx_EVT_SPINCTRL bound to
         # the increment function. We will call that function manually here.
         self.startspinA.Unbind(wx.EVT_SPINCTRL)
@@ -159,44 +138,30 @@ class Slide(wx.Frame):
         self.endspinA.Unbind(wx.EVT_SPINCTRL)
         self.endspinB.Unbind(wx.EVT_SPINCTRL)
         self.endspinOp.Unbind(wx.EVT_SPINCTRL)
-
-
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.startspinA)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.startspinB)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.startspinOp)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinA)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinB)
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinOp)
-     
+        # Set values
         self.SetValues()
         ## Sizers
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-
         self.topSizer.Add(dropsizer)
-
         self.topSizer.Add(self.rbtnB)
         self.topSizer.Add(self.rbtnOp)
-
         self.topSizer.Add(textfix)
-
         self.topSizer.Add(slidesizer)
-
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-
-        #self.size = self.topSizer.GetMinSizeTuple()
-        #newsize = (xmin1, ymin1)
-        #self.panel.SetSize(newsize)
-        #self.SetSize(newsize)
-
+        #self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.OnRadio()
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-
         self.Show(True)
-        wx.EVT_SIZE(self, self.OnSize)
-        # Disable lowest slieder
-        self.OnRadio()
+
 
     def CalcFct(self, A, B, C):
         if self.rbtnB.Value == True:
@@ -226,6 +191,7 @@ class Slide(wx.Frame):
         self.endspinB.increment()
         self.endspinOp.increment()
 
+
     def FillOpDict(self):
         # Dictionaries: [Calculate C, Calculate B)
         self.opdict["A/B"] = [lambda A,B: A/B, lambda A,C: A/C]
@@ -246,6 +212,7 @@ class Slide(wx.Frame):
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
 
+
     def Ondrop(self, event=None):
         self.labelOp = self.oplist[self.dropop.GetSelection()]
         self.labelA = self.parmAlist[self.droppA.GetSelection()]
@@ -260,6 +227,7 @@ class Slide(wx.Frame):
         self.sliderA.SetValue(self.slidestart)
         self.SetValues()
         self.OnSize()
+
 
     def OnPageChanged(self, page):
         # When parent changes
@@ -276,6 +244,7 @@ class Slide(wx.Frame):
             self.dropop.SetSelection(0)
             # Set labels
             self.Ondrop()
+
 
     def OnRadio(self, event=None):
         if self.rbtnB.Value == True:
@@ -296,14 +265,14 @@ class Slide(wx.Frame):
             self.endspinB.Enable(False)
         self.Ondrop()
 
+
     def OnSize(self, event=None):
-        #(x,y) = self.GetSize()
-        #self.size = ( max(self.size[0], y), max(self.size[1], y))
-        #print self.size
-        #print x,y
+        # We need this funciton, because contents of the flexgridsizer
+        # may change in size.
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.panel.SetSize(self.GetSize())
+
 
     def OnSlider(self, event=None):
         ## Set the slider vlaues
@@ -313,7 +282,6 @@ class Slide(wx.Frame):
         endA = self.endspinA.GetValue()
         self.valueA = startA + (endA-startA)*slideA/idmax
         self.textvalueA.SetLabel( "%.5e" % self.valueA)
-
         if self.rbtnB.Value == True:
             slideB = self.sliderB.GetValue()
             startB = self.startspinB.GetValue()
@@ -325,16 +293,13 @@ class Slide(wx.Frame):
             startOp = self.startspinOp.GetValue()
             endOp = self.endspinOp.GetValue()
             self.valueOp = startOp + (endOp-startOp)*slideOp/idmax
-
         self.valueB, self.valueOp = self.CalcFct(self.valueA, self.valueB,
                                                  self.valueOp)
         self.textvalueB.SetLabel( "%.5e" % self.valueB)
         self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
-
         self.Increment()
         self.SetResult()
         self.OnSize()
-
 
 
     def SetResult(self, event=None):
@@ -347,6 +312,7 @@ class Slide(wx.Frame):
         self.Page.apply_parameters_reverse()
         self.Page.PlotAll()
 
+
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
@@ -358,7 +324,6 @@ class Slide(wx.Frame):
         self.FillOpDict()
         self.oplist = self.opdict.keys()
         self.oplist.sort()
-
         self.labelA = self.parmAlist[0]
         self.labelB = self.parmBlist[1]
         self.labelOp = self.oplist[0]
@@ -370,46 +335,37 @@ class Slide(wx.Frame):
 
     def SetValues(self, event=None):
         # Set the values for spin and slider
+        # Parameter A
         idA = self.droppA.GetSelection()
         self.valueA = self.Page.active_parms[1][idA]
-
+        # Parameter B
         idB = self.droppB.GetSelection()
         self.valueB = self.Page.active_parms[1][idB]
-
+        # Operator
         idop = self.dropop.GetSelection()
         keys = self.opdict.keys()
         opkey = self.oplist[idop]
         self.opfunc = self.opdict[opkey]
-
-
         # Parameter A
         startA = self.valueA*self.spinstartfactor
         endA = self.valueA*self.spinendfactor
         self.startspinA.SetValue(startA)
         self.endspinA.SetValue(endA)
-
         # Parameter B
         startB = self.valueB*self.spinstartfactor
         endB = self.valueB*self.spinendfactor
         self.startspinB.SetValue(startB)
         self.endspinB.SetValue(endB)
-
         # Operation result
-
         self.valueOp = self.opfunc[0](self.valueA, self.valueB)
         startOp = self.valueOp*self.spinstartfactor
         endOp = self.valueOp*self.spinendfactor
         self.startspinOp.SetValue(startOp)
         self.endspinOp.SetValue(endOp)
-
+        # Set text
         self.textvalueA.SetLabel( "%.5e" % self.valueA)
         self.textvalueB.SetLabel( "%.5e" % self.valueB)
         self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
-
         self.Increment()
-
         self.SetResult()
-
-        
-
 

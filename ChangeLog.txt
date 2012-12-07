@@ -1,8 +1,10 @@
 0.7.1
- (This will be 0.7.2)
+ (Release candidate 0.7.2)
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
            fitting is performed
  - Bugfix: Batch control IndexError with Info window opened
+ - Tool Statistics: Sort values according to page numbers
+ - Tool global: Added weighted fitting
 0.7.1
  - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg

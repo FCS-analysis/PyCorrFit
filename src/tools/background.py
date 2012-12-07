@@ -14,7 +14,7 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# python modules
+
 import numpy as np
 import sys
 import traceback                        # for Error handling
@@ -22,10 +22,10 @@ import wx
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot    
 
-# PyCorrFit modules
 import doc
 import openfile as opf                  # How to treat an opened file
 import readfiles
+
 
 class BackgroundCorrection(wx.Frame):
     def __init__(self, parent):
@@ -36,12 +36,9 @@ class BackgroundCorrection(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=parent, title="Background correction",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-        
-
         # Current trace we are looking at
         self.activetrace = None 
         # Importet trace
@@ -53,11 +50,8 @@ class BackgroundCorrection(wx.Frame):
         ## Start drawing
         # Splitter Window
         self.sp = wx.SplitterWindow(self, style=wx.SP_NOBORDER)
-
-
         ## Controls
         panel = wx.Panel(self.sp)
-
         # text1
         textinit = wx.StaticText(panel, label=doc.backgroundinit)
         # Radio buttons
@@ -75,16 +69,12 @@ class BackgroundCorrection(wx.Frame):
         textmeanavg = wx.StaticText(panel,
                                     label="Average background signal [kHz]: ")
         self.textmean = wx.StaticText(panel, label="")
-
         # name
         textname = wx.StaticText(panel, label="User defined background name: ")
         self.bgname = wx.TextCtrl(panel, value="", size=(330,-1))
         self.bgname.Enable(False)
-
         self.btnimport = wx.Button(panel, wx.ID_ANY, 'Import into session')
         self.btnimport.Enable(False)
-
-
         # Dropdown
         textdropdown = wx.StaticText(panel, label="Show background: ")
         self.BGlist = list()
@@ -94,14 +84,12 @@ class BackgroundCorrection(wx.Frame):
         self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, 30),
                      wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
         self.textafterdropdown = wx.StaticText(panel, label="")
-
         # Apply buttons
         textapply = wx.StaticText(panel, label="Apply background to: ")
         self.btnapply = wx.Button(panel, wx.ID_ANY, 'Current page only')
         self.btnapplyall = wx.Button(panel, wx.ID_ANY, 'All pages')
         self.btnapply.Enable(False)
         self.btnapplyall.Enable(False)
-
         # Remove Backgrounds
         textrem = wx.StaticText(panel, label="Remove background from: ")
         self.btnrem = wx.Button(panel, wx.ID_ANY, 'Current page only')
@@ -109,7 +97,6 @@ class BackgroundCorrection(wx.Frame):
         if len(self.BGlist) <= 1:
             self.btnrem.Enable(False)
             self.btnremyall.Enable(False)
-
         # Bindings
         self.Bind(wx.EVT_BUTTON, self.OnBrowse, self.btnbrowse)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioFile, self.rbtnfile)
@@ -121,41 +108,31 @@ class BackgroundCorrection(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnApplyAll, self.btnapplyall)
         self.Bind(wx.EVT_BUTTON, self.OnRemove, self.btnrem)
         self.Bind(wx.EVT_BUTTON, self.OnRemoveAll, self.btnremyall)
-
-
-
         # Sizers
         topSizer = wx.BoxSizer(wx.VERTICAL)
-
         text1sizer = wx.BoxSizer(wx.HORIZONTAL)
         text1sizer.Add(self.rbtnfile)
         text1sizer.Add(self.btnbrowse)
-
         text2sizer = wx.BoxSizer(wx.HORIZONTAL)
         text2sizer.Add(self.rbtnhand)
         text2sizer.Add(self.spinctrl)
-
         textmeansizer = wx.BoxSizer(wx.HORIZONTAL)
         textmeansizer.Add(textmeanavg)
         textmeansizer.Add(self.textmean)
-
         dropsizer = wx.BoxSizer(wx.HORIZONTAL)
         dropsizer.Add(textdropdown)
         droprightsizer = wx.BoxSizer(wx.VERTICAL)
         dropsizer.Add(droprightsizer)
         droprightsizer.Add(self.dropdown)
         droprightsizer.Add(self.textafterdropdown)
-
         applysizer = wx.BoxSizer(wx.HORIZONTAL)
         applysizer.Add(textapply)
         applysizer.Add(self.btnapply)
         applysizer.Add(self.btnapplyall)
-
         remsizer = wx.BoxSizer(wx.HORIZONTAL)
         remsizer.Add(textrem)
         remsizer.Add(self.btnrem)
         remsizer.Add(self.btnremyall)
-
         topSizer.Add(textinit)
         topSizer.Add(text1sizer)
         topSizer.Add(text2sizer)
@@ -167,16 +144,13 @@ class BackgroundCorrection(wx.Frame):
         topSizer.Add(dropsizer)
         topSizer.Add(applysizer)
         topSizer.Add(remsizer)
-
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
+        self.SetMinSize(topSizer.GetMinSizeTuple())
         self.Show(True)
-
         ## Canvas
         self.canvas = plot.PlotCanvas(self.sp)
-
         # Sizes
-
         psize = panel.GetBestSize()
         initial_size = (psize[0],psize[1]+200)
         self.SetSize(initial_size)
@@ -184,7 +158,6 @@ class BackgroundCorrection(wx.Frame):
         # This is also necessary to prevent unsplitting
         self.sp.SetMinimumPaneSize(sashsize)
         self.sp.SplitHorizontally(panel, self.canvas, sashsize)
-
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -196,6 +169,7 @@ class BackgroundCorrection(wx.Frame):
         Page.bgselected = item - 1
         self.btnrem.Enable(True)
         Page.PlotAll()
+
 
     def OnApplyAll(self, event):
         N = self.parent.notebook.GetPageCount()
@@ -317,6 +291,7 @@ class BackgroundCorrection(wx.Frame):
             dlg.Destroy()
             return
 
+
     def OnDraw(self, event=None):
         item = self.dropdown.GetSelection()
         if item <= 0:
@@ -355,6 +330,7 @@ class BackgroundCorrection(wx.Frame):
                          xLabel='Measurement time [s]', 
                          yLabel='Background signal [kHz]'))
 
+
     def OnImport(self, event):
         self.parent.Background.append([self.average, self.bgname.GetValue(), 
                                       self.trace])
@@ -365,6 +341,7 @@ class BackgroundCorrection(wx.Frame):
         self.btnremyall.Enable(True)
         self.OnDraw()
 
+
     def OnPageChanged(self, page):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
@@ -373,6 +350,7 @@ class BackgroundCorrection(wx.Frame):
             self.btnrem.Enable(False)
         else:
             self.btnrem.Enable(True)
+
 
     def OnRadioFile(self, event):
         # Do not let the user change the spinctrl
@@ -390,6 +368,7 @@ class BackgroundCorrection(wx.Frame):
         # Let us draw
         self.dropdown.SetSelection(0)
         self.OnDraw()
+
 
     def OnRadioHand(self, event):
         # Let user enter a signal.
@@ -409,11 +388,13 @@ class BackgroundCorrection(wx.Frame):
             # Enter something as name
             self.bgname.SetValue("User")
 
+
     def OnRemove(self, event):
         Page = self.parent.notebook.GetCurrentPage()
         Page.bgselected = None
         self.btnrem.Enable(False)
         Page.PlotAll()
+
 
     def OnRemoveAll(self, event):
         N = self.parent.notebook.GetPageCount()
@@ -421,6 +402,7 @@ class BackgroundCorrection(wx.Frame):
             Page = self.parent.notebook.GetPage(i)
             Page.bgselected = None
             Page.PlotAll()
+
     
     def SpinCtrlChange(self, event=None):
         # Let user see the continuous trace we will generate
@@ -428,6 +410,7 @@ class BackgroundCorrection(wx.Frame):
         self.trace = np.array([[0,self.average],[1,self.average]])
         self.textmean.SetLabel(str(self.average))
         self.OnDraw()
+
 
     def UpdateDropdown(self):
         self.dropdown.SetItems(self.BGlist)

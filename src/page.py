@@ -25,12 +25,6 @@ import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np                      # NumPy
 import sys                              # System stuff
 
-import platform
-
-
-
-
-
 # PyCorrFit modules
 import doc
 import edclasses                    # Cool stuf like better floatspin
@@ -78,6 +72,7 @@ class FittingPanel(wx.Panel):
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
         # chi squared - is also an indicator, if something had been fitted
+        self.FitKnots = 5 # number of knots for spline fit or similiar
         self.chi2 = None
         # Counts number of Pages already created:
         self.counter = counter
@@ -257,6 +252,8 @@ class FittingPanel(wx.Panel):
 
     def Fit_create_instance(self, noplots=False):
         """ *noplots* prohibits plotting (e.g. splines) """
+        ### If you change anything here, make sure you
+        ### take a look at the global fit tool!
         ## Start fitting class and fill with information.
         Fitting = fit.Fit()
         # Verbose mode?
@@ -270,15 +267,19 @@ class FittingPanel(wx.Panel):
             # User edited knot number
             Knots = self.Fitbox[1].GetValue()
             Knots = filter(lambda x: x.isdigit(), Knots)
+            if Knots == "":
+                Knots = "5"
             List = self.Fitbox[1].GetItems()
             List[1] = "Spline ("+Knots+" knots)"
             Fitting.fittype = "spline"+Knots
             self.Fitbox[1].SetItems(List)
             self.Fitbox[1].SetSelection(1)
+            self.FitKnots = Knots
 
         if self.Fitbox[1].GetSelection() == 1:
             Knots = self.Fitbox[1].GetValue()
             Knots = filter(lambda x: x.isdigit(), Knots)
+            self.FitKnots = Knots
             Fitting.fittype = "spline"+Knots
             self.parent.StatusBar.SetStatusText("You can change the number"+
                " of knots. Check 'Preference>Verbose Mode' to view the spline.")
@@ -553,8 +554,8 @@ class FittingPanel(wx.Panel):
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)
         # Add a checkbox for weighted fitting
         weightedfitdrop = wx.ComboBox(self.panelsettings)
-        weightlist = ["No weights", "Spline (5 knots)", "Model function"]
-        weightedfitdrop.SetItems(weightlist)
+        self.weightlist = ["No weights", "Spline (5 knots)", "Model function"]
+        weightedfitdrop.SetItems(self.weightlist)
         weightedfitdrop.SetSelection(0)
         fitsizer.Add(weightedfitdrop)
          # WeightedFitCheck() Enables or Disables the variance part

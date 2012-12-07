@@ -40,13 +40,6 @@ except ImportError:
 import scipy.special as sps
 
 
-import platform
-
-
-
-
-
-
 class CorrFunc(object):
     """
         Check the input code of a proposed user model function and
@@ -104,7 +97,7 @@ class CorrFunc(object):
         """ Test the function for parsibility with the given parameters. """
         vardict = dict()
         for i in np.arange(len(self.variables)):
-            vardict[self.variables[i]] = float(self.values[i])
+            vardict[self.variables[i]] = sympify(float(self.values[i]))
 
         for tau in np.linspace(0.0001, 10000, 10):
             vardict["tau"] = tau
