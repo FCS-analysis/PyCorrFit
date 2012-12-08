@@ -13,7 +13,7 @@
     unit of inv. volume : 1000 /um^3
 """
 
-#import codecs, sys, win32console
+
 import csv
 from distutils.version import LooseVersion
 import sys
@@ -38,6 +38,11 @@ except ImportError:
 # import wx
 import yaml
 
+## Continue with the import:
+import doc
+import frontend as gui              # The actual program
+
+
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
 # http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
@@ -45,10 +50,6 @@ import yaml
 if platform.system() == 'Windows':
     reload(sys)
     sys.setdefaultencoding('utf-8')
-
-## Continue with the import:
-import doc
-import frontend as gui              # The actual program
 
 
 def CheckVersion(given, required, name):
@@ -113,5 +114,4 @@ elif len(arg) != 0:
     print "\nI do not know what to do with this argument: "+arg
 # Now start the app
 app.MainLoop()
-
 

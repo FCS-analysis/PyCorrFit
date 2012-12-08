@@ -49,15 +49,18 @@ import yaml
 import readfiles
 
 
+
 def description():
     return """PyCorrFit is a data displaying, fitting and evaluat
 tool, targeted at fluorescence correlation
 spectroscopy. PyCorrFit is written in Python."""
 
+
 def description():
     return """PyCorrFit displays and processes data
 from fluorescence correlation spectroscopy
 measurements. PyCorrFit is written in Python."""
+
 
 def info(version):
     """ Returns a little info about our program and what it can do.
@@ -74,7 +77,6 @@ def info(version):
     unit of Diff.coeff  : 10 µm²/s
     unit of inverse area: 100 /µm²
     unit of inv. volume : 1000 /µm^3 """
-
     textlin = """
     Paul Müller, Biotec - TU Dresden
 
@@ -91,14 +93,11 @@ def info(version):
         texta = textwin
     else:
         texta = textlin
-        
     one = "    PyCorrFit version "+version
     two = "\n\n    Supported file types:"
-
     for item in readfiles.Filetypes.keys():
         if item.split("|")[0] != readfiles.Allsupfilesstring:
             two = two + "\n     - "+item.split("|")[0]
-    
     return one + texta + two
 
     
@@ -195,6 +194,7 @@ trace*.csv (where * is {Number of page} | appendix "A" or "B" point to
 """
     return a+b
 
+
 def SoftwareUsed():
     """ Return some Information about the software used for this program """
     text = "Python "+sys.version+\
@@ -216,6 +216,9 @@ def SoftwareUsed():
         pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
     return text
+
+
+    
 # Text that is displayed once someone wishes to average all his curves
 average = """Create an average over all curves that were
 imported using the same model as the
