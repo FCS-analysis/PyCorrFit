@@ -231,7 +231,6 @@ class BackgroundCorrection(wx.Frame):
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
                 return
-
             # Usually we will get a bunch of traces. Let the user select which
             # one to take.
             if len(stuff["Filename"]) > 1:
@@ -247,7 +246,6 @@ class BackgroundCorrection(wx.Frame):
                     return
             else:
                 selindex = 0
-            
             # If we accidentally recorded a cross correlation curve
             # as the background, let the user choose which trace he wants:
             channelindex = None
@@ -263,7 +261,6 @@ class BackgroundCorrection(wx.Frame):
                     return
             else:
                 trace = stuff["Trace"][selindex]
-
             # Display filename and some of the directory
             self.textfile.SetLabel("File: ..."+dirname[-10:]+"/"+filename)
             name = str(selindex)+". "+stuff["Filename"][selindex]+" "+\

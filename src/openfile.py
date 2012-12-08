@@ -14,6 +14,7 @@
     unit of inv. volume : 1000 /µm³
 """
 
+
 import csv
 import numpy as np
 import os
@@ -26,11 +27,9 @@ import wx
 import yaml
 import zipfile
 
-# PyCorrFit Models
 import doc
 import models as mdls
 from tools import info
-
 # This contains all the information necessary to import data files:
 from readfiles import Filetypes
 from readfiles import BGFiletypes
@@ -89,7 +88,6 @@ def OpenSession(parent, dirname, sessionfile=None):
             dirname = dlg.GetDirectory()
             dlg.Destroy()
             return None, None, None, None, None, None, None, dirname, None
-
     Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
     # Get the yaml parms dump:
     yamlfile = Arc.open("Parameters.yaml")
@@ -235,14 +233,12 @@ def OpenSession(parent, dirname, sessionfile=None):
                 if (str(row[0])[0:1] != '#'):
                     bgtrace.append((float(row[0]), float(row[1])))
             bgtrace = np.array(bgtrace)
-            
             Background.append([float(bgrow[0]), str(bgrow[1]), bgtrace])
             i = i + 1
         bgfile.close()
     Arc.close()
     return Parms, Array, Trace, Background, Preferences, Comments, \
            ExternalFunctions, dirname, filename
-
 
 
 def saveCSV(parent, dirname, Page):
@@ -556,5 +552,3 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         dirname = dlg.GetDirectory()
         dlg.Destroy()
         return dirname, None
-
-

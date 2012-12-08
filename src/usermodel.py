@@ -18,13 +18,9 @@
     unit of inv. volume : 1000 /µm³
 """
 
-#import codecs, sys, win32console
-import sys
-import wx
+
 import numpy as np
-
-import models as mdls
-
+import scipy.special as sps
 try:
     import sympy
     from sympy.core.function import Function
@@ -36,8 +32,10 @@ except ImportError:
     # Define Function, so PyCorrFit will start, even if sympy is not there.
     # wixi needs Function.
     Function = object
+import sys
+import wx
 
-import scipy.special as sps
+import models as mdls
 
 
 class CorrFunc(object):
@@ -60,12 +58,11 @@ class CorrFunc(object):
             for otherkey in substitutes.keys():
                 substitutes[otherkey] = substitutes[otherkey].replace(key, 
                                                        "("+substitutes[key]+")")
-
         # Convert the function string to a simpification object
         self.simpification = sympify(self.funcstring, sympyfuncdict)
         self.simstring = str(self.simpification)
-
         self.vardict = evalfuncdict
+
 
     def GetFunction(self):
         # Define the function that will be calculated later
@@ -75,7 +72,6 @@ class CorrFunc(object):
                 self.vardict[self.variables[i]] = float(parms[i])
             self.vardict["tau"] = tau
             # Function called with array/list
-
             # The problem here might be 
             #for key in vardict.keys():
             #    symstring = symstring.replace(key, str(vardict[key]))
@@ -88,17 +84,15 @@ class CorrFunc(object):
             # for i in np.arange(len(tau)):
             # vardict["tau"] = tau[i]
             # g[i] = simpification.evalf(subs=vardict)
-
             return g
-
         return G
+
 
     def TestFunction(self):
         """ Test the function for parsibility with the given parameters. """
         vardict = dict()
         for i in np.arange(len(self.variables)):
             vardict[self.variables[i]] = sympify(float(self.values[i]))
-
         for tau in np.linspace(0.0001, 10000, 10):
             vardict["tau"] = tau
             Number = self.simpification.evalf(subs=vardict)
@@ -127,6 +121,7 @@ class UserModel(object):
         # The string that identifies the user model menu
         self.UserStr="User"
 
+
     def GetCode(self, filename=None):
         """ Get the executable code from the file.
             Optional argument filename may be used. If not self.filename will
@@ -149,6 +144,7 @@ class UserModel(object):
         self.AddModel(code)
         openedfile.close()
 
+
     def AddModel(self, code):
         """ *code* is a list with strings
              each string is one line.
@@ -161,7 +157,6 @@ class UserModel(object):
         labels = list()
         values = list()
         substitutes = dict()
-        
         for line in code:
             # We deal with comments and empty lines
             # We need to check line length first and then we look for
@@ -187,25 +182,20 @@ class UserModel(object):
                     # Add value and variable to our lists
                     labels.append(var)
                     values.append(float(val))
-
         # Active Parameters we are using for the fitting
         # [0] labels
         # [1] values
         # [2] bool values to fit
         bools = list([False]*len(values))
         bools[0] = True
-
-    
         # Create Modelarray
         active_parms = [ labels, values, bools ]
         self.SetCurrentID()
         Modelname = code[0][1:].strip()
         definitions = [self.CurrentID, Modelname, Modelname, func]
-
         model = dict()
         model["Parameters"] = active_parms
         model["Definitions"] = definitions
-
         self.modelarray.append(model)
 
 
@@ -213,17 +203,13 @@ class UserModel(object):
         """ Do everything that is necessarry to import the models into
             PyCorrFit.
         """
-
         # Set the model ids of the new model(s)
         # Normally, there is only one model.
         for i in np.arange(len(self.modelarray)):
-
             self.SetCurrentID()
             self.modelarray[i]["Definitions"][0] = self.CurrentID
-
         # We assume that the models have the correct ID for now
         mdls.AppendNewModel(self.modelarray)
-
         # Set variables and models
         # Is this still necessary? - We are doing this for compatibility!
         self.parent.value_set = mdls.values
@@ -231,10 +217,8 @@ class UserModel(object):
         self.parent.models = mdls.models
         self.parent.modeldict = mdls.modeldict
         self.parent.modeltypes = mdls.modeltypes
-
         # Get menu
         menu = self.parent.modelmenudict[self.UserStr]
-    
         # Add menu entrys
         for item in self.modelarray:
             # Get definitions
@@ -246,9 +230,11 @@ class UserModel(object):
             self.parent.Bind(wx.EVT_MENU, self.parent.add_fitting_tab,
                              menuentry)
 
+
     def TestFunction(self):
         """ Convenience function to test self.FuncClass """
         self.FuncClass.TestFunction()
+
 
     def SetCurrentID(self):
         # Check last item or so of modelarray
@@ -256,7 +242,6 @@ class UserModel(object):
         theID = 7000
         for model in mdls.models:
             theID = max(theID, model[0])
-
         self.CurrentID = theID + 1
 
 
@@ -271,16 +256,12 @@ class wixi(Function):
     nargs = 1
     is_real = True
     @classmethod
-
     def eval(csl,arg):
         return None
-
     #def _should_evalf(csl,arg):
     #    return True
-
     def as_base_exp(cls):
         return cls,S.One
-
     def _eval_evalf(cls, prec):
         result = sps.wofz(1j*float(cls.args[0]))
         return sympy.numbers.Number(sympy.functions.re(result))
@@ -298,14 +279,12 @@ def evalwixi(x):
     result = sps.wofz(z)
     # We should have a real solution. Make sure nobody complains about
     # some zero-value imaginary numbers.
-    
     return np.real_if_close(result)
+
 
 
 sympyfuncdict = dict()
 sympyfuncdict["wixi"] = wixi
-
-
 
 evalfuncdict = dict()
 evalfuncdict["wixi"] = evalwixi
@@ -316,7 +295,6 @@ numpyfuncs = ['abs', 'arccos', 'arcsin', 'arctan', 'arctan2', 'ceil', 'cos',
               'cosh', 'degrees', 'e', 'exp', 'fabs', 'floor', 'fmod', 'frexp',
               'hypot', 'ldexp', 'log', 'log10', 'modf', 'pi', 'power',
               'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh']
-
 
 for func in scipyfuncs:
     evalfuncdict[func] = eval("sps."+func)

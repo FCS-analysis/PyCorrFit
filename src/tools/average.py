@@ -2,9 +2,8 @@
 """ PyCorrFit
     Paul Müller, Biotec - TU Dresden
 
-    Module tools - example
-    This is an example tool. You will need to edit __init__.py inside this
-    folder to activate it.
+    Module tools - average
+    Creates an average of curves.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -15,9 +14,10 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# We may import different things from throughout the program:
-import wx
+
 import numpy as np
+import wx
+
 import models as mdls
 import doc
 
@@ -32,35 +32,26 @@ class Average(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Average curves",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-
          ## Content
         self.panel = wx.Panel(self)
-
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-
         textinit = wx.StaticText(self.panel, label=doc.average)
         self.topSizer.Add(textinit)
-
         btnavg = wx.Button(self.panel, wx.ID_CLOSE, 'Create average')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnAverage, btnavg)
-        
         self.topSizer.Add(btnavg)
-
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-
+        self.SetMinSize(self.topSizer.GetMinSizeTuple())
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
-        
         self.Show(True)
 
 
@@ -71,12 +62,14 @@ class Average(wx.Frame):
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
 
+
     def OnPageChanged(self, page):
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
         self.Page = page
+
 
     def OnAverage(self, evt=None):
         # Check if current page has experimental data:
@@ -94,7 +87,6 @@ class Average(wx.Frame):
                 # If there is an empty page somewhere, don't bother
                 if Page.dataexpfull is not None:
                     pages.append(Page)
-                
         # Now get all the experimental data
         explist = list()
         # Two components in case of Cross correlation
@@ -150,7 +142,6 @@ class Average(wx.Frame):
                 tracej = np.zeros((len(tracetime[j]),2))
                 tracej[:,0] = tracetime[j]
                 tracej[:,1] = tracerate[j]
-
                 if len(tracej) >= 500:
                     # We want about 500 bins
                     # We need to sum over intervals of length *teiler*
@@ -185,7 +176,6 @@ class Average(wx.Frame):
         # Everything is cleared for averaging
         exparray = np.array(explist)
         averagedata = exparray.sum(axis=0)[:,1]/len(exparray)
-    
         # Create a copy from the first page
         average = 1*exparray[0]
         # Set average data
@@ -213,5 +203,4 @@ class Average(wx.Frame):
         self.AvgPage.Fit_enable_fitting()
         self.AvgPage.tabtitle.SetValue("Average")
         self.OnClose()
-		
 

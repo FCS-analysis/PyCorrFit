@@ -18,18 +18,18 @@
 # This enlarges axis text and draws black lines instead of grey ones.
 DEMO = False
 
-# Generic modules
+
 import os
 import wx                               # GUI interface wxPython
 import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np                      # NumPy
 import sys                              # System stuff
 
-# PyCorrFit modules
 import doc
 import edclasses                    # Cool stuf like better floatspin
 import leastsquaresfit as fit       # For fitting
 import models as mdls
+
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
@@ -43,15 +43,11 @@ class FittingPanel(wx.Panel):
     """
     Those are the Panels that show the fitting dialogs with the Plots.
     """
-
     def __init__(self, parent, counter, modelid, active_parms, tau):
         """ Initialize with given parameters. """
-        
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
-
         self.parent = parent
         self.filename = "None"
-
         ## If this value is set to True, the trace and traceavg variables
         ## will not be used. Instead tracecc a list, of traces will be used.
         self.IsCrossCorrelation = False
@@ -67,7 +63,6 @@ class FittingPanel(wx.Panel):
         self.dataexpfull = None  # Experimental data (not cropped)
         self.datacorr = None     # Calculated data
         self.resid = None        # Residuals
-
         # Fitting:
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
@@ -76,23 +71,18 @@ class FittingPanel(wx.Panel):
         self.chi2 = None
         # Counts number of Pages already created:
         self.counter = counter
-
         # Model we are using
         self.modelid = modelid
         modelpack = mdls.modeldict[modelid]
-
         # The string of the model in the menu
         self.model = modelpack[1]
         # Some more useless text about the model
         self.modelname = modelpack[2]
-
         # Function for fitting
         self.active_fct = modelpack[3]
-
         # Parameter verification function.
         # This checks parameters concerning their physical meaningfullness :)
         self.check_parms = mdls.verification[modelid]
-
         # Active Parameters we are using for the fitting
         # [0] labels
         # [1] values
@@ -100,11 +90,9 @@ class FittingPanel(wx.Panel):
         # [3] labels human readable (optional)
         # [4] factors human readable (optional)
         self.active_parms = active_parms
-
         # Some timescale
         self.taufull = tau
         self.tau = 1*self.taufull
-
         ### Splitter window
         # Sizes
         size = parent.notebook.GetSize()
@@ -117,10 +105,8 @@ class FittingPanel(wx.Panel):
         self.sp = wx.SplitterWindow(self, size=size, style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.sp.SetMinimumPaneSize(1)
-        
         ## Settings Section (left side)
         self.panelsettings = wx.Panel(self.sp, size=sizepanel)
-
         ## Setting up Plot (correlation + chi**2)
         self.spcanvas = wx.SplitterWindow(self.sp, size=sizecanvas,
                                           style=wx.SP_3DSASH)
@@ -128,21 +114,16 @@ class FittingPanel(wx.Panel):
         self.spcanvas.SetMinimumPaneSize(1)
         # y difference in pixels between Auocorrelation and Residuals
         cupsizey = size[1]*4/5
-
         # Calculate initial data
         self.calculate_corr()
-
         # Draw the settings section
         self.settings()
-
         # Upper Plot for plotting of Correlation Function
         self.canvascorr = plot.PlotCanvas(self.spcanvas)
         self.canvascorr.setLogScale((True, False))  
         self.canvascorr.SetEnableZoom(True)
         self.PlotAll()
         self.canvascorr.SetSize((canvasx, cupsizey))
-
-
         # Lower Plot for plotting of the residuals
         self.canvaserr = plot.PlotCanvas(self.spcanvas)
         self.canvaserr.setLogScale((True, False))
@@ -150,10 +131,8 @@ class FittingPanel(wx.Panel):
         self.canvaserr.SetSize((canvasx, size[1]-cupsizey))
         self.spcanvas.SplitHorizontally(self.canvascorr, self.canvaserr,
                                         cupsizey)
-
         self.sp.SplitVertically(self.panelsettings, self.spcanvas,
                                 self.sizepanelx)
-
         ## Check out the DEMO option and make change the plot:
         try:
             if DEMO == True:
@@ -162,9 +141,9 @@ class FittingPanel(wx.Panel):
         except:
             # Don't raise any unnecessary erros
             pass
-
         # Bind resizing to resizing function.
         wx.EVT_SIZE(self, self.OnSize)
+
 
     def apply_parameters(self, event=None):
         """ Read the values from the form and write it to the
@@ -193,7 +172,6 @@ class FittingPanel(wx.Panel):
             self.checkboxes[i].SetValue(self.active_parms[2][i])
 
 
-
     def calculate_corr(self):
         """ Calculate correlation function
             Returns an array of tuples (tau, correlation)
@@ -215,6 +193,7 @@ class FittingPanel(wx.Panel):
         self.datacorr = np.zeros((len(self.tau), 2))
         self.datacorr[:, 0] = self.tau
         self.datacorr[:, 1] = y
+
 
     def CorrectDataexp(self, dataexp):
         """ Background correction
@@ -250,6 +229,7 @@ class FittingPanel(wx.Panel):
         self.Fitbox[1].Enable()
         self.Fitbox[-1].Enable()
 
+
     def Fit_create_instance(self, noplots=False):
         """ *noplots* prohibits plotting (e.g. splines) """
         ### If you change anything here, make sure you
@@ -262,7 +242,6 @@ class FittingPanel(wx.Panel):
         Fitting.uselatex = self.parent.MenuUseLatex.IsChecked()
         Fitting.check_parms = self.check_parms
         Fitting.dataexpfull = self.CorrectDataexp(self.dataexpfull)
-
         if self.Fitbox[1].GetSelection() == -1:
             # User edited knot number
             Knots = self.Fitbox[1].GetValue()
@@ -275,7 +254,6 @@ class FittingPanel(wx.Panel):
             self.Fitbox[1].SetItems(List)
             self.Fitbox[1].SetSelection(1)
             self.FitKnots = Knots
-
         if self.Fitbox[1].GetSelection() == 1:
             Knots = self.Fitbox[1].GetValue()
             Knots = filter(lambda x: x.isdigit(), Knots)
@@ -434,14 +412,13 @@ class FittingPanel(wx.Panel):
                 self.startcrop = 0
             else:
                 self.tau = 1*self.taufull[self.startcrop:self.endcrop]
-
         ## ## Channel selection
         ## # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
         ## # and assigns the result to *self.dataexp*. If *start* and *end* are 
         ## # equal (or not given), *self.dataexp* will be equal to 
         ## # *self.dataexpfull*.
         ## self.parent.OnFNBPageChanged(e=None, Page=self)
-
+        #
         ## Calculate trace average
         if self.trace is not None:
             # Average of the current pages trace
@@ -456,11 +433,9 @@ class FittingPanel(wx.Panel):
         # Plots self.dataexp and the calcualted correlation function 
         # self.datacorr into the upper canvas.
         # Create a line @ y=zero:
-
         zerostart = self.tau[0]
         zeroend = self.tau[-1]
         datazero = [[zerostart, 0], [zeroend,0]]
-
         ## Check out the DEMO option and make change the plot:
         try:
             if DEMO == True:
@@ -476,7 +451,6 @@ class FittingPanel(wx.Panel):
             width = 1   
             colexp = "grey"  
             colfit = "blue"
-
         linezero = plot.PolyLine(datazero, colour='orange',  width=width)
         if self.dataexp is not None:
             ## Plot Correlation curves
@@ -498,7 +472,6 @@ class FittingPanel(wx.Panel):
             PlotRes = plot.PlotGraphics([linezero, lineres], 
                                    xLabel='Lag time τ [ms]', yLabel='Residuals')
             self.canvaserr.Draw(PlotRes)
-
             # Also check if chi squared has been calculated. This is not the
             # case when a session has been loaded. Do it.
             # (Usually it is done right after fitting)
@@ -514,13 +487,13 @@ class FittingPanel(wx.Panel):
             self.canvascorr.Draw(PlotCorr)
         self.parent.OnFNBPageChanged()
 
+
     def settings(self):
         """ Here we define, what should be displayed at the left side
             of the window.
             Parameters:
         """
         # Title
-     
         # Create empty tab title
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
                                     size=(self.sizepanelx, -1))
@@ -538,12 +511,10 @@ class FittingPanel(wx.Panel):
             self.checkboxes[i].SetValue(parameterstofit[i]) 
             self.spincontrol[i].SetValue(parameters[i])
             self.spincontrol[i].increment()
-
         # Put everything together
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(self.tabtitle)
         self.panelsettings.sizer.Add(box1)
-
         # Add button "Apply"
         buttonapply = wx.Button(self.panelsettings, label="Apply")
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)
@@ -578,24 +549,20 @@ class FittingPanel(wx.Panel):
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
-
         # Add button "Fit", but not active
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
         fitsizer.Add(buttonfit)
         self.panelsettings.sizer.Add(fitsizer)
-
         # Squeeze everything into the sizer
         self.panelsettings.SetSizer(self.panelsettings.sizer)
         # This is also necessary in Windows
         self.panelsettings.Layout()
         self.panelsettings.Show()
-
         # Make all the stuff available for everyone
         self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
                         fitspin, buttonfit ]
         # Disable Fitting since no data has been loaded yet
         for element in self.Fitbox:
             element.Disable()
-
 

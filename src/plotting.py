@@ -14,17 +14,16 @@
     unit of inverse area: 100 /µm²
     unit of inv. volume : 1000 /µm³
 """
+
+
 import codecs
 import numpy as np
-
 import matplotlib
-
 # We do catch warnings about performing this before matplotlib.backends stuff
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
-    
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 # Text rendering with matplotlib
@@ -34,17 +33,13 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 ## This hack enables us to remember directories.
 # import edclasses
 # NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
-
 import os
 import sys
 import unicodedata
 
 # For finding latex tools
 from misc import findprogram
-
-# PyCorrFit models
 import models as mdls
-
 
 
 def greek2tex(char):
@@ -60,6 +55,7 @@ def greek2tex(char):
     else:
         return char
 
+
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
     string = codecs.decode(string, "UTF-8")
@@ -71,6 +67,7 @@ def escapechars(string):
             retstr += "\\"
         retstr += char
     return retstr
+
 
 def latexmath(string):
     """ Format given parameters to nice latex. """
@@ -107,7 +104,6 @@ def latexmath(string):
     return anew + r" \hspace{0.3em} \mathrm{"+b+r"}"
 
 
-
 def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     """ Save plot from Page into file        
         Parameters:
@@ -134,7 +130,6 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     parmids = np.where(Page.active_parms[2])[0]
     labels = np.array(labels)[parmids]
     parms = np.array(parms)[parmids]
-
     if dataexp is None:
         if tabtitle == "":
             fitlabel = Page.modelname
@@ -159,18 +154,14 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         tabtitle = ur"{\normalsize "+escapechars(tabtitle)+r"}"
     else:
         rcParams['text.usetex']=False
-
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure()
-
     if resid is not None:
         gs = gridspec.GridSpec(2, 1, height_ratios=[5,1])
         ax = plt.subplot(gs[0])
     else:
         ax = plt.subplot(111)
-
-
         #    ax = plt.axes()
     ax.semilogx()
     if dataexp is not None:
@@ -179,7 +170,6 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel,
              lw=2.5, color="blue")
-
     plt.ylabel('Correlation')
     if dataexp is not None:
         mind = np.min([ dataexp[:,1], fit[:,1]])
@@ -200,16 +190,13 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         text += r'\begin{split}' # ...but they are all concatenated
                                  # by the interpreter :-)
         for i in np.arange(len(parms)):
-
             text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
-
         text += r' \end{split} '
         text += r' \] '
     else:
         text = ur""
         for i in np.arange(len(parms)):
             text += labels[i]+" = "+str(parms[i])+"\n"
-
     # Add some more stuff to the text and append data to a .txt file
     #text = Auswert(parmname, parmoptim, text, savename)
     plt.legend()
@@ -219,10 +206,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     xt = 10**(logtext)
     yt = 0.5*ymax
     plt.text(xt,yt,text, size=12)
-
     if resid is not None:
         ax2 = plt.subplot(gs[1])
-
         #ax2 = plt.axes()
         ax2.semilogx()
         plt.plot(resid[:,0], resid[:,1], 'o', color="white", label='Residuals')
@@ -237,14 +222,12 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         ax2.set_ylim(-maxy, maxy)
         ticks = ax2.get_yticks()
         ax2.set_yticks([ticks[0], ticks[-1], 0])
-
-    ## # Hack removed
+    ## Hack
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = ""
-
     if verbose == True:
         plt.show()
     else:
@@ -277,7 +260,6 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         plt.close()
     except:
         pass
-
     # Trace must be displayed in s
     timefactor = 1e-3
     tabtitle = Page.tabtitle.GetValue()
@@ -292,7 +274,6 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         labels = [tabtitle+" A", tabtitle+" B"]
     else:
         return
-
     ## Check if we can use latex or plotting:
     (r1, path) = findprogram("latex")
     (r2, path) = findprogram("dvipng")
@@ -311,13 +292,10 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
             labels[i] = ur"{\normalsize "+escapechars(labels[i])+r"}"
     else:
         rcParams['text.usetex']=False
-
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure()
-
     ax = plt.subplot(111)
-
     for i in np.arange(len(traces)):
         # Columns
         time = traces[i][:,0]*timefactor
@@ -325,20 +303,16 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         plt.plot(time, intensity, '-', 
                  label = labels[i],
                  lw=1)
-
     plt.ylabel('Intensity [kHz]')
     plt.xlabel('Measurement time [s]')
-
     # Add some more stuff to the text and append data to a .txt file
     plt.legend()
-
-    ## Hack removed
+    ## Hack
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = "_trace"
-
     if verbose == True:
         plt.show()
     else:
@@ -366,12 +340,11 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
         for saving the final figure. We wanted save in the same directory
         as PyCorrFit was working and the filename should be the tabtitle.
     """
-    # This is a dirty hack
+    # This is a dirty hack to make sure no plots are opened
     try:
         plt.close()
     except:
         pass
-
     ## Check if we can use latex or plotting:
     (r1, path) = findprogram("latex")
     (r2, path) = findprogram("dvipng")
@@ -389,23 +362,17 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
         name = ur"{\normalsize "+escapechars(name)+r"}"
     else:
         rcParams['text.usetex']=False
-
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure()
-
     ax = plt.subplot(111)
-
-        #    ax = plt.axes()
+    #    ax = plt.axes()
     ax.semilogx()
     plt.plot(x, dataexp,'o', color="white")
     plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(x, datafit, '-', label = name,
              lw=2.5, color="blue")
-
     plt.ylabel('Correlation')
-
-
     mind = np.min([ dataexp, datafit])
     maxd = np.max([ dataexp, datafit])
     ymin = mind - (maxd - mind)/20.
@@ -414,11 +381,7 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
     xmin = np.min(x)
     xmax = np.max(x)
     ax.set_xlim(xmin, xmax)
-
     # Add some more stuff to the text and append data to a .txt file
     #text = Auswert(parmname, parmoptim, text, savename)
     plt.legend()
     plt.show()
-
-
-

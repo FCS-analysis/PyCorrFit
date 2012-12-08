@@ -18,12 +18,12 @@
       then calculated by a forward-difference approximation.
 """
 
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate as spintp
 from scipy import optimize as spopt
 import warnings
-
 
 # If we use this module with PyCorrFit, we can plot things with latex using
 # our own special thing.
@@ -62,7 +62,6 @@ class Fit(object):
         self.values = None
         self.valuestofit = None
         self.verbose = False # Verbose mode (shows e.g. spline fit)
-
         # The weights (data points from left and right of data array) have
         # to be chosen in a way, that the interval +/- weights will not
         # exceed self.dataexpfull!!!!
@@ -70,19 +69,16 @@ class Fit(object):
         # Changing fittype will change calculation of variances.
         # None means variances is 1.
         self.fittype = "None"
- 
         # Chi**2 Value
         self.chi = None
-
         # Messages from leastsq
         self.mesg = None
-
         # Optimal parameters found by leastsq
         self.parmoptim = None
-
         # It is possible to edit tolerance for fitting
         # ftol, xtol and gtol.
         # Those parameters could be added to the fitting routine later.
+
 
     def ApplyParameters(self):
         if self.interval is None:
@@ -100,14 +96,11 @@ class Fit(object):
             # We will not have an array. Prevent that.
             if len(self.dataexp) == 0:
                 self.dataexp = 1*self.dataexpfull
-
         # Calculate x-values
         # (Extract tau-values from dataexp)
         self.x = self.dataexp[:, 0]
         # Experimental data
         self.data = self.dataexp[:,1]
- 
-
         # Set fit parameters
         self.fitparms = np.zeros(sum(self.valuestofit))
         index = 0
@@ -115,7 +108,6 @@ class Fit(object):
             if self.valuestofit[i]:
                 self.fitparms[index] = np.float(self.values[i])
                 index = index + 1
-
         if self.fittype[:6] == "spline":
             # Number of knots to use for spline
             try:
@@ -128,7 +120,6 @@ class Fit(object):
             # Calculated variances
             datalen = len(self.dataexp[:,1])
             variances = np.zeros(datalen)
-
             if self.startcrop < points:
                 pmin = self.startcrop
             else:
@@ -137,7 +128,6 @@ class Fit(object):
                 pmax = (len(self.dataexpfull) - self.endcrop)
             else:
                 pmax = points
-
             x = self.dataexpfull[self.startcrop-pmin:self.endcrop+pmax,0]
             xs = np.log10(x)
             y = self.dataexpfull[self.startcrop-pmin:self.endcrop+pmax,1]
@@ -179,14 +169,11 @@ class Fit(object):
                 else:
                     offsetstart = 0
                     offsetcrop = 0
-
                 # i: counter on dataexp array
                 # start: counter on y array
                 start = i - points + offsetstart + self.startcrop - offsetcrop
                 end = start + 2*points + 1 - offsetstart
-
                 variances[i] = (y[start:end] - ys[start:end]).std()
-
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
                 # number of bins that were not used for calculation of the
@@ -202,7 +189,6 @@ class Fit(object):
                     reference = 2*points + 1
                     dividor = reference - backset
                     variances[i] *= reference/dividor
-
         elif self.fittype == "model function":
             # Number of neighbouring (left and right) points to include
             points = self.weights
@@ -241,7 +227,6 @@ class Fit(object):
                 #end = self.startcrop + points + i + 1
                 diff = y - self.function(self.values, x)
                 variances[i] = diff[start:end].std()
-
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
                 # number of bins that were not used for calculation of the
@@ -257,13 +242,11 @@ class Fit(object):
                     reference = 2*points + 1
                     dividor = reference - backset
                     variances[i] *= reference/dividor
-
         else:
             # The fit.Fit() class will divide the function to minimize
             # by the variances. If there is no weighted fit, just divide
             # by one.
             variances = 1.
-
         self.variances = variances
 
 
@@ -279,7 +262,6 @@ class Fit(object):
             if self.valuestofit[i]:
                 self.values[i] = parms[index]
                 index = index + 1
-
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
         # Do not forget to subtract experimental data ;)

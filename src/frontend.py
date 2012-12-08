@@ -15,7 +15,7 @@
     unit of inv. volume : 1000 /µm³
 """
 
-# Generic modules
+
 import os
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
@@ -43,6 +43,7 @@ import plotting
 import readfiles
 import tools                        # Some tools
 import usermodel
+
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
@@ -581,16 +582,10 @@ class MyFrame(wx.Frame):
             # The filename the page will get
             self.filename = dlg.GetFilename()
             self.dirname = dlg.GetDirectory()
-          #  filterindex = dlg.GetFilterIndex()
-          #  Filetype = SupFiletypes[filterindex]
-          #  # This is the function we will use to import the data
-          #  # opf.Filetypes is a dictionary with that has a key *self.Filetype*
-          #  # which points to our import function:
-          #  OpenFile = opf.Filetypes[Filetype]
             try:
                 Stuff = readfiles.openAny(self.dirname, self.filename)
             except:
-                # The file does not seem to be what it seems to be.
+                # The file format is not supported.
                 info = sys.exc_info()
                 errstr = "Unknown file format:\n"
                 errstr += str(self.filename)+"\n\n"

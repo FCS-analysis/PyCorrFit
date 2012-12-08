@@ -8,16 +8,15 @@
 
 """
 
+
 # Matplotlib plotting capabilities
 import matplotlib
-
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
-
 # We will hack this toolbar here
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx 
 import numpy as np
@@ -27,6 +26,7 @@ import traceback
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
 
+
 class FloatSpin(floatspin.FloatSpin):
     def __init__(self, parent, digits=10, increment=.01):
         floatspin.FloatSpin.__init__(self, parent, digits=digits,
@@ -34,6 +34,7 @@ class FloatSpin(floatspin.FloatSpin):
         self.Bind(wx.EVT_SPINCTRL, self.increment)
         #self.Bind(wx.EVT_SPIN, self.increment)
         #self.increment()
+
 
     def increment(self, event=None):
         # Find significant digit
@@ -51,24 +52,14 @@ class ChoicesDialog(wx.Dialog):
     def __init__(self, parent, dropdownlist, title, text):
         # parent is main frame
         self.parent = parent
-
         super(ChoicesDialog, self).__init__(parent=parent, 
             title=title)
-        # Get the window positioning correctly
-        #pos = self.parent.GetPosition()
-        #pos = (pos[0]+100, pos[1]+100)
-        #wx.Frame.__init__(self, parent=parent, title=title,
-        #   pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-
-        #self.Filename = None
         ## Controls
         panel = wx.Panel(self)
-
         # text1
         textopen = wx.StaticText(panel, label=text)
         btnok = wx.Button(panel, wx.ID_OK)
         btnabort = wx.Button(panel, wx.ID_CANCEL)
-
         # Dropdown
         self.dropdown = wx.ComboBox(panel, -1, "", (15, 30),
               wx.DefaultSize, dropdownlist, wx.CB_DROPDOWN|wx.CB_READONLY)
@@ -76,26 +67,23 @@ class ChoicesDialog(wx.Dialog):
         # Bindings
         self.Bind(wx.EVT_BUTTON, self.OnOK, btnok)
         self.Bind(wx.EVT_BUTTON, self.OnAbort, btnabort)
-
         # Sizers
         topSizer = wx.BoxSizer(wx.VERTICAL)
-
         topSizer.Add(textopen)
         topSizer.Add(self.dropdown)
-
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         btnSizer.Add(btnok)
         btnSizer.Add(btnabort)
-
         topSizer.Add(btnSizer)
-
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
         self.Show(True)
 
+
     def OnOK(self, event=None):
         self.SelcetedID = self.dropdown.GetSelection()
         self.EndModal(wx.ID_OK)
+
 
     def OnAbort(self, event=None):
         self.EndModal(wx.ID_CANCEL)
@@ -121,7 +109,6 @@ def save_figure(self, evt=None):
         filename = ""
         formats = self.canvas.get_supported_filetypes()
         parent = self
-
     fieltypestring = ""
     keys = formats.keys()
     keys.sort()
@@ -131,10 +118,8 @@ def save_figure(self, evt=None):
     fieltypestring = fieltypestring[:-1]
     dlg = wx.FileDialog(parent, "Save figure", dirname, filename, 
            fieltypestring, wx.SAVE|wx.OVERWRITE_PROMPT)
-
     # png is default
     dlg.SetFilterIndex(keys.index("png"))
-
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
         wildcard = keys[dlg.GetFilterIndex()]
@@ -147,7 +132,6 @@ def save_figure(self, evt=None):
             filename = filename+"."+wildcard
         dirname = dlg.GetDirectory()
         savename = os.path.join(dirname, filename)
-
         try:
             self.canvas.figure.savefig(savename)
         except: # RuntimeError:
@@ -168,6 +152,8 @@ def save_figure(self, evt=None):
         parent.dirname = dirname
     except:
         pass
+
+
 
 # Add the save_figure function to the standard class for wx widgets.
 matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure
