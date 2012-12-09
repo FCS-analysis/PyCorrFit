@@ -70,6 +70,8 @@ class FittingPanel(wx.Panel):
         self.FitKnots = 5 # number of knots for spline fit or similiar
         self.chi2 = None
         self.weighted_fit_was_performed = False # default is no weighting
+        # dictionary for alternative variances from e.g. averaging
+        self.external_std_weights = dict()
         # Counts number of Pages already created:
         self.counter = counter
         # Model we are using
@@ -264,8 +266,20 @@ class FittingPanel(wx.Panel):
                " of knots. Check 'Preference>Verbose Mode' to view the spline.")
         elif self.Fitbox[1].GetSelection() == 2:
             Fitting.fittype = "model function"
-            self.parent.StatusBar.SetStatusText("This is iterative. Press"+
+            if self is self.parent.notebook.GetCurrentPage():
+                self.parent.StatusBar.SetStatusText("This is iterative. Press"+
                  " 'Fit' multiple times. If it does not converge, use splines.")
+        elif self.Fitbox[1].GetSelection() > 2:
+            # This means we have some user defined std, for example from
+            # averaging. This std is stored in self.external_std_weights
+            # list, which looks like this:
+            # self.external_std_weights["from average"] = 1D np.array std
+            Fitting.fittype = "other"
+            Fitlist = self.Fitbox[1].GetItems()
+            FitValue = Fitlist[self.Fitbox[1].GetSelection()]
+            Fitting.external_deviations = self.external_std_weights[FitValue]
+            # Fitting will crop the variances according to
+            # the Fitting.interval that we set below.
         else:
             self.parent.StatusBar.SetStatusText("")
         # Set weighted_fit_was_performed variable
@@ -477,7 +491,7 @@ class FittingPanel(wx.Panel):
             # a the fitting class
             Fitting = self.Fit_create_instance(noplots=True)
             Fitting.parmoptim = Fitting.fitparms
-            self.resid[:, 1] /= Fitting.variances
+            self.resid[:, 1] /= Fitting.dataweights
             # Also check if chi squared has been calculated. This is not the
             # case when a session has been loaded. Do it.
             # (Usually it is done right after fitting)

@@ -202,5 +202,13 @@ class Average(wx.Frame):
         self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
         self.AvgPage.tabtitle.SetValue("Average")
+        # Set the addition information about the variance from averaging
+        Listname = "Average"
+        standarddev = exparray.std(axis=0)[:,1]
+        self.AvgPage.external_std_weights[Listname] = standarddev
+        WeightKinds = self.AvgPage.Fitbox[1].GetItems()
+        WeightKinds += [Listname]
+        self.AvgPage.Fitbox[1].SetItems(WeightKinds)
+        self.AvgPage.Fitbox[1].SetSelection(len(WeightKinds)-1)
         self.OnClose()
 

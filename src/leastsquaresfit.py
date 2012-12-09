@@ -48,7 +48,11 @@ class Fit(object):
                   - "splineX" - fit a Xth order spline and calulate standard
                                deviation from that difference
                   - "model function" - calculate std. dev. from difference
-                                        of fit function and dataexpfull. 
+                                        of fit function and dataexpfull.
+                  - "other" - use an external std. dev.. The variable
+                              self.external_deviations has to be set before
+                              self.ApplyParameters is called. Cropping with
+                              *interval* is performed here.
     """
     def __init__(self):
         """ Initial setting of needed variables via the given *fitset* """   
@@ -66,8 +70,8 @@ class Fit(object):
         # to be chosen in a way, that the interval +/- weights will not
         # exceed self.dataexpfull!!!!
         self.weights = None
-        # Changing fittype will change calculation of variances.
-        # None means variances is 1.
+        # Changing fittype will change calculation of variances=dataweights**2.
+        # None means dataweights is 1.
         self.fittype = "None"
         # Chi**2 Value
         self.chi = None
@@ -75,9 +79,14 @@ class Fit(object):
         self.mesg = None
         # Optimal parameters found by leastsq
         self.parmoptim = None
+        # Variances for fitting
+        self.dataweights = None
+        # External std defined by the user
+        self.external_deviations = None
         # It is possible to edit tolerance for fitting
         # ftol, xtol and gtol.
         # Those parameters could be added to the fitting routine later.
+        
 
 
     def ApplyParameters(self):
@@ -117,9 +126,9 @@ class Fit(object):
                 knotnumber = 5
             # Number of neighbouring (left and right) points to include
             points = self.weights
-            # Calculated variances
+            # Calculated dataweights
             datalen = len(self.dataexp[:,1])
-            variances = np.zeros(datalen)
+            dataweights = np.zeros(datalen)
             if self.startcrop < points:
                 pmin = self.startcrop
             else:
@@ -150,14 +159,14 @@ class Fit(object):
                     plt.show()
             ## Calculation of variance
             # In some cases, the actual cropping interval from self.startcrop to
-            # self.endcrop is chosen, such that the variances must be
+            # self.endcrop is chosen, such that the dataweights must be
             # calculated from unknown datapoints.
             # (e.g. points+endcrop > len(dataexpfull)
-            # We deal with this by multiplying variances with a factor
+            # We deal with this by multiplying dataweights with a factor
             # corresponding to the missed points.
             for i in np.arange(datalen):
                 # Define start and end positions of the sections from
-                # where we wish to calculate the variances.
+                # where we wish to calculate the dataweights.
                 # Offset at beginning:
                 if  i + self.startcrop <  points:
                     # The offset that occurs
@@ -173,7 +182,7 @@ class Fit(object):
                 # start: counter on y array
                 start = i - points + offsetstart + self.startcrop - offsetcrop
                 end = start + 2*points + 1 - offsetstart
-                variances[i] = (y[start:end] - ys[start:end]).std()
+                dataweights[i] = (y[start:end] - ys[start:end]).std()
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
                 # number of bins that were not used for calculation of the
@@ -181,14 +190,14 @@ class Fit(object):
                 if offsetstart != 0:
                     reference = 2*points + 1
                     dividor = reference - offsetstart
-                    variances[i] *= reference/dividor   
+                    dataweights[i] *= reference/dividor   
                 # Do not substitute len(y[start:end]) with end-start!
                 # It is not the same!
                 backset =  2*points + 1 - len(y[start:end]) - offsetstart
                 if backset != 0:
                     reference = 2*points + 1
                     dividor = reference - backset
-                    variances[i] *= reference/dividor
+                    dataweights[i] *= reference/dividor
         elif self.fittype == "model function":
             # Number of neighbouring (left and right) points to include
             points = self.weights
@@ -202,12 +211,12 @@ class Fit(object):
                 pmax = points
             x = self.dataexpfull[self.startcrop-pmin:self.endcrop+pmax,0]
             y = self.dataexpfull[self.startcrop-pmin:self.endcrop+pmax,1]
-            # Calculated variances
+            # Calculated dataweights
             datalen = len(self.dataexp[:,1])
-            variances = np.zeros(datalen)
+            dataweights = np.zeros(datalen)
             for i in np.arange(datalen):
                 # Define start and end positions of the sections from
-                # where we wish to calculate the variances.
+                # where we wish to calculate the dataweights.
                 # Offset at beginning:
                 if  i + self.startcrop <  points:
                     # The offset that occurs
@@ -226,7 +235,7 @@ class Fit(object):
                 #start = self.startcrop - points + i
                 #end = self.startcrop + points + i + 1
                 diff = y - self.function(self.values, x)
-                variances[i] = diff[start:end].std()
+                dataweights[i] = diff[start:end].std()
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
                 # number of bins that were not used for calculation of the
@@ -234,20 +243,29 @@ class Fit(object):
                 if offsetstart != 0:
                     reference = 2*points + 1
                     dividor = reference - offsetstart
-                    variances[i] *= reference/dividor   
+                    dataweights[i] *= reference/dividor   
                 # Do not substitute len(diff[start:end]) with end-start!
                 # It is not the same!
                 backset =  2*points + 1 - len(diff[start:end]) - offsetstart
                 if backset != 0:
                     reference = 2*points + 1
                     dividor = reference - backset
-                    variances[i] *= reference/dividor
+                    dataweights[i] *= reference/dividor
+        elif self.fittype == "other":
+            # This means that the user knows the dataweights and already
+            # gave it to us.
+            if self.external_deviations is not None:
+                dataweights = \
+                           self.external_deviations[self.startcrop:self.endcrop]
+            else:
+                raise ValueError, \
+                      "self.external_deviations not set for fit type 'other'."
         else:
             # The fit.Fit() class will divide the function to minimize
-            # by the variances. If there is no weighted fit, just divide
+            # by the dataweights. If there is no weighted fit, just divide
             # by one.
-            variances = 1.
-        self.variances = variances
+            dataweights = 1.
+        self.dataweights = dataweights
 
 
     def fit_function(self, parms, x):
@@ -265,17 +283,15 @@ class Fit(object):
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
         # Do not forget to subtract experimental data ;)
-        #return (self.function(self.values, x) - self.data) / \
-        #       np.sqrt(self.variances)
-        return (self.function(self.values, x) - self.data) / self.variances
+        return (self.function(self.values, x) - self.data) / self.dataweights
 
 
     def get_chi_squared(self):
         # Calculate Chi**2
         # We have two cases here:
-        #  a) we do not have any weights (self.variances = 1.)
+        #  a) we do not have any weights (self.dataweights = 1.)
         #  b) we have weights and can calculate the reduces Chi**2
-        if len(np.atleast_1d(self.variances)) == 1 :
+        if len(np.atleast_1d(self.dataweights)) == 1 :
             return np.sum( (self.fit_function(self.parmoptim, self.x))**2)
         else:
             # Divide by degrees of freedom

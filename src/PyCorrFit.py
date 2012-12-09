@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """ PyCorrFit
     Paul Müller, Biotec - TU Dresden

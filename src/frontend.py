@@ -1144,6 +1144,10 @@ class MyFrame(wx.Frame):
                 Page.Fitbox[1].SetSelection(0)
             if weighted is True or weighted == 1:
                 Page.Fitbox[1].SetSelection(1)
+            elif len(Page.Fitbox[1].GetItems())-1 < weighted:
+                # Is the case, e.g. when we have an average std,
+                # but this page is not an average.
+                pass
             else:
                 Page.Fitbox[1].SetSelection(weighted)
             if knots is not None:
