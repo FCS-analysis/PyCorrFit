@@ -276,7 +276,7 @@ def saveCSV(parent, dirname, Page):
             # Experimental data
             tau = Page.dataexp[:,0]
             exp = Page.dataexp[:,1]
-            res = exp - corr
+            res = Page.resid[:,1]
         else:
             tau = Page.datacorr[:,0]
             exp = None

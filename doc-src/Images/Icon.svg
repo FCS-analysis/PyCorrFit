@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="Icon.svg"
-   inkscape:export-filename="/home/paul/Teufel/PyCorrFit/source-doc/Images/Icon.png"
+   inkscape:export-filename="/home/paul/Teufel/PyCorrFit/doc-src/Images/Icon.png"
    inkscape:export-xdpi="82.285713"
    inkscape:export-ydpi="82.285713">
   <defs
@@ -40,7 +40,7 @@
      inkscape:window-width="1053"
      inkscape:window-height="751"
      inkscape:window-x="41"
-     inkscape:window-y="3"
+     inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

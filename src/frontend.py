@@ -181,7 +181,6 @@ class MyFrame(wx.Frame):
             *modelid* - optional, directly set the modelid
             *counter* - optional, set the "#" value of the page
         """
-
         if modelid is None:
             # Get the model id from the menu
             modelid = event.GetId()
@@ -207,7 +206,6 @@ class MyFrame(wx.Frame):
         return Newtab
 
 
-
     def EnableToolCurrent(self, enabled):
         """ Independent on order of menus, enable or disable tools and
             current menu.
@@ -228,6 +226,7 @@ class MyFrame(wx.Frame):
                     # This means, that we hit a separator
                     self.toolmenu.Check(item.GetId(), False)
 
+
     def MakeMenu(self):
         self.filemenu = wx.Menu()
         # toolmenu and curmenu are public, because they need to be enabled/
@@ -239,7 +238,6 @@ class MyFrame(wx.Frame):
         modelmenu = wx.Menu()
         prefmenu = wx.Menu()
         helpmenu = wx.Menu()
-
         # wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         # self.filemenu
         #menuLoadSingle = self.filemenu.Append(wx.ID_ANY, 
@@ -261,7 +259,6 @@ class MyFrame(wx.Frame):
         self.filemenu.AppendSeparator()
         menuExit = self.filemenu.Append(wx.ID_EXIT,"E&xit",
                                                         "Terminate the program")
-
         # prefmenu
         self.MenuUseLatex = prefmenu.Append(wx.ID_ANY, "Use Latex",
                             "Enables/Disables usage of Latex for image saving.",
@@ -269,7 +266,6 @@ class MyFrame(wx.Frame):
         self.MenuVerbose = prefmenu.Append(wx.ID_ANY, "Verbose mode",
                            "Enables/Disables output of additional information.",
                             kind=wx.ITEM_CHECK)
-
         # toolmenu
         for ttype in tools.ToolDict:
             for tool in np.arange(len(tools.ToolDict[ttype])):
@@ -283,8 +279,6 @@ class MyFrame(wx.Frame):
                 # On tool only needs the Id of the wx.EVT_MENU
                 self.Bind(wx.EVT_MENU, self.OnTool, menu)
             self.toolmenu.AppendSeparator()
-
-
         # curmenu
         menuImportData = self.curmenu.Append(wx.ID_ANY, "&Import Data",
                                              "Import experimental FCS curve")
@@ -299,11 +293,10 @@ class MyFrame(wx.Frame):
         menuSavePlotTrace = self.curmenu.Append(wx.ID_ANY, 
                                      "&Save trace view as image",
                                      "Export current trace as image.")
-
         self.curmenu.AppendSeparator()
         menuClPa = self.curmenu.Append(wx.ID_ANY, "&Close Page",
                                        "Close Current Page")
-        # Model menu
+        # model menu
         # Integrate models into menu
         keys = mdls.modeltypes.keys()
         keys.sort()
@@ -319,7 +312,7 @@ class MyFrame(wx.Frame):
                 model = mdls.modeldict[modelid]
                 menuentry = submenu.Append(model[0], model[1], model[2])
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
-
+        # help menu
         menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software used",
                                     "Information about the software used")
         menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About",
@@ -329,9 +322,7 @@ class MyFrame(wx.Frame):
                                      " (Web access required)")
         menuShell = helpmenu.Append(wx.ID_ANY, "S&hell",
                                     "A Python shell")
-
-
-        # Creating the menubar.
+        # Create the menubar.
         self.menuBar = wx.MenuBar()
         # Adding all the menus to the MenuBar
         self.menuBar.Append(self.filemenu,"&File") 
@@ -340,12 +331,8 @@ class MyFrame(wx.Frame):
         self.menuBar.Append(modelmenu,"&Model") 
         self.menuBar.Append(prefmenu,"&Preferences") 
         self.menuBar.Append(helpmenu,"&Help")
-
         self.SetMenuBar(self.menuBar) # Adding the MenuBar to the Frame content.
-
         self.EnableToolCurrent(False)
-
-		
         ## Set events
         #File
         #self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
@@ -356,14 +343,12 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnOpenSession, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnSaveSession, menuSave)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
-
         # Current
         self.Bind(wx.EVT_MENU, self.OnImportData, menuImportData)
         self.Bind(wx.EVT_MENU, self.OnSaveData, menuSaveData)
         self.Bind(wx.EVT_MENU, self.OnSavePlotCorr, menuSavePlotCorr)
         self.Bind(wx.EVT_MENU, self.OnSavePlotTrace, menuSavePlotTrace)
         self.Bind(wx.EVT_MENU, self.OnDeletePage, menuClPa)
-
         # Help
         self.Bind(wx.EVT_MENU, self.OnSoftware, menuSoftw)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
@@ -371,9 +356,6 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnShell, menuShell)
 
 
-
-
-    #Help
     def OnAbout(self, event=None):
         # Show About Information
         description = doc.description()
@@ -492,7 +474,6 @@ class MyFrame(wx.Frame):
             menu=self.modelmenudict["User"]
             for item in  menu.GetMenuItems():
                 menu.RemoveItem(item)
-           
 
 
     def OnCommSession(self,e=None):
@@ -541,7 +522,6 @@ class MyFrame(wx.Frame):
         if self.notebook.GetPageCount() == 0:
             # Disable Current Menu and close their dialogs
             self.EnableToolCurrent(False)
-
 
 
     def OnFNBPageChanged(self,e=None, Page=None):
@@ -603,11 +583,10 @@ class MyFrame(wx.Frame):
                 trace = Stuff["Trace"]
                 curvelist = Stuff["Type"]
                 filename = Stuff["Filename"]
-                
                 # If curvelist is a list with more than one item, we are
                 # importing more than one curve per file. Therefore, we
                 # need to create more pages for this file.
-                
+                #
                 # We want to give the user the possibility to choose from
                 # several types of input functions. If curvelist contains
                 # more than one type of data, like "AC1", "AC2", "CC1", ...
@@ -649,7 +628,6 @@ class MyFrame(wx.Frame):
                     else:
                         return
                     Chosen.Destroy()
-
                 # curvelist is a list of numbers or labels that correspond
                 # to each item in dataexp or trace. Each curvelist/filename
                 # item will be converted to a string and then added to the
@@ -660,22 +638,10 @@ class MyFrame(wx.Frame):
                         wx.PD_CAN_ABORT
                 dlg = wx.ProgressDialog("Import", "Loading pages..."
                 , maximum = num, parent=self, style=style)
-                
+                # get current page and populate
                 CurPage = self.notebook.GetCurrentPage()
                 for i in np.arange(num):
                     # Fill Page with data
-                 #   #if i == 0:
-                 #   #    # The tab title still holds the old filename
-                 #   #    # We do not want this:
-                 #   #    # *filename* is always a string
-                 #   ##    M = len(CurPage.filename)
-                 #   #    text = CurPage.tabtitle.GetValue()
-                 #   #    if text[0:M] == CurPage.filename:
-                 #   #        CurPage.tabtitle.SetValue(text[M:])
-                 #   # Now we may change the filename.
-                 #   #CurPage.filename = str(filename[i])+" "+str(curvelist[i])
-                 #   # Strip leading or trailing white spaces.
-                 #   #CurPage.filename = CurPage.filename.strip()
                     self.ImportData(CurPage, dataexp[i], trace[i],
                                     curvelist[i], filename[i])
                     # Let the user abort, if he wants to:
@@ -731,21 +697,10 @@ class MyFrame(wx.Frame):
         self.OnFNBPageChanged()
         # Enable Fitting Button
         CurPage.Fit_enable_fitting()
-   #     # Set Title
-   #    # N = len(CurPage.modelname)
-   #    # M = len(CurPage.filename)
-   #    # text = CurPage.tabtitle.GetValue()
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
         title = filename+" "+curvetype
         CurPage.tabtitle.SetValue(title.strip())
-   #    # if text[0:N] == CurPage.modelname:
-   #    #     CurPage.tabtitle.SetValue(CurPage.filename+" "+
-   #    #                               CurPage.modelname+text[N:-1].strip())
-   #    # elif text[0:M] == CurPage.filename:
-   #    #     CurPage.tabtitle.SetValue(CurPage.filename+text[M:].strip())
-   #    # else:
-   #    #     CurPage.tabtitle.SetValue(CurPage.filename+" "+text.strip())
         # Plot everything
         CurPage.PlotAll()
         # Call this function to allow the "Channel Selection" window that
@@ -779,7 +734,6 @@ class MyFrame(wx.Frame):
         else:
             dlg.Destroy()
             return
-
         ## Get information from the data files and let the user choose
         ## which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
@@ -811,11 +765,9 @@ class MyFrame(wx.Frame):
                 style=wx.ICON_WARNING|wx.OK|wx.CANCEL|wx.STAY_ON_TOP)
             if dlg.ShowModal() == wx.ID_CANCEL:
                 return
-
         # Abort, if there are no curves left
         if len(Type) == 0:
             return
-
         # We want to give the user the possibility to choose from
         # several types of input functions. If curvelist contains
         # more than one type of data, like "AC1", "AC2", "CC1", ...
@@ -862,7 +814,6 @@ class MyFrame(wx.Frame):
         else:
             return
         Chosen.Destroy()
-
         ## Import the data into new pages
         # curvelist is a list of numbers or labels that correspond
         # to each item in dataexp or trace. Each curvelist/filename
@@ -874,7 +825,6 @@ class MyFrame(wx.Frame):
                 wx.PD_CAN_ABORT
         dlg = wx.ProgressDialog("Import", "Loading pages..."
         , maximum = num, parent=self, style=style)
-        
         for i in np.arange(num):
             # create a new page
             CurPage = self.add_fitting_tab(event=None, 
@@ -956,14 +906,10 @@ class MyFrame(wx.Frame):
                     # Write experimental data
                     Newtab.dataexpfull = dataexp
                     Newtab.dataexp = True
-                    # Enable fitting button
-
                 self.UnpackParameters(Function_parms[i], Newtab)
-
                 # Set Title of the Page
                 if Comments is not None:
                     Newtab.tabtitle.SetValue(Comments[i])
-
                 # Import the intensity trace
                 trace = Function_trace[i]
                 if trace is not None:
@@ -977,7 +923,6 @@ class MyFrame(wx.Frame):
             # Set Session Comment
             if Comments is not None:
                 self.SessionComment = Comments[-1]
-
             if self.notebook.GetPageCount() > 0:
                 # Enable the "Current" Menu
                 self.EnableToolCurrent(True)
@@ -1105,6 +1050,7 @@ class MyFrame(wx.Frame):
             # We close it then
             self.ToolsOpen[eid].OnClose()
 
+
     def OnUpdate(self, event):
         misc.Update(self)
 
@@ -1148,6 +1094,7 @@ class MyFrame(wx.Frame):
         Parms.append(Page.IsCrossCorrelation)
         return Parms
 
+
     def UnpackParameters(self, Parms, Page):
         """ Apply the given parameters to the Page in question.
         """
@@ -1157,7 +1104,6 @@ class MyFrame(wx.Frame):
             return
         active_values = Parms[2]
         active_fitting = Parms[3]
-        
         # As of version 0.7.0, square pinhole TIR-FCS models
         # use sigma instead of lambda, NA and sigma_0. This
         # is for backwards compatibility:
@@ -1175,8 +1121,6 @@ class MyFrame(wx.Frame):
             active_values[lindex] = sigma
             active_values = np.delete(active_values,lindex+1)
             active_fitting = np.delete(active_fitting, lindex+1)
-            
-        
         # Cropping: What part of dataexp should be displayed.
         [cropstart, cropend] = Parms[4]
         # Add parameters and fitting to the created page.
@@ -1210,7 +1154,6 @@ class MyFrame(wx.Frame):
         if Page.dataexp is not None:
             Page.Fit_enable_fitting()
         Page.Fit_WeightedFitCheck()
-
         # Set which background correction the Page uses:
         if len(Parms) >= 7:
             if len(self.Background) > Parms[6][0]:
@@ -1231,6 +1174,3 @@ class MyFrame(wx.Frame):
             self.SetTitle('PyCorrFit ' + self.version + title)
         else:
             self.SetTitle('PyCorrFit ' + self.version)
-
-
-
