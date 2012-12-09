@@ -16,6 +16,12 @@
 import sys
 import csv
 import matplotlib
+# We do catch warnings about performing this before matplotlib.backends stuff
+#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import numpy
 import os
 import platform

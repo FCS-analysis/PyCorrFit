@@ -25,9 +25,6 @@ import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
 
-# PyCorrFit modules
-import doc                          # Documentation/some texts
-import edclasses
 # The icon file was created with
 # img2py -i -n Main Icon.png icon.py
 import icon                         # Contains the program icon
@@ -36,6 +33,11 @@ try:
 except ImportError:
     print " Some modules are not available."
     print " Update function will not work."
+
+# PyCorrFit modules
+import doc                          # Documentation/some texts
+import edclasses
+
 import models as mdls
 import openfile as opf              # How to treat an opened file
 import page

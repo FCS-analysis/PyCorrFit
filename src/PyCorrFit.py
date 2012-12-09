@@ -17,10 +17,21 @@
 import csv
 from distutils.version import LooseVersion
 import sys
+# Import matplotlib a little earlier. This way some problems with saving
+# dialogs that are not made by "WXAgg" are solved.
+import matplotlib
+# We do catch warnings about performing this before matplotlib.backends stuff
+#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import numpy as np                  # NumPy
 import os
 import platform
 import scipy
+
+   
 try:
     import sympy
 except ImportError:
