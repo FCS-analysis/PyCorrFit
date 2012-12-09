@@ -142,7 +142,6 @@ class InfoClass(object):
             else:
                 InfoDict["modelsupdoc"] = [func_info .func_doc]
         ## Fitting
-        variances_were_calculated = (Page.Fitbox[1].GetSelection() > 0)
         weightedfit = Page.Fitbox[1].GetValue()
         fittingbins = Page.Fitbox[5].GetValue() # from left and right
         Fitting = list()
@@ -153,7 +152,7 @@ class InfoClass(object):
             else:
                 Title.append(["Data type", "Autocorrelation" ]) 
             Fitting.append([ u"\u03c7"+"²", Page.chi2 ])
-            if variances_were_calculated:
+            if Page.weighted_fit_was_performed:
                 Chi2type = "reduced"
             else:
                 Chi2type = "sum of squares only"

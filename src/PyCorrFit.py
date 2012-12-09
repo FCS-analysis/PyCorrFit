@@ -30,8 +30,6 @@ import numpy as np                  # NumPy
 import os
 import platform
 import scipy
-
-   
 try:
     import sympy
 except ImportError:

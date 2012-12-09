@@ -69,6 +69,7 @@ class FittingPanel(wx.Panel):
         # chi squared - is also an indicator, if something had been fitted
         self.FitKnots = 5 # number of knots for spline fit or similiar
         self.chi2 = None
+        self.weighted_fit_was_performed = False # default is no weighting
         # Counts number of Pages already created:
         self.counter = counter
         # Model we are using
@@ -267,6 +268,11 @@ class FittingPanel(wx.Panel):
                  " 'Fit' multiple times. If it does not converge, use splines.")
         else:
             self.parent.StatusBar.SetStatusText("")
+        # Set weighted_fit_was_performed variable
+        if self.Fitbox[1].GetSelection() == 0:
+            self.weighted_fit_was_performed = False
+        else:
+            self.weighted_fit_was_performed = True
         Fitting.function = self.active_fct
         Fitting.interval = [self.startcrop, self.endcrop]
         Fitting.values = 1*self.active_parms[1]
@@ -461,24 +467,33 @@ class FittingPanel(wx.Panel):
                                     width=width)
             # Draw linezero first, so it is in the background
             PlotCorr = plot.PlotGraphics([linezero, lineexp, linecorr], 
-                                xLabel='Lag time τ [ms]', yLabel='G(τ)')
+                                xLabel='lag time τ [ms]', yLabel='G(τ)')
             self.canvascorr.Draw(PlotCorr)
-            ## Plot residuals
+            ## Calculate residuals
             self.resid = np.zeros((len(self.tau), 2))
             self.resid[:, 0] = self.tau
             self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
-            lineres = plot.PolyLine(self.resid, legend='', colour=colfit,
-                                    width=width)
-            PlotRes = plot.PlotGraphics([linezero, lineres], 
-                                   xLabel='Lag time τ [ms]', yLabel='Residuals')
-            self.canvaserr.Draw(PlotRes)
+            # Calculate weighted residuals, if weights are available from
+            # a the fitting class
+            Fitting = self.Fit_create_instance(noplots=True)
+            Fitting.parmoptim = Fitting.fitparms
+            self.resid[:, 1] /= Fitting.variances
             # Also check if chi squared has been calculated. This is not the
             # case when a session has been loaded. Do it.
             # (Usually it is done right after fitting)
             if self.chi2 is None:
-                Fitting = self.Fit_create_instance(noplots=True)
-                Fitting.parmoptim = Fitting.fitparms
                 self.chi2 = Fitting.get_chi_squared()
+            # Plot residuals
+            lineres = plot.PolyLine(self.resid, legend='', colour=colfit,
+                                    width=width)
+            # residuals or weighted residuals?
+            if self.weighted_fit_was_performed:
+                yLabelRes = "weighted \nresiduals"
+            else:
+                yLabelRes = "residuals"
+            PlotRes = plot.PlotGraphics([linezero, lineres], 
+                                   xLabel='lag time τ [ms]', yLabel=yLabelRes)
+            self.canvaserr.Draw(PlotRes)
         else:
             linecorr = plot.PolyLine(self.datacorr, legend='', colour='blue',
                                      width=1)

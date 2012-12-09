@@ -165,12 +165,12 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         #    ax = plt.axes()
     ax.semilogx()
     if dataexp is not None:
-        plt.plot(dataexp[:,0], dataexp[:,1], 'o', color="white", label=tabtitle)
+        plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey", label=tabtitle)
     else:
         plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel,
              lw=2.5, color="blue")
-    plt.ylabel('Correlation')
+    plt.ylabel('correlation')
     if dataexp is not None:
         mind = np.min([ dataexp[:,1], fit[:,1]])
         maxd = np.max([ dataexp[:,1], fit[:,1]])
@@ -210,9 +210,13 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         ax2 = plt.subplot(gs[1])
         #ax2 = plt.axes()
         ax2.semilogx()
-        plt.plot(resid[:,0], resid[:,1], 'o', color="white", label='Residuals')
+        if Page.weighted_fit_was_performed:
+            yLabelRes = "weighted \nresiduals"
+        else:
+            yLabelRes = "residuals"
+        plt.plot(resid[:,0], resid[:,1], '-', color="darkgrey", label=yLabelRes)
         plt.xlabel(r'lag time $\tau$ [ms]')
-        plt.ylabel('Residuals')
+        plt.ylabel(yLabelRes)
         minx = np.min(resid[:,0])
         maxx = np.max(resid[:,0])
         miny = np.min(resid[:,1])
@@ -330,7 +334,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
 
 
 def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
-    """ Save log plot into file        
+    """ Show log plot of correlation function without residuals. 
         Parameters:
         *parent*    the parent window
         *dirname*   directory to set on saving
@@ -368,11 +372,11 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
     ax = plt.subplot(111)
     #    ax = plt.axes()
     ax.semilogx()
-    plt.plot(x, dataexp,'o', color="white")
+    plt.plot(x, dataexp,'-', color="darkgrey")
     plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(x, datafit, '-', label = name,
              lw=2.5, color="blue")
-    plt.ylabel('Correlation')
+    plt.ylabel('correlation')
     mind = np.min([ dataexp, datafit])
     maxd = np.max([ dataexp, datafit])
     ymin = mind - (maxd - mind)/20.
