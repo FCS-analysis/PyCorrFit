@@ -5,7 +5,7 @@
  - Bugfix: Batch control IndexError with Info window opened
  - Tool Statistics: Sort values according to page numbers
  - Tool global: Added weighted fitting
- - Reiduals: weighted residuals are now shown after weighted fits
+ - Reiduals: according to weighted fitting, weighted residuals are plotted
 0.7.1
  - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg

@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="Icon.svg"
+   sodipodi:docname="Icon_dark.svg"
    inkscape:export-filename="/home/paul/Teufel/PyCorrFit/source-doc/Images/Icon.png"
    inkscape:export-xdpi="82.285713"
    inkscape:export-ydpi="82.285713">
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="242.5741"
-     inkscape:cy="162.07305"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="174.6044"
+     inkscape:cy="111.97851"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -61,7 +61,7 @@
      transform="translate(-72.322502,-192.61096)">
     <path
        sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:0.17210681;stroke:#ffffff;stroke-width:6.37775278;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510384;stroke-dasharray:none"
+       style="fill:#000000;fill-opacity:0.17210681999999999;stroke:#000000;stroke-width:6.37775277999999979;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510385;stroke-dasharray:none"
        id="path3820"
        sodipodi:cx="112.14286"
        sodipodi:cy="46.627132"

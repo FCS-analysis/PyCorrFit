@@ -68,9 +68,9 @@ class ShowTrace(wx.Frame):
             self.tracea[:,0] = self.tracea[:,0]/1000
             self.traceb = 1*self.Page.tracecc[1]
             self.traceb[:,0] = self.traceb[:,0]/1000
-            linea = plot.PolyLine(self.tracea, legend='Channel 1', 
+            linea = plot.PolyLine(self.tracea, legend='channel 1', 
                                   colour='blue', width=1)
-            lineb = plot.PolyLine(self.traceb, legend='Channel 2', 
+            lineb = plot.PolyLine(self.traceb, legend='channel 2', 
                                   colour='red', width=1)
             lines = [linea, lineb]
             self.canvas.SetEnableLegend(True)
@@ -79,8 +79,8 @@ class ShowTrace(wx.Frame):
             return
         # Plot lines
         self.canvas.Draw(plot.PlotGraphics(lines, 
-                                           xLabel='Measurement time [s]', 
-                                           yLabel='Trace signal [kHz]'))
+                                           xLabel='time [s]', 
+                                           yLabel='count rate [kHz]'))
 
 
     def OnPageChanged(self, page):

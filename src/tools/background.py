@@ -324,8 +324,8 @@ class BackgroundCorrection(wx.Frame):
         trace[:,0] = trace[:,0]/1000
         linesig = plot.PolyLine(trace, legend='', colour='blue', width=1)
         self.canvas.Draw(plot.PlotGraphics([linesig], 
-                         xLabel='Measurement time [s]', 
-                         yLabel='Background signal [kHz]'))
+                         xLabel='time [s]', 
+                         yLabel='background signal [kHz]'))
 
 
     def OnImport(self, event):

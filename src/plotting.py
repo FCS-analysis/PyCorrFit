@@ -307,8 +307,8 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         plt.plot(time, intensity, '-', 
                  label = labels[i],
                  lw=1)
-    plt.ylabel('Intensity [kHz]')
-    plt.xlabel('Measurement time [s]')
+    plt.ylabel('count rate [kHz]')
+    plt.xlabel('time [s]')
     # Add some more stuff to the text and append data to a .txt file
     plt.legend()
     ## Hack

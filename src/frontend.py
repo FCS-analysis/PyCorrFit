@@ -25,10 +25,8 @@ import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
 
-# The icon file was created with
-# img2py -i -n Main Icon.png icon.py
-import icon                         # Contains the program icon
 try:
+    # contains e.g. update and icon, but no vital things.
     import misc
 except ImportError:
     print " Some modules are not available."
@@ -388,6 +386,7 @@ class MyFrame(wx.Frame):
         info.SetCopyright('(C) 2011 - 2012 Paul Müller')
         info.SetWebSite(doc.HomePage)
         info.SetLicence(licence)
+        info.SetIcon(misc.getMainIcon(pxlength=64))
         info.AddDeveloper('Paul Müller')
         info.AddDocWriter('Paul Müller')
         wx.AboutBox(info)

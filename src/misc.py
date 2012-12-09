@@ -19,6 +19,8 @@ import wx.html
 import wx.lib.delayedresult as delayedresult
 
 import doc                          # Documentation/some texts
+# The icon file was created with
+# img2py -i -n Main Icon.png icon.py
 import icon                         # Contains the program icon
 
 
@@ -71,12 +73,13 @@ class wxHTML(wx.html.HtmlWindow):
 
 
 
-def getMainIcon():
+def getMainIcon(pxlength=32):
+    """ *pxlength* is the side length in pixels of the icon """
     # Set window icon
     iconBMP = icon.getMainBitmap()
     # scale
     image = wx.ImageFromBitmap(iconBMP)
-    image = image.Scale(32, 32, wx.IMAGE_QUALITY_HIGH)
+    image = image.Scale(pxlength, pxlength, wx.IMAGE_QUALITY_HIGH)
     iconBMP = wx.BitmapFromImage(image)
     iconICO = wx.IconFromBitmap(iconBMP)
     return iconICO

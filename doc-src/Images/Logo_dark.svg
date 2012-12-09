@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="280"
-   height="280"
+   width="786.55231"
+   height="230.34308"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="Icon.svg"
-   inkscape:export-filename="/home/paul/Teufel/PyCorrFit/source-doc/Images/Icon.png"
+   sodipodi:docname="Logo_dark.svg"
+   inkscape:export-filename="/home/paul/Arbeitsfläche/123.png"
    inkscape:export-xdpi="82.285713"
    inkscape:export-ydpi="82.285713">
   <defs
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="242.5741"
-     inkscape:cy="162.07305"
+     inkscape:zoom="1.4"
+     inkscape:cx="354.08592"
+     inkscape:cy="110.86756"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -39,8 +39,8 @@
      fit-margin-bottom="0"
      inkscape:window-width="1053"
      inkscape:window-height="751"
-     inkscape:window-x="41"
-     inkscape:window-y="3"
+     inkscape:window-x="12"
+     inkscape:window-y="29"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -58,10 +58,10 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-72.322502,-192.61096)">
+     transform="translate(-79.58144,-210.26787)">
     <path
        sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:0.17210681;stroke:#ffffff;stroke-width:6.37775278;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510384;stroke-dasharray:none"
+       style="fill:#000000;fill-opacity:0.17210681999999999;stroke:#000000;stroke-width:6.37775277999999979;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510385;stroke-dasharray:none"
        id="path3820"
        sodipodi:cx="112.14286"
        sodipodi:cy="46.627132"
@@ -69,6 +69,12 @@
        sodipodi:ry="125.71429"
        d="m 237.14286,46.627132 c 0,69.430088 -55.96441,125.714288 -125,125.714288 -69.035593,0 -125,-56.2842 -125,-125.714288 0,-69.430083 55.964407,-125.714286 125,-125.714286 69.03559,0 125,56.284203 125,125.714286 z"
        transform="matrix(0.8109252,0,0,0.80631769,129.88302,299.077)" />
+    <path
+       style="fill:none;stroke:#008000;stroke-width:7;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 83.272048,410.80442 c 0,0 78.208002,-28.60158 143.480012,-77.09641 68.08557,-50.5852 91.8236,-119.88089 91.8236,-119.88089"
+       id="path3780"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc" />
     <path
        sodipodi:type="arc"
        style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -79,12 +85,6 @@
        sodipodi:ry="36.36549"
        d="m 206.07112,424.0473 c 0,20.08411 -19.89947,36.36549 -44.44672,36.36549 -24.54724,0 -44.44671,-16.28138 -44.44671,-36.36549 0,-20.0841 19.89947,-36.36549 44.44671,-36.36549 24.54725,0 44.44672,16.28139 44.44672,36.36549 z"
        transform="matrix(0.5624713,0,0,0.68746496,129.9134,45.15562)" />
-    <path
-       style="fill:none;stroke:#008000;stroke-width:7;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 83.272048,410.80442 c 0,0 78.208002,-28.60158 143.480012,-77.09641 68.08557,-50.5852 91.8236,-119.88089 91.8236,-119.88089"
-       id="path3780"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="csc" />
     <path
        sodipodi:type="arc"
        style="fill:#c48d0a;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -105,5 +105,17 @@
        sodipodi:ry="36.36549"
        d="m 206.07112,424.0473 c 0,20.08411 -19.89947,36.36549 -44.44672,36.36549 -24.54724,0 -44.44671,-16.28138 -44.44671,-36.36549 0,-20.0841 19.89947,-36.36549 44.44671,-36.36549 24.54725,0 44.44672,16.28139 44.44672,36.36549 z"
        transform="matrix(0.5624713,0,0,0.68746496,195.09091,-23.441194)" />
+    <text
+       xml:space="preserve"
+       style="font-size:99.34378815000000884px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:0.80473375;stroke:none;font-family:Sans"
+       x="337.98184"
+       y="364.08014"
+       id="text3793"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3795"
+         x="337.98184"
+         y="364.08014"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:0.80473375;font-family:Monospace;-inkscape-font-specification:Monospace">PyCorrFit</tspan></text>
   </g>
 </svg>
