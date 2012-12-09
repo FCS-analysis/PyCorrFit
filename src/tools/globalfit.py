@@ -61,7 +61,7 @@ check parameters on each page and start 'Global fit'.
         # The weighted fit of the current page will be applied to
         # all other pages.
         self.weightedfitdrop = wx.ComboBox(self.panel)
-        weightlist = self.Page.weightlist
+        weightlist = self.Page.Fitbox[1].GetItems()
         # Do not display knot number for spline. May be different for each page.
         # Remove everything after a "(" in the weightlist string.
         # This way, e.g. the list does not show the knotnumber, which
@@ -129,7 +129,7 @@ check parameters on each page and start 'Global fit'.
             # corr = function(item.values, item.x)
             # Subtract data. This is the function we want to minimize
             minimize.append(
-                (function(values, item["x"]) - item["data"]) / item["variances"]
+              (function(values, item["x"]) - item["data"]) / item["dataweights"]
                            )
 
         # Flatten the list and make an array out of it.
@@ -175,11 +175,17 @@ check parameters on each page and start 'Global fit'.
                     Page.apply_parameters()
                     dataset["values"] = Page.active_parms[1]
                     # Get weights
-                    Page.Fitbox[1].SetSelection(
-                                            self.weightedfitdrop.GetSelection())
+                    weighttype = self.weightedfitdrop.GetSelection()
+                    Page.Fitbox[1].SetSelection(weighttype)
+                    weightname = self.weightedfitdrop.GetValue()
+                    setweightname = Page.Fitbox[1].GetValue()
+                    if weightname != setweightname:
+                        print "Page "+Page.counter+" has no fitting type '"+ \
+                              weightname+"'!"
+                        
                     Page.Fit_WeightedFitCheck()
                     Fitting = Page.Fit_create_instance(noplots=True)
-                    dataset["variances"] = Fitting.variances
+                    dataset["dataweights"] = Fitting.dataweights
                     self.PageData[j] = dataset
 
                     # Get the parameters to fit from that page
