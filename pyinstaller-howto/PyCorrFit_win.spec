@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['C:\\Python27\\PyCorrFit\\source\\PyCorrFit.py'],
+a = Analysis(['C:\\Python27\\PyCorrFit\\src\\PyCorrFit.py'],
              pathex=['C:\\Python27\\pyinstaller-pyinstaller-6ca4af8'],
              hiddenimports=[],
              hookspath=None)
