@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """ PyCorrFit
-    Paul M�ller, Biotec - TU Dresden
+    Paul Müller, Biotec - TU Dresden
 
     A flexible tool for fitting and analyzing correlation curves.
 
