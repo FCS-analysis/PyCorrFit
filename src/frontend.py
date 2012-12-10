@@ -979,23 +979,32 @@ class MyFrame(wx.Frame):
 
     def OnSaveSession(self,e=None):
         """Save a session for later continuation."""
+        # Parameters are all in one dictionary:
+        Infodict = dict()
+        Infodict["Backgrounds"] = self.Background # Session comment "Session" and Pages int
+        Infodict["Comments"] = dict() # Session comment "Session" and Pages int
+        Infodict["Correlations"] = dict() # all correlation curves
+        Infodict["External Functions"] = dict() # external model functions
+        Infodict["External Weights"] = dict() # additional weights for the pages
+        Infodict["Parameters"] = dict() # all parameters of all pages
+        Infodict["Preferences"] = dict() # not used yet
+        Infodict["Traces"] = dict() # all traces
+
         # Save each Page
         N = self.notebook.GetPageCount()
-        # Create two lists: One for internal and one for external (user added)
-        # functions:
-        Function_parms = list()
-        Function_array = list()
-        Function_trace = list()
-        Function_prefs = list()
-        # Add a dictionary for all information
-        Info = dict()
-        Info["External Weights"] = dict() # additional weights for the pages
-        # Reserved for future versions of PyCorrFit:
-        Preferences = None
-        # User edited Comments
-        Comments = list()
+
+        # # # Create two lists: One for internal and one for external (user added)
+        # # # functions:
+        # # Function_parms = list()
+        # # Function_array = list()
+        # # Function_trace = list()
+        # # Function_prefs = list()
+        # # Reserved for future versions of PyCorrFit:
+        # # Preferences = None
+        # # # User edited Comments
+        # # Comments = list()
+        
         # External functions
-        ExternalFunctions = dict()
         for usermodelid in mdls.modeltypes["User"]:
             # Those models belong to external user functions.
             doc = mdls.modeldict[usermodelid][-1].func_doc
@@ -1003,37 +1012,45 @@ class MyFrame(wx.Frame):
             docnew=""
             for line in doc:
                 docnew = docnew+line.strip()+"\r\n"
-            ExternalFunctions[usermodelid] = docnew
+            Infodict["External Functions"][usermodelid] = docnew
         for i in np.arange(N):
             # Set Page 
             Page = self.notebook.GetPage(i)
+            counter = Page.counter.strip().strip(":").strip("#")
             # Apply currently set parameters
             Page.apply_parameters()
-            # Get experimental data
-            dataexp = Page.dataexpfull    # 2D Array or None
-            # Get parameters
-            tau = Page.tau            # Array
-            Array = [tau, dataexp]
-            Parms = self.PackParameters(Page)
-            Function_parms.append(Parms)
-            Function_array.append(Array)
+           # # # Get experimental data
+           # # dataexp = Page.dataexpfull    # 2D Array or None
+           # # # Get parameters
+           # # tau = Page.tau            # Array
+           # # Array = [tau, dataexp]
+            Infodict["Parameters"][counter] = self.PackParameters(Page)
+            Infodict["Correlations"][counter] = [Page.tau, Page.dataexpfull]
+           # #Parms = self.PackParameters(Page)
+           # #Function_parms.append(Parms)
+           # #Function_array.append(Array)
             # Also save the trace
             if Page.IsCrossCorrelation is False:
-                Function_trace.append(Page.trace)
+                Infodict["Traces"][counter] = Page.trace
+                # #Function_trace.append(Page.trace)
             else:
-                Function_trace.append(Page.tracecc)
+                # #Function_trace.append(Page.tracecc)
+                Infodict["Traces"][counter] = Page.tracecc
+                
             # Append title to Comments
-            Comments.append(Page.tabtitle.GetValue())
+            # #Comments.append(Page.tabtitle.GetValue())
+            Infodict["Comments"][counter] = Page.tabtitle.GetValue()
             # Add additional weights to Info["External Weights"]
             if len(Page.external_std_weights) != 0:
-                Info["External Weights"][Page.counter] = Page.external_std_weights
+                Infodict["External Weights"][Page.counter] = Page.external_std_weights
         # Append Session Comment:
-        Comments.append(self.SessionComment)
+        Infodict["Comments"]["Session"] = self.SessionComment
         # Save everything
         # If no file has been selected, self.filename will be set to 'None'.
         self.dirname, self.filename = opf.SaveSession(self, self.dirname,
-          Function_parms, Function_array, Function_trace, self.Background,
-          Preferences, Comments, ExternalFunctions, Info)
+          Infodict)
+          #Function_parms, Function_array, Function_trace, self.Background,
+          #Preferences, Comments, ExternalFunctions, Info)
         # Set title of our window
         self.SetTitleFCS(self.filename)
 

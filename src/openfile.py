@@ -381,17 +381,17 @@ def saveCSV(parent, dirname, Page):
         return dirname, None
 
 
-def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
-                Comments, ExternalFunctions, Info):
+def SaveSession(parent, dirname, Infodict):
     """ Write whole Session into a zip file.
-        Internal Functions:
-        *Parms* of all functions will be saved in one *.yaml file.
-        *Array* includes all the arrays (tau and dataexp). For each
-         Page/Function those will be saved in a separate file.
-        *Trace* is a list of intensity traces.
-        *Background* is a list of backgrounds and their traces
-        *Preferences* are not yet used
-        *Comments* on the session and on each page
+        Infodict may contain the following keys:
+        "Backgrounds", list: contains the backgrounds
+        "Comments", dict: "Session" comment and int keys to Page titles
+        "Correlations", dict: page numbers, all correlation curves
+        "External Functions, dict": modelids to external model functions
+        "External Weights", dict: page numbers, external weights for fitting
+        "Parameters", dict: page numbers, all parameters of the pages
+        "Preferences", dict: not used yet
+        "Traces", dict: page numbers, all traces of the pages
         We will also write a Readme.txt
     """
     dlg = wx.FileDialog(parent, "Save session file", dirname, "",
@@ -413,28 +413,33 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         # Make the yaml dump
         parmsfilename = "Parameters.yaml"
         # Parameters have to be floats in lists
-        # in order for yaml.safe_load to work.     
-        for idparm in np.arange(len(Parms)):
+        # in order for yaml.safe_load to work.
+        Parms =  Infodict["Parameters"]
+        ParmsKeys = Parms.keys()
+        ParmsKeys.sort()
+        Parmlist = list()
+        for idparm in ParmsKeys:
             Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
-        yaml.dump( Parms,
-                     open(parmsfilename, "wb") )
+            Parmlist.append(Parms[idparm])
+        yaml.dump(Parmlist, open(parmsfilename, "wb"))
         Arc.write(parmsfilename)
+        os.remove(os.path.join(tempdir, parmsfilename))
         # Save external functions
-        for key in ExternalFunctions.keys():
+        for key in Infodict["External Functions"].keys():
             funcfilename = "model_"+str(key)+".txt"
             funcfile =  open(funcfilename, 'wb')
-            funcfile.write(ExternalFunctions[key])
+            funcfile.write(Infodict["External Functions"][key])
             funcfile.close()
             Arc.write(funcfilename)
+            os.remove(os.path.join(tempdir, funcfilename))
         # Save (dataexp and tau)s into separate csv files.
-        for i in np.arange(len(Array)):
+        for number in Infodict["Correlations"].keys():
             # Since *Array* and *Parms* are in the same order (the page order),
             # we will identify the filename by the Page title number.
-            number = str(Parms[i][0])
-            expfilename = "data"+number[1:len(number)-2]+".csv"
+            expfilename = "data"+number+".csv"
             expfile = open(expfilename, 'wb')
-            tau = Array[i][0]
-            exp = Array[i][1]
+            tau = Infodict["Correlations"][number][0]
+            exp = Infodict["Correlations"][number][1]
             dataWriter = csv.writer(expfile, delimiter=',')
             if exp is not None:
                 # Names of Columns
@@ -454,21 +459,21 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
             expfile.close()
             # Add to archive
             Arc.write(expfilename)
+            os.remove(os.path.join(tempdir, expfilename))
         # Save traces into separate csv files.
-        for i in np.arange(len(Trace)):
+        for number in Infodict["Traces"].keys():
             # Since *Trace* and *Parms* are in the same order, which is the
             # Page order, we will identify the filename by the Page title 
             # number.
-            if Trace[i] is not None:
-                number = str(Parms[i][0])
-                if Parms[i][7] is True:
+            if Infodict["Traces"][number] is not None:
+                if Parms[number][7] is True:
                     # We have cross correlation: save two traces
                     ## A
-                    tracefilenamea = "trace"+number[1:len(number)-2]+"A.csv"
+                    tracefilenamea = "trace"+number+"A.csv"
                     tracefile = open(tracefilenamea, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Trace[i][0][:,0]
-                    rate = Trace[i][0][:,1]
+                    time = Infodict["Traces"][number][0][:,0]
+                    rate = Infodict["Traces"][number][0][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -477,12 +482,13 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilenamea)
+                    os.remove(os.path.join(tempdir, tracefilenamea))
                     ## B
-                    tracefilenameb = "trace"+number[1:len(number)-2]+"B.csv"
+                    tracefilenameb = "trace"+number+"B.csv"
                     tracefile = open(tracefilenameb, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Trace[i][1][:,0]
-                    rate = Trace[i][1][:,1]
+                    time = Infodict["Traces"][number][1][:,0]
+                    rate = Infodict["Traces"][number][1][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -491,13 +497,14 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilenameb)
+                    os.remove(os.path.join(tempdir, tracefilenameb))
                 else:
                     # Save one single trace
-                    tracefilename = "trace"+number[1:len(number)-2]+".csv"
+                    tracefilename = "trace"+number+".csv"
                     tracefile = open(tracefilename, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Trace[i][:,0]
-                    rate = Trace[i][:,1]
+                    time = Infodict["Traces"][number][:,0]
+                    rate = Infodict["Traces"][number][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -506,15 +513,20 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilename)
+                    os.remove(os.path.join(tempdir, tracefilename))
         # Save comments into txt file
         commentfilename = "comments.txt"
         commentfile = open(commentfilename, 'wb')
         # Comments[-1] is comment on whole Session
-        for i in np.arange(len(Comments)):
-            commentfile.write(Comments[i]+"\r\n")
+        for key in Infodict["Comments"]:
+            if key != "Session":
+                commentfile.write(Infodict["Comments"][key]+"\r\n")
+        commentfile.write(Infodict["Comments"]["Session"])
         commentfile.close()
         Arc.write(commentfilename)
+        os.remove(os.path.join(tempdir, commentfilename))
         ## Save Background information:
+        Background = Infodict["Backgrounds"]
         if len(Background) > 0:
             # We do not use a comma separated, but a tab separated file,
             # because a comma might be in the name of a bg.
@@ -536,16 +548,18 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                 bgtracefile.close()
                 # Add to archive
                 Arc.write(bgtracefilename)
+                os.remove(os.path.join(tempdir, bgtracefilename))
             bgfile.close()
             Arc.write(bgfilename)
+            os.remove(os.path.join(tempdir, bgfilename))
         ## Save External Weights information
-        WeightedPageID = Info["External Weights"].keys()
+        WeightedPageID = Infodict["External Weights"].keys()
         WeightedPageID.sort()
         WeightFilename = "externalweights.txt"
         WeightFile = open(WeightFilename, 'wb')
         WeightWriter = csv.writer(WeightFile, delimiter='\t')
         for Pkey in WeightedPageID:
-            NestWeights = Info["External Weights"][Pkey].keys()
+            NestWeights = Infodict["External Weights"][Pkey].keys()
             # The order of the types does not matter, since they are
             # sorted in the frontend and upon import. We sort them here, anyhow.
             NestWeights.sort()
@@ -556,7 +570,7 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                                      "_"+str(Nkey).strip()+".csv"
                 WeightDataFile = open(WeightDataFilename, 'wb')
                 WeightDataWriter = csv.writer(WeightDataFile)
-                wdata = Info["External Weights"][Pkey][Nkey]
+                wdata = Infodict["External Weights"][Pkey][Nkey]
                 for jw in np.arange(len(wdata)):
                     WeightDataWriter.writerow([str(wdata[jw])])
                 WeightDataFile.close()
@@ -572,6 +586,7 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
         rmfile.write(doc.SessionReadme(parent))
         rmfile.close()
         Arc.write(rmfilename)
+        os.remove(os.path.join(tempdir, rmfilename))
         # Close the archive
         Arc.close()
         # Move archive to destination directory
@@ -579,31 +594,7 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                     os.path.join(dirname, filename) )
         # Go to destination directory
         os.chdir(returnWD)
-        # Clean up behind us
-        os.remove(os.path.join(tempdir, parmsfilename))
-        os.remove(os.path.join(tempdir, commentfilename))
-        os.remove(os.path.join(tempdir, rmfilename))
-        for key in ExternalFunctions.keys():
-            funcfilename = "model_"+str(key)+".txt"
-            os.remove(os.path.join(tempdir, funcfilename))
-        for i in np.arange(len(Array)):
-            number = str(Parms[i][0])
-            expfilename = "data"+number[1:len(number)-2]+".csv"
-            os.remove(os.path.join(tempdir, expfilename))
-            if Trace[i] is not None:
-                if Parms[i][7] is True:
-                    tracefilenamea = "trace"+number[1:len(number)-2]+"A.csv"
-                    os.remove(os.path.join(tempdir, tracefilenamea))
-                    tracefilenameb = "trace"+number[1:len(number)-2]+"B.csv"
-                    os.remove(os.path.join(tempdir, tracefilenameb))
-                else:
-                    tracefilename = "trace"+number[1:len(number)-2]+".csv"
-                    os.remove(os.path.join(tempdir, tracefilename))
-        if len(Background) > 0:
-            os.remove(os.path.join(tempdir, bgfilename))
-            for i in np.arange(len(Background)):
-                bgtracefilename = "bg_trace"+str(i)+".csv"
-                os.remove(os.path.join(tempdir, bgtracefilename))
+
         os.rmdir(tempdir)
         return dirname, filename
     else:

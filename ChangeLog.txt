@@ -1,6 +1,6 @@
 0.7.2
  (will be 0.7.3)
- - Issue #11 closed. External weights from averages saved in session.
+ - Issue closed. External weights from averages saved in session (#11).
 0.7.2
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
            fitting is performed
@@ -8,7 +8,7 @@
  - Tool Statistics: Sort values according to page numbers
  - Tool global: Added weighted fitting
  - Reiduals: According to weighted fitting, weighted residuals are plotted
- - Average: Variances from averaging can be used for weighted fitting (but not saved in sessions yet)
+ - Average: Variances from averaging can be used for weighted fitting
 0.7.1
  - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg
