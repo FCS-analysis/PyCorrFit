@@ -1,4 +1,7 @@
 0.7.2
+ (will be 0.7.3)
+ - Issue #11 closed. External weights from averages saved in session.
+0.7.2
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
            fitting is performed
  - Bugfix: Batch control IndexError with Info window opened

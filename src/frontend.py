@@ -186,8 +186,8 @@ class MyFrame(wx.Frame):
             modelid = event.GetId()
         if counter is not None:
             # Set the tabcounter right, so the tabs are counted continuously.
-            self.tabcounter = max(int(counter[1:len(counter)-2]), 
-                                  self.tabcounter)
+            counterint = int(counter.strip().strip(":").strip("#"))
+            self.tabcounter = max(counterint, self.tabcounter)
         counter = "#"+str(self.tabcounter)+": "
         # Get the model for the page together
         valuepack = mdls.valuedict[modelid]
@@ -854,7 +854,7 @@ class MyFrame(wx.Frame):
             # session.
             return "abort"
         Function_parms, Function_array, Function_trace, Background, \
-         Preferences, Comments, ExternalFunctions, self.dirname, filename = \
+         Preferences, Comments, ExternalFunctions, self.dirname, filename, Info = \
          opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
         # Check, if a file has been opened
         if filename is not None:
@@ -906,6 +906,21 @@ class MyFrame(wx.Frame):
                     # Write experimental data
                     Newtab.dataexpfull = dataexp
                     Newtab.dataexp = True
+                # As of 0.7.3: Add external weights to page
+                try:
+                    Newtab.external_std_weights = \
+                                       Info["External Weights"][counter.strip()]
+                except KeyError:
+                    # No data
+                    pass
+                else:
+                    # Add external weights to fitbox
+                    WeightKinds = Newtab.Fitbox[1].GetItems()
+                    wkeys = Newtab.external_std_weights.keys()
+                    wkeys.sort()
+                    for wkey in wkeys:
+                        WeightKinds += [wkey]
+                    Newtab.Fitbox[1].SetItems(WeightKinds)
                 self.UnpackParameters(Function_parms[i], Newtab)
                 # Set Title of the Page
                 if Comments is not None:
@@ -972,6 +987,9 @@ class MyFrame(wx.Frame):
         Function_array = list()
         Function_trace = list()
         Function_prefs = list()
+        # Add a dictionary for all information
+        Info = dict()
+        Info["External Weights"] = dict() # additional weights for the pages
         # Reserved for future versions of PyCorrFit:
         Preferences = None
         # User edited Comments
@@ -1006,13 +1024,16 @@ class MyFrame(wx.Frame):
                 Function_trace.append(Page.tracecc)
             # Append title to Comments
             Comments.append(Page.tabtitle.GetValue())
+            # Add additional weights to Info["External Weights"]
+            if len(Page.external_std_weights) != 0:
+                Info["External Weights"][Page.counter] = Page.external_std_weights
         # Append Session Comment:
         Comments.append(self.SessionComment)
         # Save everything
         # If no file has been selected, self.filename will be set to 'None'.
         self.dirname, self.filename = opf.SaveSession(self, self.dirname,
           Function_parms, Function_array, Function_trace, self.Background,
-          Preferences, Comments, ExternalFunctions)
+          Preferences, Comments, ExternalFunctions, Info)
         # Set title of our window
         self.SetTitleFCS(self.filename)
 

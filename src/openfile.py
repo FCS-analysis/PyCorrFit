@@ -78,7 +78,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             # stop this function
             dirname = dlg.GetDirectory()
             dlg.Destroy()
-            return None, None, None, None, None, None, None, dirname, None
+            return None, None, None, None, None, None, None, dirname, None, None
     else:
         (dirname, filename) = os.path.split(sessionfile)
         if filename[-19:] != fcsfitwildcard:
@@ -87,7 +87,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             # stop this function
             dirname = dlg.GetDirectory()
             dlg.Destroy()
-            return None, None, None, None, None, None, None, dirname, None
+            return None, None, None, None, None, None, None, dirname, None, None
     Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
     # Get the yaml parms dump:
     yamlfile = Arc.open("Parameters.yaml")
@@ -231,14 +231,44 @@ def OpenSession(parent, dirname, sessionfile=None):
             for row in bgtraceread:
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
-                    bgtrace.append((float(row[0]), float(row[1])))
+                    bgtrace.append((np.float(row[0]), np.float(row[1])))
             bgtrace = np.array(bgtrace)
-            Background.append([float(bgrow[0]), str(bgrow[1]), bgtrace])
+            Background.append([np.float(bgrow[0]), str(bgrow[1]), bgtrace])
             i = i + 1
         bgfile.close()
+    # Get external weights if they exist
+    Info = dict()
+    WeightsFilename = "externalweights.txt"
+    try:
+        # Raises KeyError, if file is not present:
+        Arc.getinfo(WeightsFilename)
+    except:
+        pass
+    else:
+        Wfile = Arc.open(WeightsFilename, 'r')
+        Wread = csv.reader(Wfile, delimiter='\t')
+        Weightsdict = dict()
+        for wrow in Wread:
+            Pkey = wrow[0]  # Page of weights
+            # Do not overwrite anything
+            try:
+                Weightsdict[Pkey]
+            except:
+                Weightsdict[Pkey] = dict()
+            Nkey = wrow[1]  # Name of weights
+            Wdatafilename = "externalweights_data_"+Pkey+"_"+Nkey+".csv"
+            Wdatafile = Arc.open(Wdatafilename, 'r')
+            Wdatareader = csv.reader(Wdatafile)
+            Wdata = list()
+            for row in Wdatareader:
+                # Exclude commentaries
+                if (str(row[0])[0:1] != '#'):
+                    Wdata.append(np.float(row[0]))
+            Weightsdict[Pkey][Nkey] = np.array(Wdata)
+        Info["External Weights"] = Weightsdict
     Arc.close()
     return Parms, Array, Trace, Background, Preferences, Comments, \
-           ExternalFunctions, dirname, filename
+           ExternalFunctions, dirname, filename, Info
 
 
 def saveCSV(parent, dirname, Page):
@@ -352,7 +382,7 @@ def saveCSV(parent, dirname, Page):
 
 
 def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
-                Comments, ExternalFunctions):
+                Comments, ExternalFunctions, Info):
     """ Write whole Session into a zip file.
         Internal Functions:
         *Parms* of all functions will be saved in one *.yaml file.
@@ -508,6 +538,34 @@ def SaveSession(parent, dirname, Parms, Array, Trace, Background, Preferences,
                 Arc.write(bgtracefilename)
             bgfile.close()
             Arc.write(bgfilename)
+        ## Save External Weights information
+        WeightedPageID = Info["External Weights"].keys()
+        WeightedPageID.sort()
+        WeightFilename = "externalweights.txt"
+        WeightFile = open(WeightFilename, 'wb')
+        WeightWriter = csv.writer(WeightFile, delimiter='\t')
+        for Pkey in WeightedPageID:
+            NestWeights = Info["External Weights"][Pkey].keys()
+            # The order of the types does not matter, since they are
+            # sorted in the frontend and upon import. We sort them here, anyhow.
+            NestWeights.sort()
+            for Nkey in NestWeights:
+                WeightWriter.writerow([str(Pkey).strip(), str(Nkey).strip()])
+                # Add data to a File
+                WeightDataFilename = "externalweights_data_"+str(Pkey).strip()+\
+                                     "_"+str(Nkey).strip()+".csv"
+                WeightDataFile = open(WeightDataFilename, 'wb')
+                WeightDataWriter = csv.writer(WeightDataFile)
+                wdata = Info["External Weights"][Pkey][Nkey]
+                for jw in np.arange(len(wdata)):
+                    WeightDataWriter.writerow([str(wdata[jw])])
+                WeightDataFile.close()
+                Arc.write(WeightDataFilename)
+                os.remove(os.path.join(tempdir, WeightDataFilename))
+        WeightFile.close()
+        Arc.write(WeightFilename)
+        os.remove(os.path.join(tempdir, WeightFilename))
+        
         ## Readme
         rmfilename = "Readme.txt"
         rmfile = open(rmfilename, 'wb')

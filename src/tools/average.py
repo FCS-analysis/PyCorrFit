@@ -207,8 +207,21 @@ class Average(wx.Frame):
         standarddev = exparray.std(axis=0)[:,1]
         self.AvgPage.external_std_weights[Listname] = standarddev
         WeightKinds = self.AvgPage.Fitbox[1].GetItems()
-        WeightKinds += [Listname]
+        # Attention! Average weights and other external weights should
+        # be sorted (for session saving).
+        extTypes = self.AvgPage.external_std_weights.keys()
+        extTypes.sort() # sorting
+        for key in extTypes:
+            try:
+                WeightKinds.remove(key)
+            except:
+                pass
+        LenInternal = len(WeightKinds)
+        IndexAverag = extTypes.index(Listname)
+        IndexInList = LenInternal + IndexAverag
+        for key in extTypes:
+            WeightKinds += [key]
         self.AvgPage.Fitbox[1].SetItems(WeightKinds)
-        self.AvgPage.Fitbox[1].SetSelection(len(WeightKinds)-1)
+        self.AvgPage.Fitbox[1].SetSelection(IndexInList)
         self.OnClose()
 
