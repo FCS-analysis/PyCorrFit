@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """ PyCorrFit
-    Paul Müller, Biotec - TU Dresden
+    Paul Mï¿½ller, Biotec - TU Dresden
 
     A flexible tool for fitting and analyzing correlation curves.
 
@@ -20,6 +20,17 @@ from distutils.version import LooseVersion
 import sys
 # Import matplotlib a little earlier. This way some problems with saving
 # dialogs that are not made by "WXAgg" are solved.
+
+
+## On Windows XP I had problems with the unicode Characters.
+# I found this at 
+# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
+# and it helped (needs to be done before import of matplotlib):
+import platform
+if platform.system() == 'Windows':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+    
 import matplotlib
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
@@ -29,7 +40,6 @@ with warnings.catch_warnings():
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import numpy as np                  # NumPy
 import os
-import platform
 import scipy
 try:
     import sympy
@@ -53,13 +63,6 @@ import doc
 import frontend as gui              # The actual program
 
 
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped:
-if platform.system() == 'Windows':
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
 
 
 def CheckVersion(given, required, name):
