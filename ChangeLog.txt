@@ -6,7 +6,7 @@
  - Tool Statistics: Sort values according to page numbers
  - Tool global: Added weighted fitting
  - Reiduals: According to weighted fitting, weighted residuals are plotted
- - Average: Variances from averaging can be used for weighted fitting
+ - Average: Variances from averaging can be used for weighted fitting (but not saved in sessions yet)
 0.7.1
  - Feature: Added Python shell
  - Bugfix: Saving image was not performed using WXAgg
