@@ -1,5 +1,4 @@
-0.7.1
- (Release candidate 0.7.2)
+0.7.2
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
            fitting is performed
  - Bugfix: Batch control IndexError with Info window opened
