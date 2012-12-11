@@ -63,7 +63,17 @@ def ImportParametersYaml(parent, dirname):
 def OpenSession(parent, dirname, sessionfile=None):
     """ Load a whole session that has previously been saved
         by PyCorrFit.
+        Infodict may contain the following keys:
+        "Backgrounds", list: contains the backgrounds
+        "Comments", dict: "Session" comment and int keys to Page titles
+        "Correlations", dict: page numbers, all correlation curves
+        "External Functions", dict: modelids to external model functions
+        "External Weights", dict: page numbers, external weights for fitting
+        "Parameters", dict: page numbers, all parameters of the pages
+        "Preferences", dict: not used yet
+        "Traces", dict: page numbers, all traces of the pages
     """
+    Infodict = dict()
     fcsfitwildcard = ".fcsfit-session.zip"
     if sessionfile is None:
         dlg = wx.FileDialog(parent, "Open session file", dirname, "", 
@@ -78,7 +88,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             # stop this function
             dirname = dlg.GetDirectory()
             dlg.Destroy()
-            return None, None, None, None, None, None, None, dirname, None, None
+            return None, dirname, None
     else:
         (dirname, filename) = os.path.split(sessionfile)
         if filename[-19:] != fcsfitwildcard:
@@ -87,29 +97,29 @@ def OpenSession(parent, dirname, sessionfile=None):
             # stop this function
             dirname = dlg.GetDirectory()
             dlg.Destroy()
-            return None, None, None, None, None, None, None, dirname, None, None
+            return None, dirname, None
     Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
     # Get the yaml parms dump:
     yamlfile = Arc.open("Parameters.yaml")
-    # Parms: Fitting and drawing parameters of correlation curve
+    # Parameters: Fitting and drawing parameters of correlation curve
     # The *yamlfile* is responsible for the order of the Pages #i.
-    Parms = yaml.safe_load(yamlfile)
+    Infodict["Parameters"] = yaml.safe_load(yamlfile)
     yamlfile.close()
     ## Preferences: Reserved for a future version of PyCorrFit :)
     prefname = "Preferences.yaml"
     try:
         Arc.getinfo(prefname)
     except KeyError:
-        Preferences = None    
+        pass
     else:
         yamlpref = Arc.open(prefname)
-        Preferences = yaml.safe_load(yamlpref)
+        Infodict["Preferences"] = yaml.safe_load(yamlpref)
         yamlpref.close()
     # Get external functions
-    ExternalFunctions = dict()
+    Infodict["External Functions"] = dict()
     key = 7001
     while key <= 7999:
-        # (There should not be more than 1000 function)
+        # (There should not be more than 1000 functions)
         funcfilename = "model_"+str(key)+".txt"
         try:
             Arc.getinfo(funcfilename)
@@ -118,15 +128,16 @@ def OpenSession(parent, dirname, sessionfile=None):
             key = 8000
         else:
             funcfile =  Arc.open(funcfilename)
-            ExternalFunctions[key] = funcfile.read()
+            Infodict["External Functions"][key] = funcfile.read()
             funcfile.close()
             key=key+1
     # Get the correlation arrays
-    Array = list()
-    for i in np.arange(len(Parms)):
+    Infodict["Correlations"] = dict()
+    for i in np.arange(len(Infodict["Parameters"])):
         # The *number* is used to identify the correct file
-        number = str(Parms[i][0])
-        expfilename = "data"+number[1:len(number)-2]+".csv"
+        number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+        pageid = int(number)
+        expfilename = "data"+number+".csv"
         expfile = Arc.open(expfilename, 'r')
         readdata = csv.reader(expfile, delimiter=',')
         dataexp = list()
@@ -145,27 +156,28 @@ def OpenSession(parent, dirname, sessionfile=None):
                     dataexp.append((float(row[0]), float(row[1])))
             dataexp = np.array(dataexp)
             tau = dataexp[:,0]
-        Array.append([tau, dataexp])
+        Infodict["Correlations"][pageid] = [tau, dataexp]
         del readdata
         expfile.close()
     # Get the Traces
-    Trace = list()
-    for i in np.arange(len(Parms)):
+    Infodict["Traces"] = dict()
+    for i in np.arange(len(Infodict["Parameters"])):
         # The *number* is used to identify the correct file
-        number = str(Parms[i][0])
+        number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+        pageid = int(number)
         # Find out, if we have a cross correlation data type
         IsCross = False
         try:
-            IsCross = Parms[i][7]
+            IsCross = Infodict["Parameters"][i][7]
         except IndexError:
             # No Cross correlation
             pass
         if IsCross is False:
-            tracefilenames = ["trace"+number[1:len(number)-2]+".csv"]
+            tracefilenames = ["trace"+number+".csv"]
         else:
             # Cross correlation uses two traces
-            tracefilenames = ["trace"+number[1:len(number)-2]+"A.csv",
-                              "trace"+number[1:len(number)-2]+"B.csv" ]
+            tracefilenames = ["trace"+number+"A.csv",
+                              "trace"+number+"B.csv" ]
         thistrace = list()
         for tracefilename in tracefilenames:
             try:
@@ -186,29 +198,30 @@ def OpenSession(parent, dirname, sessionfile=None):
                 del singletrace
                 tracefile.close()
         if len(thistrace) != 0:
-            Trace.append(thistrace)
+            Infodict["Traces"][pageid] = thistrace
         else:
-            Trace.append(None)
+            Infodict["Traces"][pageid] = None
     # Get the comments, if they exist
     commentfilename = "comments.txt"
     try:
         # Raises KeyError, if file is not present:
         Arc.getinfo(commentfilename)
     except KeyError:
-        Comments = None    
+        pass   
     else:
         # Open the file
         commentfile = Arc.open(commentfilename, 'r')
-        Comments = list()
-        for i in np.arange(len(Parms)):
+        Infodict["Comments"] = dict()
+        for i in np.arange(len(Infodict["Parameters"])):
+            number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+            pageid = int(number)
             # Strip line ending characters for all the Pages.
-            Comments.append(commentfile.readline().strip())
+            Infodict["Comments"][pageid] = commentfile.readline().strip()
         # Now Add the Session Comment (the rest of the file). 
         ComList = commentfile.readlines()
-        Com = ''
+        Infodict["Comments"]["Session"] = ''
         for line in ComList:
-            Com = Com+line
-        Comments.append(Com.strip())
+            Infodict["Comments"]["Session"] += line
         commentfile.close()
     # Get the Backgroundtraces and data if they exist
     bgfilename = "backgrounds.csv"
@@ -216,10 +229,10 @@ def OpenSession(parent, dirname, sessionfile=None):
         # Raises KeyError, if file is not present:
         Arc.getinfo(bgfilename)
     except KeyError:
-        Background = list()
+        pass
     else:
         # Open the file
-        Background = list()
+        Infodict["Backgrounds"] = list()
         bgfile = Arc.open(bgfilename, 'r')
         bgread = csv.reader(bgfile, delimiter='\t')
         i = 0
@@ -233,7 +246,7 @@ def OpenSession(parent, dirname, sessionfile=None):
                 if (str(row[0])[0:1] != '#'):
                     bgtrace.append((np.float(row[0]), np.float(row[1])))
             bgtrace = np.array(bgtrace)
-            Background.append([np.float(bgrow[0]), str(bgrow[1]), bgtrace])
+            Infodict["Backgrounds"].append([np.float(bgrow[0]), str(bgrow[1]), bgtrace])
             i = i + 1
         bgfile.close()
     # Get external weights if they exist
@@ -250,11 +263,12 @@ def OpenSession(parent, dirname, sessionfile=None):
         Weightsdict = dict()
         for wrow in Wread:
             Pkey = wrow[0]  # Page of weights
+            pageid = int(Pkey)
             # Do not overwrite anything
             try:
-                Weightsdict[Pkey]
+                Weightsdict[pageid]
             except:
-                Weightsdict[Pkey] = dict()
+                Weightsdict[pageid] = dict()
             Nkey = wrow[1]  # Name of weights
             Wdatafilename = "externalweights_data"+Pkey+"_"+Nkey+".csv"
             Wdatafile = Arc.open(Wdatafilename, 'r')
@@ -264,11 +278,10 @@ def OpenSession(parent, dirname, sessionfile=None):
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
                     Wdata.append(np.float(row[0]))
-            Weightsdict[Pkey][Nkey] = np.array(Wdata)
-        Info["External Weights"] = Weightsdict
+            Weightsdict[pageid][Nkey] = np.array(Wdata)
+        Infodict["External Weights"] = Weightsdict
     Arc.close()
-    return Parms, Array, Trace, Background, Preferences, Comments, \
-           ExternalFunctions, dirname, filename, Info
+    return Infodict, dirname, filename
 
 
 def saveCSV(parent, dirname, Page):

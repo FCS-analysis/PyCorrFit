@@ -853,8 +853,7 @@ class MyFrame(wx.Frame):
             # User pressed abort when he was asked if he wants to save the
             # session.
             return "abort"
-        Function_parms, Function_array, Function_trace, Background, \
-         Preferences, Comments, ExternalFunctions, self.dirname, filename, Info = \
+        Infodict, self.dirname, filename = \
          opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
         # Check, if a file has been opened
         if filename is not None:
@@ -864,20 +863,24 @@ class MyFrame(wx.Frame):
             self.filename = filename
             self.SetTitleFCS(self.filename)
             ## Background traces
-            self.Background = Background
+            try:
+                self.Background = Infodict["Backgrounds"]
+            except:
+                pass
             ## Preferences
             ## if Preferences is Not None:
             ## add them!
             # External functions
-            for key in ExternalFunctions.keys():
+            for key in Infodict["External Functions"].keys():
                 NewModel = usermodel.UserModel(self)
                 # NewModel.AddModel(self, code)
                 # code is a list with strings
                 # each string is one line
-                NewModel.AddModel(ExternalFunctions[key].splitlines())
+                NewModel.AddModel(
+                    Infodict["External Functions"][key].splitlines())
                 NewModel.ImportModel()
             # Internal functions:
-            N = len(Function_parms)
+            N = len(Infodict["Parameters"])
             # Reset tabcounter
             self.tabcounter = 0
             # Show a nice progress dialog:
@@ -890,27 +893,27 @@ class MyFrame(wx.Frame):
                 if dlg.Update(i+1, "Loading pages...")[0] == False:
                     dlg.Destroy()
                     return
-                # As of v.0.2.0
-                # Import dataexp:
-                [tau, dataexp] = Function_array[i]
                 # Add a new page to the notebook. This page is created with
                 # variables from models.py. We will write our data to
                 # the page later.
-                counter = Function_parms[i][0]
-                pageid = counter.strip().strip(":").strip("#")
-                modelid = Function_parms[i][1]
+                counter = Infodict["Parameters"][i][0]
+                modelid = Infodict["Parameters"][i][1]
                 self.add_fitting_tab(modelid=modelid, counter=counter)
                 # Get New Page, so we can add our stuff.
                 Newtab = self.notebook.GetCurrentPage()
                 # Add experimental Data
+                # Import dataexp:
+                number = counter.strip().strip(":").strip("#")
+                pageid = int(number)
+                [tau, dataexp] = Infodict["Correlations"][pageid]
                 if dataexp is not None:
                     # Write experimental data
                     Newtab.dataexpfull = dataexp
-                    Newtab.dataexp = True
+                    Newtab.dataexp = True # not None
                 # As of 0.7.3: Add external weights to page
                 try:
                     Newtab.external_std_weights = \
-                                       Info["External Weights"][pageid]
+                                   Infodict["External Weights"][pageid]
                 except KeyError:
                     # No data
                     pass
@@ -922,12 +925,17 @@ class MyFrame(wx.Frame):
                     for wkey in wkeys:
                         WeightKinds += [wkey]
                     Newtab.Fitbox[1].SetItems(WeightKinds)
-                self.UnpackParameters(Function_parms[i], Newtab)
+                self.UnpackParameters(Infodict["Parameters"][i], Newtab)
                 # Set Title of the Page
-                if Comments is not None:
-                    Newtab.tabtitle.SetValue(Comments[i])
+                try:
+                    Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
+                except:
+                    pass # no page title
                 # Import the intensity trace
-                trace = Function_trace[i]
+                try:
+                    trace = Infodict["Traces"][pageid]
+                except:
+                    trace = None
                 if trace is not None:
                     if Newtab.IsCrossCorrelation is False:
                         Newtab.trace = trace[0]
@@ -937,8 +945,14 @@ class MyFrame(wx.Frame):
                 # Plot everything
                 Newtab.PlotAll()
             # Set Session Comment
-            if Comments is not None:
-                self.SessionComment = Comments[-1]
+            try:
+                self.SessionComment = Infodict["Comments"]["Session"]
+            except:
+                pass
+            try:
+                Infodict["Preferences"] # not used yet
+            except:
+                pass
             if self.notebook.GetPageCount() > 0:
                 # Enable the "Current" Menu
                 self.EnableToolCurrent(True)
@@ -982,7 +996,7 @@ class MyFrame(wx.Frame):
         """Save a session for later continuation."""
         # Parameters are all in one dictionary:
         Infodict = dict()
-        Infodict["Backgrounds"] = self.Background # Session comment "Session" and Pages int
+        Infodict["Backgrounds"] = self.Background # Background list
         Infodict["Comments"] = dict() # Session comment "Session" and Pages int
         Infodict["Correlations"] = dict() # all correlation curves
         Infodict["External Functions"] = dict() # external model functions

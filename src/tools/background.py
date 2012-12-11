@@ -235,6 +235,7 @@ class BackgroundCorrection(wx.Frame):
             # one to take.
             if len(stuff["Filename"]) > 1:
                 choices = list()
+                print stuff["Type"][i]
                 for i in np.arange(len(stuff["Filename"])):
                     choices.append(str(i)+". " + stuff["Filename"][i] + " " +
                                    stuff["Type"][i])
