@@ -153,9 +153,9 @@ class InfoClass(object):
                 Title.append(["Data type", "Autocorrelation" ]) 
             Fitting.append([ u"\u03c7"+"²", Page.chi2 ])
             if Page.weighted_fit_was_performed:
-                Chi2type = "reduced"
+                Chi2type = "reduced"+u"\u03c7"+"²"
             else:
-                Chi2type = "sum of squares only"
+                Chi2type = "reduced sum of squares"
             Fitting.append([ u"\u03c7"+"²-type", Chi2type ])
             Fitting.append([ "Weighted fit", weightedfit ])
             if weightedfit is True:
