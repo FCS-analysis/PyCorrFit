@@ -2,6 +2,7 @@
  (will be 0.7.3)
  - Issue closed. External weights from averages saved in session (#11).
  - Solved minor bugs
+ - Added estimation of errors of fit (Issue #12/#14)
 0.7.2
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
            fitting is performed

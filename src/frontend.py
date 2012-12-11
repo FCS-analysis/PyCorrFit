@@ -956,11 +956,6 @@ class MyFrame(wx.Frame):
                     else:
                         Newtab.tracecc = trace
                 # Plot everything
-                if pageid == 6:
-                    import IPython
-                    IPython.embed()
-                    
-
                 Newtab.PlotAll()
             # Set Session Comment
             try:
