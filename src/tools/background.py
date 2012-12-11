@@ -235,9 +235,8 @@ class BackgroundCorrection(wx.Frame):
             # one to take.
             if len(stuff["Filename"]) > 1:
                 choices = list()
-                print stuff["Type"][i]
-                for i in np.arange(len(stuff["Filename"])):
-                    choices.append(str(i)+". " + stuff["Filename"][i] + " " +
+                for i2 in np.arange(len(stuff["Filename"])):
+                    choices.append(str(i2)+". " + stuff["Filename"][i2] + " " +
                                    stuff["Type"][i])
                 dlg = wx.SingleChoiceDialog(self, "Choose a curve",
                                             "Curve selection", choices=choices)
@@ -250,7 +249,8 @@ class BackgroundCorrection(wx.Frame):
             # If we accidentally recorded a cross correlation curve
             # as the background, let the user choose which trace he wants:
             channelindex = None
-            if stuff["Type"][selindex][0:2] == "CC":
+            if ( len(stuff["Type"][selindex]) >= 2 and 
+                 stuff["Type"][selindex][0:2] == "CC"       ):
                 choices = ["Channel 1", "Channel 2"]
                 label = "From which channel do you want to use the trace?"
                 dlg = wx.SingleChoiceDialog(self, label,

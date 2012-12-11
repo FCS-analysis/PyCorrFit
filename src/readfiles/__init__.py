@@ -115,7 +115,6 @@ def openZIP(dirname, filename):
             # The *number* is used to identify the correct file
             number = str(Parms[i][0])
             expfilename = "data"+number[1:len(number)-2]+".csv"
-            Filelist.append(filename+"/#"+number[1:len(number)-2])
             expfile = Arc.open(expfilename, 'r')
             readdata = csv.reader(expfile, delimiter=',')
             dataexp = list()
@@ -124,6 +123,7 @@ def openZIP(dirname, filename):
                 # We do not have a curve here
                 pass
             else:
+                Filelist.append(filename+"/#"+number[1:len(number)-2])
                 for row in readdata:
                     # Exclude commentaries
                     if (str(row[0])[0:1] != '#'):
@@ -160,6 +160,7 @@ def openZIP(dirname, filename):
                 try:
                     Arc.getinfo(tracefilename)
                 except KeyError:
+                    # No correlation curve, but add a None
                     pass
                 else:
                     tracefile = Arc.open(tracefilename, 'r')
