@@ -897,6 +897,7 @@ class MyFrame(wx.Frame):
                 # variables from models.py. We will write our data to
                 # the page later.
                 counter = Function_parms[i][0]
+                pageid = counter.strip().strip(":").strip("#")
                 modelid = Function_parms[i][1]
                 self.add_fitting_tab(modelid=modelid, counter=counter)
                 # Get New Page, so we can add our stuff.
@@ -909,7 +910,7 @@ class MyFrame(wx.Frame):
                 # As of 0.7.3: Add external weights to page
                 try:
                     Newtab.external_std_weights = \
-                                       Info["External Weights"][counter.strip()]
+                                       Info["External Weights"][pageid]
                 except KeyError:
                     # No data
                     pass
@@ -1016,7 +1017,7 @@ class MyFrame(wx.Frame):
         for i in np.arange(N):
             # Set Page 
             Page = self.notebook.GetPage(i)
-            counter = Page.counter.strip().strip(":").strip("#")
+            counter = int(Page.counter.strip().strip(":").strip("#"))
             # Apply currently set parameters
             Page.apply_parameters()
            # # # Get experimental data

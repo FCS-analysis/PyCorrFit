@@ -433,13 +433,14 @@ def SaveSession(parent, dirname, Infodict):
             Arc.write(funcfilename)
             os.remove(os.path.join(tempdir, funcfilename))
         # Save (dataexp and tau)s into separate csv files.
-        for number in Infodict["Correlations"].keys():
+        for pageid in Infodict["Correlations"].keys():
             # Since *Array* and *Parms* are in the same order (the page order),
             # we will identify the filename by the Page title number.
+            number = str(pageid)
             expfilename = "data"+number+".csv"
             expfile = open(expfilename, 'wb')
-            tau = Infodict["Correlations"][number][0]
-            exp = Infodict["Correlations"][number][1]
+            tau = Infodict["Correlations"][pageid][0]
+            exp = Infodict["Correlations"][pageid][1]
             dataWriter = csv.writer(expfile, delimiter=',')
             if exp is not None:
                 # Names of Columns
@@ -461,19 +462,20 @@ def SaveSession(parent, dirname, Infodict):
             Arc.write(expfilename)
             os.remove(os.path.join(tempdir, expfilename))
         # Save traces into separate csv files.
-        for number in Infodict["Traces"].keys():
+        for pageid in Infodict["Traces"].keys():
+            number = str(pageid)
             # Since *Trace* and *Parms* are in the same order, which is the
             # Page order, we will identify the filename by the Page title 
             # number.
-            if Infodict["Traces"][number] is not None:
-                if Parms[number][7] is True:
+            if Infodict["Traces"][pageid] is not None:
+                if Parms[pageid][7] is True:
                     # We have cross correlation: save two traces
                     ## A
                     tracefilenamea = "trace"+number+"A.csv"
                     tracefile = open(tracefilenamea, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Infodict["Traces"][number][0][:,0]
-                    rate = Infodict["Traces"][number][0][:,1]
+                    time = Infodict["Traces"][pageid][0][:,0]
+                    rate = Infodict["Traces"][pageid][0][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -487,8 +489,8 @@ def SaveSession(parent, dirname, Infodict):
                     tracefilenameb = "trace"+number+"B.csv"
                     tracefile = open(tracefilenameb, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Infodict["Traces"][number][1][:,0]
-                    rate = Infodict["Traces"][number][1][:,1]
+                    time = Infodict["Traces"][pageid][1][:,0]
+                    rate = Infodict["Traces"][pageid][1][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -503,8 +505,8 @@ def SaveSession(parent, dirname, Infodict):
                     tracefilename = "trace"+number+".csv"
                     tracefile = open(tracefilename, 'wb')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Infodict["Traces"][number][:,0]
-                    rate = Infodict["Traces"][number][:,1]
+                    time = Infodict["Traces"][pageid][:,0]
+                    rate = Infodict["Traces"][pageid][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time'+' \t', 'count rate'])
                     # Actual Data
@@ -560,19 +562,20 @@ def SaveSession(parent, dirname, Infodict):
         WeightFilename = "externalweights.txt"
         WeightFile = open(WeightFilename, 'wb')
         WeightWriter = csv.writer(WeightFile, delimiter='\t')
-        for Pkey in WeightedPageID:
-            NestWeights = Infodict["External Weights"][Pkey].keys()
+        for pageid in WeightedPageID:
+            number = str(pageid)
+            NestWeights = Infodict["External Weights"][pageid].keys()
             # The order of the types does not matter, since they are
             # sorted in the frontend and upon import. We sort them here, anyhow.
             NestWeights.sort()
             for Nkey in NestWeights:
-                WeightWriter.writerow([str(Pkey).strip(), str(Nkey).strip()])
+                WeightWriter.writerow([number, str(Nkey).strip()])
                 # Add data to a File
-                WeightDataFilename = "externalweights_data"+str(Pkey).strip()+\
+                WeightDataFilename = "externalweights_data"+number+\
                                      "_"+str(Nkey).strip()+".csv"
                 WeightDataFile = open(WeightDataFilename, 'wb')
                 WeightDataWriter = csv.writer(WeightDataFile)
-                wdata = Infodict["External Weights"][Pkey][Nkey]
+                wdata = Infodict["External Weights"][pageid][Nkey]
                 for jw in np.arange(len(wdata)):
                     WeightDataWriter.writerow([str(wdata[jw])])
                 WeightDataFile.close()
@@ -581,7 +584,6 @@ def SaveSession(parent, dirname, Infodict):
         WeightFile.close()
         Arc.write(WeightFilename)
         os.remove(os.path.join(tempdir, WeightFilename))
-        
         ## Readme
         rmfilename = "Readme.txt"
         rmfile = open(rmfilename, 'wb')
@@ -596,7 +598,6 @@ def SaveSession(parent, dirname, Infodict):
                     os.path.join(dirname, filename) )
         # Go to destination directory
         os.chdir(returnWD)
-
         os.rmdir(tempdir)
         return dirname, filename
     else:
