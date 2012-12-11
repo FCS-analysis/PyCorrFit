@@ -1036,13 +1036,12 @@ class MyFrame(wx.Frame):
             else:
                 # #Function_trace.append(Page.tracecc)
                 Infodict["Traces"][counter] = Page.tracecc
-                
             # Append title to Comments
             # #Comments.append(Page.tabtitle.GetValue())
             Infodict["Comments"][counter] = Page.tabtitle.GetValue()
             # Add additional weights to Info["External Weights"]
             if len(Page.external_std_weights) != 0:
-                Infodict["External Weights"][Page.counter] = Page.external_std_weights
+                Infodict["External Weights"][counter] = Page.external_std_weights
         # Append Session Comment:
         Infodict["Comments"]["Session"] = self.SessionComment
         # Save everything

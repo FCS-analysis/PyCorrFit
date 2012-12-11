@@ -256,7 +256,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             except:
                 Weightsdict[Pkey] = dict()
             Nkey = wrow[1]  # Name of weights
-            Wdatafilename = "externalweights_data_"+Pkey+"_"+Nkey+".csv"
+            Wdatafilename = "externalweights_data"+Pkey+"_"+Nkey+".csv"
             Wdatafile = Arc.open(Wdatafilename, 'r')
             Wdatareader = csv.reader(Wdatafile)
             Wdata = list()
@@ -518,7 +518,9 @@ def SaveSession(parent, dirname, Infodict):
         commentfilename = "comments.txt"
         commentfile = open(commentfilename, 'wb')
         # Comments[-1] is comment on whole Session
-        for key in Infodict["Comments"]:
+        Ckeys = Infodict["Comments"].keys()
+        Ckeys.sort()
+        for key in Ckeys:
             if key != "Session":
                 commentfile.write(Infodict["Comments"][key]+"\r\n")
         commentfile.write(Infodict["Comments"]["Session"])
@@ -566,7 +568,7 @@ def SaveSession(parent, dirname, Infodict):
             for Nkey in NestWeights:
                 WeightWriter.writerow([str(Pkey).strip(), str(Nkey).strip()])
                 # Add data to a File
-                WeightDataFilename = "externalweights_data_"+str(Pkey).strip()+\
+                WeightDataFilename = "externalweights_data"+str(Pkey).strip()+\
                                      "_"+str(Nkey).strip()+".csv"
                 WeightDataFile = open(WeightDataFilename, 'wb')
                 WeightDataWriter = csv.writer(WeightDataFile)

@@ -176,10 +176,21 @@ data*.csv (where * is {Number of page})
  - Contains lag times [ms]
  - Contains experimental data, if available
 
+externalweights.txt
+ - Contains names (types) of external weights other than from
+   Model function or spline fit
+ - Linewise: 1st element is page number, 2nd is name
+ - According to this data, the following files are present in the archive
+
+externalweights_data_*PageID*_*Type*.csv
+ - Contains weighting information of Page *PageID* of type *Type*
+
+model_*ModelID*.txt
+ - An external (user-defined) model file with internal ID *ModelID*
+
 Parameters.yaml
  - Contains all Parameters for each page
    Block format:
-
     - - '#{Number of page}: '       
       - {Internal model ID}
       - {List of parameters}
@@ -189,7 +200,6 @@ Parameters.yaml
           {No. of bins from left and right}, {No. of knots (of e.g. spline)}]
       - [{Background to use (line in backgrounds.csv)}]
       - Data type is Cross-correlation?
-
  - Order in Parameters.yaml defines order of pages in a session
  - Order in Parameters.yaml defines order in comments.txt
 
