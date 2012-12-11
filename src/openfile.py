@@ -105,6 +105,20 @@ def OpenSession(parent, dirname, sessionfile=None):
     # The *yamlfile* is responsible for the order of the Pages #i.
     Infodict["Parameters"] = yaml.safe_load(yamlfile)
     yamlfile.close()
+    # Supplementary data
+
+    # Supplementary data (errors of fit)
+    supname = "Supplements.yaml"
+    try:
+        Arc.getinfo(supname)
+    except:
+        pass
+    else:
+        supfile = Arc.open(supname)
+        supdata = yaml.safe_load(supfile)
+        Infodict["Supplements"] = dict()
+        for idp in supdata:
+            Infodict["Supplements"][idp[0]] = idp[1]
     ## Preferences: Reserved for a future version of PyCorrFit :)
     prefname = "Preferences.yaml"
     try:
@@ -437,6 +451,17 @@ def SaveSession(parent, dirname, Infodict):
         yaml.dump(Parmlist, open(parmsfilename, "wb"))
         Arc.write(parmsfilename)
         os.remove(os.path.join(tempdir, parmsfilename))
+        # Supplementary data (errors of fit)
+        errsfilename = "Supplements.yaml"
+        Sups =  Infodict["Supplements"]
+        SupKeys = Sups.keys()
+        SupKeys.sort()
+        Suplist = list()
+        for idsup in SupKeys:
+            Suplist.append([idsup,Sups[idsup]])
+        yaml.dump(Suplist, open(errsfilename, "wb"))
+        Arc.write(errsfilename)
+        os.remove(os.path.join(tempdir, errsfilename))
         # Save external functions
         for key in Infodict["External Functions"].keys():
             funcfilename = "model_"+str(key)+".txt"

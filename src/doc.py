@@ -205,6 +205,13 @@ Parameters.yaml
 
 Readme.txt (this file)
 
+Supplements.yaml
+ - Contains errors of fitting
+   Format:
+   -- Page number
+    -- [parameter id, error value]
+     - [parameter id, error value]
+     
 trace*.csv (where * is {Number of page} | appendix "A" or "B" point to
             the respective channels (only in cross-correlation mode))
  - Contains times [ms]

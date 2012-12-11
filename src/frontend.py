@@ -926,6 +926,19 @@ class MyFrame(wx.Frame):
                         WeightKinds += [wkey]
                     Newtab.Fitbox[1].SetItems(WeightKinds)
                 self.UnpackParameters(Infodict["Parameters"][i], Newtab)
+                # Supplementary data
+                try:
+                    Sups = Infodict["Supplements"][pageid]
+                except KeyError:
+                    pass
+                else:
+                    errdict = dict()
+                    for errInfo in Sups:
+                        for ierr in np.arange(len(errInfo)):
+                            errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
+                            errval = float(errInfo[1])
+                            errdict[errkey] = errval
+                    Newtab.parmoptim_error = errdict
                 # Set Title of the Page
                 try:
                     Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
@@ -943,6 +956,11 @@ class MyFrame(wx.Frame):
                     else:
                         Newtab.tracecc = trace
                 # Plot everything
+                if pageid == 6:
+                    import IPython
+                    IPython.embed()
+                    
+
                 Newtab.PlotAll()
             # Set Session Comment
             try:
@@ -1002,7 +1020,8 @@ class MyFrame(wx.Frame):
         Infodict["External Functions"] = dict() # external model functions
         Infodict["External Weights"] = dict() # additional weights for the pages
         Infodict["Parameters"] = dict() # all parameters of all pages
-        Infodict["Preferences"] = dict() # not used yet
+        Infodict["Preferences"] = dict() # not used
+        Infodict["Supplements"] = dict() # error estimates for fitting
         Infodict["Traces"] = dict() # all traces
 
         # Save each Page
@@ -1034,16 +1053,19 @@ class MyFrame(wx.Frame):
             counter = int(Page.counter.strip().strip(":").strip("#"))
             # Apply currently set parameters
             Page.apply_parameters()
-           # # # Get experimental data
-           # # dataexp = Page.dataexpfull    # 2D Array or None
-           # # # Get parameters
-           # # tau = Page.tau            # Array
-           # # Array = [tau, dataexp]
+            # Set parameters
             Infodict["Parameters"][counter] = self.PackParameters(Page)
+            # Set supplementary information, such as errors of fit
+            Errlist = list()
+            if Page.parmoptim_error is not None:
+                Alist = list()
+                for key in Page.parmoptim_error.keys():
+                    position = mdls.GetPositionOfParameter(Page.modelid, key)
+                    Alist.append([ int(position),
+                                   float(Page.parmoptim_error[key]) ])
+                    Infodict["Supplements"][counter] = Alist
+            # Set exp data
             Infodict["Correlations"][counter] = [Page.tau, Page.dataexpfull]
-           # #Parms = self.PackParameters(Page)
-           # #Function_parms.append(Parms)
-           # #Function_array.append(Array)
             # Also save the trace
             if Page.IsCrossCorrelation is False:
                 Infodict["Traces"][counter] = Page.trace
@@ -1161,11 +1183,13 @@ class MyFrame(wx.Frame):
         # is for backwards compatibility:
         changeTIRF = False
         if modelid in [6000, 6010]:
-            lindex = 1
-            changeTIRF = True
+            if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
+                lindex = 1
+                changeTIRF = True
         elif modelid in [6020, 6021, 6022, 6023]:
-            lindex = 2
-            changeTIRF = True
+            if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
+                lindex = 2
+                changeTIRF = True
         if changeTIRF:
             lamb = active_values[lindex]
             NA = active_values[lindex+1]

@@ -65,6 +65,7 @@ class Fit(object):
                               # module is available.
         self.values = None
         self.valuestofit = None
+
         self.verbose = False # Verbose mode (shows e.g. spline fit)
         # The weights (data points from left and right of data array) have
         # to be chosen in a way, that the interval +/- weights will not
@@ -79,6 +80,8 @@ class Fit(object):
         self.mesg = None
         # Optimal parameters found by leastsq
         self.parmoptim = None
+        self.covar = None # covariance matrix 
+        self.parmoptim_error = None # Errors of fit
         # Variances for fitting
         self.dataweights = None
         # External std defined by the user
@@ -288,16 +291,9 @@ class Fit(object):
 
     def get_chi_squared(self):
         # Calculate Chi**2
-        # We have two cases here:
-        #  a) we do not have any weights (self.dataweights = 1.)
-        #  b) we have weights and can calculate the reduces Chi**2
-        if len(np.atleast_1d(self.dataweights)) == 1 :
-            return np.sum( (self.fit_function(self.parmoptim, self.x))**2)
-        else:
-            # Divide by degrees of freedom
-            degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
-            return np.sum( (self.fit_function(self.parmoptim, self.x))**2) / \
-                       degrees_of_freedom
+        degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
+        return np.sum( (self.fit_function(self.parmoptim, self.x))**2) / \
+                   degrees_of_freedom
 
 
     def least_square(self):
@@ -313,9 +309,12 @@ class Fit(object):
             self.valuesoptim = 1*self.values
             return
         # Begin fitting
-        self.parmoptim, self.mesg = spopt.leastsq(self.fit_function, 
-                                                 self.fitparms[:], 
-                                                 args=(self.x)      )
+        res = spopt.leastsq(self.fit_function, self.fitparms[:],
+                            args=(self.x), full_output=1)
+        (popt, pcov, infodict, errmsg, ier) = res
+        self.parmoptim = popt
+        if ier not in [1,2,3,4]:
+            print "Optimal parameters not found: " + errmsg
         # Now write the optimal parameters to our values:
         index = 0
         for i in np.arange(len(self.values)):
@@ -324,6 +323,15 @@ class Fit(object):
                 index = index + 1
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
-        self.chi = self.get_chi_squared()
         # Write optimal parameters back to this class.
         self.valuesoptim = 1*self.values # This is actually a redundance array
+        self.chi = self.get_chi_squared()
+        try:
+            self.covar = pcov * self.chi # The covariance matrix
+        except:
+            self.parmoptim_error = None
+        else:
+            # Error estimation of fitted parameters
+            parmoptim_error = list()
+            if self.covar is not None:
+                self.parmoptim_error = np.diag(self.covar)

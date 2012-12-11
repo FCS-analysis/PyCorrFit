@@ -162,22 +162,29 @@ class InfoClass(object):
                 Fitting.append([ "No. channels", 2*fittingbins+1 ])
             # Fitting range:
             t1 = 1.*Page.taufull[Page.startcrop]
-            try:
-                t2 = 1.*Page.taufull[Page.endcrop-1]
-            except:
-                import IPython
-                IPython.embed()
+            t2 = 1.*Page.taufull[Page.endcrop-1]
             Fitting.append([ "Interval start [ms]", "%.4e" % t1 ])
             Fitting.append([ "Interval end [ms]", "%.4e" % t2 ])
-            # Fittet parameters
+            # Fittet parameters and errors
             somuch = sum(Page.active_parms[2])
             if somuch >= 1:
                 fitted = ""
                 for i in np.arange(len(Page.active_parms[2])):
                     if np.bool(Page.active_parms[2][i]) is True:
-                        fitted=fitted+Page.active_parms[0][i]+ ", "
-                fitted = fitted[:-2] # remove trailing comma
+                        errorvar = Page.active_parms[0][i] # variable name
+                        fitted=fitted+errorvar+ ", "
+                fitted = fitted.strip().strip(",") # remove trailing comma
                 Fitting.append(["fit par.", fitted])
+                # Fitting error included in v.0.7.3
+                Errors_fit = Page.parmoptim_error
+                if Errors_fit is not None:
+                    errkeys = Errors_fit.keys()
+                    errkeys.sort()
+                    for key in errkeys:
+                        savekey, saveval = \
+                            mdls.GetHumanReadableParameterDict(model[2],
+                                                [key], [Errors_fit[key]])
+                        Fitting.append(["Err "+savekey[0], saveval[0]])
             InfoDict["fitting"] = Fitting
         ## Background
         bgselected = Page.bgselected # Selected Background

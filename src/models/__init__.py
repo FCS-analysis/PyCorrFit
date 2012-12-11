@@ -92,20 +92,18 @@ def AppendNewModel(Modelarray):
         else:
             verification[texts[0]] = verify
             
-
-
 def GetHumanReadableParms(model, parameters):
     """ From a set of parameters that have some strange units e.g. [100 nm],
         Calculate the parameters in human readable units e.g. [nm].
         Uses modeldict from this module.
         *model* - an integer ID of a model
-        *parameters* - a list of parameters (can be an array)
+        *parameters* - a list/array of parameters (all parameters of that model)
         Returns:
         New Units, New Parameters
     """
     stdparms = valuedict[model]
     if len(stdparms) == 5:
-        # This means we hav extra information on the model
+        # This means we have extra information on the model
         # Return some human readable stuff
         OldParameters = 1.*np.array(parameters)
         Facors = 1.*np.array(stdparms[4])
@@ -116,6 +114,34 @@ def GetHumanReadableParms(model, parameters):
         # There is no info about human readable stuff, or it is already human
         # readable.
         return stdparms[0], parameters
+
+
+def GetHumanReadableParameterDict(model, names, parameters):
+    """ From a set of parameters that have some strange units e.g. [100 nm],
+        Calculate the parameters in human readable units e.g. [nm].
+        Uses modeldict from this module.
+        *model* - an integer ID of a model
+        *name of parameters* - order should be same as in
+        *parameters* - a list of parameters
+        Returns:
+        New Units, New Parameters
+    """
+    stdparms = valuedict[model]
+    if len(stdparms) == 5:
+        # This means we have extra information on the model
+        # Return some human readable stuff
+        NewUnits = list()
+        NewParameters = list()
+        for i in np.arange(len(stdparms[0])):
+            for j in np.arange(len(names)):
+                if names[j] == stdparms[0][i]:
+                    NewUnits.append(stdparms[3][i])
+                    NewParameters.append(stdparms[4][i]*parameters[j])
+        return NewUnits, NewParameters
+    else:
+        # There is no info about human readable stuff, or it is already human
+        # readable.
+        return names, parameters
 
 
 def GetMoreInfo(modelid, Page):
@@ -180,7 +206,6 @@ def GetMoreInfo(modelid, Page):
             avg1 = Page.tracecc[1][:,1].mean()
             Info.append(["avg. signal A [kHz]", avg0])
             Info.append(["avg. signal B [kHz]", avg1])
-
     if len(Info) == 0:
         # If nothing matched until now:
         return None
@@ -188,6 +213,15 @@ def GetMoreInfo(modelid, Page):
         return Info
 
 
+def GetPositionOfParameter(model, name):
+    """ Returns an integer corresponding to the position of the label
+        of a parameter in the model function
+    """
+    stdparms = valuedict[model]
+    for i in np.arange(len(stdparms[0])):
+        if name == stdparms[0][i]:
+            return int(i)
+    
 
 # Pack all variables
 values = list()

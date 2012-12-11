@@ -67,11 +67,13 @@ class FittingPanel(wx.Panel):
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
         # chi squared - is also an indicator, if something had been fitted
-        self.FitKnots = 5 # number of knots for spline fit or similiar
+        self.FitKnots = 5 # number of knots for spline fit or similiars
         self.chi2 = None
         self.weighted_fit_was_performed = False # default is no weighting
         # dictionary for alternative variances from e.g. averaging
         self.external_std_weights = dict()
+        # Errors of fit dictionary
+        self.parmoptim_error = None
         # Counts number of Pages already created:
         self.counter = counter
         # Model we are using
@@ -280,6 +282,8 @@ class FittingPanel(wx.Panel):
             Fitting.external_deviations = self.external_std_weights[FitValue]
             # Fitting will crop the variances according to
             # the Fitting.interval that we set below.
+            if self is self.parent.notebook.GetCurrentPage():
+                self.parent.StatusBar.SetStatusText("")
         else:
             self.parent.StatusBar.SetStatusText("")
         # Set weighted_fit_was_performed variable
@@ -315,6 +319,17 @@ class FittingPanel(wx.Panel):
             wx.EndBusyCursor()
             return
         parms = Fitting.valuesoptim
+        # create an error dictionary
+        p_error = Fitting.parmoptim_error
+        if p_error is None:
+            self.parmoptim_error = None
+        else:
+            self.parmoptim_error = dict()
+            errcount = 0
+            for i in np.arange(len(parms)):
+                if self.active_parms[2][i]:
+                    self.parmoptim_error[self.active_parms[0][i]] =p_error[errcount]
+                    errcount += 1
         self.chi2 = Fitting.chi
         for i in np.arange(len(parms)):
             self.active_parms[1][i] = parms[i]

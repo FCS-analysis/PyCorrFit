@@ -237,7 +237,7 @@ class BackgroundCorrection(wx.Frame):
                 choices = list()
                 for i2 in np.arange(len(stuff["Filename"])):
                     choices.append(str(i2)+". " + stuff["Filename"][i2] + " " +
-                                   stuff["Type"][i])
+                                   stuff["Type"][i2])
                 dlg = wx.SingleChoiceDialog(self, "Choose a curve",
                                             "Curve selection", choices=choices)
                 if dlg.ShowModal() == wx.ID_OK:
