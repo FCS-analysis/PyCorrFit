@@ -127,6 +127,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     fitlabel = ur"applied fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                Page.active_parms[1])
+    errparms = Page.parmoptim_error
     parmids = np.where(Page.active_parms[2])[0]
     labels = np.array(labels)[parmids]
     parms = np.array(parms)[parmids]
@@ -165,7 +166,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         #    ax = plt.axes()
     ax.semilogx()
     if dataexp is not None:
-        plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey", label=tabtitle)
+        plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey",
+                 label=tabtitle)
     else:
         plt.xlabel(r'lag time $\tau$ [ms]')
     plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel,
@@ -191,12 +193,22 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
                                  # by the interpreter :-)
         for i in np.arange(len(parms)):
             text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
+        if errparms is not None:
+            keys = errparms.keys()
+            keys.sort()
+            for key in keys:
+                text += r' \Delta '+latexmath(key)+r" &= " + str(errparms[key]) +r' \\ '
         text += r' \end{split} '
         text += r' \] '
     else:
         text = ur""
         for i in np.arange(len(parms)):
             text += labels[i]+" = "+str(parms[i])+"\n"
+        if errparms is not None:
+            keys = errparms.keys()
+            keys.sort()
+            for key in keys:
+                text += "Err "+key+" = " + str(errparms[key]) +"\n"
     # Add some more stuff to the text and append data to a .txt file
     #text = Auswert(parmname, parmoptim, text, savename)
     plt.legend()
