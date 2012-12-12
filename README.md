@@ -11,7 +11,7 @@ built-in model functions,  covering a wide range of application including multip
 diffusional  species or total internal reflection (TIR-) FCS. For more information, visit the official homepage at http://fcstools.dyndns.org/pycorrfit.
 
 
-This repository contains the source scripts of PyCorrFit. The Python language enables the program to be run on many different platforms. If you do not want to install Python on your system, checkout http://fcstools.dyndns.org/pycorrfit or the [download section](https://github.com/paulmueller/PyCorrFit/downloads) for pre-compiled binaries.
+This repository contains the source scripts of PyCorrFit. The Python language enables the program to be run on many different platforms. If you do not want to install Python on your system, checkout http://fcstools.dyndns.org/pycorrfit for pre-compiled binaries.
 If you want to compile the sources for your own system using [PyInstaller](http://www.pyinstaller.org), take a look at [Pyinstaller readme](https://github.com/paulmueller/PyCorrFit/blob/master/pyinstaller-howto/README.md).
 
 To run PyCorrFit from source, download the contents of this repository, install the necessary modules (see below), and execute
