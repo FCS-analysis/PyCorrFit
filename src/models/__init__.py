@@ -130,6 +130,14 @@ def GetHumanReadableParameterDict(model, names, parameters):
     if len(stdparms) == 5:
         # This means we have extra information on the model
         # Return some human readable stuff
+        # Check for list:
+        if isinstance(names, basestring):
+            names = [names]
+            parameters = [parameters]
+            retstring = True
+        else:
+            retstring = False
+        # Create new lists
         NewUnits = list()
         NewParameters = list()
         for i in np.arange(len(stdparms[0])):
@@ -137,6 +145,9 @@ def GetHumanReadableParameterDict(model, names, parameters):
                 if names[j] == stdparms[0][i]:
                     NewUnits.append(stdparms[3][i])
                     NewParameters.append(stdparms[4][i]*parameters[j])
+        if retstring == True:
+            NewUnits = NewUnits[0]
+            NewParameters = NewParameters[0]
         return NewUnits, NewParameters
     else:
         # There is no info about human readable stuff, or it is already human

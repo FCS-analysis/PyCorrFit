@@ -127,7 +127,16 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     fitlabel = ur"applied fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                Page.active_parms[1])
-    errparms = Page.parmoptim_error
+    # Error parameters with nice look
+    errparmsblank = Page.parmoptim_error
+    if errparmsblank is None:
+        errparms = None
+    else:
+        errparms = dict()
+        for key in errparmsblank.keys():
+            newkey, newparm = mdls.GetHumanReadableParameterDict(Page.modelid,
+                                                        key, errparmsblank[key])
+            errparms[newkey] = newparm
     parmids = np.where(Page.active_parms[2])[0]
     labels = np.array(labels)[parmids]
     parms = np.array(parms)[parmids]
