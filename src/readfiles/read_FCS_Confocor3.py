@@ -6,6 +6,7 @@
 import os
 import csv
 import numpy as np
+import warnings
 
 import platform
 
@@ -159,9 +160,17 @@ def openFCS_Multiple(dirname, filename):
                     elif FoundType[:2] == "CC":
                         cc_correlations.append(np.array(corr))
                 else:
+                    # There is no correlation data in the file
+                    # Fill in some dummy data. These will be removed.
                     if FoundType[:2] == "AC":
+                        # append a dummy correlation curve
                         ac_correlations.append(None)
+                        if gottrace == False:
+                            # append a dummy trace
+                            traces.append(None)
                     elif FoundType[:2] == "CC":
+                        # append a dummy correlation curve
+                        # cc_correlations do not have traces
                         cc_correlations.append(None)
                 #else:
                 #    # So if inside this "FcsDataSet" section there actually 
@@ -196,7 +205,8 @@ def openFCS_Multiple(dirname, filename):
     # These item come from averaging inside the Confocor software and
     # do not contain any data.
     # These "None" type items should be at the end of these lists.
-    # If they are somewhere within the list, traces could be shuffled.
+    # If the user created .fcs files with averages between the curves,
+    # the *traces* contains *None* values at those positions.
 
     # We now create:
     #  curvelist: All actually used data
@@ -207,11 +217,16 @@ def openFCS_Multiple(dirname, filename):
     curvelist = list()
     tracelist = list()
     corrlist = list()
+    
     for i in np.arange(len(ac_correlations)):
         if ac_correlations[i] is not None:
             curvelist.append(aclist[i])
             tracelist.append(1*traces[i])
             corrlist.append(ac_correlations[i])
+        else:
+            if traces[i] is not None:
+                warnings.warn("We encountered a zero-length correlation "+\
+                              "curve that is associated with a trace.")
 
     ## The CC traces are more tricky:
     # Add traces to CC-correlation functions.
