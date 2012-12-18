@@ -40,19 +40,19 @@ This documentation addresses the processing of correlation curves with PyCorrFit
 
 \subsubsection{Software}
 \label{cha:soft}
-The latest version of PyCorrFit can be obtained from the internet via \url{http://fcstools.dyndns.org/pycorrfit/}.
+The latest version of PyCorrFit can be obtained from the internet at \url{http://fcstools.dyndns.org/pycorrfit/}.
 \begin{itemize}
 \item \textbf{Windows}.
 For Windows XP or Windows 7, stand-alone binary executables are available from the download page. 
 \item \textbf{Linux}.
 There are executable binaries for widely used distributions (e.g. Ubuntu).
 \item \textbf{Sources}
-The program was written in Python, keeping the concept of cross-platform programming in mind. To run PyCorrFit on any other operating system, the installation of Python v.2.6.5 is needed. Furthermore, the following additional python modules are required:\\
+The program was written in Python, keeping the concept of cross-platform programming in mind. To run PyCorrFit on any other operating system, the installation of Python v.2.7 is required. Furthermore, the following additional python modules need to be installed:\\
 \texttt{\\
 python-matplotlib ($\geq$ 1.0.1) \\
 python-numpy ($\geq$ 1.5.1) \\
 python-scipy ($\geq$ 0.8.0) \\
-python-sympy ($\geq$ 0.7.1) \\
+python-sympy ($\geq$ 0.7.2) \\
 python-yaml \\
 python-wxtools \\
 python-wxgtk2.8-dbg \\
@@ -66,6 +66,7 @@ For older versions of Ubuntu, some of the above package versions are not listed 
 \item[ ] \textbf{sympy}. To enable importing external model functions, sympy is required. It is available from \url{http://code.google.com/p/sympy/downloads/list}. Unpacking the archive and executing \texttt{python setup.py install} within the unpacked directory will install sympy.
 \end{itemize}
 \end{itemize}
+Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be used to install up-to-date python modules.
 
 \noindent \textbf{\LaTeX}.
 PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages texlive-science and texlive-math-extra need to be installed.
@@ -183,14 +184,14 @@ This section introduces the calculation of FCS model functions. It supplies some
 	By modifying the propagator $\Phi$ and the detection volume $\Omega$, other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals can not be found and approximations have to be made. The Gaussian shaped detection profile in confocal FCS is already an approximation. However, it is close to the real shape and deviations from the true results are considered to be small \cite{Zhang2007}.
 
 
-\subsection{Non-linear least squares fit}
+\subsection{Non-linear least-squares fit}
 \label{cha:PyCorFit_leastsq}
-PyCorrFit uses the non-linear least squares fitting capabilities from \texttt{scipy.optimize}. This package utilizes the Levenberg–Marquardt algorithm to minimize the sum of the squares. More information on this topic can be obtained from the online documentation of \texttt{leastsq}\footnote{\url{http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.leastsq.html##scipy.optimize.leastsq}}. 
+PyCorrFit uses the non-linear least-squares fitting capabilities from \texttt{scipy.optimize}. This package utilizes the Levenberg–Marquardt algorithm to minimize the sum of the squares. More information on this topic can be obtained from the online documentation of \texttt{leastsq}\footnote{\url{http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.leastsq.html##scipy.optimize.leastsq}}. 
 One can define a distance $d(G,H)$ between two discrete functions $G$ and $H$ with the discrete domain of definition $\tau_1 \dots \tau_n$ as the sum of squares:
 \begin{equation}
 d(G,H) = \sum_{i=1}^n \left[ G(\tau_i) - H(\tau_i) \right]^2
 \end{equation}
-The least squares method minimizes this distance between the model function $G$ and the experimental values $H$ by modifying $k$ additional fitting parameters $\alpha_1, \dots, \alpha_k$:
+The least-squares method minimizes this distance between the model function $G$ and the experimental values $H$ by modifying $k$ additional fitting parameters $\alpha_1, \dots, \alpha_k$:
 \begin{equation}
 \chi^2 = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n \left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2
 \end{equation}
@@ -198,11 +199,11 @@ The minimum distance $\chi^2$ is used to characterize the success of a fit. Note
 
 
 \subsection{Weighted fitting}
-In certain cases, it is useful to implement weights $\sigma_i$ for the calculation of $\chi^2$. For example, very noisy parts of a correlation curve can falsify the resulting fit. In PyCorrFit, weighting is implemented as follows:
+In certain cases, it is useful to implement weights (standard deviation) $\sigma_i$ for the calculation of $\chi^2$. For example, very noisy parts of a correlation curve can falsify the resulting fit. In PyCorrFit, weighting is implemented as follows:
 \begin{equation}
-\chi^2_\mathrm{weighted} = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2}{\sigma_i}
+\chi^2_\mathrm{weighted} = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2}{\sigma_i^2}
 \end{equation}
-PyCorrFit uses different approaches to calculate the weights $\sigma_i$ from the experimental data. The different approaches to calculate the weights implemented in PyCorrFit are explained in \hyref{section}{cha_graphint}.
+PyCorrFit is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in PyCorrFit are explained in \hyref{section}{cha_graphint}.
 
 
 
@@ -231,7 +232,7 @@ These are file formats that were designed for PyCorrFit.
 
 \subsubsection{.csv data files}
 \label{text:csv}
-This is the recommended way to store data from FCS experiments. \mytilde .csv files are directly readable by any editor from any platform. There is a certain syntax that has to be followed for \mytilde .csv files to be successfully imported by PyCorrFit:
+This is the recommended way to store data from FCS experiments. \mytilde .csv files are directly readable by any editor from any platform, allow comments throughout the file and have a well-defined structure. There is a certain syntax that has to be followed for \mytilde .csv files to be successfully imported by PyCorrFit:
 
 
 \begin{itemize}
@@ -263,7 +264,7 @@ the corresponding string \texttt{AC} or \texttt{CC} will be used to identify the
 \textbf{\mytilde .zip files} are containers for files containing correlation curves.
 
 \subsubsection{.txt model function files} 
-In addition to the built-in model functions, PyCorrFit supports the import of user defined model functions for fitting. To get started quickly, it is helpful to take a look at some examples online\footnote{``PyCorrFit external model functions'' in the download section at \url{http://fcstools.dyndns.org/pycorrfit}} .
+In addition to the built-in model functions, PyCorrFit supports the import of user defined model functions for fitting. To get started quickly, it is helpful to take a look at some examples online\footnote{``PyCorrFit external model functions'' in the download section at \url{http://fcstools.dyndns.org/pycorrfit}}.
 File syntax:
 \begin{itemize}
 
@@ -362,10 +363,11 @@ G = 1./n * gThrD * gScan * gTrip
 Within the page, the user may choose starting parameters for the fitting, select which parameters should be variable during fitting (checked means variable) and select a weighting method. The page displays the experimental and fitted curve, as well as the residuals in the lower plot.
 
 \subparagraph*{Weighting}
-Weights can be calculated for each data point using the standard deviation from neighboring points. Since FCS curves naturally have regions where the standard deviation of the experimental data is large (falling inflection points), the standard deviation has to be calculated from curves that mimic the experimental data. The following methods for weighting have been implemented:
+Weights can be calculated for each data point using the standard deviation from neighboring points. Since FCS curves naturally have regions where the standard deviation of the experimental data is large (falling inflection points), the standard deviation has to be calculated from curves that mimic the experimental data. If weighted fitting is used, the weighted residuals are shown instead of the plain residuals (difference of experimental and theoretical curve). The following methods for weighting have been implemented:
 \begin{itemize}
 \item[] \textbf{Spline}. A spline is fitted to the experimental curve. Weights are calculated from the deviation of the experimental data from the spline. If  the \texttt{Verbose mode} is enabled in  the \texttt{Preferences} menu, the spline fit will be displayed. The number of knots of the spline can be changed by adjusting the number in the dropdown menu. In case of multiple component data, a higher number of knots is required to obtain a fitting spline. For single component data, up to three knots are sufficient.
 \item[] \textbf{Model function}. Instead of calculating the weights from a spline, calculate the weights from the previously fitted model function. This method of weighting is iterative - the fit should converge!
+\item[] \textbf{Average}. If an average was created using the \texttt{Average data} tool, the standard deviation $\sigma_i$ at all data points $i$, calculated from all curves can be used as weights for fitting. 
 \end{itemize}
 
 \subparagraph*{Menus} PyCorrFit is operated through the menu bar. The \texttt{File} menu lets the user load and save files as discussed in section \ref{sec:fileformats}. The \texttt{Tools} menu contains several tools that are described below. The \texttt{Current Page} menu allows the user to perform tasks on the current page. This includes loading experimental data files or saving the currently viewable correlation curve as \mytilde .csv file or as an image. The \texttt{Model} menu lets the user select a model to create a new page. The \texttt{Preferences} menu allows the user to use Latex for plotting (\hyref{section}{cha:soft}) or tells the program to be more verbose (spline fits for calculation of weights will be displayed). The \texttt{Help} menu contains an update function that checks the current program version against the official release of PyCorrFit.
@@ -380,17 +382,17 @@ The graphical user interface comes with a bunch of tools located in the \texttt{
 		\item pages that do not have the same correlation type (autocorrelation or cross-correlation) as the current page,
 		\item pages, where the length of the correlation curve does not match the length of the curve of the current page.
 		\end{itemize}
-		A new page will be created containing the resulting average. The resulting trace is constructed by appending the traces of the averaged curves.
+		A new page will be created containing the resulting average. The resulting trace is constructed by appending the traces of the averaged curves. After averaging, the standard deviaton from all curves can be used as weights for fitting.
 		
-\item \textbf{Background correction}: Performs a background correction on the experimental curve. The result is usually a lower particle number after fitting. Backgrounds may be manually set or imported from background measurements (see supported file formats). Background measurements should consist of files containing only one curve and a trace. Else, only the first trace from the first curve will be used.
+\item \textbf{Background correction}: Performs a background correction according to \cite{Thomps:bookFCS2002}. The result is a higher amplitude of the correlation fuction $G(0)$. Backgrounds may be manually set or imported from background measurements (see supported file formats).
 \begin{equation}
 G_\mathrm{corrected}(\tau) = G_\mathrm{measured}(\tau) \cdot \left[ \frac{S}{S-B} \right]^2
 \label{eq:BG_correction}
 \end{equation}
-where $S$ is the average signal of the correlation curve and $B$ is the background signal.
+where $S$ is the average signal of the correlation curve and $B$ is the average background signal.
 \item \textbf{Batch control}: Perform fitting operations on all pages. Parameters may be imported from other \mytilde .fcsfit-session.zip-files. Application of parameters and fitting of curves is only executed for pages with the same model as the current page.
 \item \textbf{Data range selection}: This selects the lag times $\tau$ from the experimental curve that will be displayed. By default, all data from a file will be displayed. 
-\item \textbf{Global fitting}: If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and the squares of the residuals (parametrized curve minus experimental data) are minimized according to the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
+\item \textbf{Global fitting}: If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
 \item \textbf{Slider simulation}: This is useful to visualize the impact of certain parameters on the shape of the correlation function or to set proper starting parameters for a fit.
 \item \textbf{Page info}: A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
 \item \textbf{Trace view}: If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
