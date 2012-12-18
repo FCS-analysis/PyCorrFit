@@ -313,6 +313,8 @@ class FittingPanel(wx.Panel):
         self.apply_parameters()
         # Create instance of fitting class
         Fitting = self.Fit_create_instance()
+        # Reset page counter
+        self.GlobalParameterShare = list()
         try:
             Fitting.least_square()
         except ValueError:
