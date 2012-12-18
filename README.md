@@ -16,7 +16,7 @@ If you want to compile the sources for your own system using [PyInstaller](http:
 
 To run PyCorrFit from source, download the contents of this repository, install the necessary modules (see below), and execute
 
-	python PyCorrFit/source/PyCorrFit.py
+	python PyCorrFit/src/PyCorrFit.py
 
 Ubuntu-Linux
 -------------------
