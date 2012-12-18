@@ -148,12 +148,16 @@ check parameters on each page and start 'Global fit'.
         strFull = self.WXTextPages.GetValue()
         listFull = strFull.split(",")
         PageNumbers = list()
-        for item in listFull:
-            pagerange = item.split("-")
-            start = int(pagerange[0].strip())
-            end = int(pagerange[-1].strip())
-            for i in np.arange(end-start+1)+start:
-                PageNumbers.append(i)
+        try:
+            for item in listFull:
+                pagerange = item.split("-")
+                start = int(pagerange[0].strip())
+                end = int(pagerange[-1].strip())
+                for i in np.arange(end-start+1)+start:
+                    PageNumbers.append(i)
+        except:
+            print "Syntax invalid for page selection in global fitting."
+            return
         ## Get the corresponding pages, if they exist:
         self.PageData = dict()
         self.parmstofit = list()
