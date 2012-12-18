@@ -332,6 +332,5 @@ class Fit(object):
             self.parmoptim_error = None
         else:
             # Error estimation of fitted parameters
-            parmoptim_error = list()
             if self.covar is not None:
                 self.parmoptim_error = np.diag(self.covar)

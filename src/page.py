@@ -74,6 +74,10 @@ class FittingPanel(wx.Panel):
         self.external_std_weights = dict()
         # Errors of fit dictionary
         self.parmoptim_error = None
+        # A list containing page numbers that share parameters with this page.
+        # This parameter is defined by the global fitting tool and is saved in
+        # sessions.
+        self.GlobalParameterShare = list()
         # Counts number of Pages already created:
         self.counter = counter
         # Model we are using

@@ -933,12 +933,20 @@ class MyFrame(wx.Frame):
                     pass
                 else:
                     errdict = dict()
-                    for errInfo in Sups:
+                    for errInfo in Sups["FitErr"]:
                         for ierr in np.arange(len(errInfo)):
                             errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
                             errval = float(errInfo[1])
                             errdict[errkey] = errval
                     Newtab.parmoptim_error = errdict
+                    try:
+                        Newtab.GlobalParameterShare = Sups["Global Share"]
+                    except:
+                        pass
+                    try:
+                        Newtab.chi2 = Sups["Chi sq"]
+                    except:
+                        pass
                 # Set Title of the Page
                 try:
                     Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
@@ -1022,17 +1030,7 @@ class MyFrame(wx.Frame):
         # Save each Page
         N = self.notebook.GetPageCount()
 
-        # # # Create two lists: One for internal and one for external (user added)
-        # # # functions:
-        # # Function_parms = list()
-        # # Function_array = list()
-        # # Function_trace = list()
-        # # Function_prefs = list()
-        # # Reserved for future versions of PyCorrFit:
-        # # Preferences = None
-        # # # User edited Comments
-        # # Comments = list()
-        
+       
         # External functions
         for usermodelid in mdls.modeltypes["User"]:
             # Those models belong to external user functions.
@@ -1051,14 +1049,20 @@ class MyFrame(wx.Frame):
             # Set parameters
             Infodict["Parameters"][counter] = self.PackParameters(Page)
             # Set supplementary information, such as errors of fit
-            Errlist = list()
-            if Page.parmoptim_error is not None:
+            if Page.parmoptim_error is not None: # == if Page.chi2 is not None
+                Infodict["Supplements"][counter] = dict()
+                Infodict["Supplements"][counter]["Chi sq"] = float(Page.chi2)
+                PageList = list()
+                for pagei in Page.GlobalParameterShare:
+                    PageList.append(int(pagei))
+                Infodict["Supplements"][counter]["Global Share"] = PageList
+                                                
                 Alist = list()
                 for key in Page.parmoptim_error.keys():
                     position = mdls.GetPositionOfParameter(Page.modelid, key)
                     Alist.append([ int(position),
                                    float(Page.parmoptim_error[key]) ])
-                    Infodict["Supplements"][counter] = Alist
+                    Infodict["Supplements"][counter]["FitErr"] = Alist
             # Set exp data
             Infodict["Correlations"][counter] = [Page.tau, Page.dataexpfull]
             # Also save the trace

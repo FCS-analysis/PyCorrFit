@@ -154,8 +154,6 @@ check parameters on each page and start 'Global fit'.
             end = int(pagerange[-1].strip())
             for i in np.arange(end-start+1)+start:
                 PageNumbers.append(i)
-        # Remove duplicates is not necessary, because we are accessing a dict.
-        # PageNumbers = dict.fromkeys(PageNumbers).keys()
         ## Get the corresponding pages, if they exist:
         self.PageData = dict()
         self.parmstofit = list()
@@ -186,7 +184,7 @@ check parameters on each page and start 'Global fit'.
                     Page.Fit_WeightedFitCheck()
                     Fitting = Page.Fit_create_instance(noplots=True)
                     dataset["dataweights"] = Fitting.dataweights
-                    self.PageData[j] = dataset
+                    self.PageData[int(j)] = dataset
 
                     # Get the parameters to fit from that page
                     labels = Page.active_parms[0]
@@ -197,21 +195,30 @@ check parameters on each page and start 'Global fit'.
                             if self.parmstofit.count(labels[i]) == 0:
                                 self.parmstofit.append(labels[i])
                                 fitparms.append(parms[i])
+                                
         fitparms = np.array(fitparms)
         # Now we can perform the least squares fit
         if len(fitparms) == 0:
             return
-        self.parmoptim, self.mesg = spopt.leastsq(self.fit_function, 
-                                                  fitparms[:])
+        res = spopt.leastsq(self.fit_function, fitparms[:], full_output=1)
+        (popt, pcov, infodict, errmsg, ier) = res
+        #self.parmoptim, self.mesg = spopt.leastsq(self.fit_function, 
+        #                                          fitparms[:])
+        self.parmoptim = res[0]
         # So we have the optimal parameters.
         # We would like to give each page a chi**2 and its parameters back:
-        for key in self.PageData.keys():
+        # Create a clean list of PageNumbers
+        # UsedPages = dict.fromkeys(PageNumbers).keys()
+        UsedPages = self.PageData.keys()
+        UsedPages.sort()
+        for key in UsedPages:
             # Get the Page:
             for i in np.arange(self.parent.notebook.GetPageCount()):
                 aPage = self.parent.notebook.GetPage(i)
                 j = filter(lambda x: x.isdigit(), aPage.counter)
                 if int(j) == int(key):
                     Page = aPage
+            Page.GlobalParameterShare = UsedPages
             # Get the function
             item = self.PageData[key]
             modelid = item["modelid"]
@@ -235,10 +242,25 @@ check parameters on each page and start 'Global fit'.
             # Subtract data. This is the function we want to minimize
             residual = function(values, item["x"]) - item["data"]
             # Calculate chi**2
-            Fitting = Page.Fit_create_instance(noplots=True)
-            Fitting.parmoptim = Fitting.fitparms
-            Page.chi2 = Fitting.get_chi_squared()
-            del Fitting
+            # Set the parameter error estimates for all pages
+            minimized = self.fit_function(self.parmoptim)
+            degrees_of_freedom = len(minimized) - len(self.parmoptim) - 1
+            self.chi = Page.chi2 = np.sum((minimized)**2) / degrees_of_freedom
+            try:
+                self.covar = pcov * self.chi
+            except:
+                self.parmoptim_error = None
+            else:
+                parmoptim_error = list()
+                if self.covar is not None:
+                    self.parmoptim_error = np.diag(self.covar)
+            p_error = self.parmoptim_error
+            if p_error is None:
+                Page.parmoptim_error = None
+            else:
+                Page.parmoptim_error = dict()
+                for i in np.arange(len(p_error)):
+                    Page.parmoptim_error[self.parmstofit[i]] = p_error[i]
             Page.apply_parameters_reverse()
             Page.PlotAll()
 

@@ -1,4 +1,8 @@
 0.7.3
+ (rc 0.7.4)
+ - Fixed: Page now inherits Chi² of global fit (best solution).
+ - Fixed: Chi² and parameters of global fitting are now stored in sessions.
+0.7.3
  - Issue closed. External weights from averages saved in session (#11).
  - Solved minor bugs
  - Added estimation of errors of fit (Issue #12/#14)

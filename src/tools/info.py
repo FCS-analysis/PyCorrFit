@@ -158,6 +158,11 @@ class InfoClass(object):
                 Chi2type = "reduced sum of squares"
             Fitting.append([ u"\u03c7"+"²-type", Chi2type ])
             Fitting.append([ "Weighted fit", weightedfit ])
+            if len(Page.GlobalParameterShare) != 0:
+                shared = str(Page.GlobalParameterShare[0])
+                for item in Page.GlobalParameterShare[1:]:
+                    shared += ", "+str(item)
+                Fitting.append([ "Shared parameters with Pages", shared ])
             if weightedfit is True:
                 Fitting.append([ "No. channels", 2*fittingbins+1 ])
             # Fitting range:

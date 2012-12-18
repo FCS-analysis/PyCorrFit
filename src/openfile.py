@@ -105,8 +105,6 @@ def OpenSession(parent, dirname, sessionfile=None):
     # The *yamlfile* is responsible for the order of the Pages #i.
     Infodict["Parameters"] = yaml.safe_load(yamlfile)
     yamlfile.close()
-    # Supplementary data
-
     # Supplementary data (errors of fit)
     supname = "Supplements.yaml"
     try:
@@ -118,7 +116,12 @@ def OpenSession(parent, dirname, sessionfile=None):
         supdata = yaml.safe_load(supfile)
         Infodict["Supplements"] = dict()
         for idp in supdata:
-            Infodict["Supplements"][idp[0]] = idp[1]
+            Infodict["Supplements"][idp[0]] = dict() 
+            Infodict["Supplements"][idp[0]]["FitErr"] = idp[1]
+            if len(idp) > 2:
+                # As of version 0.7.4 we save chi2 and shared pages -global fit
+                Infodict["Supplements"][idp[0]]["Chi sq"] = idp[2]
+                Infodict["Supplements"][idp[0]]["Global Share"] = idp[3]
     ## Preferences: Reserved for a future version of PyCorrFit :)
     prefname = "Preferences.yaml"
     try:
@@ -458,7 +461,10 @@ def SaveSession(parent, dirname, Infodict):
         SupKeys.sort()
         Suplist = list()
         for idsup in SupKeys:
-            Suplist.append([idsup,Sups[idsup]])
+            error = Sups[idsup]["FitErr"]
+            chi2 = Sups[idsup]["Chi sq"]
+            globalshare = Sups[idsup]["Global Share"]
+            Suplist.append([idsup, error, chi2, globalshare])
         yaml.dump(Suplist, open(errsfilename, "wb"))
         Arc.write(errsfilename)
         os.remove(os.path.join(tempdir, errsfilename))
