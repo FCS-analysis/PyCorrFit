@@ -211,8 +211,8 @@ Supplements.yaml
    -- Page number
     -- [parameter id, error value]
      - [parameter id, error value]
-   - Chi squared
-   - [pages that share parameters] (from global fitting)
+    - Chi squared
+    - [pages that share parameters] (from global fitting)
      
 trace*.csv (where * is {Number of page} | appendix "A" or "B" point to
             the respective channels (only in cross-correlation mode))

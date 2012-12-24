@@ -1026,11 +1026,8 @@ class MyFrame(wx.Frame):
         Infodict["Preferences"] = dict() # not used
         Infodict["Supplements"] = dict() # error estimates for fitting
         Infodict["Traces"] = dict() # all traces
-
         # Save each Page
         N = self.notebook.GetPageCount()
-
-       
         # External functions
         for usermodelid in mdls.modeltypes["User"]:
             # Those models belong to external user functions.

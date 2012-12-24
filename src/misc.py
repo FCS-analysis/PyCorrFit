@@ -20,7 +20,7 @@ import wx.lib.delayedresult as delayedresult
 
 import doc                          # Documentation/some texts
 # The icon file was created with
-# img2py -i -n Main Icon.png icon.py
+# img2py -i -n Main PyCorrFit_icon.png icon.py
 import icon                         # Contains the program icon
 
 

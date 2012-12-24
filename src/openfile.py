@@ -449,7 +449,10 @@ def SaveSession(parent, dirname, Infodict):
         ParmsKeys.sort()
         Parmlist = list()
         for idparm in ParmsKeys:
+            # Make sure we do not accidently save arrays.
+            # This will not work correctly with yaml.
             Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
+            Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
             Parmlist.append(Parms[idparm])
         yaml.dump(Parmlist, open(parmsfilename, "wb"))
         Arc.write(parmsfilename)
