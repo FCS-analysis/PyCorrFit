@@ -1,4 +1,4 @@
-PyCorrFit
+![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/doc-src/Images/PyCorrFit_logo_dark.png)
 =========
 
 In current research, fluorescence correlation spectrsocopy (FCS) is  applied to
