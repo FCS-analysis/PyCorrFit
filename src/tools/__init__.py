@@ -37,6 +37,7 @@ from channels import SelectChannels
 from globalfit import GlobalFit
 from info import ShowInfo
 from trace import ShowTrace
+from selectcurves import Wrapper_Tools as SelCurves
 from statistics import Stat
 from simulation import Slide
 
@@ -53,8 +54,8 @@ from comment import EditComment
 # Make a dictionary of Tools
 ToolDict = dict()
 # Make lists of tools for each dictionary entry
-ToolsActive = [Average, BackgroundCorrection, BatchCtrl,  SelectChannels,
-               GlobalFit, Slide]
+ToolsActive = [Average, BackgroundCorrection, BatchCtrl, SelCurves,
+               SelectChannels, GlobalFit, Slide]
 ToolsPassive = [ShowInfo, ShowTrace, Stat]
 ToolDict["A"] = ToolsActive
 ToolDict["P"] = ToolsPassive
@@ -66,6 +67,7 @@ NameActive = [
   ["&Average data", "Create an average curve from whole session."],
   ["&Background correction", "Open a file for background correction."],
   ["B&atch control", "Batch fitting."],
+  ["&Curve selction", "Select experimental curves."],
   ["&Data range selection",
                      "Select an interval of lag times to be used for fitting."],
   ["&Global fitting", "Interconnect parameters from different measurements."],
