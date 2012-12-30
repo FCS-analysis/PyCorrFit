@@ -67,7 +67,7 @@ NameActive = [
   ["&Average data", "Create an average curve from whole session."],
   ["&Background correction", "Open a file for background correction."],
   ["B&atch control", "Batch fitting."],
-  ["&Curve selction", "Select experimental curves."],
+  ["&Curve selection", "Select experimental curves."],
   ["&Data range selection",
                      "Select an interval of lag times to be used for fitting."],
   ["&Global fitting", "Interconnect parameters from different measurements."],
