@@ -76,18 +76,30 @@ class Wrapper_Tools(object):
             do not contain any experimental data (Page.dataeyp is None),
             because we ignored those pages during import.
         """
-        print "keep "+str(keyskeep)
-        print "remove "+str(keysrem)
+        if len(keysrem) == 0:
+            self.OnClose()
+            return
         # warn the user!
-        # First make a list of all pages that need to be removes and then
+        # First make a list of all pages that need to be removed and then
         # delete those pages.
-        N = self.parent.notebook.GetPageCount()
-        for i in np.arange(N):
-            Page = self.parent.notebook.GetPage(i)
-            key = Page.counter
-            if keyskeep.count(key) == 0 and Page.dataexp is not None:
-                self.parent.notebook.DeletePage(i)
-        self.Selector.Destroy()
+        warntext = "The following pages will be removed:\n"
+        for key in keysrem:
+            warntext += "- "+key+"\n"
+        dlg = wx.MessageDialog(self.parent, warntext, "Warning",
+                        wx.OK|wx.ICON_EXCLAMATION|wx.CANCEL)
+        if dlg.ShowModal() == wx.ID_OK:
+            N = self.parent.notebook.GetPageCount()
+            pagerem = list()
+            for i in np.arange(N):
+                Page = self.parent.notebook.GetPage(i)
+                key = Page.counter
+                if keysrem.count(key) == 1:
+                    pagerem.append(Page)
+            for Page in pagerem:
+                j = self.parent.notebook.GetPageIndex(Page)
+                self.parent.notebook.DeletePage(j)
+            # Already triggered by DeletePage:
+            # self.OnClose()
 
 
 class UserSelectCurves(wx.Frame):
@@ -116,35 +128,54 @@ class UserSelectCurves(wx.Frame):
         ## Pre-process
         self.ProcessDict()
         ## Content
-        # Panel
-        self.sp = wx.SplitterWindow(self, size=(500,300), style=wx.SP_3DSASH)
+        self.sp = wx.SplitterWindow(self, size=(500,500), style=wx.SP_3DSASH)
         self.sp.SetMinimumPaneSize(1)
+        # Top panel
+        panel_top = wx.Panel(self.sp, size=(500,200))
+        self.upperSizer = wx.BoxSizer(wx.VERTICAL)
+        text = "Select the curves to keep. \n" +\
+               "By holding down the 'Ctrl' key, single curves can be \n" +\
+               "selected or deselected. Use 'Ctrl'+'a' to select all \n" +\
+               "curves. The 'Shift' key can be used to select groups."
+        self.upperSizer.Add(wx.StaticText(panel_top, label=text))
+        # Bottom Panel
+        self.bottom_sp = wx.SplitterWindow(self.sp, size=(500,300), style=wx.SP_3DSASH)
+        self.bottom_sp.SetMinimumPaneSize(1)
         sizepanelx = 150
-        self.panel = wx.Panel(self.sp, size=(sizepanelx,300))
-        self.topSizer = wx.BoxSizer(wx.VERTICAL)
+        panel_bottom = wx.Panel(self.bottom_sp, size=(sizepanelx,300))
+        self.boxSizer = wx.BoxSizer(wx.VERTICAL)
         # Box selection
         style = wx.LB_EXTENDED
-        self.SelectBox = wx.ListBox(self.panel, size=(150,300), style=style,
+        self.SelectBox = wx.ListBox(panel_bottom, size=(150,300), style=style,
                                     choices=self.curvekeys)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
         self.Bind(wx.EVT_LISTBOX, self.OnUpdatePlot, self.SelectBox)
-        self.topSizer.Add(self.SelectBox)
+        self.boxSizer.Add(self.SelectBox)
         # Button OK
-        btnok = wx.Button(self.panel, wx.ID_ANY, 'Apply')
+        btnok = wx.Button(panel_bottom, wx.ID_ANY, 'Apply')
         self.Bind(wx.EVT_BUTTON, self.OnPushResults, btnok)
-        self.topSizer.Add(btnok)
+        self.boxSizer.Add(btnok)
         # Finish off sizers
-        self.panel.SetSizer(self.topSizer)
-        self.topSizer.Fit(self.panel)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
-        #self.SetMaxSize((9999, self.topSizer.GetMinSizeTuple()[1]))
+        panel_top.SetSizer(self.upperSizer)
+        panel_bottom.SetSizer(self.boxSizer)
+        self.upperSizer.Fit(panel_top)
+        self.boxSizer.Fit(panel_bottom)
+        minsize = np.array(self.boxSizer.GetMinSizeTuple()) +\
+                  np.array(self.upperSizer.GetMinSizeTuple()) +\
+                  np.array((0,10))
+        self.SetMinSize(minsize)
+        #self.SetMaxSize((9999, self.boxSizer.GetMinSizeTuple()[1]))
         # Canvas
-        self.canvas = plot.PlotCanvas(self.sp)
+        self.canvas = plot.PlotCanvas(self.bottom_sp)
         self.canvas.setLogScale((True, False))  
         self.canvas.SetEnableZoom(True)
         # Splitter window
-        self.sp.SplitVertically(self.panel, self.canvas, sizepanelx)
+        self.bottom_sp.SplitVertically(panel_bottom, self.canvas, sizepanelx)
+        sizetoppanel = self.upperSizer.GetMinSizeTuple()[1]
+        self.sp.SplitHorizontally(panel_top, self.bottom_sp, sizetoppanel)
+        #import IPython
+        #IPython.embed()
         self.OnUpdatePlot()
         # Icon
         if parent.MainIcon is not None:
@@ -153,9 +184,19 @@ class UserSelectCurves(wx.Frame):
 
     
     def ProcessDict(self, e=None):
-        # Define the order of keys used
+        # Define the order of keys used.
+        # We want to sort the keys, such that #10: is not before #1:
         self.curvekeys = self.curvedict.keys()
-        self.curvekeys.sort()
+        # Sorting key function applied to each key before sorting:
+        page_num = lambda counter: int(counter.strip().strip(":").strip("#"))
+        try:
+            for item in self.curvekeys:
+                page_num(item)
+        except:
+            fstr = lambda x: x.strip()
+        else:
+            fstr = page_num
+        self.curvekeys.sort(key = fstr)
 
 
     def OnPushResults(self, e=None):
@@ -193,8 +234,8 @@ class UserSelectCurves(wx.Frame):
         self.canvas.SetEnableLegend(True)
         if len(curves) != 0:
             self.canvas.Draw(plot.PlotGraphics(lines, 
-                         xLabel='lag time [s]', 
-                         yLabel='Correlation'))
+                         xLabel=u'lag time τ [s]', 
+                         yLabel=u'G(τ)'))
 
 
 
