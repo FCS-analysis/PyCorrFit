@@ -781,11 +781,11 @@ class MyFrame(wx.Frame):
                 curvetypes[Type[i]] = [i]
         # Now we have a dictionary curvetypes with keys that name
         # items in *Type* and which point to indices in *Type*.
-        # We will display a dialog that let's the user choose what
+        # We will display a dialog that lets the user choose what
         # to import.
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
-        Chosen = tools.ChooseImportTypesModel(self, curvetypes)
+        Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation)
         newCorrelation = list()
         newTrace = list()
         newType = list()
@@ -793,6 +793,9 @@ class MyFrame(wx.Frame):
         modelList = list()
         if Chosen.ShowModal() == wx.ID_OK:
             keys = Chosen.typekeys
+            # Keepdict is a list of indices pointing to Type or Correlation
+            # of curves that are supposed to be kept.
+            keepcurvesindex = Chosen.keepcurvesindex
             # modelids is a dictionary with chosen modelids.
             # The keys of modelids are indices in the *Type* etc. lists.
             modelids = Chosen.modelids
@@ -802,11 +805,12 @@ class MyFrame(wx.Frame):
             for key in keys:
                 # create a new curvelist with the selected curves
                 for index in curvetypes[key]:
-                    newCorrelation.append(Correlation[index])
-                    newTrace.append(Trace[index])
-                    newType.append(Type[index])
-                    newFilename.append(Filename[index])
-                    modelList.append(modelids[index])
+                    if keepcurvesindex.count(index) == 1:
+                        newCorrelation.append(Correlation[index])
+                        newTrace.append(Trace[index])
+                        newType.append(Type[index])
+                        newFilename.append(Filename[index])
+                        modelList.append(modelids[index])
             Correlation = newCorrelation
             Trace = newTrace
             Type = newType

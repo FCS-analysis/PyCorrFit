@@ -21,9 +21,13 @@ import wx
 
 import models as mdls
 import doc
+import selectcurves
 
 
 class ChooseImportTypes(wx.Dialog):
+    """ This class is used for importing single files from the "Current" menu.
+        The model function is defined by the model that is in use.
+    """
     # This tool is derived from a wx.frame.
     def __init__(self, parent, curvedict):
         # parent is the main frame of PyCorrFit
@@ -54,7 +58,7 @@ class ChooseImportTypes(wx.Dialog):
         self.sizer.Fit(self)
         #Icon
         if parent.MainIcon is not None:
-            wx.Frame.SetIcon(self, parent.MainIcon)
+            wx.Dialog.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
 
@@ -74,14 +78,19 @@ class ChooseImportTypes(wx.Dialog):
 
 
 class ChooseImportTypesModel(wx.Dialog):
+    """ This class shows a dialog displaying options to choose
+        model function on import of data
+    """
     # This tool is derived from a wx.frame.
-    def __init__(self, parent, curvedict):
+    def __init__(self, parent, curvedict, correlations):
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
         super(ChooseImportTypesModel, self).__init__(parent=parent, 
             title="Choose types", size=(250, 200))
         self.curvedict = curvedict
+        self.kept_curvedict = curvedict.copy() # Can be edited by user
+        self.correlations = correlations
         # List of keys that will be imported by our *parent*
         self.typekeys = list()
         # Dictionary of modelids corresponding to indices in curvedict
@@ -94,6 +103,7 @@ class ChooseImportTypesModel(wx.Dialog):
         self.sizer.Add(textinit)
         curvekeys = curvedict.keys()
         curvekeys.sort()
+        self.curvekeys = curvekeys
         # Dropdown model selections:
         DropdownList = ["No model selected"] # Contains string in model dropdown
         self.DropdownIndex = [None]          # Contains corresponsing model
@@ -105,11 +115,17 @@ class ChooseImportTypesModel(wx.Dialog):
                 self.DropdownIndex.append(modelid)
         self.ModelDropdown = dict()
         dropsizer = wx.FlexGridSizer(rows=len(modelkeys), cols=3, vgap=5, hgap=5)
+        self.Buttons = list()
+        i = 8000
         for key in curvekeys:
             # Text with keys and numer of curves
             dropsizer.Add( wx.StaticText(self.panel, label=str(key)) )
-            dropsizer.Add( wx.StaticText(self.panel,
-                           label=" ("+str(len(curvedict[key]))+" curves)") )
+            label=" ("+str(len(curvedict[key]))+" curves)"
+            button = wx.Button(self.panel, i, label)
+            i += 1
+            self.Bind(wx.EVT_BUTTON, self.OnSelectCurves, button)
+            self.Buttons.append(button)
+            dropsizer.Add(button)
             # Model selection dropdown
             dropdown = wx.ComboBox(self.panel, -1, DropdownList[0], (15,30),
                wx.DefaultSize, DropdownList, wx.CB_DROPDOWN|wx.CB_READONLY)
@@ -125,13 +141,65 @@ class ChooseImportTypesModel(wx.Dialog):
         self.sizer.Fit(self)
         self.Show(True)
 
+        if parent.MainIcon is not None:
+            wx.Dialog.SetIcon(self, parent.MainIcon)
+        self.Show(True)
+
 
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
+        self.keepcurvesindex = list()
+        for key in self.kept_curvedict.keys():
+            self.keepcurvesindex += self.kept_curvedict[key]
+        for i in np.arange(len(self.keepcurvesindex)):
+            self.keepcurvesindex[i] = int(self.keepcurvesindex[i])
         self.EndModal(wx.ID_OK)
+        
         #self.Show
         #self.Destroy()
+
+
+    def OnSelectCurves(self, buttonevent):
+        index = buttonevent.GetId() - 8000
+        self.buttonindex = index
+        curvedict = dict()
+        key = self.curvekeys[index]
+        corrcurves = dict()
+        for i in self.curvedict[key]:
+            corrcurves[str(i)] = self.correlations[int(i)]
+        Selector = selectcurves.Wrapper_OnImport(self.parent, corrcurves,
+                                                  self.OnSelected)
+
+    def OnSelected(self, keep, remove):
+        # Set new button label
+        for i in np.arange(len(keep)):
+            keep[i] = int(keep[i])
+        #button = self.Buttons[self.buttonindex]
+        label = " ("+str(len(keep))+" curves)"
+        #button.SetLabel(label)
+        # Add new content to selected key
+        SelectedKey = self.curvekeys[self.buttonindex]
+        #self.kept_curvedict[SelectedKey] = keep
+        # If there are keys with the same amount of correlations,
+        # these are assumed to be AC2, CC12, CC21 etc., so we will remove
+        # items from them accordingly.
+        diff = set(keep).intersection(set(self.curvedict[SelectedKey]))
+        indexes = list()
+        for i in np.arange(len(self.curvedict[SelectedKey])):
+            for number in diff:
+                if number == self.curvedict[SelectedKey][i]:
+                    indexes.append(i)
+        for j in np.arange(len(self.curvekeys)):
+            key = self.curvekeys[j]
+            if len(self.curvedict[key]) == len(self.curvedict[SelectedKey]):
+                newlist = list()
+                for index in indexes:
+                    newlist.append(self.curvedict[key][index])
+                self.kept_curvedict[key] = newlist
+                # Also update buttons
+                button = self.Buttons[j]
+                button.SetLabel(label)
 
 
     def OnSetkeys(self, event = None):
@@ -153,3 +221,8 @@ class ChooseImportTypesModel(wx.Dialog):
                     # Set different model id for the curves
                     self.modelids[index] = modelid
         self.typekeys.sort()
+
+        
+
+
+        

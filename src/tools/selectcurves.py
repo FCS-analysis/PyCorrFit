@@ -22,6 +22,32 @@ import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 
 
+class Wrapper_OnImport(object):
+    """ Wrapper for import function.
+        parent: wx.Frame
+        curvedict: dictionary with curves
+        onselected: external function that is called with two arguments:
+                    *kept keys* and *unwanted keys* as lists referring to
+                    curvedict.
+    """
+    def __init__(self, parent, curvedict, onselected):
+        self.onselected = onselected
+        self.parent = parent
+        self.Selector = UserSelectCurves(parent, curvedict, wrapper=self)
+        self.Selector.MakeModal(True)
+
+
+    def OnResults(self, keyskeep, keysrem):
+        """ Here we will close (or disable?) pages that are not wanted
+            by the user. It is important that we do not close pages that
+            do not contain any experimental data (Page.dataeyp is None),
+            because we ignored those pages during import.
+        """
+        self.Selector.MakeModal(False)
+        self.Selector.Destroy()
+        self.Selector.Close()
+        self.onselected(keyskeep,keysrem)
+
 
 class Wrapper_Tools(object):
     def __init__(self, parent):
@@ -193,7 +219,7 @@ class UserSelectCurves(wx.Frame):
             for item in self.curvekeys:
                 page_num(item)
         except:
-            fstr = lambda x: x.strip()
+            fstr = lambda x: x
         else:
             fstr = page_num
         self.curvekeys.sort(key = fstr)
@@ -237,8 +263,3 @@ class UserSelectCurves(wx.Frame):
                          xLabel=u'lag time τ [s]', 
                          yLabel=u'G(τ)'))
 
-
-
-
-def Wrapper_OnImport(curvelist):
-    pass
