@@ -168,8 +168,11 @@ class ChooseImportTypesModel(wx.Dialog):
         corrcurves = dict()
         for i in self.curvedict[key]:
             corrcurves[str(i)] = self.correlations[int(i)]
+        prev_selected = list()
+        for item in self.kept_curvedict.keys():
+            prev_selected += self.kept_curvedict[item]
         Selector = selectcurves.Wrapper_OnImport(self.parent, corrcurves,
-                                                  self.OnSelected)
+                                                 self.OnSelected, prev_selected)
 
     def OnSelected(self, keep, remove):
         # Set new button label

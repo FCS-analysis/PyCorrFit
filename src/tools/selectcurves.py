@@ -30,10 +30,12 @@ class Wrapper_OnImport(object):
                     *kept keys* and *unwanted keys* as lists referring to
                     curvedict.
     """
-    def __init__(self, parent, curvedict, onselected):
+    def __init__(self, parent, curvedict, onselected, selkeys=None):
         self.onselected = onselected
         self.parent = parent
-        self.Selector = UserSelectCurves(parent, curvedict, wrapper=self)
+        self.Selector = UserSelectCurves(parent, curvedict, wrapper=self,
+                                         selkeys=selkeys)
+        self.Selector.Show()
         self.Selector.MakeModal(True)
 
 
@@ -130,7 +132,7 @@ class Wrapper_Tools(object):
 
 class UserSelectCurves(wx.Frame):
     # This tool is derived from a wx.frame.
-    def __init__(self, parent, curvedict, wrapper=None):
+    def __init__(self, parent, curvedict, wrapper=None, selkeys=None):
         """
         *curvedict* is a dictionary that contains the curves. Keys serve as
         identifiers in the curve selection.
@@ -145,6 +147,12 @@ class UserSelectCurves(wx.Frame):
         self.parent = parent
         self.wrapper = wrapper
         self.curvedict = curvedict
+        self.selkeys = selkeys
+        if self.selkeys is not None:
+            newselkeys = list()
+            for item in self.selkeys:
+                newselkeys.append(str(item))
+            self.selkeys = newselkeys
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
@@ -176,6 +184,11 @@ class UserSelectCurves(wx.Frame):
                                     choices=self.curvekeys)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
+        # Deselect keys that are not in self.selkeys
+        if self.selkeys is not None:
+            for i in np.arange(len(self.curvekeys)):
+                if self.selkeys.count(self.curvekeys[i]) == 0:
+                    self.SelectBox.Deselect(i)
         self.Bind(wx.EVT_LISTBOX, self.OnUpdatePlot, self.SelectBox)
         self.boxSizer.Add(self.SelectBox)
         # Button OK

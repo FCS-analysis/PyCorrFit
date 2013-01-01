@@ -8,11 +8,6 @@ import csv
 import numpy as np
 import warnings
 
-import platform
-
-
-
-
 
 def openFCS(dirname, filename):
     """ The AIM software can save data as multiple or single data files.
@@ -225,8 +220,7 @@ def openFCS_Multiple(dirname, filename):
             corrlist.append(ac_correlations[i])
         else:
             if traces[i] is not None:
-                warnings.warn("We encountered a zero-length correlation "+\
-                              "curve that is associated with a trace.")
+                warnings.warn(filename+ " does not contain AC data.")
 
     ## The CC traces are more tricky:
     # Add traces to CC-correlation functions.

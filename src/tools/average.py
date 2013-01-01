@@ -182,8 +182,10 @@ class Average(wx.Frame):
         average[:,1] = averagedata
         # create new page
         self.IsCrossCorrelation = self.Page.IsCrossCorrelation
+        interval = (self.Page.startcrop, self.Page.endcrop)
         self.parent.add_fitting_tab(modelid = self.Page.modelid)
         self.AvgPage = self.parent.notebook.GetCurrentPage()
+        (self.AvgPage.startcrop, self.AvgPage.endcrop) = interval
         self.AvgPage.dataexpfull = average
         self.AvgPage.IsCrossCorrelation = self.IsCrossCorrelation
         if self.IsCrossCorrelation is False:
