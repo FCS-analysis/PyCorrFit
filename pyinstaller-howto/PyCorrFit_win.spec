@@ -14,6 +14,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
+          icon='C:\\Python27\\PyCorrFit\\doc-src\\Images\\PyCorrFit_icon.ico'
 #          console=False )
           console=True )
 #app = BUNDLE(exe,

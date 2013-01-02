@@ -20,6 +20,7 @@ def openFCS(dirname, filename):
     else:
         return openFCS_Single(dirname, filename)
 
+
 def openFCS_Multiple(dirname, filename):
     """ Load data from Zeiss Confocor3
     """
@@ -167,25 +168,11 @@ def openFCS_Multiple(dirname, filename):
                         # append a dummy correlation curve
                         # cc_correlations do not have traces
                         cc_correlations.append(None)
-                #else:
-                #    # So if inside this "FcsDataSet" section there actually 
-                #    # is no correlation function (or trace), we would have
-                #    # a problem, because curvelist has an element that
-                #    # corresponds to no curve. Erase that element:
-                #    if len(curvelist) > len(correlations):
-                #        curvelist = curvelist.__getslice__(0, len(curvelist)-1)
-                #    # What if we have a trace but no correlation?
-                #    # This is an unlikely case. We will have to remove the
-                #    # trace, since PyCorrFit cannot deal with that.
-                #    if gottrace == True:
-                #        traces = traces.__getslice__(0, len(curvelist)-1)
                 # We reached the end of this "FcsDataSet" section.
                 fcsset = False
         i = i + 1
-
     # finished.
     openfile.close()
-
     # We now have:
     #  aclist: a list of AC curve names mentioned in the file.
     #  cclist: a list of CC curve names mentioned in the file.
@@ -202,17 +189,14 @@ def openFCS_Multiple(dirname, filename):
     # These "None" type items should be at the end of these lists.
     # If the user created .fcs files with averages between the curves,
     # the *traces* contains *None* values at those positions.
-
-    # We now create:
+    ## We now create:
     #  curvelist: All actually used data
     #  tracelist: Traces brought into right form (also for CCs)
     #  corrlist: Correlation curves
     #  Index in curvelist defines index in trace and correlation.
-
     curvelist = list()
     tracelist = list()
     corrlist = list()
-    
     for i in np.arange(len(ac_correlations)):
         if ac_correlations[i] is not None:
             curvelist.append(aclist[i])
@@ -221,13 +205,11 @@ def openFCS_Multiple(dirname, filename):
         else:
             if traces[i] is not None:
                 warnings.warn(filename+ " does not contain AC data.")
-
     ## The CC traces are more tricky:
     # Add traces to CC-correlation functions.
     # It seems reasonable, that if number of AC1,AC2 and CC are equal,
     # CC gets the traces accordingly.
     cctracelist = list()
-
     n_ac1 = aclist.count("AC1")
     n_ac2 = aclist.count("AC2")
     n_cc12 = cclist.count("CC12")
@@ -236,31 +218,6 @@ def openFCS_Multiple(dirname, filename):
         CCTraces = True
     else:
         CCTraces = False
-
-# OLD STUFF - CAN BE DELETED:
-#        # start at -1, we will add a 1 while finding indices.
-#        indexcc = -1    # index in curvelist of the CC12 function
-#        indexac1 = -1   # index in curvelist of the AC1 function
-#        indexac2 = -1   # index in curvelist of the AC2 function
-#        for i in np.arange(n_cc12):
-#            # find indices of ac1/2 traces
-#            indexcc = cclist.index("CC12", indexcc+1)
-#            indexac1 = aclist.index("AC1", indexac1+1)
-#            indexac2 = aclist.index("AC2", indexac2+1)
-#            # append corresponding traces (assumes chronology)
-#            cctracelist.append([traces[indexac1], traces[indexac2]])#
-#    if n_ac1==n_ac2==n_cc21>0:
-#        indexcc = -1    # index in curvelist of the CC21 function
-#        indexac1 = -1   # index in curvelist of the AC1 function
-#        indexac2 = -1   # index in curvelist of the AC2 function
-#        for i in np.arange(n_cc21):
-#            # find indices of ac1/2 traces
-#            indexcc = cclist.index("CC21", indexcc+1)
-#            indexac1 = aclist.index("AC1", indexac1+1)
-#            indexac2 = aclist.index("AC2", indexac2+1)
-#            # append corresponding traces (assumes chronology)
-#            cctracelist.append([traces[indexac1], traces[indexac2]])
-
     # Commence swapping, if necessary
     # We want to have CC12 first and the corresponding trace to AC1 as well.
     if len(cc_correlations) != 0:
@@ -277,7 +234,6 @@ def openFCS_Multiple(dirname, filename):
                 cclist[2*i], cclist[2*i+1] = cclist[2*i+1], cclist[2*i]
                 if aclist[2*i] == "AC2":
                     traces[2*i], traces[2*i+1] = traces[2*i+1], traces[2*i] 
-                
     # Add cc-curves with (if CCTraces) trace.
     for i in np.arange(len(cc_correlations)):
         if cc_correlations[i] is not None:
@@ -290,7 +246,6 @@ def openFCS_Multiple(dirname, filename):
                     tracelist.append([traces[i-1], traces[i]])
             else:
                 traclist.append(None)
-                
     dictionary = dict()
     dictionary["Correlation"] = corrlist
     dictionary["Trace"] = tracelist
@@ -300,6 +255,7 @@ def openFCS_Multiple(dirname, filename):
         filelist.append(filename)
     dictionary["Filename"] = filelist
     return dictionary
+
 
 def openFCS_Single(dirname, filename):
     """ Load data from Zeiss Confocor3
@@ -314,13 +270,11 @@ def openFCS_Single(dirname, filename):
     # Indicates if trace or FCS curve should be imported in loop
     fcscurve = False
     tracecurve = False
-
     while i <= len(Alldata)-1:
         if Alldata[i].partition("=")[0].strip() == "##DATA TYPE":
             # Find out what type of correlation curve we have.
             # Might be interesting to the user.
             Type  = Alldata[i].partition("=")[2].strip()
-
             if Type == "FCS Correlogram":
                 fcscurve = True
                 tracecurve = False
@@ -329,9 +283,7 @@ def openFCS_Single(dirname, filename):
                 fcscurve = False
             else:
                 raise SyntaxError("Unknown file syntax: "+Type)
-
         i = i + 1
-
         if tracecurve == True:
             if Alldata[i].partition("=")[0].strip() == "##NPOINTS":
                 # Start importing the trace. This is a little difficult, since
@@ -383,7 +335,6 @@ def openFCS_Single(dirname, filename):
                         # otherwise we have a problem down three lines ;)
                         newtrace = trace
                 tracecurve = False
-
         if fcscurve == True:
             if Alldata[i].partition("=")[0].strip() == "##NPOINTS":
                 # Get the correlation information
@@ -400,9 +351,7 @@ def openFCS_Single(dirname, filename):
                         corr.append( (np.float(row[0]), np.float(row[1])-1) )
                     corr = np.array(corr)
                 fcscurve = False
-
     openfile.close()
-
     dictionary = dict()
     dictionary["Correlation"] = [corr]
     dictionary["Trace"] = [newtrace]

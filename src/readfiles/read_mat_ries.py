@@ -8,8 +8,10 @@ scipy-io-loadmat-nested-structures-i-e-dictionaries
 The structure has been derived from "corrSFCS.m" from the SFCS.m program
 from Jonas Ries.
 """
+
 import csv
 import numpy as np
+
 # On the windows machine the matlab binary import raised a warning.
 # We want to catch that warning, since importing ries's files works.
 import warnings
@@ -26,6 +28,7 @@ with warnings.catch_warnings():
         print " Error: scipy.io.matlab.streams not found!"
         print "        Try upgrading python-scipy."
 import os
+
 
 def openMAT(dirname, filename):
     # initiate lists
@@ -102,7 +105,6 @@ def openMAT(dirname, filename):
                             trace[1,0] = 1.0
                             trace[:,1] = traceavg
                             traces.append(trace)
-
     # Get dc "dual color" functions
     try:
         dc = g["dc"]
@@ -125,7 +127,6 @@ def openMAT(dirname, filename):
                         correlations.append(final)
                         curvelist.append("CC dual color "+str(i+1))
                         traces.append(None)
-
     # Get twof "two focus" functions
     try:
         twof = g["twof"]
@@ -148,7 +149,6 @@ def openMAT(dirname, filename):
                         correlations.append(final)
                         curvelist.append("CC two foci "+str(i+1))
                         traces.append(None)
-
     # Get dc2f "dual color two focus" functions
     try:
         dc2f = g["dc2f"]
@@ -171,7 +171,6 @@ def openMAT(dirname, filename):
                         correlations.append(final)
                         curvelist.append("CC dual color two foci "+str(i+1))
                         traces.append(None)
-
     dictionary = dict()
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces
@@ -182,6 +181,7 @@ def openMAT(dirname, filename):
     dictionary["Filename"] = filelist
     return dictionary
 
+
 def loadmat(filename):
     '''
     this function should be called instead of direct spio.loadmat
@@ -191,6 +191,7 @@ def loadmat(filename):
     '''
     data = spio.loadmat(filename, struct_as_record=False, squeeze_me=True)
     return _check_keys(data)
+
 
 def _check_keys(dict):
     '''
@@ -214,7 +215,3 @@ def _todict(matobj):
         else:
             dict[strg] = elem
     return dict
-
-
-
-

@@ -1,22 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # This file is necessary for this folder to become a module that can be 
-# imported by PyCorrFit or other people.
-
-# Here is a résumé of all the files that are currently supported.
-# All of these fuctions return three arrays:
-#[0]:
-# N Arrays with tuples containing two elements:
-# 1st: tau in ms
-# 2nd: corresponding correlation signal
-#[1]:
-# N Intensity traces (tuples):
-# 1st: time in ms
-# 2nd: Trace in kHz
-#[2]:
-# An array with N elements, indicating, how many curves we are opening
-# from the file. Elements can be names and must be convertible to
-# strings.
+# imported by PyCorrFit.
 
 import csv
 import numpy as np
@@ -32,6 +17,7 @@ from read_CSV_PyCorrFit import openCSV
 from read_SIN_correlator_com import openSIN
 from read_FCS_Confocor3 import openFCS
 from read_mat_ries import openMAT
+
 
 def AddAllWildcard(Dictionary):
     wildcard = ""
@@ -69,6 +55,7 @@ def openAny(dirname, filename):
     
     ## For convenience in openZIP
     #return None # already in openAnyBG
+
 
 def openAnyBG(dirname, filename):
     wildcard = filename.split(".")[-1]
@@ -237,17 +224,3 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "zip files (*.zip)|*.zip" : openZIP
               }
 BGFiletypes = AddAllWildcard(BGFiletypes)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

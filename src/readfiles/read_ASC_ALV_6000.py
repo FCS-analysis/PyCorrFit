@@ -4,7 +4,6 @@ import csv
 import numpy as np
 
 
-
 def openASC(dirname, filename):
     """ Read data from a .ASC file, created by
         some ALV-6000 correlator.
@@ -104,7 +103,6 @@ def openASC(dirname, filename):
     EndT = Alldata.__len__()
     # Get the header
     Namedata = Alldata.__getslice__(StartC-1, StartC)
-
     ## Define *curvelist*
     curvelist = csv.reader(Namedata, delimiter='\t').next()
     if len(curvelist) <= 2:
@@ -117,8 +115,6 @@ def openASC(dirname, filename):
         curvelist.remove(curvelist[0])
         # Last column is empty
         curvelist.remove(curvelist[-1])
-
-
     ## Correlation function
     Truedata = Alldata.__getslice__(StartC, EndC)
     readdata = csv.reader(Truedata, delimiter='\t')
@@ -130,8 +126,6 @@ def openASC(dirname, filename):
     for row in readdata:
         for i in np.arange(len(curvelist)):
             data[i].append( (np.float(row[0]), np.float(row[i+1])) )
-
-
     ## Trace
     # Trace is stored in two columns
     # 1st column: time [s]
@@ -150,8 +144,6 @@ def openASC(dirname, filename):
         trace[0].append((np.float(row[0])*timefactor, np.float(row[1])))
         for i in np.arange(len(curvelist)-1):
             trace[i+1].append((np.float(row[0])*timefactor, 0))
-
-
     # return as an array
     openfile.close()
     dictionary = dict()

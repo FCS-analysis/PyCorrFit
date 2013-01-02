@@ -90,14 +90,12 @@ def openCSV(dirname, filename):
             # had some white-spaces around them. Therefore: strip()
             data.append((np.float(row[0].strip())*timefactor, 
                          np.float(row[1].strip())))
-
     # Collect the rest of the trace, if there is any:
     rest = np.array(data)
     if numtraces == 0:
         corr = rest
     elif numtraces >= 1:
         trace = rest
-
     del data
     ## Remove any NaN numbers from thearray
     # Explanation:
@@ -112,7 +110,6 @@ def openCSV(dirname, filename):
     # Also check for infinities.
     corr = corr[~np.isinf(corr).any(1)]
     csvfile.close()
-    
     Traces=list()
     # Set correct trace data for import
     if numtraces == 1 and DataType[:2] == "AC":
@@ -124,7 +121,6 @@ def openCSV(dirname, filename):
         Traces.append([trace, trace])
     else:
         Traces.append(None)
-
     dictionary = dict()
     dictionary["Correlation"] = [corr]
     dictionary["Trace"] = Traces

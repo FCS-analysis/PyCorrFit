@@ -3,6 +3,7 @@ import os
 import csv
 import numpy as np
 
+
 def openSIN(dirname, filename):
     """ Read data from a .SIN file, usually created by
         the software using correlators from correlator.com.
@@ -125,7 +126,6 @@ def openSIN(dirname, filename):
     timedivfac = 1000 # because we want kHz instead of Hz
     readtrace = csv.reader(Tracedata, delimiter='\t')
     openfile.close()
-
     # Process all Data:
     if Mode == "Single Auto":
         curvelist.append("AC")
@@ -139,7 +139,6 @@ def openSIN(dirname, filename):
             # tau in ms, corr-function minus "1"
             trace.append((np.float(row[0])*timefactor,
                          np.float(row[1])/timedivfac))
-     
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
         curvelist.append("CC")
@@ -156,7 +155,6 @@ def openSIN(dirname, filename):
                            np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor,
                            np.float(row[2])/timedivfac))
-     
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Dual Auto":
         curvelist.append("AC1")
@@ -177,7 +175,6 @@ def openSIN(dirname, filename):
                            np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor,
                            np.float(row[2])/timedivfac))
-     
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
     elif Mode == "Dual Cross":
@@ -199,7 +196,6 @@ def openSIN(dirname, filename):
                            np.float(row[1])/timedivfac))
             trace2.append((np.float(row[0])*timefactor,
                            np.float(row[2])/timedivfac))
-     
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Quad":
@@ -233,7 +229,6 @@ def openSIN(dirname, filename):
         traces.append(np.array(trace2))
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
-
     dictionary = dict()
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces
