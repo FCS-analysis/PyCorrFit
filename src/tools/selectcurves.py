@@ -37,18 +37,23 @@ class Wrapper_OnImport(object):
                                          selkeys=selkeys)
         self.Selector.Show()
         self.Selector.MakeModal(True)
+        self.Selector.Bind(wx.EVT_CLOSE, self.OnClose)
+        
+    def OnClose(self, event=None):
+        self.Selector.MakeModal(False)
+        self.Selector.Destroy()
 
-
+        
     def OnResults(self, keyskeep, keysrem):
         """ Here we will close (or disable?) pages that are not wanted
             by the user. It is important that we do not close pages that
             do not contain any experimental data (Page.dataeyp is None),
             because we ignored those pages during import.
         """
-        self.Selector.MakeModal(False)
-        self.Selector.Destroy()
-        self.Selector.Close()
+        self.OnClose()
         self.onselected(keyskeep,keysrem)
+        
+ 
 
 
 class Wrapper_Tools(object):
@@ -158,22 +163,22 @@ class UserSelectCurves(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Curve selection",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
-                 size=(700,300))
+                 size=(700,500))
         ## Pre-process
         self.ProcessDict()
         ## Content
-        self.sp = wx.SplitterWindow(self, size=(500,500), style=wx.SP_3DSASH)
+        self.sp = wx.SplitterWindow(self, size=(500,500), style=wx.SP_NOBORDER)
         self.sp.SetMinimumPaneSize(1)
         # Top panel
         panel_top = wx.Panel(self.sp, size=(500,200))
         self.upperSizer = wx.BoxSizer(wx.VERTICAL)
         text = "Select the curves to keep. \n" +\
                "By holding down the 'Ctrl' key, single curves can be \n" +\
-               "selected or deselected. Use 'Ctrl'+'a' to select all \n" +\
-               "curves. The 'Shift' key can be used to select groups."
+               "selected or deselected. The 'Shift' key can be used \n" +\
+               "to select groups."
         self.upperSizer.Add(wx.StaticText(panel_top, label=text))
         # Bottom Panel
-        self.bottom_sp = wx.SplitterWindow(self.sp, size=(500,300), style=wx.SP_3DSASH)
+        self.bottom_sp = wx.SplitterWindow(self.sp, size=(500,300), style=wx.SP_NOBORDER)
         self.bottom_sp.SetMinimumPaneSize(1)
         sizepanelx = 150
         panel_bottom = wx.Panel(self.bottom_sp, size=(sizepanelx,300))
@@ -202,8 +207,9 @@ class UserSelectCurves(wx.Frame):
         self.boxSizer.Fit(panel_bottom)
         minsize = np.array(self.boxSizer.GetMinSizeTuple()) +\
                   np.array(self.upperSizer.GetMinSizeTuple()) +\
-                  np.array((0,10))
+                  np.array((300,30))
         self.SetMinSize(minsize)
+        #self.SetSize(minsize)
         #self.SetMaxSize((9999, self.boxSizer.GetMinSizeTuple()[1]))
         # Canvas
         self.canvas = plot.PlotCanvas(self.bottom_sp)
@@ -213,8 +219,6 @@ class UserSelectCurves(wx.Frame):
         self.bottom_sp.SplitVertically(panel_bottom, self.canvas, sizepanelx)
         sizetoppanel = self.upperSizer.GetMinSizeTuple()[1]
         self.sp.SplitHorizontally(panel_top, self.bottom_sp, sizetoppanel)
-        #import IPython
-        #IPython.embed()
         self.OnUpdatePlot()
         # Icon
         if parent.MainIcon is not None:
