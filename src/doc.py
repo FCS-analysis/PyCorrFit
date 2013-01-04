@@ -74,9 +74,9 @@ def info(version):
     """ Returns a little info about our program and what it can do.
     """
     textwin = u"""
-    Paul Müller, Biotec - TU Dresden
+    Copyright 20011-2012 Paul Müller, Biotec - TU Dresden
 
-    A flexible tool for fitting and analyzing correlation curves.
+    A versatile tool for fitting and analyzing correlation curves.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -86,9 +86,9 @@ def info(version):
     unit of inverse area: 100 /µm²
     unit of inv. volume : 1000 /µm^3 """
     textlin = """
-    Paul Müller, Biotec - TU Dresden
+    © 20011-2012 Paul Müller, Biotec - TU Dresden
 
-    A flexible tool for fitting and analyzing correlation curves.
+    A versatile tool for fitting and analyzing correlation curves.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -101,12 +101,15 @@ def info(version):
         texta = textwin
     else:
         texta = textlin
-    one = "    PyCorrFit version "+version
+    one = "    PyCorrFit version "+version+"\n\n"
     two = "\n\n    Supported file types:"
     for item in readfiles.Filetypes.keys():
         if item.split("|")[0] != readfiles.Allsupfilesstring:
             two = two + "\n     - "+item.split("|")[0]
-    return one + texta + two
+    lizenz = ""
+    for line in licence().splitlines():
+        lizenz += "    "+line+"\n"
+    return one + lizenz + texta + two
 
     
 def licence():
