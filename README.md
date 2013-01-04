@@ -7,7 +7,7 @@ permit data analysis that is limited to  a specific instrument by the use of in-
 file formats or a  finite number of implemented correlation model functions.
 PyCorrFit is a general-purpose FCS evaluation software that,  amongst other formats,
 supports the established ConfoCor3 ~.fcs  file format and which comes with several
-built-in model functions,  covering a wide range of application including multiple
+built-in model functions,  covering a wide range of applications including multiple
 diffusional  species or total internal reflection (TIR-) FCS. For more information, visit the official homepage at http://fcstools.dyndns.org/pycorrfit.
 
 
