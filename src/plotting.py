@@ -232,12 +232,16 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         #ax2 = plt.axes()
         ax2.semilogx()
         if Page.weighted_fit_was_performed:
-            yLabelRes = "weighted \nresiduals"
+            if uselatex == True:
+                lb = r"\newline \indent "
+            else:
+                lb = "\n"
+            yLabelRes = "weighted "+ lb +"residuals"
         else:
             yLabelRes = "residuals"
         plt.plot(resid[:,0], resid[:,1], '-', color="darkgrey", label=yLabelRes)
         plt.xlabel(r'lag time $\tau$ [ms]')
-        plt.ylabel(yLabelRes)
+        plt.ylabel(yLabelRes, multialignment='center')
         minx = np.min(resid[:,0])
         maxx = np.max(resid[:,0])
         miny = np.min(resid[:,1])
