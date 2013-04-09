@@ -384,8 +384,10 @@ class MyFrame(wx.Frame):
                             self.dirname, "", filters, wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             NewModel = usermodel.UserModel(self)
-            filename = dlg.GetFilename()
-            dirname = dlg.GetDirectory()
+            # Workaround since 0.7.5
+            (dirname, filename) = os.path.split(dlg.GetPath())
+            #filename = dlg.GetFilename()
+            #dirname = dlg.GetDirectory()
             self.dirname = dirname
             # Try to import a selected .txt file
             try:
@@ -561,8 +563,10 @@ class MyFrame(wx.Frame):
             self.dirname, "", filters, wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # The filename the page will get
-            self.filename = dlg.GetFilename()
-            self.dirname = dlg.GetDirectory()
+            path = dlg.GetPath()            # Workaround since 0.7.5
+            (self.dirname, self.filename) = os.path.split(path)
+            #self.filename = dlg.GetFilename()
+            #self.dirname = dlg.GetDirectory()
             try:
                 Stuff = readfiles.openAny(self.dirname, self.filename)
             except:
@@ -729,7 +733,12 @@ class MyFrame(wx.Frame):
             self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
         if dlg.ShowModal() == wx.ID_OK:
             Datafiles = dlg.GetFilenames()
-            self.dirname = dlg.GetDirectory()
+            # Workaround since 0.7.5
+            paths = dlg.GetPaths()
+            if len(paths) != 0:
+                self.dirname = os.path.split(paths[0])[0]
+            else:
+                self.dirname = dlg.GetDirectory()
             dlg.Destroy()
         else:
             dlg.Destroy()

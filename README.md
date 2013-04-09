@@ -88,5 +88,5 @@ Windows (XP/7)
 	http://code.google.com/p/sympy/downloads/list   	
 	http://www.wxpython.org/download.php   
 	
-- In order to use the Latex-plotting features of PyCorrFit, install MikTex with (!) automatic package download.   
+- In order to use the Latex-plotting features of PyCorrFit, install MikTex with automatic package download (Install missing packages on-the-fly).   
 	http://www.miktex.org/

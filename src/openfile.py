@@ -43,8 +43,10 @@ def ImportParametersYaml(parent, dirname):
                                 "*.fcsfit-session.zip", wx.OPEN)
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
-        filename = dlg.GetFilename()
-        dirname = dlg.GetDirectory()
+        path = dlg.GetPath()            # Workaround since 0.7.5
+        (dirname, filename) = os.path.split(path)
+        #filename = dlg.GetFilename()
+        #dirname = dlg.GetDirectory()
         dlg.Destroy()
         Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
         # Get the yaml parms dump:
@@ -80,8 +82,10 @@ def OpenSession(parent, dirname, sessionfile=None):
                         "*"+fcsfitwildcard, wx.OPEN)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
-            filename = dlg.GetFilename()
-            dirname = dlg.GetDirectory()
+            path = dlg.GetPath()            # Workaround since 0.7.5
+            (dirname, filename) = os.path.split(path)
+            #filename = dlg.GetFilename()
+            #dirname = dlg.GetDirectory()
             dlg.Destroy()
         else:
             # User did not press OK
@@ -91,6 +95,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             return None, dirname, None
     else:
         (dirname, filename) = os.path.split(sessionfile)
+        path = sessionfile                  # Workaround since 0.7.5
         if filename[-19:] != fcsfitwildcard:
             # User specified wrong file
             print "Unknown file extension: "+filename
@@ -98,7 +103,7 @@ def OpenSession(parent, dirname, sessionfile=None):
             dirname = dlg.GetDirectory()
             dlg.Destroy()
             return None, dirname, None
-    Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
+    Arc = zipfile.ZipFile(path, mode='r')
     # Get the yaml parms dump:
     yamlfile = Arc.open("Parameters.yaml")
     # Parameters: Fitting and drawing parameters of correlation curve
@@ -316,10 +321,12 @@ def saveCSV(parent, dirname, Page):
            wx.SAVE|wx.FD_OVERWRITE_PROMPT)
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
-        filename = dlg.GetFilename()
+        path = dlg.GetPath()            # Workaround since 0.7.5
+        (dirname, filename) = os.path.split(path)
+        #filename = dlg.GetFilename()
+        #dirname = dlg.GetDirectory()
         if filename.lower().endswith(".csv") is not True:
             filename = filename+".csv"
-        dirname = dlg.GetDirectory()
         openedfile = open(os.path.join(dirname, filename), 'wb')
         ## First, some doc text
         openedfile.write(doc.saveCSVinfo(parent).replace('\n', '\r\n'))
@@ -427,11 +434,13 @@ def SaveSession(parent, dirname, Infodict):
     dlg = wx.FileDialog(parent, "Save session file", dirname, "",
                      "*.fcsfit-session.zip", wx.SAVE|wx.FD_OVERWRITE_PROMPT)
     if dlg.ShowModal() == wx.ID_OK:
-        filename = dlg.GetFilename()
+        path = dlg.GetPath()            # Workaround since 0.7.5
+        (dirname, filename) = os.path.split(path)
+        #filename = dlg.GetFilename()
+        #dirname = dlg.GetDirectory()
         # Sometimes you have multiple endings...
         if filename.endswith(".fcsfit-session.zip") is not True:
             filename = filename+".fcsfit-session.zip"
-        dirname = dlg.GetDirectory()
         dlg.Destroy()
         # Change working directory
         returnWD = os.getcwd()

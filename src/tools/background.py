@@ -16,6 +16,7 @@
 
 
 import numpy as np
+import os
 import sys
 import traceback                        # for Error handling
 import wx
@@ -211,8 +212,10 @@ class BackgroundCorrection(wx.Frame):
         dlg = wx.FileDialog(self, "Choose a data file", 
             self.parent.dirname, "", filters, wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
-            filename = dlg.GetFilename()
-            dirname = dlg.GetDirectory()
+            # Workaround since 0.7.5
+            (dirname, filename) = os.path.split(dlg.GetPath())
+            #filename = dlg.GetFilename()
+            #dirname = dlg.GetDirectory()
             # Set parent dirname for user comfort
             self.parent.dirname = dirname
             try:

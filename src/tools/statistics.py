@@ -119,11 +119,11 @@ class Stat(wx.Frame):
                wx.SAVE|wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
-            filename = dlg.GetFilename()
+            filename = dlg.GetPath()
             if filename.lower().endswith(".txt") is not True:
                 filename = filename+".txt"
             dirname = dlg.GetDirectory()
-            openedfile = open(os.path.join(dirname, filename), 'wb')
+            openedfile = open(filename, 'wb')
             # Get Parameterlist of all Pages with same model id as
             # Self.Page
             modelid = self.Page.modelid

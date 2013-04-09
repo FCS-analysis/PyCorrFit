@@ -123,7 +123,7 @@ def save_figure(self, evt=None):
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
         wildcard = keys[dlg.GetFilterIndex()]
-        filename = dlg.GetFilename()
+        filename = dlg.GetPath()
         haswc = False
         for key in keys:
             if filename.lower().endswith("."+key) is True:
@@ -131,7 +131,8 @@ def save_figure(self, evt=None):
         if haswc == False:
             filename = filename+"."+wildcard
         dirname = dlg.GetDirectory()
-        savename = os.path.join(dirname, filename)
+        #savename = os.path.join(dirname, filename)
+        savename = filename
         try:
             self.canvas.figure.savefig(savename)
         except: # RuntimeError:
