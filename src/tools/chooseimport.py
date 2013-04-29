@@ -28,7 +28,7 @@ class ChooseImportTypes(wx.Dialog):
     """ This class is used for importing single files from the "Current" menu.
         The model function is defined by the model that is in use.
     """
-    # This tool is derived from a wx.frame.
+    # This tool is derived from a wx.Dialog.
     def __init__(self, parent, curvedict):
         # parent is the main frame of PyCorrFit
         self.parent = parent
