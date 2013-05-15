@@ -344,10 +344,12 @@ def saveCSV(parent, dirname, Page):
             tau = Page.dataexp[:,0]
             exp = Page.dataexp[:,1]
             res = Page.resid[:,1]
+            weight = Page.weights_used_for_fitting
         else:
             tau = Page.datacorr[:,0]
             exp = None
             res = None
+        # Include weights in data saving:
         # PyCorrFit thinks in [ms], but we will save as [s]
         timefactor = 0.001
         tau = timefactor * tau
@@ -356,21 +358,31 @@ def saveCSV(parent, dirname, Page):
         ## Correlation curve
         dataWriter = csv.writer(openedfile, delimiter=',')
         if exp is not None:
-            # Names of Columns
-            openedfile.write('# Channel (tau [s])'+" \t,"+ 
-                                 'Experimental correlation'+" \t,"+
-                                 'Fitted correlation'+ " \t,"+ 
-                                 'Resuduals'+"\r\n")
-            # Actual Data
-            for i in np.arange(len(tau)):
-                dataWriter.writerow([str(tau[i])+" \t", str(exp[i])+" \t", 
-                                     str(corr[i])+" \t", str(res[i])])
+            header = '# Channel (tau [s])'+"\t,"+ \
+                     'Experimental correlation'+"\t,"+ \
+                     'Fitted correlation'+ "\t,"+ \
+                     'Residuals'+"\r\n"
+            data = [tau, exp, corr, res]
+            if Page.weighted_fit_was_performed is True \
+            and weight is not None:
+                header = header.strip() + "\t,"+'Weights (fit)'+"\r\n"
+                data.append(weight)
         else:
-            # Only write Correlation curve
-            openedfile.write('# Channel (tau [s])'+" \t," 
-                                 'Correlation function'+" \r\n")
-            for i in np.arange(len(tau)):
-                dataWriter.writerow([str(tau[i])+" \t", str(corr[i])])
+            header = '# Channel (tau [s])'+"\t,"+ \
+                     'Correlation function'+"\r\n"
+            data = [tau, corr]
+        # Write header
+        openedfile.write(header)
+        # Write data
+        for i in np.arange(len(data[0])):
+            # row-wise
+            datarow = list()
+            for j in np.arange(len(data)):
+                rowcoli = str(data[j][i])
+                if j < len(data)-1:
+                    rowcoli += "\t"
+                datarow.append(rowcoli)
+            dataWriter.writerow(datarow)
         ## Trace
         # Only save the trace if user wants us to:
         if dlg.GetFilterIndex() == 0:

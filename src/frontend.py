@@ -1147,6 +1147,9 @@ class MyFrame(wx.Frame):
         # Get Page number
         counter = Page.counter
         active_numbers = Page.active_parms[1]       # Array, Parameters
+        active_fitting = Page.active_parms[2]
+        crop = [Page.startcrop, Page.endcrop]
+        Parms = [counter, modelid, active_numbers, active_fitting, crop]
         # Weighting:
         # Additional parameters as of v.0.2.0
         # Splines and model function:
@@ -1156,14 +1159,14 @@ class MyFrame(wx.Frame):
         # Some fits like Spline have a number of knots of the spline
         # that is important for fitting. If there is a number in the
         # Dropdown, save it.
-        knots = Page.Fitbox[1].GetValue()
+        knots = str(Page.FitKnots)
         knots = filter(lambda x: x.isdigit(), knots)
         if len(knots) == 0:
             knots = None
         else:
             knots = int(knots)
-        weighted = Page.Fitbox[1].GetSelection()
-        weights = Page.Fitbox[5].GetValue()
+        weighted = Page.weighted_fittype_id
+        weights = Page.weighted_nuvar
         Parms.append([weighted, weights, knots])
         # Additional parameters as of v.0.2.9
         # Which Background signal is selected?
@@ -1224,6 +1227,10 @@ class MyFrame(wx.Frame):
                 [weighted, weights, knots] = Parms[5]
             if weighted is False or weighted == 0:
                 Page.Fitbox[1].SetSelection(0)
+            if knots is not None:
+                text = Page.Fitbox[1].GetValue()
+                text = filter(lambda x: x.isalpha(), text)
+                Page.Fitbox[1].SetValue(text+str(knots))
             if weighted is True or weighted == 1:
                 Page.Fitbox[1].SetSelection(1)
             elif len(Page.Fitbox[1].GetItems())-1 < weighted:
@@ -1232,14 +1239,11 @@ class MyFrame(wx.Frame):
                 pass
             else:
                 Page.Fitbox[1].SetSelection(weighted)
-            if knots is not None:
-                text = Page.Fitbox[1].GetValue()
-                text = filter(lambda x: x.isalpha(), text)
-                Page.Fitbox[1].SetValue(text+str(knots))
             Page.Fitbox[5].SetValue(weights)
         if Page.dataexp is not None:
             Page.Fit_enable_fitting()
         Page.Fit_WeightedFitCheck()
+        Page.Fit_create_instance()
         # Set which background correction the Page uses:
         if len(Parms) >= 7:
             if len(self.Background) > Parms[6][0]:

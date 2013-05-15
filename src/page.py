@@ -70,6 +70,10 @@ class FittingPanel(wx.Panel):
         self.FitKnots = 5 # number of knots for spline fit or similiars
         self.chi2 = None
         self.weighted_fit_was_performed = False # default is no weighting
+        self.weights_used_for_fitting = None # weights used for fitting
+        self.weighted_fittype_id = None # integer (drop down item)
+        self.weighted_fittype = "Unknown" # type of fit used
+        self.weighted_nuvar = None # bins for std-dev. (left and rigth)
         # dictionary for alternative variances from e.g. averaging
         self.external_std_weights = dict()
         # Errors of fit dictionary
@@ -312,17 +316,21 @@ class FittingPanel(wx.Panel):
                 self.parent.StatusBar.SetStatusText("")
         else:
             self.parent.StatusBar.SetStatusText("")
-        # Set weighted_fit_was_performed variable
-        if self.Fitbox[1].GetSelection() == 0:
-            self.weighted_fit_was_performed = False
-        else:
-            self.weighted_fit_was_performed = True
         Fitting.function = self.active_fct
         Fitting.interval = [self.startcrop, self.endcrop]
         Fitting.values = 1*self.active_parms[1]
         Fitting.valuestofit = 1*self.active_parms[2]
         Fitting.weights = self.Fitbox[5].GetValue()
         Fitting.ApplyParameters()
+        # Set weighted_fit_was_performed variables
+        if self.Fitbox[1].GetSelection() == 0:
+            self.weighted_fit_was_performed = False
+        else:
+            self.weighted_fit_was_performed = True
+            self.weights_used_for_fitting = Fitting.dataweights
+            self.weighted_nuvar = Fitting.weights
+        self.weighted_fittype_id = self.Fitbox[1].GetSelection()
+        self.weighted_fittype = Fitting.fittype
         return Fitting
 
         
@@ -538,16 +546,16 @@ class FittingPanel(wx.Panel):
             self.resid = np.zeros((len(self.tau), 2))
             self.resid[:, 0] = self.tau
             self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
-            # Calculate weighted residuals, if weights are available from
-            # a the fitting class
-            Fitting = self.Fit_create_instance(noplots=True)
-            Fitting.parmoptim = Fitting.fitparms
-            self.resid[:, 1] /= Fitting.dataweights
-            # Also check if chi squared has been calculated. This is not the
-            # case when a session has been loaded. Do it.
-            # (Usually it is done right after fitting)
-            if self.chi2 is None:
-                self.chi2 = Fitting.get_chi_squared()
+             ## Calculate weighted residuals, if weights are available from
+             ## a the fitting class
+             #Fitting = self.Fit_create_instance(noplots=True)
+             #Fitting.parmoptim = Fitting.fitparms
+             #self.resid[:, 1] /= Fitting.dataweights
+             ## Also check if chi squared has been calculated. This is not the
+             ## case when a session has been loaded. Do it.
+             ## (Usually it is done right after fitting)
+             #if self.chi2 is None:
+             #    self.chi2 = Fitting.get_chi_squared()
             # Plot residuals
             lineres = plot.PolyLine(self.resid, legend='', colour=colfit,
                                     width=width)

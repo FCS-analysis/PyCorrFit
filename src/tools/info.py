@@ -142,8 +142,9 @@ class InfoClass(object):
             else:
                 InfoDict["modelsupdoc"] = [func_info .func_doc]
         ## Fitting
-        weightedfit = Page.Fitbox[1].GetValue()
-        fittingbins = Page.Fitbox[5].GetValue() # from left and right
+        weightedfit = Page.weighted_fit_was_performed
+        weightedfit_type = Page.weighted_fittype
+        fittingbins = Page.weighted_nuvar  # from left and right
         Fitting = list()
         if Page.dataexp is not None:
             # Mode AC vs CC
@@ -157,14 +158,14 @@ class InfoClass(object):
             else:
                 Chi2type = "reduced sum of squares"
             Fitting.append([ u"\u03c7"+"²-type", Chi2type ])
-            Fitting.append([ "Weighted fit", weightedfit ])
+            Fitting.append([ "Weighted fit", weightedfit_type ])
             if len(Page.GlobalParameterShare) != 0:
                 shared = str(Page.GlobalParameterShare[0])
                 for item in Page.GlobalParameterShare[1:]:
                     shared += ", "+str(item)
-                Fitting.append([ "Shared parameters with Pages", shared ])
+                Fitting.append(["Shared parameters with Pages", shared])
             if weightedfit is True:
-                Fitting.append([ "No. channels", 2*fittingbins+1 ])
+                Fitting.append([ "Std. channels", 2*fittingbins+1 ])
             # Fitting range:
             t1 = 1.*Page.taufull[Page.startcrop]
             t2 = 1.*Page.taufull[Page.endcrop-1]
