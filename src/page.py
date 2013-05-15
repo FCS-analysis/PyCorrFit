@@ -301,19 +301,6 @@ class FittingPanel(wx.Panel):
             if self is self.parent.notebook.GetCurrentPage():
                 self.parent.StatusBar.SetStatusText("This is iterative. Press"+
                  " 'Fit' multiple times. If it does not converge, use splines.")
-        elif self.Fitbox[1].GetSelection() == 3:
-            # This means we have some user defined std, for example from
-            # averaging. This std is stored in self.external_std_weights
-            # list, which looks like this:
-            # self.external_std_weights["from average"] = 1D np.array std
-            Fitting.fittype = "other"
-            Fitlist = self.Fitbox[1].GetItems()
-            FitValue = Fitlist[self.Fitbox[1].GetSelection()]
-            Fitting.external_deviations = self.external_std_weights[FitValue]
-            # Fitting will crop the variances according to
-            # the Fitting.interval that we set below.
-            if self is self.parent.notebook.GetCurrentPage():
-                self.parent.StatusBar.SetStatusText("")
         elif self.Fitbox[1].GetSelection() > 2:
             # This means we have some user defined std, for example from
             # averaging. This std is stored in self.external_std_weights
