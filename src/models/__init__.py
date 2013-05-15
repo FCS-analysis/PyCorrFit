@@ -93,11 +93,12 @@ def AppendNewModel(Modelarray):
             verification[texts[0]] = verify
             
 def GetHumanReadableParms(model, parameters):
-    """ From a set of parameters that have some strange units e.g. [100 nm],
+    """ From a set of parameters that have internal units e.g. [100 nm],
         Calculate the parameters in human readable units e.g. [nm].
         Uses modeldict from this module.
         *model* - an integer ID of a model
-        *parameters* - a list/array of parameters (all parameters of that model)
+        *parameters* - a list/array of parameters 
+                       (all parameters of that model)
         Returns:
         New Units, New Parameters
     """
@@ -117,11 +118,15 @@ def GetHumanReadableParms(model, parameters):
 
 
 def GetHumanReadableParameterDict(model, names, parameters):
-    """ From a set of parameters that have some strange units e.g. [100 nm],
+    """ From a set of parameters that have internal units e.g. [100 nm],
         Calculate the parameters in human readable units e.g. [nm].
         Uses modeldict from this module.
+        In contrast to *GetHumanReadableParms* this function accepts
+        single parameter names and does not need the full array of
+        parameters.
         *model* - an integer ID of a model
-        *name of parameters* - order should be same as in
+        *name* - the names of the parameters to be translated,
+                 order should be same as in
         *parameters* - a list of parameters
         Returns:
         New Units, New Parameters
@@ -154,6 +159,29 @@ def GetHumanReadableParameterDict(model, names, parameters):
         # readable.
         return names, parameters
 
+
+def GetInternalFromHumanReadableParm(model, parameters):
+    """ This is the inverse of *GetHumanReadableParms*
+        *model* - an integer ID of a model
+        *parameters* - a list/array of parameters 
+        Returns:
+        New Units, New Parameters
+    """
+    stdparms = valuedict[model]
+    if len(stdparms) == 5:
+        # This means we have extra information on the model
+        # and can convert to internal values
+        OldParameters = 1.*np.array(parameters)
+        Facors = 1./np.array(stdparms[4])        # inverse
+        NewParameters = 1.*OldParameters*Facors
+        NewUnits = stdparms[0]
+        return NewUnits, NewParameters
+    else:
+        # There is no info about human readable stuff. The given 
+        # parameters have not been converted befor using
+        # *GetHumanReadableParms*.
+        return stdparms[0], parameters
+        
 
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated

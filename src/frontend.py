@@ -1147,9 +1147,6 @@ class MyFrame(wx.Frame):
         # Get Page number
         counter = Page.counter
         active_numbers = Page.active_parms[1]       # Array, Parameters
-        active_fitting = Page.active_parms[2]
-        crop = [Page.startcrop, Page.endcrop]
-        Parms = [counter, modelid, active_numbers, active_fitting, crop]
         # Weighting:
         # Additional parameters as of v.0.2.0
         # Splines and model function:
@@ -1187,7 +1184,7 @@ class MyFrame(wx.Frame):
             return
         active_values = Parms[2]
         active_fitting = Parms[3]
-        # As of version 0.7.0, square pinhole TIR-FCS models
+        # As of version 0.7.0: square pinhole TIR-FCS models
         # use sigma instead of lambda, NA and sigma_0. This
         # is for backwards compatibility:
         changeTIRF = False
@@ -1251,8 +1248,8 @@ class MyFrame(wx.Frame):
         if len(Parms) >= 8:
             Page.IsCrossCorrelation = Parms[7]
         ## If we want to add more stuff, we should do something like:
-        ##   if len(Parms) >= 6:
-        ##       nextvalue = Parms[5]
+        ##   if len(Parms) >= 9:
+        ##       nextvalue = Parms[8]
         ## Such that we are compatible to earlier versions of 
         ## PyCorrFit sessions.
 

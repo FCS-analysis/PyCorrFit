@@ -120,25 +120,18 @@ app = gui.wx.App(False)
 frame = gui.MyFrame(None, -1, version)
 # Before starting the main loop, check for possible session files
 # in the arguments.
-if hasattr(sys, 'frozen'):
-    # Then we are an executable and need to use argument 0
-    sysarg = sys.argv
-    if len(sysarg) > 1:
-        arg = sysarg[1]
-    else:
-        arg = ""
-elif len(sys.argv) >= 2:
-    # We have something like "python Scriptname.py argument"
-    arg = sys.argv[1]
-else:
-    arg = ""
-
-if len(arg) >= 18:
-    # Send first argument as session file
-    print "\nLoading Session "+arg
-    frame.OnOpenSession(sessionfile=arg)
-elif len(arg) != 0:
-    print "\nI do not know what to do with this argument: "+arg
+sysarg = sys.argv
+for arg in sysarg:
+	if len(arg) >= 18:
+		if arg[-18:] == "fcsfit-session.zip":
+			print "\nLoading Session "+arg
+			frame.OnOpenSession(sessionfile=arg)
+	elif arg[:6] == "python":
+		pass
+	elif arg[-12:] == "PyCorrFit.py":
+		pass
+	else:
+		print "I do not know what to do with this argument: "+arg
 # Now start the app
 app.MainLoop()
 

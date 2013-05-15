@@ -82,6 +82,12 @@ class FittingPanel(wx.Panel):
         self.counter = counter
         # Model we are using
         self.modelid = modelid
+        # modelpack:
+        # [0] labels
+        # [1] values
+        # [2] bool values to fit
+        # [3] labels human readable (optional)
+        # [4] factors human readable (optional)
         modelpack = mdls.modeldict[modelid]
         # The string of the model in the menu
         self.model = modelpack[1]
@@ -92,12 +98,10 @@ class FittingPanel(wx.Panel):
         # Parameter verification function.
         # This checks parameters concerning their physical meaningfullness :)
         self.check_parms = mdls.verification[modelid]
-        # Active Parameters we are using for the fitting
+        # active_parameters:
         # [0] labels
         # [1] values
         # [2] bool values to fit
-        # [3] labels human readable (optional)
-        # [4] factors human readable (optional)
         self.active_parms = active_parms
         # Some timescale
         self.taufull = tau
@@ -159,25 +163,43 @@ class FittingPanel(wx.Panel):
             pages parameters.
             This function is called when the "Apply" button is hit.
         """
+        parameters = list()
         # Read parameters from form and update self.active_parms[1]
         for i in np.arange(len(self.active_parms[1])):
-            self.active_parms[1][i] = self.spincontrol[i].GetValue()
+            parameters.append(1*self.spincontrol[i].GetValue())
             self.active_parms[2][i] = self.checkboxes[i].GetValue()
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        # Here: Convert human readable units to program internal
+        # units
+        e, self.active_parms[1] = mdls.GetInternalFromHumanReadableParm(
+                                  self.modelid, np.array(parameters))
         self.active_parms[1] = self.check_parms(1*self.active_parms[1])
         # If parameters have been changed because of the check_parms
         # function, write them back.
-        for i in np.arange(len(self.active_parms[1])):
-            self.spincontrol[i].SetValue(self.active_parms[1][i])
+        self.apply_parameters_reverse()
 
 
     def apply_parameters_reverse(self, event=None):
         """ Read the values from the pages parameters and write
             it to the form.
         """
-        # Write parameters to the form on the Page
+        # check parameters
         self.active_parms[1] = self.check_parms(self.active_parms[1])
+        #
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        # 
+        # Here: Convert program internal units to
+        # human readable units
+        labels, parameters = \
+                     mdls.GetHumanReadableParms(self.modelid,
+                                        self.active_parms[1])
+        # Write parameters to the form on the Page
         for i in np.arange(len(self.active_parms[1])):
-            self.spincontrol[i].SetValue(self.active_parms[1][i])
+            self.spincontrol[i].SetValue(parameters[i])
             self.checkboxes[i].SetValue(self.active_parms[2][i])
 
 
@@ -339,7 +361,8 @@ class FittingPanel(wx.Panel):
         self.chi2 = Fitting.chi
         for i in np.arange(len(parms)):
             self.active_parms[1][i] = parms[i]
-            self.spincontrol[i].SetValue(parms[i])
+        # Update spin-control values
+        self.apply_parameters_reverse()
         # Plot everthing
         self.PlotAll()
         # Return cursor to normal
@@ -382,7 +405,14 @@ class FittingPanel(wx.Panel):
         sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
         check = list()
         spin = list()
-        for label in self.active_parms[0]:
+        #
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        # 
+        labels, parameters = mdls.GetHumanReadableParms(self.modelid,
+                                                self.active_parms[1])
+        for label in labels:
             sizerh = wx.BoxSizer(wx.HORIZONTAL)
             checkbox = wx.CheckBox(self.panelsettings, label=label)
             # We needed to "from wx.lib.agw import floatspin" to get this:
@@ -552,9 +582,13 @@ class FittingPanel(wx.Panel):
         # Make the check boxes and spin-controls available everywhere
         self.checkboxes = check
         self.spincontrol = spin
-        # Show what is inside active_parms
-        labels = self.active_parms[0]
-        parameters = self.active_parms[1]
+        #
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        # 
+        labels, parameters = mdls.GetHumanReadableParms(self.modelid,
+                                                self.active_parms[1])
         parameterstofit = self.active_parms[2]
         # Set initial values given by user/programmer for Diffusion Model
         for i in np.arange(len(labels)):

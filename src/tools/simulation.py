@@ -20,6 +20,7 @@ import wx
 import numpy as np
 
 import edclasses  # edited floatspin
+import models as mdls
 
 
 class Slide(wx.Frame):
@@ -306,9 +307,20 @@ class Slide(wx.Frame):
         # And Plot
         idA = self.droppA.GetSelection()
         idB = self.droppB.GetSelection()
-        self.Page.active_parms[1][idA] = self.valueA
-        self.Page.active_parms[1][idB] = self.valueB
-
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        # Convert from human readable to internal units
+        # The easiest way is to make a copy of all parameters and
+        # only write back those that have been changed:
+        # 
+        parms_0 = 1.*np.array(mdls.valuedict[self.modelid][1])
+        parms_0[idA] = self.valueA # human readable units
+        parms_0[idB] = self.valueB # human readable units
+        label, parms_i =\
+            mdls.GetInternalFromHumanReadableParm(self.modelid, parms_0)
+        self.Page.active_parms[1][idA] = parms_i[idA]
+        self.Page.active_parms[1][idB] = parms_i[idB]
         self.Page.apply_parameters_reverse()
         self.Page.PlotAll()
 
@@ -316,8 +328,13 @@ class Slide(wx.Frame):
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
-        self.parmAlist = self.Page.active_parms[0]
-        self.parmBlist = self.Page.active_parms[0]
+        self.modelid = self.Page.modelid
+        ParmLabels, ParmValues = \
+                   mdls.GetHumanReadableParms(self.modelid,
+                                              self.Page.active_parms[1])
+
+        self.parmAlist = ParmLabels
+        self.parmBlist = ParmLabels
         # Operators
         # Calculation of variable A with fixed B
         self.opdict = dict()
@@ -328,19 +345,29 @@ class Slide(wx.Frame):
         self.labelB = self.parmBlist[1]
         self.labelOp = self.oplist[0]
         self.opfunc = self.opdict[self.labelOp]
-        self.valueA = self.Page.active_parms[1][0]
-        self.valueB = self.Page.active_parms[1][1]
-        self.valueB, self.valueOp = self.CalcFct(self.valueA, self.valueB, 0)
+        self.valueA = ParmValues[0]
+        self.valueB = ParmValues[1]
+        self.valueB, self.valueOp = self.CalcFct(self.valueA, 
+                                                         self.valueB, 0)
 
 
     def SetValues(self, event=None):
         # Set the values for spin and slider
+        # As of version 0.7.5: we want the units to be displayed
+        # human readable - the way they are displayed 
+        # in the Page info tool.
+        #
         # Parameter A
         idA = self.droppA.GetSelection()
-        self.valueA = self.Page.active_parms[1][idA]
         # Parameter B
         idB = self.droppB.GetSelection()
-        self.valueB = self.Page.active_parms[1][idB]
+        # self.valueB = self.Page.active_parms[1][idB]
+        # self.valueA = self.Page.active_parms[1][idA]
+        ParmLabels, ParmValues = \
+                   mdls.GetHumanReadableParms(self.modelid,
+                                              self.Page.active_parms[1])
+        self.valueA = ParmValues[idA]
+        self.valueB = ParmValues[idB]                             
         # Operator
         idop = self.dropop.GetSelection()
         keys = self.opdict.keys()

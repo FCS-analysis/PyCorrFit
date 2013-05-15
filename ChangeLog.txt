@@ -1,4 +1,11 @@
 0.7.4
+ - This will be 0.7.5
+ - During fitting, units are now displayed in a human readable
+   fashion as in the info Page (#17).
+ - Slider simulation also uses human readable units.
+ - Secured support for Ubuntu 12.10 and 13.04
+ - Fixed new line (\n) bug for LaTeX plotting on Windows
+0.7.4
  - New tool: Colorful curve selection
  - Import data: Curve selection possible
  - Average: Crop average according to current page.
