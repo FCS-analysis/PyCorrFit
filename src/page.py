@@ -531,8 +531,18 @@ class FittingPanel(wx.Panel):
             width = 1   
             colexp = "grey"  
             colfit = "blue"
+        lines = list()
         linezero = plot.PolyLine(datazero, colour='orange',  width=width)
+        lines.append(linezero)
+                
         if self.dataexp is not None:
+            #if self.weighted_fit_was_performed == True and \
+            #    self.weights_used_for_fitting != None:
+            #    w1 = 1*self.datacorr
+            #    w1[;1] = 
+            #    lineweight1 = plot.PolyLine(self.datacorr, legend='', colour=colfit,
+            #                         width=width)
+                
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
             linecorr = plot.PolyLine(self.datacorr, legend='', colour=colfit,
@@ -540,7 +550,9 @@ class FittingPanel(wx.Panel):
             lineexp = plot.PolyLine(self.dataexp, legend='', colour=colexp,
                                     width=width)
             # Draw linezero first, so it is in the background
-            PlotCorr = plot.PlotGraphics([linezero, lineexp, linecorr], 
+            lines.append[lineexp]
+            lines.append[linecoor]
+            PlotCorr = plot.PlotGraphics(lines, 
                                 xLabel='lag time τ [ms]', yLabel='G(τ)')
             self.canvascorr.Draw(PlotCorr)
             ## Calculate residuals
