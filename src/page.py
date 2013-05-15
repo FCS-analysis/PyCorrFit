@@ -550,8 +550,8 @@ class FittingPanel(wx.Panel):
             lineexp = plot.PolyLine(self.dataexp, legend='', colour=colexp,
                                     width=width)
             # Draw linezero first, so it is in the background
-            lines.append[lineexp]
-            lines.append[linecoor]
+            lines.append(lineexp)
+            lines.append(linecorr)
             PlotCorr = plot.PlotGraphics(lines, 
                                 xLabel='lag time τ [ms]', yLabel='G(τ)')
             self.canvascorr.Draw(PlotCorr)
