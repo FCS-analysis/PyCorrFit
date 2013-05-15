@@ -325,6 +325,7 @@ class FittingPanel(wx.Panel):
         # Set weighted_fit_was_performed variables
         if self.Fitbox[1].GetSelection() == 0:
             self.weighted_fit_was_performed = False
+            self.weights_used_for_fitting = None
         else:
             self.weighted_fit_was_performed = True
             self.weights_used_for_fitting = Fitting.dataweights

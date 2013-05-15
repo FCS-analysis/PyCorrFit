@@ -104,7 +104,8 @@ def latexmath(string):
     return anew + r" \hspace{0.3em} \mathrm{"+b+r"}"
 
 
-def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
+def savePlotCorrelation(parent, dirname, Page, uselatex=False,
+                        verbose=False, show_weights=True):
     """ Save plot from Page into file        
         Parameters:
         *parent*    the parent window
@@ -123,8 +124,10 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     dataexp = Page.dataexp
     resid = Page.resid
     fit = Page.datacorr
+    weights = Page.weights_used_for_fitting
     tabtitle = Page.tabtitle.GetValue()
-    fitlabel = ur"applied fit"
+    fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
+    labelweights = ur"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                Page.active_parms[1])
     # Error parameters with nice look
@@ -162,6 +165,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
         rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"] 
         fitlabel = ur"{\normalsize "+escapechars(fitlabel)+r"}"
         tabtitle = ur"{\normalsize "+escapechars(tabtitle)+r"}"
+        labelweights = ur"{\normalsize "+escapechars(labelweights)+r"}"
     else:
         rcParams['text.usetex']=False
     # create plot
@@ -179,8 +183,20 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
                  label=tabtitle)
     else:
         plt.xlabel(r'lag time $\tau$ [ms]')
-    plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel,
-             lw=2.5, color="blue")
+    # Plotting with error bars is very ugly if you have a lot of
+    # data points.
+    # We will use fill_between instead.
+    #plt.errorbar(fit[:,0], fit[:,1], yerr=weights, fmt='-',
+    #             label = fitlabel, lw=2.5, color="blue")
+    plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel, lw=2.5,
+             color="blue")    
+    if weights is not None and show_weights is True:
+        plt.fill_between(fit[:,0],fit[:,1]+weights,fit[:,1]-weights,
+                         color='cyan')
+        # fake legend:
+        p = plt.Rectangle((0, 0), 0, 0, color='cyan',
+                          label=labelweights)
+        ax.add_patch(p)
     plt.ylabel('correlation')
     if dataexp is not None:
         mind = np.min([ dataexp[:,1], fit[:,1]])
@@ -225,7 +241,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False, verbose=False):
     logmin = np.log10(xmin)
     logtext = 0.6*(logmax-logmin)+logmin
     xt = 10**(logtext)
-    yt = 0.5*ymax
+    yt = 0.3*ymax
     plt.text(xt,yt,text, size=12)
     if resid is not None:
         ax2 = plt.subplot(gs[1])

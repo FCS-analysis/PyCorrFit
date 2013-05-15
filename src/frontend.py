@@ -266,6 +266,10 @@ class MyFrame(wx.Frame):
         self.MenuVerbose = prefmenu.Append(wx.ID_ANY, "Verbose mode",
                            "Enables/Disables output of additional information.",
                             kind=wx.ITEM_CHECK)
+        self.MenuShowWeights = prefmenu.Append(wx.ID_ANY, "Show weights",
+                           "Enables/Disables displaying weights of fit.",
+                            kind=wx.ITEM_CHECK)
+        self.MenuShowWeights.Check()
         # toolmenu
         for ttype in tools.ToolDict:
             for tool in np.arange(len(tools.ToolDict[ttype])):
@@ -1012,9 +1016,10 @@ class MyFrame(wx.Frame):
         # Saving dialog box.
         uselatex = self.MenuUseLatex.IsChecked()
         verbose = self.MenuVerbose.IsChecked()
+        show_weights = self.MenuShowWeights.IsChecked()
         Page = self.notebook.GetCurrentPage()
         plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
-                                     verbose)
+                                     verbose, show_weights)
 
 
     def OnSavePlotTrace(self, e=None):
