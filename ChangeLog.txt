@@ -1,15 +1,14 @@
 0.7.4
- - This will be 0.7.5
+ - RC 0.7.5
  - Weights from fitting are now exported in .csv files.
  - Rework of info panel for fitting
  - Cleared unintuitive behavior of session saving:
-   The fitting parameters were read from the frontend. This lead to
-   scenarios where wrong parameters could be saved.
- - During fitting, units are now displayed in a human readable
-   fashion as in the info Page (#17).
- - Slider simulation also uses human readable units.
+   The fitting parameters were read from the frontend. This could have
+   led to saving false fit meta data.
+ - During fitting, units are now displayed as "human readable" (#17).
+ - Slider simulation now also uses human readable units (#17).
  - Secured support for Ubuntu 12.10 and 13.04
- - Fixed new line (\n) bug for LaTeX plotting on Windows
+ - Fixed: new line (\n) characters for LaTeX plotting on Windows
 0.7.4
  - New tool: Colorful curve selection
  - Import data: Curve selection possible
