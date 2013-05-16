@@ -60,3 +60,7 @@ nosetests.xml
 *.synctex.gz
 *.pdf
 *.bak
+
+# ~
+*.py~
+*.md~
