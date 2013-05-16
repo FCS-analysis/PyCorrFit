@@ -1,0 +1,52 @@
+\subsubsection{Confocal FCS}
+
+% 2D diffusion
+\begin{samepage}
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{2D (Gauß)} \\ 
+ID & \textbf{6001} \\ 
+Descr. &  Two-dimensional diffusion with a Gaussian laser profile. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}) )}
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles \\ 
+$\tau_\mathrm{diff}$ &  2D diffusion time \\ 
+\end{tabular} \\
+\end{center}
+\vspace{2em}
+\end{samepage}
+\\
+\\
+
+% 2D diffusion + triplett
+\begin{samepage}
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{2D+T (Gauß)} \\ 
+ID & \textbf{6002} \\ 
+Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}))}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles \\ 
+$\tau_\mathrm{diff}$ &  2D diffusion time \\ 
+$T$ &  Triplet fraction \\ 
+$\tau_\mathrm{trip}$ &  Triplet time \\ 
+\end{tabular}
+\end{center}
+\end{samepage}
+
+
+
+
+\subsubsection{Confocal TIR-FCS}
+%G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}) )}
+
+\subsubsection{TIR-FCS with a square shaped lateral detection volume}

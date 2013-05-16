@@ -1,7 +1,9 @@
 \section{Introduction}
 
 \subsection{Preface}
-\texttt{PyCorrFit} was written to simplify the work with experimentally obtained correlation curves. These can be processed independently (operating system, location, time). PyCorrFit supports commonly used file formats and enables users to allocate and organize their data in a simple way.\\
+\texttt{PyCorrFit} emerged from my work in the Schwille Lab\footnote{\url{http://www.biochem.mpg.de/en/rd/schwille/}} at the Biotechnology Center of the TU Dresden in 2011/2012. The program source code is available at GitHub\footnote{\url{https://github.com/paulmueller/PyCorrFit}}. Please do not hesitate to sign up and add a feature request. If you you found a bug, please let me know via GitHub.\\
+
+\noindent \texttt{PyCorrFit} was written to simplify the work with experimentally obtained correlation curves. These can be processed independently (operating system, location, time). PyCorrFit supports commonly used file formats and enables users to allocate and organize their data in a simple way.\\
 
 \noindent PyCorrFit is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published 
@@ -349,6 +351,11 @@ G = 1./n * gThrD * gScan * gTrip
 \end{figure}
 \hyref{Figure}{fig:extxt} shows a working example. External models will be imported with internal model function IDs starting at $7000$. Model functions are checked upon import by PyCorrFit. If the model function does not work, it might be a syntax error, or just an error of \texttt{sympy}. Sympy is used to check the model and is still under development. Model functions will be saved upon session saving.
 
+\subsection{Included model functions}
+This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. The following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
+
+\input{PyCorrFit_doc_models}
+
 
 \subsection{The graphical user interface}
 \label{cha_graphint}
@@ -394,7 +401,7 @@ where $S$ is the average signal of the correlation curve and $B$ is the average 
 \item \textbf{Data range selection}: This selects the lag times $\tau$ from the experimental curve that will be displayed. By default, all data from a file will be displayed. 
 \item \textbf{Global fitting}: If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
 \item \textbf{Slider simulation}: This is useful to visualize the impact of certain parameters on the shape of the correlation function or to set proper starting parameters for a fit.
-\item \textbf{Page info}: A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
+\item \label{Tool:PageInfo}  \textbf{Page info}: A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
 \item \textbf{Trace view}: If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
 \item  \textbf{Statistics}: Used for large data sets. Save selected parameters (of all pages with the same model as the current page) as a table of tab separated values into one single file.
 \end{itemize}

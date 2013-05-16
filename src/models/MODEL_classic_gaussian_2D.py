@@ -6,8 +6,7 @@ import numpy as np                  # NumPy
 
 # 2D simple gauss
 def CF_Gxy_gauss(parms, tau):
-    """ 2D free diffusion with a Gaussian laser profile.
-        Single molecule fluorescence spectroscopy.
+    """ Two-dimensional diffusion with a Gaussian laser profile.
 
         G(tau) = offset + 1/( n * (1+tau/τ_diff) )
     
@@ -41,10 +40,10 @@ def Check_xy_gauss(parms):
 
 # 2D simple gauss
 def CF_Gxy_T_gauss(parms, tau):
-    """ 2D free diffusion with a Gaussian laser profile.
-        Single molecule fluorescence spectroscopy.
+    """ Two-dimensional diffusion with a Gaussian laser profile,
+        including a triplet component.
 
-        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
 
         G(tau) = offset + 1/( n * (1+tau/τ_diff) )*triplet
     
