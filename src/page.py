@@ -63,6 +63,7 @@ class FittingPanel(wx.Panel):
         self.dataexpfull = None  # Experimental data (not cropped)
         self.datacorr = None     # Calculated data
         self.resid = None        # Residuals
+        self.data4weight = None  # Data used for weight calculation 
         # Fitting:
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
@@ -71,6 +72,8 @@ class FittingPanel(wx.Panel):
         self.chi2 = None
         self.weighted_fit_was_performed = False # default is no weighting
         self.weights_used_for_fitting = None # weights used for fitting
+        self.weights_used_for_plotting = None # weights used for plotting
+        self.weights_plot_fill_area = None # weight area in plot
         self.weighted_fittype_id = None # integer (drop down item)
         self.weighted_fittype = "Unknown" # type of fit used
         self.weighted_nuvar = None # bins for std-dev. (left and rigth)
@@ -229,6 +232,60 @@ class FittingPanel(wx.Panel):
         self.datacorr[:, 0] = self.tau
         self.datacorr[:, 1] = y
 
+    def crop_data(self):
+        """ Crop the pages data for plotting
+            This will create slices from
+            *self.taufull* and *self.dataexpfull* using the values from
+            *self.startcrop* and *self.endcrop*, creating
+            *self.tau* and *self.dataexp*.
+        """
+        if self.dataexpfull is not None:
+            if self.startcrop == self.endcrop:
+                # self.bgcorrect is background correction
+                self.dataexp = 1*self.dataexpfull
+                self.taufull = self.dataexpfull[:,0]
+                self.tau = 1*self.taufull
+                self.startcrop = 0
+                self.endcrop = len(self.taufull)
+            else:
+                self.dataexp = 1*self.dataexpfull[self.startcrop:self.endcrop]
+                self.taufull = self.dataexpfull[:,0]
+                self.tau = 1*self.dataexp[:,0]
+                # If startcrop is larger than the lenght of dataexp,
+                # We will not have an array. Prevent that.
+                if len(self.tau) == 0:
+                    self.tau = 1*self.taufull
+                    self.dataexp = 1*self.dataexpfull
+            try:
+                self.taufull[self.startcrop]
+                self.taufull[self.endcrop-1]
+            except:
+                self.startcrop = 0
+                self.endcrop = len(self.taufull)
+                self.tau = 1*self.taufull
+                self.dataexp = 1*self.dataexpfull
+        else:
+            # We have to check if the startcrop and endcrop parameters are
+            # inside the taufull array.
+            try:
+                # Raises IndexError if index out of bounds
+                self.taufull[self.startcrop]
+                # Raises TypeError if self.endcrop is not an int.
+                self.taufull[self.endcrop-1]
+            except (IndexError, TypeError):
+                self.tau = 1*self.taufull
+                self.endcrop = len(self.taufull)
+                self.startcrop = 0
+            else:
+                self.tau = 1*self.taufull[self.startcrop:self.endcrop]
+        ## ## Channel selection
+        ## # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
+        ## # and assigns the result to *self.dataexp*. If *start* and *end* are 
+        ## # equal (or not given), *self.dataexp* will be equal to 
+        ## # *self.dataexpfull*.
+        ## self.parent.OnFNBPageChanged(e=None, Page=self)
+
+
 
     def CorrectDataexp(self, dataexp):
         """ Background correction
@@ -326,6 +383,7 @@ class FittingPanel(wx.Panel):
         if self.Fitbox[1].GetSelection() == 0:
             self.weighted_fit_was_performed = False
             self.weights_used_for_fitting = None
+            self.tauweight = None
         else:
             self.weighted_fit_was_performed = True
             self.weights_used_for_fitting = Fitting.dataweights
@@ -370,6 +428,9 @@ class FittingPanel(wx.Panel):
         self.chi2 = Fitting.chi
         for i in np.arange(len(parms)):
             self.active_parms[1][i] = parms[i]
+        # We need this for plotting
+        self.calculate_corr()
+        self.data4weight = 1.*self.datacorr
         # Update spin-control values
         self.apply_parameters_reverse()
         # Plot everthing
@@ -453,52 +514,7 @@ class FittingPanel(wx.Panel):
         - Apply Parameters (separate function)
         - Drawing of plots
         """
-        if self.dataexpfull is not None:
-            if self.startcrop == self.endcrop:
-                # self.bgcorrect is background correction
-                self.dataexp = 1*self.dataexpfull
-                self.taufull = self.dataexpfull[:,0]
-                self.tau = 1*self.taufull
-                self.startcrop = 0
-                self.endcrop = len(self.taufull)
-            else:
-                self.dataexp = 1*self.dataexpfull[self.startcrop:self.endcrop]
-                self.taufull = self.dataexpfull[:,0]
-                self.tau = 1*self.dataexp[:,0]
-                # If startcrop is larger than the lenght of dataexp,
-                # We will not have an array. Prevent that.
-                if len(self.tau) == 0:
-                    self.tau = 1*self.taufull
-                    self.dataexp = 1*self.dataexpfull
-            try:
-                self.taufull[self.startcrop]
-                self.taufull[self.endcrop-1]
-            except:
-                self.startcrop = 0
-                self.endcrop = len(self.taufull)
-                self.tau = 1*self.taufull
-                self.dataexp = 1*self.dataexpfull
-        else:
-            # We have to check if the startcrop and endcrop parameters are
-            # inside the taufull array.
-            try:
-                # Raises IndexError if index out of bounds
-                self.taufull[self.startcrop]
-                # Raises TypeError if self.endcrop is not an int.
-                self.taufull[self.endcrop-1]
-            except (IndexError, TypeError):
-                self.tau = 1*self.taufull
-                self.endcrop = len(self.taufull)
-                self.startcrop = 0
-            else:
-                self.tau = 1*self.taufull[self.startcrop:self.endcrop]
-        ## ## Channel selection
-        ## # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
-        ## # and assigns the result to *self.dataexp*. If *start* and *end* are 
-        ## # equal (or not given), *self.dataexp* will be equal to 
-        ## # *self.dataexpfull*.
-        ## self.parent.OnFNBPageChanged(e=None, Page=self)
-        #
+        self.crop_data()
         ## Calculate trace average
         if self.trace is not None:
             # Average of the current pages trace
@@ -531,17 +547,55 @@ class FittingPanel(wx.Panel):
             width = 1   
             colexp = "grey"  
             colfit = "blue"
+        colweight = "cyan"
         lines = list()
-        linezero = plot.PolyLine(datazero, colour='orange',  width=width)
+        linezero = plot.PolyLine(datazero, colour='orange', width=width)
         lines.append(linezero)
                 
         if self.dataexp is not None:
-            #if self.weighted_fit_was_performed == True and \
-            #    self.weights_used_for_fitting != None:
-            #    w1 = 1*self.datacorr
-            #    w1[;1] = 
-            #    lineweight1 = plot.PolyLine(self.datacorr, legend='', colour=colfit,
-            #                         width=width)
+            if self.weighted_fit_was_performed == True and \
+               self.weights_used_for_fitting is not None and \
+               self.parent.MenuShowWeights.IsChecked() and \
+               self.data4weight is not None:
+                # Add the weights to the graph.
+                # This is done by drawing two lines.
+                w = 1*self.data4weight
+                w1 = 1*self.data4weight
+                w2 = 1*self.data4weight
+                w1[:, 1] = w[:, 1] + self.weights_used_for_fitting 
+                w2[:, 1] = w[:, 1] - self.weights_used_for_fitting 
+                wend = 1*self.weights_used_for_fitting 
+                # crop w1 and w2 if self.dataexp does not include all
+                # data points.
+                if np.all(w[:,0] == self.dataexp[:,0]):
+                    pass
+                else:
+                    start = np.min(self.dataexp[:,0])
+                    end = np.max(self.dataexp[:,0])
+                    idstart = np.argwhere(w[:,0]==start)
+                    idend = np.argwhere(w[:,0]==end)
+                    if len(idend) == 0:
+                        # dataexp is longer, do not change anything
+                        pass
+                    else:
+                        w1 = w1[:idend[0][0]+1]
+                        w2 = w2[:idend[0][0]+1]
+                        wend = wend[:idend[0][0]+1]
+                    if len(idstart) == 0:
+                        # dataexp starts earlier, do not change anything
+                        pass
+                    else:
+                        w1 = w1[idstart[0][0]:]
+                        w2 = w2[idstart[0][0]:]
+                        wend = wend[idstart[0][0]:]
+                self.weights_used_for_plotting = wend
+                self.weights_plot_fill_area = [w1,w2]
+                lineweight1 = plot.PolyLine(w1, legend='',
+                                          colour=colweight, width=width)
+                lines.append(lineweight1)
+                lineweight2 = plot.PolyLine(w2, legend='',
+                                          colour=colweight, width=width)
+                lines.append(lineweight2)
                 
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
@@ -559,6 +613,7 @@ class FittingPanel(wx.Panel):
             self.resid = np.zeros((len(self.tau), 2))
             self.resid[:, 0] = self.tau
             self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
+             ## REMOVED in 0.7.5:
              ## Calculate weighted residuals, if weights are available from
              ## a the fitting class
              #Fitting = self.Fit_create_instance(noplots=True)
@@ -578,7 +633,8 @@ class FittingPanel(wx.Panel):
             else:
                 yLabelRes = "residuals"
             PlotRes = plot.PlotGraphics([linezero, lineres], 
-                                   xLabel='lag time τ [ms]', yLabel=yLabelRes)
+                                   xLabel='lag time τ [ms]',
+                                   yLabel=yLabelRes)
             self.canvaserr.Draw(PlotRes)
         else:
             linecorr = plot.PolyLine(self.datacorr, legend='', colour='blue',

@@ -124,7 +124,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     dataexp = Page.dataexp
     resid = Page.resid
     fit = Page.datacorr
-    weights = Page.weights_used_for_fitting
+    weights = Page.weights_plot_fill_area
     tabtitle = Page.tabtitle.GetValue()
     fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
     labelweights = ur"Weights of fit"
@@ -191,7 +191,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel, lw=2.5,
              color="blue")    
     if weights is not None and show_weights is True:
-        plt.fill_between(fit[:,0],fit[:,1]+weights,fit[:,1]-weights,
+        plt.fill_between(weights[0][:,0],weights[0][:,1],weights[1][:,1],
                          color='cyan')
         # fake legend:
         p = plt.Rectangle((0, 0), 0, 0, color='cyan',

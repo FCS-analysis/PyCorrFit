@@ -1222,6 +1222,7 @@ class MyFrame(wx.Frame):
         # Cropping
         Page.startcrop = cropstart
         Page.endcrop = cropend
+        Page.crop_data()
         # Weighted fitting
         if len(Parms) >= 6:
             if len(Parms[5]) == 2:
@@ -1249,6 +1250,10 @@ class MyFrame(wx.Frame):
             Page.Fit_enable_fitting()
         Page.Fit_WeightedFitCheck()
         Page.Fit_create_instance()
+        if Page.weighted_fit_was_performed:
+            # We need this to plot std-dev
+            Page.calculate_corr()
+            Page.data4weight = 1.*Page.datacorr
         # Set which background correction the Page uses:
         if len(Parms) >= 7:
             if len(self.Background) > Parms[6][0]:
