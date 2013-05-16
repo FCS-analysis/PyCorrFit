@@ -189,7 +189,7 @@ def MoreInfo_6010(parms, countrate):
 m_twodsq6000 = [6000, u"2D (□xσ)", u"2D diffusion w/ square pinhole",
                 CF_Gxy_TIR_square]
 labels_6000 = [u"D [10 µm²/s]", u"σ [100 nm]", "a [100 nm]", u"C_2D [100 /µm²]"]
-values_6000 = [0.1, 2.3, 7.5, .6] # [D,lamb,NA,a,conc]
+values_6000 = [0.054, 2.3, 7.5, .6] # [D,lamb,NA,a,conc]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6000 = [u"D [µm²/s]", u"σ [nm]", "a [nm]",
@@ -204,7 +204,7 @@ m_3dtirsq6010 = [6010, u"3D (□xσ/exp)", "Simple 3D diffusion w/ TIR",
                  CF_Gxyz_TIR_square]
 labels_6010 = [u"D [10 µm²/s]", u"σ [100 nm]","a [100 nm]", "d_eva [100 nm]",
                u"C_3D [1000 /µm³]"]
-values_6010 = [0.0005420, 2.3, 7.5, 1.0, .0216]
+values_6010 = [0.520, 2.3, 7.5, 1.0, .0216]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6010 = [u"D [µm²/s]", u"σ [nm]", "a [nm]", "d_eva [nm]",

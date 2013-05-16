@@ -354,7 +354,7 @@ def saveCSV(parent, dirname, Page):
                 dlg = wx.MessageDialog(parent, text, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
-                return
+                return driname, None
         else:
             tau = Page.datacorr[:,0]
             exp = None

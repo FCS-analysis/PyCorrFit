@@ -109,7 +109,7 @@ def MoreInfo_6013(parms, countrate):
 # 3D Model TIR gaussian
 m_3dtirsq6013 = [6013, "3D (Gauß/exp)","Simple 3D diffusion w/ TIR", CF_Gxyz_TIR_gauss]
 labels_6013 = ["D [10 µm²/s]","r_0 [100 nm]", "d_eva [100 nm]", "C_3D [1000/µm³)"]
-values_6013 = [0.0005420, 9.44, 1.0, .03011]
+values_6013 = [2.5420, 9.44, 1.0, .03011]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6013 = ["D [µm²/s]", "r_0 [nm]", "d_eva [nm]", "C_3D [1/µm³]"]
