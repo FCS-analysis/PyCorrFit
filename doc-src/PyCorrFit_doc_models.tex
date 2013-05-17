@@ -124,19 +124,20 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+2D+T (Gauß)} \\ 
 ID & \textbf{6032} \\ 
-Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+G(\tau) = A_0 + \frac{1}{N (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ 1+\tau/\tau_\mathrm{3D} } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
-$\tau_1$ &  Diffusion time of particle species 1 \\ 
-$\tau_2$ &  Diffusion time of particle species 2 \\ 
-$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
-$\alpha$ & Relative molecular brightness of particles 1 and 2 ($ alpha = q_2/q_1$) \\
+$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$\tau_\mathrm{2D}$ &  Diffusion time of surface bound particle species \\ 
+$\tau_\mathrm{3D}$ &  Diffusion time of freely diffusing particle species \\ 
+$F$ & Fraction of molecules of freely diffusing species ($N_\mathrm{3D} = F N$) \\
+$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
+$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
 $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
 \end{tabular}

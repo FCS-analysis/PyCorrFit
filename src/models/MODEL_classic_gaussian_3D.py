@@ -106,8 +106,6 @@ def Check_6011(parms):
     # Model 6030
 def CF_Gxyz_gauss_3D3DT(parms, tau):
     """ Two component 3D free diffusion and a triplet component.
-        Single molecule fluorescence spectroscopy, confocal setups, focused
-        laser beam defines excitation volume.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.

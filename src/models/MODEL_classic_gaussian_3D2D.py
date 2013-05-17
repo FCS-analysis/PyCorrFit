@@ -5,9 +5,8 @@ import numpy as np                  # NumPy
 
 # 3D + 2D + T
 def CF_Gxyz_3d2dT_gauss(parms, tau):
-    """ Two component 3D and 2D free diffusion and a triplet component.
-        Single molecule fluorescence spectroscopy, confocal setups, focused
-        laser beam defines excitation volume.
+    """ Two-component, two- and three-dimensional diffusion
+        with a Gaussian laser profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
@@ -20,17 +19,18 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] τ_2D: diffusion time of surface bound particle species
-        [2] τ_3D: diffusion time of 3D diffusing particle species
-        [3] F: fraction of molecules of 3D diffusing species 1 (n3D = n*F)
+        [0] n: Effective number of particles in confocal volume
+               (n = n2D+n3D)
+        [1] τ_2D: Diffusion time of surface bound particle species
+        [2] τ_3D: Diffusion time of freely diffusing particle species
+        [3] F: Fraction of molecules of freely diffusing species (n3D = n*F)
                0 <= F <= 1
-        [4] SP: structural parameter z0/r0, describes the shape of the 
-                detection/excitation volume
+        [4] SP: SP=z0/r0 Structural parameter,
+                         describes elongation of the confocal volume
         [5] alpha: relative molecular brightness of particle
                    3D compared to particle 2D (alpha = q3D/q2D)
-        [6] τ_trip: characteristic residence time in triplet state
-        [7] T: coefficient describing fraction of non-fluorescent molecules
+        [6] τ_trip: Characteristic residence time in triplet state
+        [7] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [8] offset
         *tau*: lag time
