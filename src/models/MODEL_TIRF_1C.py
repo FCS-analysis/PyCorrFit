@@ -32,7 +32,7 @@ def CF_Gxy_TIR_square(parms, tau):
                    sigma = simga_0 * lambda / NA
         [2] a: side size of the square pinhole
         [3] C_2D: 2-dimensional concentration 
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
@@ -67,7 +67,7 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
         [2] a: side size of the square pinhole
         [3] d_eva: evanescent decay length (decay to 1/e)
         [4] C_3D: 3-dimensional concentration 
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: 3D correlation function for TIR-FCS w/square pinhole
     """

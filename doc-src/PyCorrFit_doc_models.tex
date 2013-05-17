@@ -1,7 +1,19 @@
+\subsection{Included model functions}
+This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. To each model a unique model ID is assigned by PyCorrFit. The following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
+
 \subsubsection{Confocal FCS}
+The detection volume is a confocal volume with the structural parameter 
+\begin{align}
+\mathit{SP}= \frac{z_0}{r_0}
+\end{align}
+where $r_0$ is its lateral and $z_0$ its axial (in case of 3D diffusion) extension. The diffusion coefficient is calculated from the diffusion time $\tau_\mathrm{diff}$ using
+\begin{align}
+D = \frac{1}{4 \tau_\mathrm{diff}} \left( \frac{z_0}{\mathit{SP}} \right)^2 = \frac{r_0^2}{4 \tau_\mathrm{diff}}.
+\end{align}
+\\
+
 
 % 2D diffusion
-\begin{samepage}
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D (Gauß)} \\ 
 ID & \textbf{6001} \\ 
@@ -13,17 +25,14 @@ G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}) )}
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles \\ 
-$\tau_\mathrm{diff}$ &  2D diffusion time \\ 
+$N$ & Effective number of particles in confocal area \\ 
+$\tau_\mathrm{diff}$ &   Characteristic residence time in confocal area \\
 \end{tabular} \\
 \end{center}
 \vspace{2em}
-\end{samepage}
-\\
-\\
+
 
 % 2D diffusion + triplett
-\begin{samepage}
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D+T (Gauß)} \\ 
 ID & \textbf{6002} \\ 
@@ -35,16 +44,105 @@ G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}))}  \left(1 + \f
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles \\ 
-$\tau_\mathrm{diff}$ &  2D diffusion time \\ 
-$T$ &  Triplet fraction \\ 
-$\tau_\mathrm{trip}$ &  Triplet time \\ 
+$N$ & Effective number of particles in confocal area \\ 
+$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal area \\ 
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+% 3D diffusion
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{3D (Gauß)} \\ 
+ID & \textbf{6012} \\ 
+Descr. &  3D free diffusion with a Gaussian laser profile (eliptical). \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}))} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}}
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal volume \\ 
+$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal volume \\ 
+$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+% 3D diffusion + triplet
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{3D+T (Gauß)} \\ 
+ID & \textbf{6011} \\ 
+Descr. &  3D free diffusion with a Gaussian laser profile (eliptical). \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}))} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal volume \\ 
+$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal volume \\ 
+$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet \\
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+% 2D+2D diffusion + triplett
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{2D+2D+T (Gauß)} \\ 
+ID & \textbf{6031} \\ 
+Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
+$\tau_1$ &  Diffusion time of particle species 1 \\ 
+$\tau_2$ &  Diffusion time of particle species 2 \\ 
+$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$\alpha$ & Relative molecular brightness of particles 1 and 2 ($ \alpha = q_2/q_1$) \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+% 3D+2D diffusion + triplett
+\begin{samepage}
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{3D+2D+T (Gauß)} \\ 
+ID & \textbf{6032} \\ 
+Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
+$\tau_1$ &  Diffusion time of particle species 1 \\ 
+$\tau_2$ &  Diffusion time of particle species 2 \\ 
+$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$\alpha$ & Relative molecular brightness of particles 1 and 2 ($ alpha = q_2/q_1$) \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
 \end{tabular}
 \end{center}
 \end{samepage}
-
-
-
+\vspace{2em}
 
 \subsubsection{Confocal TIR-FCS}
 %G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff}) )}

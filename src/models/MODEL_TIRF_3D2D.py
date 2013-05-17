@@ -41,7 +41,7 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
         [6] C_2D: 2-dimensional concentration of species C
         [7] alpha: relative molecular brightness of 3D particle
                    compared to 2D particle (alpha = q3D/q2D)
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: 3D correlation function for TIR-FCS w/square pinhole and
                  separate 3D and 2D diffusion.

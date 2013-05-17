@@ -42,7 +42,7 @@ def CF_gxy_square(parms, tau):
         [1] sigma: lateral size of the point spread function
                    sigma = simga_0 * lambda / NA
         [2] a: side size of the square pinhole
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: Nonnormalized Lateral correlation function w/square pinhole.
     """
@@ -78,7 +78,7 @@ def CF_gz_CC(parms, tau, wixi=wixi):
         [8] eta_2D: molecular brightness of species C
         [9] k_a : Surface association rate constant
         [10] k_d : Surface dissociation rate constant
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     D = parms[0]
     # D_2D = parms[1]
@@ -131,7 +131,7 @@ def CF_gz_AC(parms, tau, wixi=wixi):
         [8] eta_2D: molecular brightness of species C
         [9] k_a : Surface association rate constant
         [10] k_d : Surface dissociation rate constant
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     D = parms[0]
     # D_2D = parms[1]
@@ -190,7 +190,7 @@ def CF_gz_AA(parms, tau, wixi=wixi):
         [8] eta_2D: molecular brightness of species C
         [9] k_a : Surface association rate constant
         [10] k_d : Surface dissociation rate constant
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     D = parms[0]
     # D_2D = parms[1]
@@ -265,7 +265,7 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
         [8] eta_2D: molecular brightness of species C
         [9] k_a : Surface association rate constant
         [10] k_d : Surface dissociation rate constant
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: 3D correlation function for TIR-FCS w/square pinhole and
                  surface binding/unbinding.

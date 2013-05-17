@@ -7,7 +7,6 @@ import numpy as np                  # NumPy
 def CF_Gxyz_gauss(parms, tau):
     # Model 6012
     """ 3D free diffusion with a Gaussian laser profile (eliptical).
-        Single molecule fluorescence spectroscopy.
 
         G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
 
@@ -25,11 +24,12 @@ def CF_Gxyz_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume.
-        [1] τ_diff: characteristic residence time (diffusion).
-        [2] SP: SP=z0/r0 describes the shape of the detection volume
+        [0] n: Effective number of particles in confocal volume
+        [1] τ_diff: Characteristic residence time in confocal volume
+        [2] SP: SP=z0/r0 Structural parameter,
+                         describes elongation of the confocal volume
         [3] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -45,7 +45,6 @@ def CF_Gxyz_gauss(parms, tau):
     # Model 6011
 def CF_Gxyz_blink(parms, tau):
     """ 3D free diffusion and blinking effects.
-        Single molecule fluorescence spectroscopy.
         Due to pH-reigned (de-)protonation (or other factors), blinking of 
         fluorescent molecules can be observed.
         (This is *CF_Gxyz_gauss* + blinking.
@@ -57,14 +56,15 @@ def CF_Gxyz_blink(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume
-        [1] T: coefficient describing fraction of non-fluorescent molecules
+        [0] n: Effective number of particles in confocal volume
+        [1] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
-        [2] τ_diff: characteristic residence time in Triplett state
-        [3] τ_trip: characteristic residence time (Diffusion)
-        [4] SP: =z0/r0 describes the shape of the detection/excitation volume
+        [2] τ_trip: Characteristic residence time in triplet state
+        [3] τ_diff: Characteristic residence time in confocal volume
+        [4] SP: SP=z0/r0 Structural parameter,
+                         describes elongation of the confocal volume
         [5] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n = parms[0]
     T = parms[1]
@@ -133,7 +133,7 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
         [7] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [8] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n=parms[0]
     taud1=parms[1]

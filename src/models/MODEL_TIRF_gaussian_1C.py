@@ -39,7 +39,7 @@ def CF_Gxyz_TIR_gauss(parms, tau):
         [1] r_0: radius of the detection profile (FWHM)
         [2] d_eva: evanescent wave depth
         [2] C_3D : 3D Concentration
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
 
         Returns: Normalized 3D correlation function for TIRF.
     """

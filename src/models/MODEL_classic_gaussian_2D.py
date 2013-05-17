@@ -18,10 +18,10 @@ def CF_Gxy_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation area.
-        [1] τ_diff: characteristic residence time (diffusion).
+        [0] n: Effective number of particles in confocal area
+        [1] τ_diff: Characteristic residence time in confocal area
         [3] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -56,13 +56,13 @@ def CF_Gxy_T_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation area.
-        [1] τ_diff: characteristic residence time (Diffusion).
-        [2] τ_trip: characteristic residence time in triplet state
-        [3] T: coefficient describing fraction of non-fluorescent molecules
+        [0] n: Effective number of particles in confocal area
+        [1] τ_diff: Characteristic residence time in confocal area
+        [2] τ_trip: Characteristic residence time in triplet state
+        [3] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [4] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -100,9 +100,8 @@ def Check_xy_T_gauss(parms):
 # 2D + 2D + Triplet Gauß
     # Model 6031
 def CF_Gxyz_gauss_2D2DT(parms, tau):
-    """ Two component 2D free diffusion and a triplet component.
-        Single molecule fluorescence spectroscopy, confocal setups, focused
-        laser beam defines excitation volume.
+    """ Two-component, two-dimensional diffusion with a Gaussian laser
+        profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
@@ -115,18 +114,18 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume (n = n1+n2)
-        [1] τ_1: diffusion time of particle species 1
-        [2] τ_2: diffusion time of particle species 2
-        [3] F: fraction of molecules of species 1 (n1 = n*F)
+        [0] n: Effective number of particles in confocal area (n = n1+n2)
+        [1] τ_1: Diffusion time of particle species 1
+        [2] τ_2: Diffusion time of particle species 2
+        [3] F: Fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
-        [4] alpha: relative molecular brightness of particle
+        [4] alpha: Relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [5] τ_trip: characteristic residence time in triplet state
-        [6] T: coefficient describing fraction of non-fluorescent molecules
+        [5] τ_trip: Characteristic residence time in triplet state
+        [6] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [7] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n=parms[0]
     taud1=parms[1]

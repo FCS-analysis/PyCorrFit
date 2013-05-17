@@ -351,12 +351,6 @@ G = 1./n * gThrD * gScan * gTrip
 \end{figure}
 \hyref{Figure}{fig:extxt} shows a working example. External models will be imported with internal model function IDs starting at $7000$. Model functions are checked upon import by PyCorrFit. If the model function does not work, it might be a syntax error, or just an error of \texttt{sympy}. Sympy is used to check the model and is still under development. Model functions will be saved upon session saving.
 
-\subsection{Included model functions}
-This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. The following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
-
-\input{PyCorrFit_doc_models}
-
-
 \subsection{The graphical user interface}
 \label{cha_graphint}
 \label{sec:PyCorrFitUserInterface}
@@ -405,3 +399,5 @@ where $S$ is the average signal of the correlation curve and $B$ is the average 
 \item \textbf{Trace view}: If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
 \item  \textbf{Statistics}: Used for large data sets. Save selected parameters (of all pages with the same model as the current page) as a table of tab separated values into one single file.
 \end{itemize}
+
+\input{PyCorrFit_doc_models}

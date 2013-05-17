@@ -62,7 +62,7 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         [8] T: coefficient describing fraction of non-fluorescent molecules
                0 <= T < 1
         [9] offset
-        *tau*: time differences from multiple tau correlator
+        *tau*: lag time
     """
     n=parms[0]
     D2D=parms[1]
