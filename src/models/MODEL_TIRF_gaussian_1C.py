@@ -35,11 +35,11 @@ def CF_Gxyz_TIR_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D: Diffusion coefficient
-        [1] r_0: Lateral extent of the detection volume
-        [2] d_eva: Evanescent field depth
-        [2] C_3D : Particle concentration in the confocal volume
-        *tau*: lag time
+        [0] D      Diffusion coefficient
+        [1] r_0    Lateral extent of the detection volume
+        [2] d_eva  Evanescent field depth
+        [2] C_3D   Particle concentration in the confocal volume
+        *tau* - lag time
 
         Returns: Normalized 3D correlation function for TIRF.
     """

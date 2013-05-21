@@ -51,20 +51,20 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal volume (n = n2D+n3D)
-        [1] D_1: Diffusion coefficient of species 1
-        [2] D_2: Diffusion coefficient of species 2
-        [3] F: Fraction of molecules of species 1 (n1 = n*F)
-               0 <= F <= 1
-        [4] r_0: Lateral extent of the detection volume
-        [5] d_eva: Evanescent field depth
-        [6] alpha: Relative molecular brightness of particle
-                   2 compared to particle 1 (alpha = q2/q1)
-        [7] τ_trip: Characteristic residence time in triplet state
-        [8] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
+        [0] n       Effective number of particles in confocal volume (n = n2D+n3D)
+        [1] D_1     Diffusion coefficient of species 1
+        [2] D_2     Diffusion coefficient of species 2
+        [3] F       Fraction of molecules of species 1 (n1 = n*F)
+                    0 <= F <= 1
+        [4] r_0     Lateral extent of the detection volume
+        [5] d_eva   Evanescent field depth
+        [6] alpha   Relative molecular brightness of particle
+                    2 compared to particle 1 (alpha = q2/q1)
+        [7] τ_trip  Characteristic residence time in triplet state
+        [8] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
         [9] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n=parms[0]
     D1=parms[1]

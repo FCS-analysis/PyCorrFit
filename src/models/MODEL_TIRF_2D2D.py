@@ -23,28 +23,23 @@ def wixi(x):
 
 # 2D + 2D no binding TIRF
 def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
-    """ 2D diffusion measured with a square pinhole in a TIR-FCS setup and
-        considering two species:
-        - Surface bound species 1
-        - Surface bound species 2
-        without binding/unbinding.
+    """ Two-component two-dimensional diffusion with a square-shaped
+        lateral detection area taking into account the size of the
+        point spread function.
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_2D1: 2D Diffusion coefficient (species 1)
-        [1] D_2D2: 2D Diffusion coefficient of bound species 2
-        [2] sigma: lateral size of the point spread function
+        [0] D_2D1  Diffusion coefficient of species 1
+        [1] D_2D2  Diffusion coefficient of species 2
+        [2] sigma  Lateral size of the point spread function
                    sigma = simga_0 * lambda / NA
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] C_2D1: 2-dimensional concentration of species 1
-        [6] C_2D2: 2-dimensional concentration of species 2
-        [7] alpha: relative molecular brightness of particle
+        [3] a      Side size of the square-shaped detection area
+        [4] d_eva  Evanescent penetration depth
+        [5] C_2D1  Two-dimensional concentration of species 1
+        [6] C_2D2  Two-dimensional concentration of species 2
+        [7] alpha  Relative molecular brightness of particle
                    2 compared to 1 (alpha = q2/q1)
-        *tau*: lag time
-
-        Returns: 2D correlation function for TIR-FCS w/square pinhole and
-                 2D diffusion with two components.
+        *tau* - lag time
     """
     D_2D1 = parms[0]
     D_2D2 = parms[1]

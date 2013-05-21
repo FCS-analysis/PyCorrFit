@@ -19,21 +19,21 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal volume
-               (n = n2D+n3D)
-        [1] τ_2D: Diffusion time of surface bound particls
-        [2] τ_3D: Diffusion time of freely diffusing particles
-        [3] F: Fraction of molecules of the freely diffusing species
-               (n3D = n*F), 0 <= F <= 1
-        [4] SP: SP=z0/r0 Structural parameter,
+        [0] n       Effective number of particles in confocal volume
+                    (n = n2D+n3D)
+        [1] τ_2D    Diffusion time of surface bound particls
+        [2] τ_3D    Diffusion time of freely diffusing particles
+        [3] F       Fraction of molecules of the freely diffusing species
+                    (n3D = n*F), 0 <= F <= 1
+        [4] SP      SP=z0/r0 Structural parameter,
                          describes elongation of the confocal volume
-        [5] alpha: relative molecular brightness of particle
-                   3D compared to particle 2D (alpha = q3D/q2D)
-        [6] τ_trip: Characteristic residence time in triplet state
-        [7] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
+        [5] alpha   relative molecular brightness of particle
+                    3D compared to particle 2D (alpha = q3D/q2D)
+        [6] τ_trip  Characteristic residence time in triplet state
+        [7] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
         [8] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n=parms[0]
     taud2D=parms[1]

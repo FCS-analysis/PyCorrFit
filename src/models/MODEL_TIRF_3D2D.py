@@ -23,28 +23,24 @@ def wixi(x):
 
 # 3D + 2D no binding TIRF
 def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
-    """ 3D diffusion measured with a square pinhole in a TIR-FCS setup and
-        considering two species:
-        - Surface bound species C (2D)
-        - Freely diffusing species A (3D)
-        without binding/unbinding.
+    """ Two-component two- and three-dimensional diffusion
+        with a square-shaped lateral detection area taking into account
+        the size of the point spread function; and an exponential
+        decaying profile in axial direction.
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_3D: 3D Diffusion coefficient (species A)
-        [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] sigma: lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] C_3D: 3-dimensional concentration of species A
-        [6] C_2D: 2-dimensional concentration of species C
-        [7] alpha: relative molecular brightness of 3D particle
-                   compared to 2D particle (alpha = q3D/q2D)
-        *tau*: lag time
-
-        Returns: 3D correlation function for TIR-FCS w/square pinhole and
-                 separate 3D and 2D diffusion.
+        [0] D_3D    Diffusion coefficient of freely diffusing species
+        [1] D_2D    Diffusion coefficient of surface bound species
+        [2] sigma   Lateral size of the point spread function
+                    sigma = simga_0 * lambda / NA
+        [3] a       Side size of the square-shaped detection area
+        [4] d_eva   Evanescent penetration depth
+        [5] C_3D    Concentration of freely diffusing species
+        [6] C_2D    Concentration of surface bound species
+        [7] alpha   Relative molecular brightness of 3D particle
+                    compared to 2D particle (alpha = q3D/q2D)
+        *tau* - lag time
     """
     D_3D = parms[0]
     D_2D = parms[1]

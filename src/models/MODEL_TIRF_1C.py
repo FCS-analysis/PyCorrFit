@@ -26,15 +26,15 @@ def CF_Gxy_TIR_square(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D: Diffusion coefficient
-        [1] sigma: Lateral size of the point spread function
+        [0] D      Diffusion coefficient
+        [1] sigma  Lateral size of the point spread function
                    sigma = sigma_0 * lambda / NA
-        [2] a: Side size of the square-shaped detection area
-        [3] C_2D: Particle concentration in detection area
-        *tau*: lag time
+        [2] a      Side size of the square-shaped detection area
+        [3] C_2D   Particle concentration in detection area
+        *tau* - lag time
 
-        Please refer to the documentation for further information
-        on the model.
+        Please refer to the documentation of PyCorrFit
+        for further information on the model function.
         
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
@@ -59,18 +59,24 @@ def CF_Gxy_TIR_square(parms, tau):
 # 3D free tir
 def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
     # Model 6010
-    """ 3D free diffusion measured with a square pinhole in a TIR-FCS setup.
-
+    """ Three-dimensional diffusion with a square-shaped lateral
+        detection area taking into account the size of the
+        point spread function; and an exponential decaying profile
+        in axial direction.
+        
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D: Diffusion coefficient
-        [1] sigma: lateral size of the point spread function
+        [0] D      Diffusion coefficient
+        [1] sigma  Lateral size of the point spread function
                    sigma = simga_0 * lambda / NA
-        [2] a: side size of the square pinhole
-        [3] d_eva: evanescent decay length (decay to 1/e)
-        [4] C_3D: 3-dimensional concentration 
-        *tau*: lag time
+        [2] a      Side size of the square-shaped detection area
+        [3] d_eva  Evanescent penetration depth
+        [4] C_3D   Particle concentration in detection volume
+        *tau* - lag time
 
+        Please refer to the documentation of PyCorrFit
+        for further information on the model function.
+        
         Returns: 3D correlation function for TIR-FCS w/square pinhole
     """
     D = parms[0]

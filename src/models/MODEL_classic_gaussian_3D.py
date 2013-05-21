@@ -11,7 +11,6 @@ def CF_Gxyz_gauss(parms, tau):
 
         G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
 
-
         Calculation of diffusion coefficient and concentration
         from the effective radius of the detection profile:
         D = r0²/(4*τ_diff)
@@ -21,16 +20,15 @@ def CF_Gxyz_gauss(parms, tau):
             z0   axial detection length (waist of axial gaussian)
             D    Diffusion coefficient
             Conc Concentration of dye
-            
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal volume
-        [1] τ_diff: Characteristic residence time in confocal volume
-        [2] SP: SP=z0/r0 Structural parameter,
-                         describes elongation of the confocal volume
+        [0] n       Effective number of particles in confocal volume
+        [1] τ_diff  Characteristic residence time in confocal volume
+        [2] SP      SP=z0/r0 Structural parameter,
+                    describes elongation of the confocal volume
         [3] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -58,15 +56,15 @@ def CF_Gxyz_blink(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal volume
-        [1] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
-        [2] τ_trip: Characteristic residence time in triplet state
-        [3] τ_diff: Characteristic residence time in confocal volume
-        [4] SP: SP=z0/r0 Structural parameter,
-                         describes elongation of the confocal volume
+        [0] n       Effective number of particles in confocal volume
+        [1] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
+        [2] τ_trip  Characteristic residence time in triplet state
+        [3] τ_diff  Characteristic residence time in confocal volume
+        [4] SP      SP=z0/r0 Structural parameter,
+                    describes elongation of the confocal volume
         [5] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n = parms[0]
     T = parms[1]
@@ -121,20 +119,20 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal volume (n = n1+n2)
-        [1] τ_1: Diffusion time of particle species 1
-        [2] τ_2: Diffusion time of particle species 2
-        [3] F: Fraction of molecules of species 1 (n1 = n*F)
-               0 <= F <= 1
-        [4] SP: SP=z0/r0, Structural parameter,
-                          describes elongation of the confocal volume
-        [5] alpha: Relative molecular brightness of particle
-                   2 compared to particle 1 (alpha = q2/q1)
-        [6] τ_trip: Characteristic residence time in triplet state
-        [7] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
+        [0] n       Effective number of particles in confocal volume (n = n1+n2)
+        [1] τ_1     Diffusion time of particle species 1
+        [2] τ_2     Diffusion time of particle species 2
+        [3] F       Fraction of molecules of species 1 (n1 = n*F)
+                    0 <= F <= 1
+        [4] SP      SP=z0/r0, Structural parameter,
+                    describes elongation of the confocal volume
+        [5] alpha   Relative molecular brightness of particle
+                    2 compared to particle 1 (alpha = q2/q1)
+        [6] τ_trip  Characteristic residence time in triplet state
+        [7] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
         [8] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n=parms[0]
     taud1=parms[1]

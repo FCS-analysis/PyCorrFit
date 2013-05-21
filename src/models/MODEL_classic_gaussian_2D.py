@@ -16,13 +16,12 @@ def CF_Gxy_gauss(parms, tau):
         D = r0²/(4*τ_diff)
         Conc = n/(pi*r0²)
 
-
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal area
-        [1] τ_diff: Characteristic residence time in confocal area
+        [0] n       Effective number of particles in confocal area
+        [1] τ_diff  Characteristic residence time in confocal area
         [3] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -53,17 +52,15 @@ def CF_Gxy_T_gauss(parms, tau):
         D = r0²/(4*τ_diff)
         Conc = n/(pi*r0²)
 
-            
-
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal area
-        [1] τ_diff: Characteristic residence time in confocal area
-        [2] τ_trip: Characteristic residence time in triplet state
-        [3] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
+        [0] n       Effective number of particles in confocal area
+        [1] τ_diff  Characteristic residence time in confocal area
+        [2] τ_trip  Characteristic residence time in triplet state
+        [3] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
         [4] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n = parms[0]
     taudiff = parms[1]
@@ -115,18 +112,18 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: Effective number of particles in confocal area (n = n1+n2)
-        [1] τ_1: Diffusion time of particle species 1
-        [2] τ_2: Diffusion time of particle species 2
-        [3] F: Fraction of molecules of species 1 (n1 = n*F)
-               0 <= F <= 1
-        [4] alpha: Relative molecular brightness of particle
-                   2 compared to particle 1 (alpha = q2/q1)
-        [5] τ_trip: Characteristic residence time in triplet state
-        [6] T: Fraction of particles in triplet (non-fluorescent) state
-               0 <= T < 1
+        [0] n       Effective number of particles in confocal area (n = n1+n2)
+        [1] τ_1     Diffusion time of particle species 1
+        [2] τ_2     Diffusion time of particle species 2
+        [3] F       Fraction of molecules of species 1 (n1 = n*F)
+                    0 <= F <= 1
+        [4] alpha   Relative molecular brightness of particle
+                    2 compared to particle 1 (alpha = q2/q1)
+        [5] τ_trip  Characteristic residence time in triplet state
+        [6] T       Fraction of particles in triplet (non-fluorescent) state
+                    0 <= T < 1
         [7] offset
-        *tau*: lag time
+        *tau* - lag time
     """
     n=parms[0]
     taud1=parms[1]

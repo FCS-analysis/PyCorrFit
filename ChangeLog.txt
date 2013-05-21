@@ -1,5 +1,5 @@
 0.7.4
- - RC 0.7.5
+ - Added model functions to documentation.
  - Weights from fitting are now exported in .csv files.
  - Rework of info panel for fitting
  - Cleared unintuitive behavior of session saving:
