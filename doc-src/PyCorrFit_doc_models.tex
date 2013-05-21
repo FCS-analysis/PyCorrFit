@@ -191,7 +191,7 @@ The decay constant $\kappa$ is the inverse of the depth $d_\mathrm{eva}$ :
 \begin{align}
 d_\mathrm{eva} = \frac{1}{\kappa}
 \end{align} 
-The equations below make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
+The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
 \begin{align}
 w(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
 \notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
@@ -284,4 +284,40 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 
 
 
-\subsubsection{TIR-FCS with a square shaped lateral detection volume}
+\subsubsection{TIR-FCS with a square-shaped lateral detection volume}
+The detection volume is axially confined by an evanescent field of depth $d_\mathrm{eva} = 1 / \kappa$.
+The lateral detection area is a convolution of the point spread function of the microscope of size $\sigma$,
+\begin{align}
+\sigma = \sigma_0  \frac{\lambda}{\mathit{NA}},
+\end{align} 
+with a square of side length $a$.
+The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
+\begin{align}
+w(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
+\notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
+\end{align} 
+\vspace{2em}
+
+
+% 2D TIRF diffusion (□xσ)
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{2D (□x$\upsigma$)} \\ 
+ID & \textbf{6000} \\ 
+Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = \frac{1}{C} \left[
+\frac{2 \sqrt{\sigma^2+D \tau}}{\sqrt{\pi} a^2}
+\left( e^{-a^2/(4 \sigma^2+D \tau)} - 1 \right) +
+\frac{1}{a} \, \mathrm{erf}\left(\frac{a}{2 \sqrt{\sigma^2+D \tau}}\right)
+\right]^2
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$C$ & Particle concentration in detection area \\ 
+$\sigma$ & Lateral size of the point spread function \\ 
+$a$ & Side size of the square-shaped detection area \\
+$D$ & Diffusion coefficient \\
+\end{tabular} \\
+\end{center}
+\vspace{2em}

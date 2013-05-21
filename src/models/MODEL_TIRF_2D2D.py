@@ -116,7 +116,7 @@ labels_human_readable_6022 = [
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_factor_human_readable_6022 = [
-                10, # D_2D₁ [10 µm²/s],
+                10,     # D_2D₁ [10 µm²/s],
                 10,     # D_2D₂ [10 µm²/s]
                 100,    # σ [100 nm]
                 100,    # a [100 nm]

@@ -21,19 +21,21 @@ def wixi(x):
 
 def CF_Gxy_TIR_square(parms, tau):
     # Model 6000
-    """ 2D free diffusion measured with a square pinhole.
-        For the square pinhole, the correlation function can readily be
-        calculated for a TIR-FCS setup.
+    """ Two-dimensional diffusion with a square shaped lateral detection
+        area taking into account the size of the point spread function.
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] sigma: lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
-        [2] a: side size of the square pinhole
-        [3] C_2D: 2-dimensional concentration 
+        [1] sigma: Lateral size of the point spread function
+                   sigma = sigma_0 * lambda / NA
+        [2] a: Side size of the square-shaped detection area
+        [3] C_2D: Particle concentration in detection area
         *tau*: lag time
 
+        Please refer to the documentation for further information
+        on the model.
+        
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
     D = parms[0]

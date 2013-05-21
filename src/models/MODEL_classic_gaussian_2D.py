@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ This file contains some simple 2D models for confocal microscopy
 """
+
 import numpy as np                  # NumPy
 
 
@@ -254,11 +255,6 @@ values_factor_human_readable_6031 = [
 valuestofit_6031 = [True, True, False, False, False, True, True, False]
 parms_6031 = [labels_6031, values_6031, valuestofit_6031,
               labels_human_readable_6031, values_factor_human_readable_6031]
-
-
-
-
-
 
 
 model1 = dict()
