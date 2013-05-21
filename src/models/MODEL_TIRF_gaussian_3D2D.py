@@ -45,7 +45,8 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n       Effective number of particles in confocal volume (n = n2D+n3D)
+        [0] n       Effective number of particles in confocal volume
+                    (n = n2D+n3D)
         [1] D_2D    Diffusion coefficient  of surface bound particles
         [2] D_3D    Diffusion coefficient of freely diffusing particles
         [3] F       Fraction of molecules of the freely diffusing species

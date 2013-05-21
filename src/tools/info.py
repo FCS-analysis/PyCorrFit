@@ -221,7 +221,7 @@ class ShowInfo(wx.Frame):
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
         # Size
-        initial_size = wx.Size(450,300)
+        initial_size = wx.Size(650,700)
         initial_sizec = (initial_size[0]-6, initial_size[1]-30)
         self.SetMinSize(wx.Size(200,200))
         self.SetSize(initial_size)

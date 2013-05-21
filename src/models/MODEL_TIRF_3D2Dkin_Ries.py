@@ -38,10 +38,10 @@ def CF_gxy_square(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D: Diffusion coefficient
-        [1] sigma: lateral size of the point spread function
+        [0] D      Diffusion coefficient
+        [1] sigma  lateral size of the point spread function
                    sigma = simga_0 * lambda / NA
-        [2] a: side size of the square pinhole
+        [2] a      side size of the square pinhole
         *tau* - lag time
 
         Returns: Nonnormalized Lateral correlation function w/square pinhole.
@@ -66,18 +66,18 @@ def CF_gz_CC(parms, tau, wixi=wixi):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_3D: 3D Diffusion coefficient (species A)
-        [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] sigma: lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D: 3-dimensional concentration of species A
-        [6] Conc_2D: 2-dimensional concentration of species C
-        [7] eta_3D: molecular brightness of species A
-        [8] eta_2D: molecular brightness of species C
-        [9] k_a : Surface association rate constant
-        [10] k_d : Surface dissociation rate constant
+        [0] D_3D     3D Diffusion coefficient (species A)
+        [1] D_2D     2D Diffusion coefficient of bound species C
+        [2] sigma    lateral size of the point spread function
+                     sigma = simga_0 * lambda / NA
+        [3] a        side size of the square pinhole
+        [4] d_eva    evanescent decay length (decay to 1/e)
+        [5] Conc_3D  3-dimensional concentration of species A
+        [6] Conc_2D  2-dimensional concentration of species C
+        [7] eta_3D   molecular brightness of species A
+        [8] eta_2D   molecular brightness of species C
+        [9] k_a      Surface association rate constant
+        [10] k_d     Surface dissociation rate constant
         *tau* - lag time
     """
     D = parms[0]
@@ -119,18 +119,18 @@ def CF_gz_AC(parms, tau, wixi=wixi):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_3D: 3D Diffusion coefficient (species A)
-        [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] sigma: lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D: 3-dimensional concentration of species A
-        [6] Conc_2D: 2-dimensional concentration of species C
-        [7] eta_3D: molecular brightness of species A
-        [8] eta_2D: molecular brightness of species C
-        [9] k_a : Surface association rate constant
-        [10] k_d : Surface dissociation rate constant
+        [0] D_3D     3D Diffusion coefficient (species A)
+        [1] D_2D     2D Diffusion coefficient of bound species C
+        [2] sigma    lateral size of the point spread function
+                     sigma = simga_0 * lambda / NA
+        [3] a        side size of the square pinhole
+        [4] d_eva    evanescent decay length (decay to 1/e)
+        [5] Conc_3D  3-dimensional concentration of species A
+        [6] Conc_2D  2-dimensional concentration of species C
+        [7] eta_3D   molecular brightness of species A
+        [8] eta_2D   molecular brightness of species C
+        [9] k_a      Surface association rate constant
+        [10] k_d     Surface dissociation rate constant
         *tau* - lag time
     """
     D = parms[0]
@@ -178,18 +178,18 @@ def CF_gz_AA(parms, tau, wixi=wixi):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_3D: 3D Diffusion coefficient (species A)
-        [1] D_2D: 2D Diffusion coefficient of bound species C
-        [2] sigma: lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
-        [3] a: side size of the square pinhole
-        [4] d_eva: evanescent decay length (decay to 1/e)
-        [5] Conc_3D: 3-dimensional concentration of species A
-        [6] Conc_2D: 2-dimensional concentration of species C
-        [7] eta_3D: molecular brightness of species A
-        [8] eta_2D: molecular brightness of species C
-        [9] k_a : Surface association rate constant
-        [10] k_d : Surface dissociation rate constant
+        [0] D_3D     3D Diffusion coefficient (species A)
+        [1] D_2D     2D Diffusion coefficient of bound species C
+        [2] sigma    lateral size of the point spread function
+                     sigma = simga_0 * lambda / NA
+        [3] a        side size of the square pinhole
+        [4] d_eva    evanescent decay length (decay to 1/e)
+        [5] Conc_3D  3-dimensional concentration of species A
+        [6] Conc_2D  2-dimensional concentration of species C
+        [7] eta_3D   molecular brightness of species A
+        [8] eta_2D   molecular brightness of species C
+        [9] k_a      Surface association rate constant
+        [10] k_d     Surface dissociation rate constant
         *tau* - lag time
     """
     D = parms[0]
@@ -245,24 +245,24 @@ def CF_gz_AA(parms, tau, wixi=wixi):
 def CF_Gxyz_TIR_square_ubibi(parms, tau, 
                          gAAz=CF_gz_AA, gACz=CF_gz_AC, gCCz=CF_gz_CC,
                          gxy=CF_gxy_square):
-    """ 3D diffusion measured with a square pinhole in a TIR-FCS setup and
-        considering two species:
-        - Surface bound species C
-        - Freely diffusing species A
-        Binding and unbinding is implied.
+    """ Two-component two- and three-dimensional diffusion
+        with a square-shaped lateral detection area taking into account
+        the size of the point spread function; and an exponential
+        decaying profile in axial direction. This model covers binding
+        and unbinding kintetics. 
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] D_3D    3D Diffusion coefficient (species A)
-        [1] D_2D    2D Diffusion coefficient of bound species C
-        [2] sigma   lateral size of the point spread function
+        [0] D_3D    Diffusion coefficient of freely diffusing species A
+        [1] D_2D    Diffusion coefficient of bound species C
+        [2] sigma   Lateral size of the point spread function
                     sigma = simga_0 * lambda / NA
-        [3] a       side size of the square pinhole
-        [4] d_eva   evanescent decay length (decay to 1/e)
-        [5] C_3D    3-dimensional concentration of species A
-        [6] C_2D    2-dimensional concentration of species C
-        [7] eta_3D  molecular brightness of species A
-        [8] eta_2D  molecular brightness of species C
+        [3] a       Side size of the square-shaped detection area 
+        [4] d_eva   Evanescent decay constant
+        [5] C_3D    Concentration of species A in observation volume
+        [6] C_2D    Concentration of species C in observation area
+        [7] eta_3D  Molecular brightness of species A
+        [8] eta_2D  Molecular brightness of species C
         [9] k_a     Surface association rate constant
         [10] k_d    Surface dissociation rate constant
         *tau* - lag time

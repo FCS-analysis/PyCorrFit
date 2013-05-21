@@ -112,7 +112,8 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n       Effective number of particles in confocal area (n = n1+n2)
+        [0] n       Effective number of particles in confocal area
+                    (n = n1+n2)
         [1] τ_1     Diffusion time of particle species 1
         [2] τ_2     Diffusion time of particle species 2
         [3] F       Fraction of molecules of species 1 (n1 = n*F)
