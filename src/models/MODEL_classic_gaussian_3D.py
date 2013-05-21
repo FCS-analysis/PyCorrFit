@@ -6,7 +6,8 @@ import numpy as np                  # NumPy
 # 3D simple gauss
 def CF_Gxyz_gauss(parms, tau):
     # Model 6012
-    """ 3D free diffusion with a Gaussian laser profile (eliptical).
+    """ Three-dimanesional free diffusion with a Gaussian laser profile
+        (eliptical).
 
         G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
 
@@ -44,7 +45,8 @@ def CF_Gxyz_gauss(parms, tau):
 # 3D blinking gauss
     # Model 6011
 def CF_Gxyz_blink(parms, tau):
-    """ 3D free diffusion and blinking effects.
+    """ Three-dimanesional free diffusion with a Gaussian laser profile
+        (eliptical), including a triplet component.
         Due to pH-reigned (de-)protonation (or other factors), blinking of 
         fluorescent molecules can be observed.
         (This is *CF_Gxyz_gauss* + blinking.
@@ -105,7 +107,8 @@ def Check_6011(parms):
 # 3D + 3D + Triplet Gauß
     # Model 6030
 def CF_Gxyz_gauss_3D3DT(parms, tau):
-    """ Two component 3D free diffusion and a triplet component.
+    """ Two-component three-dimensional free diffusion
+        with a Gaussian laser profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
@@ -118,17 +121,17 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume (n = n1+n2)
-        [1] τ_1: diffusion time of particle species 1
-        [2] τ_2: diffusion time of particle species 2
-        [3] F: fraction of molecules of species 1 (n1 = n*F)
+        [0] n: Effective number of particles in confocal volume (n = n1+n2)
+        [1] τ_1: Diffusion time of particle species 1
+        [2] τ_2: Diffusion time of particle species 2
+        [3] F: Fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
-        [4] SP: structural parameter z0/r0, describes the shape of the 
-                detection/excitation volume
-        [5] alpha: relative molecular brightness of particle
+        [4] SP: SP=z0/r0, Structural parameter,
+                          describes elongation of the confocal volume
+        [5] alpha: Relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [6] τ_trip: characteristic residence time in triplet state
-        [7] T: coefficient describing fraction of non-fluorescent molecules
+        [6] τ_trip: Characteristic residence time in triplet state
+        [7] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [8] offset
         *tau*: lag time
@@ -199,7 +202,7 @@ def MoreInfo_1C(parms, countrate):
 m_3dblink6011 = [6011, "3D+T (Gauß)","Simple 3D diffusion w/ triplet", 
                  CF_Gxyz_blink]
 labels_6011 = ["n","T","τ_trip [ms]", "τ_diff [ms]", "SP", "offset"]
-values_6011 = [4.0, 0.2, 0.07, 0.4, 5.0, 0.0]
+values_6011 = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
 valuestofit_6011 = [True, True, True, True, False, False]
 parms_6011 = [labels_6011, values_6011, valuestofit_6011]
 

@@ -22,44 +22,41 @@ def wixi(x):
 
 # 3D + 2D + T
 def CF_Gxyz_3d2dT_gauss(parms, tau):
-    """ Two component 3D and 2D free diffusion and a triplet component 
-        measured with a gaussian lateral detection profile and an exponentially
-        decaying profile in axial direction.
+    """ Two-component, two- and three-dimensional diffusion
+        with a Gaussian lateral detection profile and
+        an exponentially decaying profile in axial direction,
+        including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
-        *tautrip* is always smaller than 0.9*taud3D* or 0.9*taud2D*
 
-
-        taud3D = r0²/(4*D_3D)
         x = sqrt(D_3D*tau)*kappa
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa * 
-             [ sqrt(D_3D*tau/pi) - (2*D_3D*tau*kappa² - 1)/(2*kappa) * w(i*x) ]
-        g2D3D = 1 / [ 1.+tau/taud3D ]
+             [ sqrt(D_3D*tau/pi) + (1 - 2*D_3D*tau*kappa²)/(2*kappa) * w(i*x) ]
+        g2D3D = 1 / [ 1+4*D_3D*tau/r_0² ]
         particle3D = alpha²*F * g2D3D * gz
 
-        taud2D = r_0²/(4*D_2D)
-        particle2D = (1-F)/ (1+tau/taud2D) 
+        particle2D = (1-F)/ (1+4*D_2D*tau/r_0²) 
 
         triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
         norm = (1-F + alpha*F)²
-        G = 1/n*(particle1 + particle2)*triplet/norm + offset
+        G = 1/n*(particle2D + particle3D)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] D_2D: diffusion coefficient  of surface bound particle species
-        [2] D_3D: diffusion coefficient of 3D diffusing particle species
-        [3] F: fraction of molecules of 3D diffusing species 1 (n3D = n*F)
-               0 <= F <= 1
-        [4] r_0: radius of the detection profile (FWHM)
-        [5] d_eva: evanescent wave depth
-        [6] alpha: relative molecular brightness of particle
-                   3D compared to particle 2D (alpha = q3D/q2D)
-        [7] τ_trip: characteristic residence time in triplet state
+        [0] n: Effective number of particles in confocal volume (n = n2D+n3D)
+        [1] D_2D: Diffusion coefficient  of surface bound particles
+        [2] D_3D: Diffusion coefficient of freely diffusing particles
+        [3] F: Fraction of molecules of the freely diffusing species
+               (n3D = n*F), 0 <= F <= 1
+        [4] r_0: Lateral extent of the detection volume
+        [5] d_eva: Evanescent field depth
+        [6] alpha: Relative molecular brightness of freely diffusing
+                   compared to surface bound particles (alpha = q3D/q2D)
+        [7] τ_trip: Characteristic residence time in triplet state
                      tautrip = min(tautrip,taud2D*0.9,taud3D*0.9)
-        [8] T: coefficient describing fraction of non-fluorescent molecules
+        [8] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [9] offset
         *tau*: lag time
@@ -118,8 +115,10 @@ def Checkme(parms):
 
     taud2D = r0**2/(4*D2D)
     taud3D = r0**2/(4*D3D)
-    # Force triplet component to be smaller than diffusion times
-    tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
+    # We are not doing this anymore:
+    ## Force triplet component to be smaller than diffusion times
+    ## tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
+    
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one

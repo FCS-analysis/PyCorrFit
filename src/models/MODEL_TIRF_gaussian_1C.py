@@ -20,25 +20,25 @@ def wixi(x):
     return np.real_if_close(wixi)
 
 def CF_Gxyz_TIR_gauss(parms, tau):
-    """ 3D free diffusion measured with a gaussian lateral detection profile
-        and an exponentially decaying profile in axial direction.
+    """ Three-dimensional free diffusion with a Gaussian lateral 
+        detection profile and an exponentially decaying profile
+        in axial direction.
 
         x = sqrt(D*tau)*kappa
-        taudiff = r_0²/(4*D)
         kappa = 1/d_eva
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa² * 
-             [ sqrt(D*tau/pi) - (2*D*tau*kappa² - 1)/(2*kappa) * w(i*x) ]
-        g2D = 1 / [ pi*r_0² * (1.+tau/taudiff) ]
+             [ sqrt(D*tau/pi) + (1 - 2*D*tau*kappa²)/(2*kappa) * w(i*x) ]
+        g2D = 1 / [ pi (r_0² + 4*D*tau) ]
         G = 1/C_3D * g2D * gz
 
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D: Diffusion coefficient
-        [1] r_0: radius of the detection profile (FWHM)
-        [2] d_eva: evanescent wave depth
-        [2] C_3D : 3D Concentration
+        [1] r_0: Lateral extent of the detection volume
+        [2] d_eva: Evanescent field depth
+        [2] C_3D : Particle concentration in the confocal volume
         *tau*: lag time
 
         Returns: Normalized 3D correlation function for TIRF.
