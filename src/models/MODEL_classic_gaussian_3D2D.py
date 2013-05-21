@@ -119,9 +119,33 @@ values = [
                 0.001,       # tautrip
                 0.01,       # T
                 0.0      # offset
-                ]        
+                ]
+# For user comfort we add values that are human readable.
+# Theese will be used for output that only humans can read.
+labels_human_readable  = [  "n",
+                            "τ_2D [ms]",
+                            "τ_3D [ms]",
+                            "F_3D", 
+                            "SP",
+                            u"\u03b1"+" (q_3D/q_2D)", 
+                            "τ_trip [µs]",
+                            "T",
+                            "offset"
+                            ]
+values_factor_human_readable = [
+                          1.,     # "n",
+                          1.,     # "τ_2D [ms]",
+                          1.,     # "τ_3D [ms]",
+                          1.,     # "F_3D", 
+                          1.,     # "SP",
+                          1.,     # u"\u03b1"+" (q_3D/q_2D)", 
+                          1000.,  # "τ_trip [µs]",
+                          1.,     # "T",
+                          1.      # "offset"
+                ]
 valuestofit = [True, True, True, True, False, False, False, False, False]
-parms = [labels, values, valuestofit]
+parms = [labels, values, valuestofit,
+         labels_human_readable, values_factor_human_readable]
 
 
 model1 = dict()

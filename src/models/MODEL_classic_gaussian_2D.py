@@ -199,8 +199,11 @@ m_twodga6002 = [6002, "2D+T (Gauß)","2D confocal diffusion with triplet",
                 CF_Gxy_T_gauss]
 labels_6002 = ["n", "τ_diff [ms]",  "τ_trip [ms]", "T", "offset"]
 values_6002 = [4.0, 0.4, 0.001, 0.01, 0.0]
+labels_hr_6002 = ["n", "τ_diff [ms]",  "τ_trip [µs]", "T", "offset"]
+factors_hr_6002 = [1., 1., 1000., 1., 1.]
 valuestofit_6002 = [True, True, True, True, False]
-parms_6002 = [labels_6002, values_6002, valuestofit_6002]
+parms_6002 = [labels_6002, values_6002, valuestofit_6002,
+              labels_hr_6002, factors_hr_6002]
 
 
 # 2D + 2D + T model gauss
@@ -226,8 +229,31 @@ values_6031 = [
                 0.01,       # T
                 0.0      # offset
                 ]        
+# For user comfort we add values that are human readable.
+# Theese will be used for output that only humans can read.
+labels_human_readable_6031  = [
+                        "n",
+                        "τ"+u"\u2081"+" [ms]",
+                        "τ"+u"\u2082"+" [ms]",
+                        "F"+u"\u2081", 
+                        u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                        "τ_trip [µs]",
+                        "T",
+                        "offset"
+                            ]
+values_factor_human_readable_6031 = [
+                1.,     # "n",
+                1.,     # "τ"+u"\u2081"+" [ms]",
+                1.,     # "τ"+u"\u2082"+" [ms]",
+                1.,     # "F"+u"\u2081", 
+                1.,     # u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                1000.,  # "τ_trip [µs]",
+                1.,     # "T",
+                1.      # "offset"
+                ]
 valuestofit_6031 = [True, True, False, False, False, True, True, False]
-parms_6031 = [labels_6031, values_6031, valuestofit_6031]
+parms_6031 = [labels_6031, values_6031, valuestofit_6031,
+              labels_human_readable_6031, values_factor_human_readable_6031]
 
 
 

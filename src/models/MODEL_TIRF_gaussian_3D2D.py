@@ -55,7 +55,6 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         [6] alpha: Relative molecular brightness of freely diffusing
                    compared to surface bound particles (alpha = q3D/q2D)
         [7] τ_trip: Characteristic residence time in triplet state
-                     tautrip = min(tautrip,taud2D*0.9,taud3D*0.9)
         [8] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [9] offset
@@ -115,7 +114,7 @@ def Checkme(parms):
 
     taud2D = r0**2/(4*D2D)
     taud3D = r0**2/(4*D3D)
-    # We are not doing this anymore:
+    # We are not doing this anymore (Issue #2).
     ## Force triplet component to be smaller than diffusion times
     ## tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
     
@@ -198,7 +197,7 @@ labelshr  = ["n",
                 "r_0 [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ_trip [ms]",
+                "τ_trip [µs]",
                 "T",
                 "offset"
                 ] 
@@ -210,7 +209,7 @@ valueshr = [
                 100.,       # r0
                 100.,       # deva
                 1.,     # alpha
-                1.,       # tautrip
+                1000.,       # tautrip
                 1.,       # T
                 1.      # offset
                 ]   

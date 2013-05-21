@@ -22,26 +22,25 @@ def wixi(x):
 
 # 3D + 3D + T
 def CF_Gxyz_3D3DT_gauss(parms, tau):
-    """ Two component 3D free diffusion and a triplet component 
-        measured with a gaussian lateral detection profile and an exponentially
-        decaying profile in axial direction.
+    """ Two-component three-dimensional diffusion with a Gaussian
+        lateral detection profile and an exponentially decaying profile
+        in axial direction, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
-        *tautrip* is always smaller than 0.9*tauD1* or 0.9*tauD2*
 
         w(i*x) = exp(x²)*erfc(x)
         taud1 = r_0²/(4*D_1)
         x1 = sqrt(D_1*tau)*kappa
         gz1 = kappa * 
-             [ sqrt(D_1*tau/pi) - (2*D_1*tau*kappa² - 1)/(2*kappa) * w(i*x1) ]
+             [ sqrt(D_1*tau/pi) + (1 - 2*D_1*tau*kappa²)/(2*kappa) * w(i*x1) ]
         g2D1 = 1 / [ 1.+tau/taud1 ]
         particle1 = F * g2D1 * gz1
 
         taud2 = r_0²/(4*D_2)
         x2 = sqrt(D_2*tau)*kappa
         gz2 = kappa * 
-             [ sqrt(D_2*tau/pi) - (2*D_2*tau*kappa² - 1)/(2*kappa) * w(i*x2) ]
+             [ sqrt(D_2*tau/pi) + (1 - 2*D_2*tau*kappa²)/(2*kappa) * w(i*x2) ]
         g2D2 = 1 / [ 1.+tau/taud2 ]
         particle2 =  alpha²*(1-F) * g2D2 * gz2
 
@@ -52,18 +51,17 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n: expected number of particles in observation volume (n = n2D+n3D)
-        [1] D_1: diffusion coefficient first particle species
-        [2] D_2: diffusion coefficient second particle species
-        [3] F: fraction of molecules of species 1 (n1 = n*F)
+        [0] n: Effective number of particles in confocal volume (n = n2D+n3D)
+        [1] D_1: Diffusion coefficient of species 1
+        [2] D_2: Diffusion coefficient of species 2
+        [3] F: Fraction of molecules of species 1 (n1 = n*F)
                0 <= F <= 1
-        [4] r_0: radius of the detection profile (FWHM)
-        [5] d_eva: evanescent wave depth
-        [6] alpha: relative molecular brightness of particle
+        [4] r_0: Lateral extent of the detection volume
+        [5] d_eva: Evanescent field depth
+        [6] alpha: Relative molecular brightness of particle
                    2 compared to particle 1 (alpha = q2/q1)
-        [7] τ_trip: characteristic residence time in triplet state
-                     tautrip = min(tautrip,tauD2*0.9,tauD1*0.9)
-        [8] T: coefficient describing fraction of non-fluorescent molecules
+        [7] τ_trip: Characteristic residence time in triplet state
+        [8] T: Fraction of particles in triplet (non-fluorescent) state
                0 <= T < 1
         [9] offset
         *tau*: lag time
@@ -210,13 +208,13 @@ values = [
                 ]    
 # Human readable stuff
 labelshr  = ["n",
-                "D"+u"\u2081"+" [µm²/s]",
-                "D"+u"\u2082"+" [µm²/s]",
+                "D"+u"\u2081"+u" [µm²/s]",
+                "D"+u"\u2082"+u" [µm²/s]",
                 "F"+u"\u2081", 
                 "r_0 [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ_trip [ms]",
+                "τ_trip [µs]",
                 "T",
                 "offset"
                 ]
@@ -228,7 +226,7 @@ valueshr = [
                 100.,       # r0
                 100.,       # deva
                 1.,     # alpha
-                1.,       # tautrip
+                1000.,       # tautrip
                 1.,       # T
                 1.      # offset
                 ]   

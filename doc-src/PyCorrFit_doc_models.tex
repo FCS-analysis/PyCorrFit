@@ -238,18 +238,49 @@ G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
 $N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
-$\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
 $D_\mathrm{2D}$ &  Diffusion coefficient of surface bound particles \\ 
 $D_\mathrm{3D}$ &  Diffusion coefficient of freely diffusing particles \\ 
 $F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
 $\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
 $R_0$ & Lateral extent of the detection volume \\
+$\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
 $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
 \end{tabular}
 \end{center}
 \vspace{2em}
 
+
+% 3D+3D+T diffusion (Gauß/exp)
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{3D+3D+T (Gauß/exp)} \\ 
+ID & \textbf{6034} \\ 
+Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component. \\
+\end{tabular}
+\begin{align}
+G(\tau) = &A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
+\notag \times  \Bigg[ \,\, & 
+\frac{F \kappa}{1+ 4 D_1 \tau/R_0^2} 
+\left( \sqrt{\frac{D_1 \tau}{\pi}} + \frac{1 - 2 D_1 \tau \kappa^2}{2 \kappa}  w\left(i \sqrt{D_1 \tau} \kappa\right) \right) + \\
+ \notag + &
+\frac{(1-F) \alpha^2 \kappa}{1+ 4 D_2 \tau/R_0^2} 
+\left( \sqrt{\frac{D_2 \tau}{\pi}} + \frac{1 - 2 D_2 \tau \kappa^2}{2 \kappa}  w\left(i \sqrt{D_2 \tau} \kappa\right) \right) \,\, \Bigg]
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal volume ($N = N_1+N_2$) \\ 
+$D_1$ &  Diffusion coefficient of species 1 \\ 
+$D_2$ &  Diffusion coefficient of species 2 \\ 
+$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_2/q_1$) \\
+$R_0$ & Lateral extent of the detection volume \\
+$\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
 
 
 

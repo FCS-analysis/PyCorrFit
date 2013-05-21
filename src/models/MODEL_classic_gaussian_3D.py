@@ -203,8 +203,11 @@ m_3dblink6011 = [6011, "3D+T (Gauß)","Simple 3D diffusion w/ triplet",
                  CF_Gxyz_blink]
 labels_6011 = ["n","T","τ_trip [ms]", "τ_diff [ms]", "SP", "offset"]
 values_6011 = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
+labels_hr_6011 = ["n","T","τ_trip [µs]", "τ_diff [ms]", "SP", "offset"]
+factors_hr_6011 = [1., 1., 1000., 1., 1., 1.]
 valuestofit_6011 = [True, True, True, True, False, False]
-parms_6011 = [labels_6011, values_6011, valuestofit_6011]
+parms_6011 = [labels_6011, values_6011, valuestofit_6011,
+              labels_hr_6011, factors_hr_6011]
 
 # 3D Model gauss
 m_3dgauss6012 = [6012, "3D (Gauß)","Simple 3D diffusion", CF_Gxyz_gauss]
@@ -231,15 +234,40 @@ values_6030 = [
                 25,      # n
                 5,       # taud1
                 1000,    # taud2
-                0.75,     # F
+                0.75,    # F
                 5,       # SP
                 1.0,     # alpha
-                0.001,       # tautrip
-                0.01,       # T
+                0.001,   # tautrip
+                0.01,    # T
                 0.0      # offset
                 ]        
+# For user comfort we add values that are human readable.
+# Theese will be used for output that only humans can read.
+labels_human_readable_6030  = [
+                        "n",
+                        "τ"+u"\u2081"+" [ms]",
+                        "τ"+u"\u2082"+" [ms]",
+                        "F"+u"\u2081", 
+                        "SP",
+                        u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                        "τ_trip [µs]",
+                        "T",
+                        "offset"
+                            ]
+values_factor_human_readable_6030 = [
+                        1.,     # n
+                        1.,     # taud1
+                        1.,     # taud2
+                        1.,     # F
+                        1.,     # SP
+                        1.,     # alpha
+                        1000.,  # tautrip [µs]
+                        1.,     # T
+                        1.      # offset
+                ]
 valuestofit_6030 = [True, True, False, False, False, False, True, True, False]
-parms_6030 = [labels_6030, values_6030, valuestofit_6030]
+parms_6030 = [labels_6030, values_6030, valuestofit_6030,
+              labels_human_readable_6030, values_factor_human_readable_6030]
 
 
 # Pack the models
