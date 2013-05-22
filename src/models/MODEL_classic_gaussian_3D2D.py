@@ -27,7 +27,7 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
                     (n3D = n*F), 0 <= F <= 1
         [4] SP      SP=z0/r0 Structural parameter,
                          describes elongation of the confocal volume
-        [5] alpha   relative molecular brightness of particle
+        [5] alpha   Relative molecular brightness of particle
                     3D compared to particle 2D (alpha = q3D/q2D)
         [6] τ_trip  Characteristic residence time in triplet state
         [7] T       Fraction of particles in triplet (non-fluorescent) state
