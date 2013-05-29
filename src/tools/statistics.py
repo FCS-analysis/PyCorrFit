@@ -162,7 +162,12 @@ class Stat(wx.Frame):
         # Some nasty iteration through the dictionaries.
         # Collect all checked variables.
         pagekeys = AllInfo.keys()
-        pagekeys.sort()
+        # If pagenumber is larger than 10,
+        # pagekeys.sort will not work, because we have strings
+        # Define new compare function
+        cmp_func = lambda a,b: cmp(int(a.strip().strip("#")),
+                                   int(b.strip().strip("#")))
+        pagekeys.sort(cmp=cmp_func)
         for Info in pagekeys:
             pageinfo = list()
             for item in AllInfo[Info]:
