@@ -21,7 +21,7 @@ To run PyCorrFit from source, download the contents of this repository, install 
 Ubuntu-Linux
 -------------------
 
-- On a standard Ubuntu-Linux 12.04 installation, install these packages:
+- On a standard Ubuntu-Linux 12.04 or 13.04 installation, install these packages:
 
 		python-matplotlib
 		python-numpy
@@ -37,7 +37,7 @@ Ubuntu-Linux
 		texlive-math-extra
 		texlive-science
 
-- The following steps are optional but might increase performance. Up-to-date python packages can easily be installed using pip. 
+- The following steps are optional but might increase performance on Ubuntu 12.04. Up-to-date python packages can easily be installed using pip. 
 	- Install
 
 			gfortran 
