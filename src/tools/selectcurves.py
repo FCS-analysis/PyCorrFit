@@ -23,7 +23,7 @@ import wx.lib.plot as plot              # Plotting in wxPython
 
 
 # Menu entry name
-MENUINFO = ["&Curve selection", "Select experimental curves."]
+MENUINFO = ["&Overlay tool", "Select experimental curves."]
 
 class Wrapper_OnImport(object):
     """ Wrapper for import function.
