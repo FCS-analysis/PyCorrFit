@@ -24,6 +24,8 @@ import wx
 import openfile as opf     # How to treat an opened file
 import models as mdls
 
+# Menu entry name
+MENUINFO = ["B&atch control", "Batch fitting."]
 
 class BatchCtrl(wx.Frame):
     def __init__(self, parent):

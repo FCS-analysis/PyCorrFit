@@ -21,6 +21,8 @@ import wx
 import models as mdls
 import doc
 
+# Menu entry name
+MENUINFO = ["&Average data", "Create an average curve from whole session."]
 
 class Average(wx.Frame):
     # This tool is derived from a wx.frame.

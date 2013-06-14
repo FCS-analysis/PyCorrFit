@@ -22,6 +22,8 @@ import os
 
 from info import InfoClass
 
+# Menu entry name
+MENUINFO = ["&Statistics", "Show some session statistics."]
 
 class Stat(wx.Frame):
     # This tool is derived from a wx.frame.

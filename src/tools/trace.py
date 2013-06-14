@@ -19,6 +19,8 @@ import wx
 import numpy as np
 import wx.lib.plot as plot    
 
+# Menu entry name
+MENUINFO = ["&Trace view", "Show the trace of an opened file."]
 
 class ShowTrace(wx.Frame):
     def __init__(self, parent):

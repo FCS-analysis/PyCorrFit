@@ -27,6 +27,8 @@ import doc
 import openfile as opf                  # How to treat an opened file
 import readfiles
 
+# Menu entry name
+MENUINFO = ["&Background correction", "Open a file for background correction."]
 
 class BackgroundCorrection(wx.Frame):
     def __init__(self, parent):

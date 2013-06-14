@@ -20,6 +20,9 @@ import numpy as np
 
 import doc
 
+# Menu entry name
+MENUINFO = ["&Data range selection",
+            "Select an interval of lag times to be used for fitting."]
 
 class SelectChannels(wx.Frame):
     def __init__(self, parent):

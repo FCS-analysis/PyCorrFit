@@ -22,6 +22,9 @@ import numpy as np
 import edclasses  # edited floatspin
 import models as mdls
 
+# Menu entry name
+MENUINFO = ["S&lider simulation",
+            "Fast plotting for different parameters."]
 
 class Slide(wx.Frame):
     # This tool is derived from a wx.frame.

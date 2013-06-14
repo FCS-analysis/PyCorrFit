@@ -20,7 +20,10 @@ import numpy as np
 
 import models as mdls
 
-
+# Menu entry name
+MENUINFO = ["Page &info",
+            "Display some information on the current page."]
+            
 class InfoClass(object):
     """ This class get's all the Info possible from a Page and
         makes it available through a dictionary with headings as keys.

@@ -19,6 +19,7 @@
 # This file is necessary for this folder to become a module that can be 
 # imported by PyCorrFit or other people.
 
+import importlib
 import numpy as np                  # NumPy
 import sys
 
@@ -30,61 +31,57 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 # Load all of the classes
-from average import Average
-from background import BackgroundCorrection
-from batch import BatchCtrl
-from channels import SelectChannels
-from globalfit import GlobalFit
-from info import ShowInfo
-from trace import ShowTrace
-from selectcurves import Wrapper_Tools as SelCurves
-from statistics import Stat
-from simulation import Slide
+# This also defines the order of the tools in the menu
+ImpA = [ 
+        ["channels", "SelectChannels"],
+        ["background", "BackgroundCorrection"],
+        ["selectcurves", "Wrapper_Tools"],
+        ["batch", "BatchCtrl"],
+        ["globalfit", "GlobalFit"],
+        ["average", "Average"],
+        ["simulation", "Slide"]
+       ]
 
+ImpB = [
+        ["info", "ShowInfo"],
+        ["statistics", "Stat"],
+        ["trace", "ShowTrace"]
+       ]
 
-# from example import Tool
+ModuleActive = list()
+ToolsActive = list()
+for i in np.arange(len(ImpA)):
+    # We have to add "tools." because this is a relative import
+    ModuleActive.append(importlib.import_module("tools."+ImpA[i][0]))
+    ToolsActive.append(getattr(ModuleActive[i], ImpA[i][1]))
+
+ModulePassive = list()
+ToolsPassive = list()
+for i in np.arange(len(ImpB)):
+    ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
+    ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
 
 # This is in the file menu and not needed in the dictionaries below.
 from chooseimport import ChooseImportTypes
 from chooseimport import ChooseImportTypesModel
 from comment import EditComment
 
-
-
-# Make a dictionary of Tools
 ToolDict = dict()
-# Make lists of tools for each dictionary entry
-ToolsActive = [Average, BackgroundCorrection, BatchCtrl, SelCurves,
-               SelectChannels, GlobalFit, Slide]
-ToolsPassive = [ShowInfo, ShowTrace, Stat]
 ToolDict["A"] = ToolsActive
 ToolDict["P"] = ToolsPassive
 
 
 # Make the same for Menu Names in Tools
+NameActive = list()
+for i in np.arange(len(ImpA)):
+    NameActive.append(ModuleActive[i].MENUINFO)
+    
+NamePassive = list()
+for i in np.arange(len(ImpB)):
+    NamePassive.append(ModulePassive[i].MENUINFO)
+
+
 ToolName = dict()
-NameActive = [
-  ["&Average data", "Create an average curve from whole session."],
-  ["&Background correction", "Open a file for background correction."],
-  ["B&atch control", "Batch fitting."],
-  ["&Curve selection", "Select experimental curves."],
-  ["&Data range selection",
-                     "Select an interval of lag times to be used for fitting."],
-  ["&Global fitting", "Interconnect parameters from different measurements."],
-  ["S&lider simulation", "Fast plotting for different parameters."]
-             ]
-
-NamePassive = [
-    ["Page &info", "Display some information on the current page."],
-    ["&Trace view", "Show the trace of an opened file."],
-    ["&Statistics", "Show some session statistics."]
-              ]
-
-
 ToolName["A"] = NameActive
 ToolName["P"] = NamePassive
-
-
-
-
 

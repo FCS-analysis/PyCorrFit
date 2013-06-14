@@ -21,6 +21,9 @@ from scipy import optimize as spopt
 
 import models as mdls
 
+# Menu entry name
+MENUINFO = ["&Global fitting",
+            "Interconnect parameters from different measurements."]
 
 class GlobalFit(wx.Frame):
     # This tool is derived from a wx.frame.
@@ -71,8 +74,12 @@ check parameters on each page and start 'Global fit'.
         for i in np.arange(len(weightlist)):
             weightlist[1] = weightlist[1].split("(")[0].strip()
         self.weightedfitdrop.SetItems(weightlist)
-        self.Page.Fit_create_instance(noplots=True)
-        FitTypeSelection = Page.Fitbox[1].GetSelection()
+        try:
+            # if there is no data, this could go wrong
+            self.Page.Fit_create_instance(noplots=True)
+            FitTypeSelection = Page.Fitbox[1].GetSelection()
+        except:
+            FitTypeSelection = 0
         self.weightedfitdrop.SetSelection(FitTypeSelection)
         ## Knotnumber: we don't want to interfere
         # The user might want to edit the knotnumbers.

@@ -240,8 +240,6 @@ class MyFrame(wx.Frame):
         helpmenu = wx.Menu()
         # wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         # self.filemenu
-        #menuLoadSingle = self.filemenu.Append(wx.ID_ANY, 
-        #                          "&Load single data file", "Load a data file")
         menuLoadBatch = self.filemenu.Append(wx.ID_ANY, 
                          "&Load data files", "Loads one or multiple data files")
         menuAddModel = self.filemenu.Append(wx.ID_ANY, 
