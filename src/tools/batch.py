@@ -74,6 +74,8 @@ class BatchCtrl(wx.Frame):
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
         self.SetMinSize(topSizer.GetMinSizeTuple())
+        # Check if we even have pages.
+        self.OnPageChanged()
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -133,6 +135,12 @@ class BatchCtrl(wx.Frame):
 
 
     def OnPageChanged(self, Page=None):
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        else:
+            print "batch"
+            self.Enable()
         # We need to update the list of Pages in self.dropdown
         if self.rbtnhere.Value == True:
             DDlist = list()

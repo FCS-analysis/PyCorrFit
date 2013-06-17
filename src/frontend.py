@@ -210,21 +210,27 @@ class MyFrame(wx.Frame):
         """ Independent on order of menus, enable or disable tools and
             current menu.
         """
-        tid = self.menuBar.FindMenu("&Tools")
-        self.menuBar.EnableTop(tid, enabled)
+        # Tools menu is now always enabled
+        # tid = self.menuBar.FindMenu("&Tools")
+        # self.menuBar.EnableTop(tid, enabled)
         cid = self.menuBar.FindMenu("Current &Page")
         self.menuBar.EnableTop(cid, enabled)
-        if enabled == False:
-            # Close all the dialogs
-            keys = self.ToolsOpen.keys()
-            for key in keys:
-                # Close it
-                self.ToolsOpen[key].Close()
-            # Uncheck all the tool menu items
-            for item in self.toolmenu.GetMenuItems():
-                if item.IsCheckable() is True:
-                    # This means, that we hit a separator
-                    self.toolmenu.Check(item.GetId(), False)
+        #if enabled == False:
+        #    # Disable all the dialogs
+        #    keys = self.ToolsOpen.keys()
+        #    for key in keys:
+        #        # Do not close it but disable it
+        #        # self.ToolsOpen[key].Close()
+        #        self.ToolsOpen[key].Disable()
+        #    # Uncheck all the tool menu items
+        #    # for item in self.toolmenu.GetMenuItems():
+        #    #    if item.IsCheckable() is True:
+        #    #        # This means, that we hit a separator
+        #    #        self.toolmenu.Check(item.GetId(), False)
+        #else:
+        #    keys = self.ToolsOpen.keys()
+        #    for key in keys:
+        #        self.ToolsOpen[key].Enable()
 
 
     def MakeMenu(self):
@@ -453,7 +459,7 @@ class MyFrame(wx.Frame):
                 return "abort"      # stop this function - do nothing.
             elif result == wx.ID_YES:
                 self.OnSaveSession()
-        # Close all the dialogs and disable menus
+        # Disable all the dialogs and menus
         self.EnableToolCurrent(False)
         # Delete all the pages
         for i in np.arange(numtabs):
@@ -524,8 +530,9 @@ class MyFrame(wx.Frame):
     def OnFNBClosedPage(self,e=None):
         """ Called, when a page has been closed """
         if self.notebook.GetPageCount() == 0:
-            # Disable Current Menu and close their dialogs
+            # Grey out tools
             self.EnableToolCurrent(False)
+            
 
 
     def OnFNBPageChanged(self,e=None, Page=None):
@@ -542,6 +549,7 @@ class MyFrame(wx.Frame):
         for key in keys:
             # Update the information
             self.ToolsOpen[key].OnPageChanged(Page)
+            
 
 
     def OnImportData(self,e=None):

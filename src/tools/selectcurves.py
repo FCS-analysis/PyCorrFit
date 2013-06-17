@@ -76,6 +76,7 @@ class Wrapper_Tools(object):
         # This is necessary for parent to deselect and select the tool
         # in the tools menu.
         self.Bind = self.Selector.Bind
+        self.OnPageChanged(None)
 
 
     def GetCurvedict(self, e=None):
@@ -98,12 +99,33 @@ class Wrapper_Tools(object):
         self.Selector.Destroy()
 
 
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page=None):
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
-        self.OnClose()
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Selector.Disable()
+        else:
+            # This is quite hacky. Someone clean it up?
+            pos = self.Selector.GetPositionTuple()
+            size = self.Selector.GetSizeTuple()
+            del self.Bind
+            self.Selector.Close()
+            del self.Selector
+            curvedict = self.GetCurvedict()
+            self.Selector = UserSelectCurves(self.parent,
+                                             curvedict, wrapper=self)
+            self.Bind = self.Selector.Bind
+            self.Selector.SetSize(size)
+            self.Selector.SetPosition(pos)
+            # Tell the parent that we are still there
+            self.parent.ToolsOpen[self.MyID] = self
+            self.parent.ToolsOpen[self.MyID].MyID = self.MyID
+            self.parent.ToolsOpen[self.MyID].Bind(wx.EVT_CLOSE, 
+                              self.parent.ToolsOpen[self.MyID].OnClose)
+            self.parent.toolmenu.Check(self.MyID, True)
+
 
 
     def OnResults(self, keyskeep, keysrem):

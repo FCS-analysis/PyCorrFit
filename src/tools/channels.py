@@ -109,17 +109,23 @@ class SelectChannels(wx.Frame):
         # Parent should be the fitting panel -
         # The tab, where the fitting is done.
         self.Page = parent
-        if self.Page.dataexpfull is not None:
-            taufull = self.Page.dataexpfull[:,0]
+        if self.Page == None:
+            # dummy info
+            taufull = np.arange(100)
+            self.left = self.right = None
+            self.Disable()
         else:
-            # then we only have tau
-            taufull = self.Page.taufull
+            self.left = self.Page.startcrop     # starting position
+            self.right = self.Page.endcrop      # ending position
+            if self.Page.dataexpfull is not None:
+                taufull = self.Page.dataexpfull[:,0]
+            else:
+                # then we only have tau
+                taufull = self.Page.taufull
         self.lentau = len(taufull)
         self.start0 = 0                     # left border of interval
         # The interval starts at 0!
         self.end0 = self.lentau - 1         # right border of interval 
-        self.left = self.Page.startcrop     # starting position
-        self.right = self.Page.endcrop      # ending position
         if self.left is None or self.left > self.end0:
             # This means, that either left = right = None
             # or the dataexp-array is too small
@@ -175,6 +181,8 @@ class SelectChannels(wx.Frame):
         """ Called, whenever data range in channels is changed. This updates
             the data range in seconds in the window.
         """
+        if self.Page == None:
+            return
         N = len(self.Page.taufull)
         start = self.spinstart.Value
         end = self.spinend.Value
@@ -209,19 +217,25 @@ class SelectChannels(wx.Frame):
         # import some data.
         #
         # Check if we have a fixed channel selection
-        state = self.fixcheck.GetValue()
-        if state == True:
-            # We do not need to run Calc_init
-            self.Page = page
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
         else:
-            # We will run it
-            self.Calc_init(page)
-            self.spinstart.SetRange(self.start0, self.end0-1)
-            self.spinstart.SetValue(self.left)
-            self.spinend.SetRange(self.start0+1, self.end0)
-            self.spinend.SetValue(self.right)
-            self.textend.SetLabel("%d." % self.lentau)
-        self.OnChangeChannels()
+            self.Enable()
+            # There is a page. We may continue.
+            state = self.fixcheck.GetValue()
+            if state == True:
+                # We do not need to run Calc_init
+                self.Page = page
+            else:
+                # We will run it
+                self.Calc_init(page)
+                self.spinstart.SetRange(self.start0, self.end0-1)
+                self.spinstart.SetValue(self.left)
+                self.spinend.SetRange(self.start0+1, self.end0)
+                self.spinend.SetValue(self.right)
+                self.textend.SetLabel("%d." % self.lentau)
+            self.OnChangeChannels(),
+
 
 
     def SetValues(self):

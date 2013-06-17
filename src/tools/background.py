@@ -161,6 +161,8 @@ class BackgroundCorrection(wx.Frame):
         # This is also necessary to prevent unsplitting
         self.sp.SetMinimumPaneSize(sashsize)
         self.sp.SplitHorizontally(panel, self.canvas, sashsize)
+        # If there is not page, disable ourselves:
+        self.OnPageChanged(None)
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -349,6 +351,11 @@ class BackgroundCorrection(wx.Frame):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        else:
+            self.Enable()
         if page.bgselected is None:
             self.btnrem.Enable(False)
         else:
