@@ -188,7 +188,7 @@ check parameters on each page and start 'Global fit'.
                     Page.Fitbox[1].SetSelection(weighttype)
                     weightname = self.weightedfitdrop.GetValue()
                     setweightname = Page.Fitbox[1].GetValue()
-                    if weightname != setweightname:
+                    if setweightname.count(weightname) == 0:
                         print "Page "+Page.counter+" has no fitting type '"+ \
                               weightname+"'!"
                         
@@ -281,7 +281,10 @@ check parameters on each page and start 'Global fit'.
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        self.Enable()
         self.Page = page
-        pass
 
 

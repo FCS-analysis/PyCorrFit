@@ -102,7 +102,7 @@ class BatchCtrl(wx.Frame):
         # Set all parameters for all pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
-            if OtherPage.modelid == modelid:
+            if OtherPage.modelid == modelid and OtherPage.dataexp is not None:
                 self.parent.UnpackParameters(Parms, OtherPage)
                 OtherPage.PlotAll()
 
@@ -139,7 +139,6 @@ class BatchCtrl(wx.Frame):
             self.Disable()
             return
         else:
-            print "batch"
             self.Enable()
         # We need to update the list of Pages in self.dropdown
         if self.rbtnhere.Value == True:

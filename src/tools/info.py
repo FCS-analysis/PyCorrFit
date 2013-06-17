@@ -252,6 +252,11 @@ class ShowInfo(wx.Frame):
     def Content(self):
         # Fill self.control with content.
         # Parameters and models
+        if self.parent.notebook.GetPageCount() == 0:
+            self.control.SetValue("")
+            self.Disable()
+            return
+        self.Enable()
         Page = self.Page
         InfoMan = InfoClass(CurPage=Page)
         PageInfo = InfoMan.GetCurFancyInfo()
@@ -275,7 +280,7 @@ class ShowInfo(wx.Frame):
             print "Other application has lock on clipboard."
 
 
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page=None):
         # When parent changes
         self.Page = page
         self.Content()

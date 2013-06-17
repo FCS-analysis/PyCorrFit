@@ -215,13 +215,13 @@ class MyFrame(wx.Frame):
         # self.menuBar.EnableTop(tid, enabled)
         cid = self.menuBar.FindMenu("Current &Page")
         self.menuBar.EnableTop(cid, enabled)
-        #if enabled == False:
-        #    # Disable all the dialogs
-        #    keys = self.ToolsOpen.keys()
-        #    for key in keys:
-        #        # Do not close it but disable it
-        #        # self.ToolsOpen[key].Close()
-        #        self.ToolsOpen[key].Disable()
+        if enabled == False:
+            # Disable all the dialogs
+            keys = self.ToolsOpen.keys()
+            for key in keys:
+                # Do not close it but disable it
+                # self.ToolsOpen[key].Close()
+                self.ToolsOpen[key].Disable()
         #    # Uncheck all the tool menu items
         #    # for item in self.toolmenu.GetMenuItems():
         #    #    if item.IsCheckable() is True:
@@ -466,6 +466,7 @@ class MyFrame(wx.Frame):
             idp = numtabs-i-1
             self.notebook.DeletePage(idp)
         self.EnableToolCurrent(False)
+        self.OnFNBPageChanged()
         self.tabcounter = 0
         self.filename = None
         self.SetTitleFCS(None)
@@ -507,6 +508,9 @@ class MyFrame(wx.Frame):
         It removes a page from the notebook
         """
         self.notebook.DeletePage(self.notebook.GetSelection())
+        self.OnFNBClosedPage()
+        if self.notebook.GetPageCount() == 0:
+            self.OnFNBPageChanged()
 
 
     def OnExit(self,e=None):
@@ -1153,6 +1157,7 @@ class MyFrame(wx.Frame):
         """ Gets all parameters from a page and returns a list object,
             that can be used to save as e.g. a safe YAML file 
         """
+        Page.apply_parameters()
         # Get Model ID
         modelid = Page.modelid
         # Get Page number
@@ -1170,6 +1175,7 @@ class MyFrame(wx.Frame):
         # Some fits like Spline have a number of knots of the spline
         # that is important for fitting. If there is a number in the
         # Dropdown, save it.
+        #
         knots = str(Page.FitKnots)
         knots = filter(lambda x: x.isdigit(), knots)
         if len(knots) == 0:
@@ -1202,6 +1208,7 @@ class MyFrame(wx.Frame):
         # use sigma instead of lambda, NA and sigma_0. This
         # is for backwards compatibility:
         changeTIRF = False
+        
         if modelid in [6000, 6010]:
             if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
                 lindex = 1
@@ -1224,7 +1231,6 @@ class MyFrame(wx.Frame):
         # for the data to be displayed in the user interface.
         Page.active_parms[1] = active_values
         Page.active_parms[2] = active_fitting
-        Page.apply_parameters_reverse()
         # Cropping
         Page.startcrop = cropstart
         Page.endcrop = cropend
@@ -1237,21 +1243,24 @@ class MyFrame(wx.Frame):
             else:
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
-            if weighted is False or weighted == 0:
-                Page.Fitbox[1].SetSelection(0)
             if knots is not None:
-                text = Page.Fitbox[1].GetValue()
-                text = filter(lambda x: x.isalpha(), text)
-                Page.Fitbox[1].SetValue(text+str(knots))
-            if weighted is True or weighted == 1:
-                Page.Fitbox[1].SetSelection(1)
+         # This is done with apply_paramters_reverse:
+         #       text = Page.Fitbox[1].GetValue()
+         #       text = filter(lambda x: x.isalpha(), text)
+         #       Page.Fitbox[1].SetValue(text+str(knots))
+                Page.FitKnots = int(knots)
+            if weighted is False:
+                weighted = 0
+            elif weighted is True:
+                weighted = 1
             elif len(Page.Fitbox[1].GetItems())-1 < weighted:
                 # Is the case, e.g. when we have an average std,
                 # but this page is not an average.
-                pass
-            else:
-                Page.Fitbox[1].SetSelection(weighted)
-            Page.Fitbox[5].SetValue(weights)
+                weighted = 0
+            Page.weighted_fittype_id = weighted
+            Page.weighted_nuvar = weights
+        Page.apply_parameters_reverse()
+
         if Page.dataexp is not None:
             Page.Fit_enable_fitting()
         Page.Fit_WeightedFitCheck()

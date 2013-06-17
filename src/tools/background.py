@@ -269,6 +269,9 @@ class BackgroundCorrection(wx.Frame):
                     return
             else:
                 trace = stuff["Trace"][selindex]
+            if trace is None:
+                print "WARNING: I did not find any trace data."
+                return
             # Display filename and some of the directory
             self.textfile.SetLabel("File: ..."+dirname[-10:]+"/"+filename)
             name = str(selindex)+". "+stuff["Filename"][selindex]+" "+\
@@ -354,12 +357,12 @@ class BackgroundCorrection(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0:
             self.Disable()
             return
-        else:
-            self.Enable()
-        if page.bgselected is None:
-            self.btnrem.Enable(False)
-        else:
-            self.btnrem.Enable(True)
+        self.Enable()
+        if page is not None:
+            if page.bgselected is None:
+                self.btnrem.Enable(False)
+            else:
+                self.btnrem.Enable(True)
 
 
     def OnRadioFile(self, event):

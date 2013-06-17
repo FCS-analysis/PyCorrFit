@@ -76,9 +76,16 @@ class Wrapper_Tools(object):
         # This is necessary for parent to deselect and select the tool
         # in the tools menu.
         self.Bind = self.Selector.Bind
-        self.OnPageChanged(None)
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Selector.Disable()
 
 
+    def Disable(self):
+        self.Selector.Disable()
+
+    def Enable(self, par=True):
+        self.Selector.Enable(par)
+    
     def GetCurvedict(self, e=None):
         curvedict = dict()
         N = self.parent.notebook.GetPageCount()

@@ -161,6 +161,7 @@ class Slide(wx.Frame):
         self.topSizer.Fit(self)
         #self.SetMinSize(self.topSizer.GetMinSizeTuple())
         self.OnRadio()
+        self.OnPageChanged()
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -233,21 +234,34 @@ class Slide(wx.Frame):
         self.OnSize()
 
 
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page=None):
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
-        if page.counter != self.Page.counter:
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        self.Enable()
+        try:
+            # wx._core.PyDeadObjectError: The C++ part of the FittingPanel
+            # object has been deleted, attribute access no longer allowed.
+            oldcounter = self.Page.counter
+        except:
+            oldcounter = -1
+        if page is not None and self.Page is not None:
+            if page.counter != oldcounter:
+                self.Page = page
+                self.SetStart()
+                self.droppA.SetItems(self.parmAlist)
+                self.droppB.SetItems(self.parmBlist)
+                self.droppA.SetSelection(0)
+                self.droppB.SetSelection(1)
+                self.dropop.SetSelection(0)
+                # Set labels
+                self.Ondrop()
+        else:
             self.Page = page
-            self.SetStart()
-            self.droppA.SetItems(self.parmAlist)
-            self.droppB.SetItems(self.parmBlist)
-            self.droppA.SetSelection(0)
-            self.droppB.SetSelection(1)
-            self.dropop.SetSelection(0)
-            # Set labels
-            self.Ondrop()
 
 
     def OnRadio(self, event=None):
@@ -307,6 +321,9 @@ class Slide(wx.Frame):
 
 
     def SetResult(self, event=None):
+        if self.parent.notebook.GetPageCount() == 0:
+            # Nothing to do
+            return
         # And Plot
         idA = self.droppA.GetSelection()
         idB = self.droppB.GetSelection()
@@ -331,8 +348,14 @@ class Slide(wx.Frame):
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
-        self.modelid = self.Page.modelid
-        ParmLabels, ParmValues = \
+        if self.parent.notebook.GetPageCount() == 0:
+            self.modelid = 6000
+            ParmLabels, ParmValues = \
+                   mdls.GetHumanReadableParms(self.modelid,
+                                              mdls.valuedict[6000][1])
+        else:
+            self.modelid = self.Page.modelid
+            ParmLabels, ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,
                                               self.Page.active_parms[1])
 
@@ -366,7 +389,14 @@ class Slide(wx.Frame):
         idB = self.droppB.GetSelection()
         # self.valueB = self.Page.active_parms[1][idB]
         # self.valueA = self.Page.active_parms[1][idA]
-        ParmLabels, ParmValues = \
+        if self.parent.notebook.GetPageCount() == 0:
+            self.modelid = 6000
+            ParmLabels, ParmValues = \
+                   mdls.GetHumanReadableParms(self.modelid,
+                                              mdls.valuedict[6000][1])
+        else:
+            self.modelid = self.Page.modelid
+            ParmLabels, ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,
                                               self.Page.active_parms[1])
         self.valueA = ParmValues[idA]

@@ -183,6 +183,21 @@ class FittingPanel(wx.Panel):
         e, self.active_parms[1] = mdls.GetInternalFromHumanReadableParm(
                                   self.modelid, np.array(parameters))
         self.active_parms[1] = self.check_parms(1*self.active_parms[1])
+        # Fitting parameters
+        self.weighted_nuvar = self.Fitbox[5].GetValue()
+        self.weighted_fittype_id = self.Fitbox[1].GetSelection()
+        if self.Fitbox[1].GetSelection() == -1:
+            # User edited knot number
+            Knots = self.Fitbox[1].GetValue()
+            Knots = filter(lambda x: x.isdigit(), Knots)
+            if Knots == "":
+                Knots = "5"
+            self.weighted_fittype_id = 1
+            self.FitKnots = str(Knots)
+        elif self.Fitbox[1].GetSelection() == 1:
+            Knots = self.Fitbox[1].GetValue()
+            Knots = filter(lambda x: x.isdigit(), Knots)
+            self.FitKnots = int(Knots)
         # If parameters have been changed because of the check_parms
         # function, write them back.
         self.apply_parameters_reverse()
@@ -208,6 +223,13 @@ class FittingPanel(wx.Panel):
         for i in np.arange(len(self.active_parms[1])):
             self.spincontrol[i].SetValue(parameters[i])
             self.checkboxes[i].SetValue(self.active_parms[2][i])
+        # Fitting parameters
+        self.Fitbox[5].SetValue(self.weighted_nuvar)
+        idf = self.weighted_fittype_id
+        List = self.Fitbox[1].GetItems()
+        List[1] = "Spline ("+str(self.FitKnots)+" knots)"
+        self.Fitbox[1].SetItems(List)
+        self.Fitbox[1].SetSelection(idf)
 
 
     def calculate_corr(self):
@@ -327,6 +349,7 @@ class FittingPanel(wx.Panel):
         ### If you change anything here, make sure you
         ### take a look at the global fit tool!
         ## Start fitting class and fill with information.
+        self.apply_parameters()
         Fitting = fit.Fit()
         # Verbose mode?
         if noplots is False:
@@ -334,23 +357,24 @@ class FittingPanel(wx.Panel):
         Fitting.uselatex = self.parent.MenuUseLatex.IsChecked()
         Fitting.check_parms = self.check_parms
         Fitting.dataexpfull = self.CorrectDataexp(self.dataexpfull)
-        if self.Fitbox[1].GetSelection() == -1:
-            # User edited knot number
-            Knots = self.Fitbox[1].GetValue()
-            Knots = filter(lambda x: x.isdigit(), Knots)
-            if Knots == "":
-                Knots = "5"
-            List = self.Fitbox[1].GetItems()
-            List[1] = "Spline ("+Knots+" knots)"
-            Fitting.fittype = "spline"+Knots
-            self.Fitbox[1].SetItems(List)
-            self.Fitbox[1].SetSelection(1)
-            self.FitKnots = Knots
+      ## This is now done in apply_parameters
+      #  if self.Fitbox[1].GetSelection() == -1:
+      #      # User edited knot number
+      #      Knots = self.Fitbox[1].GetValue()
+      #      Knots = filter(lambda x: x.isdigit(), Knots)
+      #      if Knots == "":
+      #          Knots = "5"
+      #      List = self.Fitbox[1].GetItems()
+      #      List[1] = "Spline ("+Knots+" knots)"
+      #      Fitting.fittype = "spline"+Knots
+      #      self.Fitbox[1].SetItems(List)
+      #      self.Fitbox[1].SetSelection(1)
+      #      self.FitKnots = Knots
         if self.Fitbox[1].GetSelection() == 1:
-            Knots = self.Fitbox[1].GetValue()
-            Knots = filter(lambda x: x.isdigit(), Knots)
-            self.FitKnots = Knots
-            Fitting.fittype = "spline"+Knots
+      #      Knots = self.Fitbox[1].GetValue()
+      #      Knots = filter(lambda x: x.isdigit(), Knots)
+      #      self.FitKnots = Knots
+            Fitting.fittype = "spline"+str(self.FitKnots)
             self.parent.StatusBar.SetStatusText("You can change the number"+
                " of knots. Check 'Preference>Verbose Mode' to view the spline.")
         elif self.Fitbox[1].GetSelection() == 2:
@@ -387,7 +411,6 @@ class FittingPanel(wx.Panel):
         else:
             self.weighted_fit_was_performed = True
             self.weights_used_for_fitting = Fitting.dataweights
-            self.weighted_nuvar = Fitting.weights
         self.weighted_fittype_id = idf = self.Fitbox[1].GetSelection()
         self.weighted_fittype = self.Fitbox[1].GetItems()[idf]
         return Fitting
