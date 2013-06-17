@@ -39,7 +39,10 @@ class ShowTrace(wx.Frame):
         ## Canvas
         self.canvas = plot.PlotCanvas(self)
         self.canvas.SetEnableZoom(True)
-        self.OnDraw()
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+        else:
+            self.OnDraw()
         initial_size = (350,150)
         self.SetSize(initial_size)
         self.SetMinSize(initial_size)
@@ -85,8 +88,12 @@ class ShowTrace(wx.Frame):
                                            yLabel='count rate [kHz]'))
 
 
-    def OnPageChanged(self, page):
-        # When parent changes
+    def OnPageChanged(self, page=None):
         self.Page = page
+        # When parent changes
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        self.Enable()
         self.OnDraw()
 

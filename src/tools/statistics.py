@@ -54,18 +54,22 @@ class Stat(wx.Frame):
         text = wx.StaticText(self.panel, 
                              label="Create a table with all the selected\n"+
                                    "variables below from pages with the\n"+
-                                   "same model as page "+self.Page.counter+
+                                   "same model as the current page "+
                                    ".\nBeware that not all the pages might\n"+
                                    "have the variables you choose. The saved\n"+
                                    "file may be useless.")
         # Parameter settings.
-        self.InfoClass = InfoClass(CurPage=self.Page)
+        if self.parent.notebook.GetPageCount() != 0:
+            self.InfoClass = InfoClass(CurPage=self.Page)
+        else:
+            self.Disable()
         # Create space for parameters
         self.box = wx.StaticBox(self.panel, label="values:")
         self.boxsizer = wx.StaticBoxSizer(self.box, wx.VERTICAL)
         self.Checkboxes = list()
         self.Checklabels = list()
-        self.OnChooseValues()
+        if self.parent.notebook.GetPageCount() != 0:
+            self.OnChooseValues()
         self.btnSave = wx.Button(self.panel, wx.ID_ANY, 'Save')
         self.Bind(wx.EVT_BUTTON, self.OnSaveTable, self.btnSave)
         # Add elements to sizer
@@ -110,8 +114,23 @@ class Stat(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
-        # Just close it. It's the easiest way.
-        self.OnClose()
+        self.Page = page
+        self.InfoClass = InfoClass(CurPage=self.Page)
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        self.Enable()
+        for i in np.arange(len(self.Checkboxes)):
+            self.boxsizer.Remove(0)
+            self.Checkboxes[i].Destroy()
+            #self.Checklabels[i].Destroy()
+        self.Checkboxes = list()
+        self.Checklabels = list()
+        self.OnChooseValues()
+        self.boxsizer.Layout()
+        self.topSizer.Fit(self)
+        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+
 
 
     def OnSaveTable(self, event=None):
