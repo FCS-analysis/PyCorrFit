@@ -282,7 +282,7 @@ chooseimportmulti = """Select a fitting model for each type of data found.
 """
 
 # Standard homepage
-HomePage = "http://fcstools.dyndns.org/pycorrfit/"
+HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
 if hasattr(sys, 'frozen'):
