@@ -683,10 +683,11 @@ class MyFrame(wx.Frame):
             return
 
 
-    def ImportData(self, Page, dataexp, trace, curvetype="", filename=""):
+    def ImportData(self, Page, dataexp, trace, curvetype="",
+                   filename="", run=""):
         CurPage = Page
         # Import traces. Traces are usually put into a list, even if there
-        # is only on trace. The reason is, that for cross correlation, we 
+        # is only one trace. The reason is, that for cross correlation, we 
         # have two traces and thus we have to import both.
         # In case of cross correlation, save that list of (two) traces
         # in the page.tracecc variable. Else, save the trace for auto-
@@ -717,7 +718,7 @@ class MyFrame(wx.Frame):
         CurPage.Fit_enable_fitting()
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
-        title = filename+" "+curvetype
+        title = filename+" "+curvetype+" "+run
         CurPage.tabtitle.SetValue(title.strip())
         # Plot everything
         CurPage.PlotAll()
@@ -766,6 +767,7 @@ class MyFrame(wx.Frame):
         Trace = list()
         Type = list()
         Filename = list() # there might be zipfiles with additional name info
+        Run = list()
         for afile in Datafiles:
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
@@ -778,6 +780,19 @@ class MyFrame(wx.Frame):
                     Trace.append(Stuff["Trace"][i])
                     Type.append(Stuff["Type"][i])
                     Filename.append(Stuff["Filename"][i])
+        # Add number of the run within a file.
+        Run = list()
+        nameold = None
+        counter = 1
+        for name in Filename:
+            if name == nameold:
+                Run.append(counter)
+                counter += 1
+            else:
+                counter = 1
+                nameold = name
+                Run.append(counter)
+                counter += 1 
         # If there are any BadFiles, we will let the user know.
         if len(BadFiles) > 0:
             # The file does not seem to be what it seems to be.
@@ -808,12 +823,14 @@ class MyFrame(wx.Frame):
         # to import.
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
+        # Version 0.7.6 - add support for Filenames in curve selection.
         Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation)
         newCorrelation = list()
         newTrace = list()
         newType = list()
         newFilename = list()
         modelList = list()
+        newRun = list()
         if Chosen.ShowModal() == wx.ID_OK:
             keys = Chosen.typekeys
             # Keepdict is a list of indices pointing to Type or Correlation
@@ -834,10 +851,12 @@ class MyFrame(wx.Frame):
                         newType.append(Type[index])
                         newFilename.append(Filename[index])
                         modelList.append(modelids[index])
+                        newRun.append(Run[index])
             Correlation = newCorrelation
             Trace = newTrace
             Type = newType
             Filename = newFilename
+            Run = newRun
         else:
             return
         Chosen.Destroy()
@@ -859,7 +878,7 @@ class MyFrame(wx.Frame):
                                      counter=None)
             # Fill Page with data
             self.ImportData(CurPage, Correlation[i], Trace[i],
-                            Type[i], Filename[i])
+                            Type[i], Filename[i], str(Run[i]))
             # Let the user abort, if he wants to:
             # We want to do this here before an empty page is added
             # to the notebok.

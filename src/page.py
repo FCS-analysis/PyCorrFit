@@ -675,8 +675,11 @@ class FittingPanel(wx.Panel):
         """
         # Title
         # Create empty tab title
+        boxti = wx.StaticBox(self.panelsettings, label="filename/title")
+        sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
-                                    size=(self.sizepanelx, -1))
+                                    size=(self.sizepanelx-20, -1))
+        sizerti.Add(self.tabtitle)                       
         # Create StaticBoxSizer
         box1, check, spin = self.MakeStaticBoxSizer("Fit parameters")
         # Make the check boxes and spin-controls available everywhere
@@ -697,7 +700,7 @@ class FittingPanel(wx.Panel):
             self.spincontrol[i].increment()
         # Put everything together
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.panelsettings.sizer.Add(self.tabtitle)
+        self.panelsettings.sizer.Add(sizerti)
         self.panelsettings.sizer.Add(box1)
         # Add button "Apply"
         buttonapply = wx.Button(self.panelsettings, label="Apply")
