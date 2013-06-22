@@ -869,7 +869,7 @@ class MyFrame(wx.Frame):
         # to each item in dataexp or trace. Each curvelist/filename
         # item will be converted to a string and then added to the
         # pages title.
-        num = len(Type) 
+        num = len(Type)
         # Show a nice progress dialog:
         style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
                 wx.PD_CAN_ABORT
@@ -888,7 +888,10 @@ class MyFrame(wx.Frame):
             # to the notebok.
             if dlg.Update(i+1, "Loading pages...")[0] == False:
                 dlg.Destroy()
-                return        
+                return
+        # If the user did not select curves but chose a model, destroy
+        # the dialog.
+        dlg.Destroy()
 
 
     def OnOpenSession(self,e=None,sessionfile=None):

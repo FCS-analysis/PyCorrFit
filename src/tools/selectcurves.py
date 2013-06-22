@@ -32,6 +32,7 @@ class Wrapper_OnImport(object):
         onselected: external function that is called with two arguments:
                     *kept keys* and *unwanted keys* as lists referring to
                     curvedict.
+        selkeys: preselected values for curves in curvedict
     """
     def __init__(self, parent, curvedict, onselected,
                  selkeys=None, labels=None):
