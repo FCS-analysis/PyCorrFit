@@ -161,10 +161,12 @@ class ChooseImportTypesModel(wx.Dialog):
 
 
     def OnSelectCurves(self, buttonevent):
+        # Get the type of curves we want to look at
         index = buttonevent.GetId() - 8000
         self.buttonindex = index
         curvedict = dict()
         key = self.curvekeys[index]
+        # Get correlation curves for corresponding type
         corrcurves = dict()
         for i in self.curvedict[key]:
             corrcurves[str(i)] = self.correlations[int(i)]

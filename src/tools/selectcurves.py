@@ -71,8 +71,10 @@ class Wrapper_Tools(object):
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         ## Wrapping
-        curvedict = self.GetCurvedict()
-        self.Selector = UserSelectCurves(parent, curvedict, wrapper=self)
+        curvedict, labels = self.GetCurvedict()
+        self.labels = labels
+        self.Selector = UserSelectCurves(parent, curvedict,
+                                         wrapper=self, labels=labels)
         # This is necessary for parent to deselect and select the tool
         # in the tools menu.
         self.Bind = self.Selector.Bind
@@ -88,6 +90,7 @@ class Wrapper_Tools(object):
     
     def GetCurvedict(self, e=None):
         curvedict = dict()
+        labels = dict()
         N = self.parent.notebook.GetPageCount()
         for i in np.arange(N):
             Page = self.parent.notebook.GetPage(i)
@@ -95,7 +98,8 @@ class Wrapper_Tools(object):
             curve = Page.dataexp
             if curve is not None:
                 curvedict[key] = curve
-        return curvedict
+                labels[key] = Page.tabtitle.GetValue()
+        return curvedict, labels
 
         
     def OnClose(self, event=None):
@@ -120,9 +124,10 @@ class Wrapper_Tools(object):
             del self.Bind
             self.Selector.Close()
             del self.Selector
-            curvedict = self.GetCurvedict()
-            self.Selector = UserSelectCurves(self.parent,
-                                             curvedict, wrapper=self)
+            curvedict, labels = self.GetCurvedict()
+            self.labels = labels
+            self.Selector = UserSelectCurves(self.parent, curvedict,
+                                             wrapper=self, labels=labels)
             self.Bind = self.Selector.Bind
             self.Selector.SetSize(size)
             self.Selector.SetPosition(pos)
@@ -149,7 +154,7 @@ class Wrapper_Tools(object):
         # delete those pages.
         warntext = "The following pages will be removed:\n"
         for key in keysrem:
-            warntext += "- "+key+"\n"
+            warntext += "- "+key+" "+self.labels[key]+"\n"
         dlg = wx.MessageDialog(self.parent, warntext, "Warning",
                         wx.OK|wx.ICON_EXCLAMATION|wx.CANCEL)
         if dlg.ShowModal() == wx.ID_OK:
@@ -169,7 +174,8 @@ class Wrapper_Tools(object):
 
 class UserSelectCurves(wx.Frame):
     # This tool is derived from a wx.frame.
-    def __init__(self, parent, curvedict, wrapper=None, selkeys=None):
+    def __init__(self, parent, curvedict, wrapper=None, selkeys=None,
+                 labels=None):
         """
         *curvedict* is a dictionary that contains the curves. Keys serve as
         identifiers in the curve selection.
@@ -177,14 +183,19 @@ class UserSelectCurves(wx.Frame):
         curvelist["#1:"] = np.array[ np.array[0.0,1], np.array[0.0,.971] ...]
         *parent* is the main frame
         *wrapper* is the object to which the chosen keys are given back. If
-        it is not None, it must provide a function *OnResults*, accepting a list
-        of keys as an argument.
+           it is not None, it must provide a function *OnResults*, accepting
+           a list of keys as an argument.
+        *selkeys* items in the list *curvedict* that are preelected.
+        *labels* dictionary with same keys as *curvelist* - labels of the
+           entries in the list. If none, the keys of *curvedict* will be used.        
         """
         # parent is the main frame of PyCorrFit
         self.parent = parent
         self.wrapper = wrapper
         self.curvedict = curvedict
         self.selkeys = selkeys
+        self.labels = labels    # can be None
+        self.curvelabels = None # filled by self.ProcessDict()
         if self.selkeys is not None:
             newselkeys = list()
             for item in self.selkeys:
@@ -218,7 +229,7 @@ class UserSelectCurves(wx.Frame):
         # Box selection
         style = wx.LB_EXTENDED
         self.SelectBox = wx.ListBox(panel_bottom, size=(150,300), style=style,
-                                    choices=self.curvekeys)
+                                    choices=self.curvelabels)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
         # Deselect keys that are not in self.selkeys
@@ -272,6 +283,13 @@ class UserSelectCurves(wx.Frame):
         else:
             fstr = page_num
         self.curvekeys.sort(key = fstr)
+        if self.labels is None:
+            self.curvelabels = self.curvekeys
+        else:
+            # Use given labels instead of curvekeys.
+            self.curvelabels = list()
+            for key in self.curvekeys:
+                self.curvelabels.append(str(key)+" "+self.labels[key])
 
 
     def OnPushResults(self, e=None):

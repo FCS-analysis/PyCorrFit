@@ -5,6 +5,8 @@
     Module tools - example
     This is an example tool. You will need to edit __init__.py inside this
     folder to activate it.
+    Add the filename (*example*) and class (*Tool*) to either of the lists
+    *ImpA*  or *ImpB* in __init__.py.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -64,5 +66,10 @@ class Tool(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        if self.parent.notebook.GetPageCount() == 0:
+            # Do something when there are no pages left.
+            self.Disable()
+            return
         self.Page = page
+        
 
