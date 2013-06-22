@@ -118,7 +118,7 @@ class InfoClass(object):
         Title.append(["Function used", fct ]) 
         Title.append(["Model name", model[0] ]) 
         Title.append(["Model ID", str(model[2]) ]) 
-        Title.append(["User title", model[1] ]) 
+        Title.append(["filename/title", model[1] ]) 
         Title.append(["Page number", Page.counter[1:-2] ]) 
         InfoDict["title"] = Title
         ## Parameters

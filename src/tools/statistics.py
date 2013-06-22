@@ -54,10 +54,7 @@ class Stat(wx.Frame):
         text = wx.StaticText(self.panel, 
                              label="Create a table with all the selected\n"+
                                    "variables below from pages with the\n"+
-                                   "same model as the current page "+
-                                   ".\nBeware that not all the pages might\n"+
-                                   "have the variables you choose. The saved\n"+
-                                   "file may be useless.")
+                                   "same model as the current page.")
         # Parameter settings.
         if self.parent.notebook.GetPageCount() != 0:
             self.InfoClass = InfoClass(CurPage=self.Page)
@@ -91,14 +88,38 @@ class Stat(wx.Frame):
         self.InfoClass.CurPage = self.Page
         # Now that we know our Page, we may change the available
         # parameter options.
-        Info = self.InfoClass.GetCurInfo()
+        Infodict = self.InfoClass.GetCurInfo()
+        # We want to sort the information and have some prechecked values
+        # in the statistics window afterwards.
+        # new iteration
+        keys = Infodict.keys()
+        head = list()
+        tail = list()
+        for key in keys:
+            if key == "title":
+                for item in Infodict[key]:
+                    if len(item) == 2:
+                        if item[0] == "filename/title":
+                            head.append(item)
+                        else:
+                            tail.append(item)
+            # Append all other items
+            else:
+                for item in Infodict[key]:
+                    if len(item) == 2:
+                        tail.append(item)
+        # Bring lists together
+        Info = head + tail
+        headcounter = 0
+        headlen = len(head)
         for item in Info:
-            for subitem in Info[item]:
-                if len(subitem) == 2:
-                    checkbox = wx.CheckBox(self.panel, label=subitem[0])
-                    self.boxsizer.Add(checkbox)
-                    self.Checkboxes.append(checkbox)
-                    self.Checklabels.append(subitem[0])
+            headcounter += 1
+            checkbox = wx.CheckBox(self.panel, label=item[0])
+            if headcounter <= headlen:
+                checkbox.SetValue(True)
+            self.boxsizer.Add(checkbox)
+            self.Checkboxes.append(checkbox)
+            self.Checklabels.append(item[0])
 
 
     def OnClose(self, event=None):
@@ -150,13 +171,18 @@ class Stat(wx.Frame):
             modelid = self.Page.modelid
             # This creates self.SaveInfo:
             self.GetWantedParameters()
+            # Write header
+            linestring = ""
             for atuple in self.SaveInfo[0]:
-                openedfile.write(atuple[0]+"\t")
-            openedfile.write("\r\n")
+                linestring += str(atuple[0])+"\t"
+            # remove trailing "\t"
+            openedfile.write(linestring.strip()+"\r\n")
+            # Write data         
             for item in self.SaveInfo:
+                linestring = ""
                 for btuple in item:
-                    openedfile.write(str(btuple[1])+"\t")
-                openedfile.write("\r\n")
+                    linestring += str(btuple[1])+"\t"
+                openedfile.write(linestring.strip()+"\r\n")
             openedfile.close()
         else:
             dirname = dlg.GetDirectory()
@@ -189,13 +215,30 @@ class Stat(wx.Frame):
         cmp_func = lambda a,b: cmp(int(a.strip().strip("#")),
                                    int(b.strip().strip("#")))
         pagekeys.sort(cmp=cmp_func)
+        #for Info in pagekeys:
+        #    pageinfo = list()
+        #    for item in AllInfo[Info]:
+        #        for subitem in AllInfo[Info][item]:
+        #            if len(subitem) == 2:
+        #                for label in checked:
+        #                    if label == subitem[0]:
+        #                        pageinfo.append(subitem)
+        #
+        # We want to replace the above iteration with an iteration that
+        # covers missing values. This means checking for "label == subitem[0]"
+        # and iteration over AllInfo with that consition.
+        
         for Info in pagekeys:
             pageinfo = list()
-            for item in AllInfo[Info]:
-                for subitem in AllInfo[Info][item]:
-                    if len(subitem) == 2:
-                        for label in checked:
+            for label in checked:
+                label_in_there = False
+                for item in AllInfo[Info]:
+                    for subitem in AllInfo[Info][item]:
+                        if len(subitem) == 2:
                             if label == subitem[0]:
+                                label_in_there = True
                                 pageinfo.append(subitem)
-
+                if label_in_there == False:
+                    # No data available
+                    pageinfo.append([label, "-"])
             self.SaveInfo.append(pageinfo)
