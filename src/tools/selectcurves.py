@@ -33,11 +33,12 @@ class Wrapper_OnImport(object):
                     *kept keys* and *unwanted keys* as lists referring to
                     curvedict.
     """
-    def __init__(self, parent, curvedict, onselected, selkeys=None):
+    def __init__(self, parent, curvedict, onselected,
+                 selkeys=None, labels=None):
         self.onselected = onselected
         self.parent = parent
         self.Selector = UserSelectCurves(parent, curvedict, wrapper=self,
-                                         selkeys=selkeys)
+                                         selkeys=selkeys, labels=labels)
         self.Selector.Show()
         self.Selector.MakeModal(True)
         self.Selector.Bind(wx.EVT_CLOSE, self.OnClose)
@@ -206,7 +207,7 @@ class UserSelectCurves(wx.Frame):
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Curve selection",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
-                 size=(700,500))
+                 size=(800,500))
         ## Pre-process
         self.ProcessDict()
         ## Content
@@ -223,13 +224,13 @@ class UserSelectCurves(wx.Frame):
         # Bottom Panel
         self.bottom_sp = wx.SplitterWindow(self.sp, size=(500,300), style=wx.SP_NOBORDER)
         self.bottom_sp.SetMinimumPaneSize(1)
-        sizepanelx = 150
+        sizepanelx = 250
         panel_bottom = wx.Panel(self.bottom_sp, size=(sizepanelx,300))
         self.boxSizer = wx.BoxSizer(wx.VERTICAL)
         # Box selection
         style = wx.LB_EXTENDED
-        self.SelectBox = wx.ListBox(panel_bottom, size=(150,300), style=style,
-                                    choices=self.curvelabels)
+        self.SelectBox = wx.ListBox(panel_bottom, size=(sizepanelx,300),
+                                    style=style, choices=self.curvelabels)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
         # Deselect keys that are not in self.selkeys

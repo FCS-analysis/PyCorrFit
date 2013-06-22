@@ -82,7 +82,13 @@ class ChooseImportTypesModel(wx.Dialog):
         model function on import of data
     """
     # This tool is derived from a wx.frame.
-    def __init__(self, parent, curvedict, correlations):
+    def __init__(self, parent, curvedict, correlations, labels=None):
+        """ curvedict - dictionary, contains indexes to correlations and
+                        labels. The keys are different types of curves
+            correlations - list of correlations
+            labels - list of labels for the correlations (e.g. filename+run)
+                     if none, index numbers will be used for labels
+        """
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
@@ -91,6 +97,7 @@ class ChooseImportTypesModel(wx.Dialog):
         self.curvedict = curvedict
         self.kept_curvedict = curvedict.copy() # Can be edited by user
         self.correlations = correlations
+        self.labels = labels
         # List of keys that will be imported by our *parent*
         self.typekeys = list()
         # Dictionary of modelids corresponding to indices in curvedict
@@ -168,13 +175,20 @@ class ChooseImportTypesModel(wx.Dialog):
         key = self.curvekeys[index]
         # Get correlation curves for corresponding type
         corrcurves = dict()
+        if self.labels is None:
+            labeldict = None
+        else:
+            labeldict = dict()
         for i in self.curvedict[key]:
             corrcurves[str(i)] = self.correlations[int(i)]
+            if self.labels is not None:
+                labeldict[str(i)] = self.labels[int(i)]
         prev_selected = list()
         for item in self.kept_curvedict.keys():
             prev_selected += self.kept_curvedict[item]
         Selector = selectcurves.Wrapper_OnImport(self.parent, corrcurves,
-                                                 self.OnSelected, prev_selected)
+                                                 self.OnSelected, prev_selected,
+                                                 labels=labeldict)
 
     def OnSelected(self, keep, remove):
         # Set new button label

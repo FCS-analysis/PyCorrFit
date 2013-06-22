@@ -824,7 +824,11 @@ class MyFrame(wx.Frame):
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
         # Version 0.7.6 - add support for Filenames in curve selection.
-        Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation)
+        labels=list()
+        for i in np.arange(len(Filename)):
+            labels.append(Filename[i]+" "+str(Run[i]))
+        Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation,
+                                              labels=labels)
         newCorrelation = list()
         newTrace = list()
         newType = list()
