@@ -113,6 +113,8 @@ class FittingPanel(wx.Panel):
         # Some timescale
         self.taufull = tau
         self.tau = 1*self.taufull
+        # Tool statistics uses this list:
+        self.StatisticsCheckboxes = None
         ### Splitter window
         # Sizes
         size = parent.notebook.GetSize()

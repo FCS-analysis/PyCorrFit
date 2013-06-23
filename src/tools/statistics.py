@@ -84,6 +84,26 @@ class Stat(wx.Frame):
         self.Show(True)
 
 
+    def OnCheckboxChecked(self, e="restore"):
+        """
+            Write boolean data of checked checkboxes to Page variable
+            *StatisticsCheckboxes*. If e=="restore", then we will attempt
+            to get the info back from the page.
+        """
+        # What happens if a checkbox has been checked?
+        # We write the data to the Page (it will not be saved in the session).
+        if e=="restore":
+            checklist = self.Page.StatisticsCheckboxes
+            if checklist is not None:
+                if len(checklist) <= len(self.Checkboxes):
+                    for i in np.arange(len(checklist)):
+                        self.Checkboxes[i].SetValue(checklist[i])
+        else:
+            checklist = list()
+            for cb in self.Checkboxes:
+                checklist.append(cb.GetValue())
+                self.Page.StatisticsCheckboxes = checklist
+        
     def OnChooseValues(self, event=None):
         self.InfoClass.CurPage = self.Page
         # Now that we know our Page, we may change the available
@@ -159,6 +179,9 @@ class Stat(wx.Frame):
             self.boxsizer.Add(checkbox)
             self.Checkboxes.append(checkbox)
             self.Checklabels.append(item[0])
+            self.Bind(wx.EVT_CHECKBOX, self.OnCheckboxChecked, checkbox)
+        self.OnCheckboxChecked("restore")
+
 
 
     def OnClose(self, event=None):
