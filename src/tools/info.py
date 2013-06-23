@@ -115,12 +115,13 @@ class InfoClass(object):
         fct = Page.active_fct.__name__
         InfoDict["version"] = [Page.parent.version]
         Title = list()
-        Title.append(["Function used", fct ]) 
-        Title.append(["Model name", model[0] ]) 
-        Title.append(["Model ID", str(model[2]) ]) 
+        # The tool statistics relys on the string "filename/title".
+        # Do not change it!
         Title.append(["filename/title", model[1] ]) 
+        Title.append(["Model ID", str(model[2]) ]) 
+        Title.append(["Model name", model[0] ]) 
+        Title.append(["Model function", fct ]) 
         Title.append(["Page number", Page.counter[1:-2] ]) 
-        InfoDict["title"] = Title
         ## Parameters
         Parameters = list()
         # Use this function to determine human readable parameters, if possible
@@ -152,9 +153,9 @@ class InfoClass(object):
         if Page.dataexp is not None:
             # Mode AC vs CC
             if Page.IsCrossCorrelation is True:
-                Title.append(["Data type", "Cross-correlation" ]) 
+                Title.append(["Type AC/CC", "Cross-correlation" ]) 
             else:
-                Title.append(["Data type", "Autocorrelation" ]) 
+                Title.append(["Type AC/CC", "Autocorrelation" ]) 
             Fitting.append([ u"\u03c7"+"²", Page.chi2 ])
             if Page.weighted_fit_was_performed:
                 Chi2type = "reduced "+u"\u03c7"+"²"
@@ -193,6 +194,8 @@ class InfoClass(object):
                         savekey, saveval = \
                             mdls.GetHumanReadableParameterDict(model[2],
                                                 [key], [Errors_fit[key]])
+                        # The tool statistics relys on the string "Err ".
+                        # Do not change it!
                         Fitting.append(["Err "+savekey[0], saveval[0]])
             InfoDict["fitting"] = Fitting
         ## Background
@@ -206,6 +209,8 @@ class InfoClass(object):
             InfoDict["background"] = Background
         ## Function doc string
         InfoDict["modeldoc"] = [Page.active_fct.func_doc]
+        InfoDict["title"] = Title
+
         return InfoDict
 
 

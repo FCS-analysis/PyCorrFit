@@ -94,22 +94,57 @@ class Stat(wx.Frame):
         # new iteration
         keys = Infodict.keys()
         head = list()
+        body = list()
         tail = list()
+        # A list with additional strings that should be default checked if found
+        # somewhere in the data.
+        checklist = ["cpp", "duration", "bg rate"]
         for key in keys:
+            # "title" - filename/title first
             if key == "title":
                 for item in Infodict[key]:
                     if len(item) == 2:
                         if item[0] == "filename/title":
-                            head.append(item)
+                            headtitle = [item]
                         else:
                             tail.append(item)
+            # "title" - filename/title first
+            elif key == "parameters":
+                headparm = list()
+                bodyparm = list()
+                for parm in Infodict[key]:
+                    parminlist = False
+                    try:
+                        for fitp in Infodict["fitting"]:
+                            parmname = parm[0]
+                            errname = "Err "+parmname
+                            if fitp[0] == errname:
+                                headparm.append(parm)
+                                parminlist = True
+                                headparm.append(fitp)
+                    except:
+                        # Maybe there was not fit...
+                        pass
+                    if parminlist == False:
+                        bodyparm.append(parm)
+            elif key == "fitting":
+                for fitp in Infodict[key]:
+                    # We added the error data before in the parameter section
+                    if str(fitp[0])[0:4] != "Err ":
+                        tail.append(fitp)
+            elif key == "supplement":
+                body += Infodict[key]
             # Append all other items
+            elif key == "background":
+                body += Infodict[key]
             else:
                 for item in Infodict[key]:
                     if len(item) == 2:
                         tail.append(item)
         # Bring lists together
-        Info = head + tail
+        head = headtitle + headparm
+        body = bodyparm + body
+        Info = head + body + tail
         headcounter = 0
         headlen = len(head)
         for item in Info:
@@ -117,6 +152,10 @@ class Stat(wx.Frame):
             checkbox = wx.CheckBox(self.panel, label=item[0])
             if headcounter <= headlen:
                 checkbox.SetValue(True)
+            # Additionally default checked items
+            for checkitem in checklist:
+                if item[0].count(checkitem):
+                    checkbox.SetValue(True)
             self.boxsizer.Add(checkbox)
             self.Checkboxes.append(checkbox)
             self.Checklabels.append(item[0])
