@@ -66,7 +66,8 @@ class FlatNotebookDemo(fnb.FlatNotebook):
         agwStyle=fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
               fnb.FNB_DROPDOWN_TABS_LIST|fnb.FNB_NODRAG|\
               fnb.FNB_TABS_BORDER_SIMPLE|\
-              fnb.FNB_HIDE_ON_SINGLE_TAB)
+              fnb.FNB_HIDE_ON_SINGLE_TAB|\
+              fnb.FNB_X_ON_TAB|fnb.FNB_NO_X_BUTTON)
 
 
 ###########################################################

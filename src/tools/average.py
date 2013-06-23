@@ -51,6 +51,7 @@ class Average(wx.Frame):
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.OnPageChanged(self.Page)
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -70,6 +71,10 @@ class Average(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        if self.parent.notebook.GetPageCount() == 0:
+            self.Disable()
+            return
+        self.Enable()
         self.Page = page
 
 
@@ -209,23 +214,29 @@ class Average(wx.Frame):
         # Set the addition information about the variance from averaging
         Listname = "Average"
         standarddev = exparray.std(axis=0)[:,1]
-        self.AvgPage.external_std_weights[Listname] = standarddev
-        WeightKinds = self.AvgPage.Fitbox[1].GetItems()
-        # Attention! Average weights and other external weights should
-        # be sorted (for session saving).
-        extTypes = self.AvgPage.external_std_weights.keys()
-        extTypes.sort() # sorting
-        for key in extTypes:
-            try:
-                WeightKinds.remove(key)
-            except:
-                pass
-        LenInternal = len(WeightKinds)
-        IndexAverag = extTypes.index(Listname)
-        IndexInList = LenInternal + IndexAverag
-        for key in extTypes:
-            WeightKinds += [key]
-        self.AvgPage.Fitbox[1].SetItems(WeightKinds)
-        self.AvgPage.Fitbox[1].SetSelection(IndexInList)
+        if np.sum(np.abs(standarddev)) == 0:
+            # The average sd is zero. We probably made an average
+            # from only one page. In this case we do not enable
+            # average weighted fitting
+            pass
+        else:
+            self.AvgPage.external_std_weights[Listname] = standarddev
+            WeightKinds = self.AvgPage.Fitbox[1].GetItems()
+            # Attention! Average weights and other external weights should
+            # be sorted (for session saving).
+            extTypes = self.AvgPage.external_std_weights.keys()
+            extTypes.sort() # sorting
+            for key in extTypes:
+                try:
+                    WeightKinds.remove(key)
+                except:
+                    pass
+            LenInternal = len(WeightKinds)
+            IndexAverag = extTypes.index(Listname)
+            IndexInList = LenInternal + IndexAverag
+            for key in extTypes:
+                WeightKinds += [key]
+            self.AvgPage.Fitbox[1].SetItems(WeightKinds)
+            self.AvgPage.Fitbox[1].SetSelection(IndexInList)
         self.OnClose()
 

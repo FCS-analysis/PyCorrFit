@@ -161,7 +161,7 @@ class Slide(wx.Frame):
         self.topSizer.Fit(self)
         #self.SetMinSize(self.topSizer.GetMinSizeTuple())
         self.OnRadio()
-        self.OnPageChanged()
+        self.OnPageChanged(self.Page)
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)

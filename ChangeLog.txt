@@ -1,3 +1,26 @@
+0.7.6
+- Improved handling
+   - Tools are now sorted according to a standard work-flow
+   - Renamed "Curve selection" to "Overlay tool" - this is more intuitive
+   - Tools will now stay open or may be opened when there are no open pages (#25)
+   - Filenames and runs are now displayed on each page (also added filename/title tag) (#23)
+   - Notebook: moved close button to each tab to prevent accidental closing of tabs
+- Improved tool "Statistics" (#21)
+   - Fixed the case where "useless" data was produced - instead we write "NaN" data,
+     removed warning message accordingly
+   - Row-wise ordering according to page numbers (#22)
+   - Column-wise ordering is now more intuitive
+     (Fitted parameters with errors first)
+   - Some columns are now checked by default
+   - PyCorrFit remembers checked parameters for a page (not saved in session)
+- Improved tool "Overlay" (#23)
+   - New feature: Overlay shows run number of each file (upon import),
+     the run (or index) of an experimental file is uniqe to PyCorrFit
+   - Upon import filenames and runs are displayed
+   - In a session, the filename/title is displayed
+- Web address of PyCorrFit changed
+  from "fcstools.dyndns.org/pycorrfit" to "pycorrfit.craban.de"
+- Minor bugfixes: Batch control, Global fitting, import dialog
 0.7.5
  - Added model functions to documentation.
  - Weights from fitting are now exported in .csv files.
@@ -19,10 +42,10 @@
  - Issue closed. External weights from averages saved in session (#11).
  - Solved minor bugs
  - Added estimation of errors of fit (Issue #12/#14)
- - fixed: Some .fcs files containing averages were not imported.
+ - Fixed: Some .fcs files containing averages were not imported.
 0.7.2
  - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
-           fitting is performed
+    fitting is performed
  - Bugfix: Weights for fitting not properly calculated (sqrt(std)).
  - Bugfix: Batch control IndexError with Info window opened
  - Tool Statistics: Sort values according to page numbers
@@ -38,11 +61,11 @@
  - Added program icon
 0.7.0
  - File import dialog was enhanced (#4, #5 - subsequently #7, #8):
-    - Now there is only one "load data" dialog in the file menu.
-    - The model function is chosen for each type of data that is 
-       to be imported (AC, CC, etc.).
-    - Loading files that do not contain data a pointed out to the
-      user and the program continues with the other files.
+   - Now there is only one "load data" dialog in the file menu.
+   - The model function is chosen for each type of data that is 
+      to be imported (AC, CC, etc.).
+   - Loading files that do not contain data a pointed out to the
+     user and the program continues with the other files.
  - Bugfix: Channel selection window causes crash on file import (#1).
  - Bugfix: Hidden feature changes fixed parameters during fitting (#2).
  - Feature: Convert TIR model function parameters lambda and NA to sigma (#3).

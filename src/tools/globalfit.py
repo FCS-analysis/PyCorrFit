@@ -64,26 +64,6 @@ check parameters on each page and start 'Global fit'.
         # The weighted fit of the current page will be applied to
         # all other pages.
         self.weightedfitdrop = wx.ComboBox(self.panel)
-        weightlist = self.Page.Fitbox[1].GetItems()
-        # Do not display knot number for spline. May be different for each page.
-        # Remove everything after a "(" in the weightlist string.
-        # This way, e.g. the list does not show the knotnumber, which
-        # we don't use anyhow.
-        # We are doing this for all elements, because in the future, other (?)
-        # weighting methods might be implemented.
-        for i in np.arange(len(weightlist)):
-            weightlist[1] = weightlist[1].split("(")[0].strip()
-        self.weightedfitdrop.SetItems(weightlist)
-        try:
-            # if there is no data, this could go wrong
-            self.Page.Fit_create_instance(noplots=True)
-            FitTypeSelection = Page.Fitbox[1].GetSelection()
-        except:
-            FitTypeSelection = 0
-        self.weightedfitdrop.SetSelection(FitTypeSelection)
-        ## Knotnumber: we don't want to interfere
-        # The user might want to edit the knotnumbers.
-        # self.FitKnots = Page.FitKnots   # 5 by default
         ## Bins from left and right: We also don't edit that.
         self.topSizer.Add(self.weightedfitdrop)
         ## Button
@@ -94,6 +74,7 @@ check parameters on each page and start 'Global fit'.
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.OnPageChanged(self.Page)
         # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -191,12 +172,10 @@ check parameters on each page and start 'Global fit'.
                     if setweightname.count(weightname) == 0:
                         print "Page "+Page.counter+" has no fitting type '"+ \
                               weightname+"'!"
-                        
                     Page.Fit_WeightedFitCheck()
                     Fitting = Page.Fit_create_instance(noplots=True)
                     dataset["dataweights"] = Fitting.dataweights
                     self.PageData[int(j)] = dataset
-
                     # Get the parameters to fit from that page
                     labels = Page.active_parms[0]
                     parms = 1*Page.active_parms[1]
@@ -206,7 +185,6 @@ check parameters on each page and start 'Global fit'.
                             if self.parmstofit.count(labels[i]) == 0:
                                 self.parmstofit.append(labels[i])
                                 fitparms.append(parms[i])
-                                
         fitparms = np.array(fitparms)
         # Now we can perform the least squares fit
         if len(fitparms) == 0:
@@ -273,6 +251,16 @@ check parameters on each page and start 'Global fit'.
                 for i in np.arange(len(p_error)):
                     Page.parmoptim_error[self.parmstofit[i]] = p_error[i]
             Page.apply_parameters_reverse()
+            # Because we are plotting the weights, we need to update
+            # the corresponfing info in each page:
+            weightid = self.weightedfitdrop.GetSelection()
+            if weightid != 0:
+                # We have weights.
+                # We need the following information for correct plotting.
+                Page.weighted_fit_was_performed = True
+                Page.weights_used_for_fitting = Fitting.dataweights
+                Page.calculate_corr()
+                Page.data4weight = 1.*Page.datacorr
             Page.PlotAll()
 
 
@@ -286,5 +274,26 @@ check parameters on each page and start 'Global fit'.
             return
         self.Enable()
         self.Page = page
+        if self.Page is not None:
+            weightlist = self.Page.Fitbox[1].GetItems()
+            # Do not display knot number for spline. May be different for each page.
+            # Remove everything after a "(" in the weightlist string.
+            # This way, e.g. the list does not show the knotnumber, which
+            # we don't use anyhow.
+            # We are doing this for all elements, because in the future, other (?)
+            # weighting methods might be implemented.
+            for i in np.arange(len(weightlist)):
+                weightlist[1] = weightlist[1].split("(")[0].strip()
+            self.weightedfitdrop.SetItems(weightlist)
+            try:
+                # if there is no data, this could go wrong
+                self.Page.Fit_create_instance(noplots=True)
+                FitTypeSelection = self.Page.Fitbox[1].GetSelection()
+            except:
+                FitTypeSelection = 0
+            self.weightedfitdrop.SetSelection(FitTypeSelection)
+            ## Knotnumber: we don't want to interfere
+            # The user might want to edit the knotnumbers.
+            # self.FitKnots = Page.FitKnots   # 5 by default
 
 
