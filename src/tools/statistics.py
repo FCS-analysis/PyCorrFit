@@ -183,7 +183,7 @@ class Stat(wx.Frame):
         for i in np.arange(len(self.Checkboxes)):
             self.boxsizer.Remove(0)
             self.Checkboxes[i].Destroy()
-            #self.Checklabels[i].Destroy()
+            #self.Checklabels[i].Destroy() # those cannot be destroyed.
         self.Checkboxes = list()
         self.Checklabels = list()
         self.OnChooseValues()
@@ -266,7 +266,6 @@ class Stat(wx.Frame):
         # We want to replace the above iteration with an iteration that
         # covers missing values. This means checking for "label == subitem[0]"
         # and iteration over AllInfo with that consition.
-        
         for Info in pagekeys:
             pageinfo = list()
             for label in checked:
@@ -279,5 +278,5 @@ class Stat(wx.Frame):
                                 pageinfo.append(subitem)
                 if label_in_there == False:
                     # No data available
-                    pageinfo.append([label, "-"])
+                    pageinfo.append([label, "NaN"])
             self.SaveInfo.append(pageinfo)

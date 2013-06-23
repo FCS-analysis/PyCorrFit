@@ -249,7 +249,7 @@ class Slide(wx.Frame):
             oldcounter = self.Page.counter
         except:
             oldcounter = -1
-        if page is not None and self.Page is not None:
+        if page is not None:
             if page.counter != oldcounter:
                 self.Page = page
                 self.SetStart()
