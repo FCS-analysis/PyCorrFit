@@ -30,6 +30,17 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+import channels
+import background
+import selectcurves
+import batch
+import globalfit
+import average
+import simulation
+
+import info
+import statistics
+import trace
 # Load all of the classes
 # This also defines the order of the tools in the menu
 ImpA = [ 
@@ -52,14 +63,16 @@ ModuleActive = list()
 ToolsActive = list()
 for i in np.arange(len(ImpA)):
     # We have to add "tools." because this is a relative import
-    ModuleActive.append(importlib.import_module("tools."+ImpA[i][0]))
+    ModuleActive.append(__import__(ImpA[i][0], globals(), locals(), [ImpA[i][1]], -1))
     ToolsActive.append(getattr(ModuleActive[i], ImpA[i][1]))
 
 ModulePassive = list()
 ToolsPassive = list()
 for i in np.arange(len(ImpB)):
-    ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
+    ModulePassive.append(__import__(ImpB[i][0], globals(), locals(), [ImpB[i][1]], -1))
     ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
+    #ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
+    #ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
 
 # This is in the file menu and not needed in the dictionaries below.
 from chooseimport import ChooseImportTypes

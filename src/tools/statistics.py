@@ -29,6 +29,7 @@ class Stat(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
         # parent is the main frame of PyCorrFit
+        self.boxsizerlist = list()
         self.parent = parent
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
@@ -61,8 +62,8 @@ class Stat(wx.Frame):
         else:
             self.Disable()
         # Create space for parameters
-        self.box = wx.StaticBox(self.panel, label="values:")
-        self.boxsizer = wx.StaticBoxSizer(self.box, wx.VERTICAL)
+        self.box = wx.StaticBox(self.panel, label="variables:")
+        self.boxsizer = wx.StaticBoxSizer(self.box, wx.HORIZONTAL)
         self.Checkboxes = list()
         self.Checklabels = list()
         if self.parent.notebook.GetPageCount() != 0:
@@ -167,7 +168,17 @@ class Stat(wx.Frame):
         Info = head + body + tail
         headcounter = 0
         headlen = len(head)
+        # We will sort the checkboxes in more than one column if there
+        # are more than *maxitemsincolumn*
+        maxitemsincolumn = np.float(25)
+        Sizernumber = int(np.ceil(len(Info)/maxitemsincolumn))
+        self.boxsizerlist = list()
+        for i in np.arange(Sizernumber):
+            self.boxsizerlist.append(wx.BoxSizer(wx.VERTICAL))
+        # Start at -1 so the indexes will start at 0 (see below).
+        itemcount = -1
         for item in Info:
+            itemcount += 1
             headcounter += 1
             checkbox = wx.CheckBox(self.panel, label=item[0])
             if headcounter <= headlen:
@@ -176,10 +187,15 @@ class Stat(wx.Frame):
             for checkitem in checklist:
                 if item[0].count(checkitem):
                     checkbox.SetValue(True)
-            self.boxsizer.Add(checkbox)
+            # Add checkbox to column sizers
+            sizern = int(np.floor(itemcount/maxitemsincolumn))
+            self.boxsizerlist[sizern].Add(checkbox)
             self.Checkboxes.append(checkbox)
             self.Checklabels.append(item[0])
             self.Bind(wx.EVT_CHECKBOX, self.OnCheckboxChecked, checkbox)
+        # Add sizers to boxsizer
+        for sizer in self.boxsizerlist:
+            self.boxsizer.Add(sizer)
         self.OnCheckboxChecked("restore")
 
 
@@ -204,15 +220,17 @@ class Stat(wx.Frame):
             return
         self.Enable()
         for i in np.arange(len(self.Checkboxes)):
-            self.boxsizer.Remove(0)
             self.Checkboxes[i].Destroy()
             #self.Checklabels[i].Destroy() # those cannot be destroyed.
+        for i in np.arange(len(self.boxsizerlist)):
+            self.boxsizer.Remove(0)
+        self.boxsizerlist = list()
         self.Checkboxes = list()
         self.Checklabels = list()
         self.OnChooseValues()
         self.boxsizer.Layout()
-        self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.topSizer.Fit(self)
 
 
 
