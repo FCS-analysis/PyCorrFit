@@ -51,11 +51,11 @@ class Average(wx.Frame):
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSizeTuple())
-        self.OnPageChanged(self.Page)
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
+        self.OnPageChanged(self.Page)
 
 
     def OnClose(self, event=None):
