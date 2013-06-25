@@ -41,6 +41,7 @@ class BatchCtrl(wx.Frame):
         self.MyID = None
         ## Controls
         panel = wx.Panel(self)
+        self.panel = panel
         text1 = wx.StaticText(panel, label="Choose source of parameters:")
         self.rbtnhere = wx.RadioButton (panel, -1, 'This session', 
                                         style = wx.RB_GROUP)
@@ -136,10 +137,10 @@ class BatchCtrl(wx.Frame):
 
     def OnPageChanged(self, Page=None):
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.panel.Disable()
             return
         else:
-            self.Enable()
+            self.panel.Enable()
         # We need to update the list of Pages in self.dropdown
         if self.rbtnhere.Value == True:
             DDlist = list()

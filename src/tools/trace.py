@@ -40,7 +40,8 @@ class ShowTrace(wx.Frame):
         self.canvas = plot.PlotCanvas(self)
         self.canvas.SetEnableZoom(True)
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            # We do not need to disable anything here.  user input.
+            pass
         else:
             self.OnDraw()
         initial_size = (350,150)
@@ -92,8 +93,7 @@ class ShowTrace(wx.Frame):
         self.Page = page
         # When parent changes
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            # Nothing to do
             return
-        self.Enable()
         self.OnDraw()
 

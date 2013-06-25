@@ -60,7 +60,7 @@ class Stat(wx.Frame):
         if self.parent.notebook.GetPageCount() != 0:
             self.InfoClass = InfoClass(CurPage=self.Page)
         else:
-            self.Disable()
+            self.panel.Disable()
         # Create space for parameters
         self.box = wx.StaticBox(self.panel, label="variables:")
         self.boxsizer = wx.StaticBoxSizer(self.box, wx.HORIZONTAL)
@@ -216,9 +216,9 @@ class Stat(wx.Frame):
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.panel.Disable()
             return
-        self.Enable()
+        self.panel.Enable()
         for i in np.arange(len(self.Checkboxes)):
             self.Checkboxes[i].Destroy()
             #self.Checklabels[i].Destroy() # those cannot be destroyed.

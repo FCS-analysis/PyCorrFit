@@ -161,8 +161,8 @@ class BackgroundCorrection(wx.Frame):
         # This is also necessary to prevent unsplitting
         self.sp.SetMinimumPaneSize(sashsize)
         self.sp.SplitHorizontally(panel, self.canvas, sashsize)
-        # If there is not page, disable ourselves:
-        self.OnPageChanged(None)
+        # If there is no page, disable ourselves:
+        self.OnPageChanged(self.parent.notebook.GetCurrentPage())
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -355,9 +355,9 @@ class BackgroundCorrection(wx.Frame):
         # We open and close the SelectChannelsFrame every time we
         # import some data.
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.sp.Disable()
             return
-        self.Enable()
+        self.sp.Enable()
         if page is not None:
             if page.bgselected is None:
                 self.btnrem.Enable(False)

@@ -36,11 +36,12 @@ class SelectChannels(wx.Frame):
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
+        ## Start drawing
+        panel = wx.Panel(self)
+        self.panel = panel
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
         self.Calc_init(self.Page)
-        ## Start drawing
-        panel = wx.Panel(self)
         text1 = wx.StaticText(panel, label=u"The lag times τ are stored as an "+
                                            u"array of length ")
         self.textend = wx.StaticText(panel, label="%d." % self.lentau)
@@ -113,7 +114,7 @@ class SelectChannels(wx.Frame):
             # dummy info
             taufull = np.arange(100)
             self.left = self.right = None
-            self.Disable()
+            self.panel.Disable()
         else:
             self.left = self.Page.startcrop     # starting position
             self.right = self.Page.endcrop      # ending position
@@ -218,9 +219,9 @@ class SelectChannels(wx.Frame):
         #
         # Check if we have a fixed channel selection
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.panel.Disable()
         else:
-            self.Enable()
+            self.panel.Enable()
             # There is a page. We may continue.
             state = self.fixcheck.GetValue()
             if state == True:

@@ -81,7 +81,7 @@ class Wrapper_Tools(object):
         # in the tools menu.
         self.Bind = self.Selector.Bind
         if self.parent.notebook.GetPageCount() == 0:
-            self.Selector.Disable()
+            self.Selector.sp.Disable()
 
 
     def Disable(self):
@@ -118,7 +118,7 @@ class Wrapper_Tools(object):
         # This is stuff that should be done when the active page
         # of the notebook changes.
         if self.parent.notebook.GetPageCount() == 0:
-            self.Selector.Disable()
+            self.Selector.sp.Disable()
         else:
             # This is quite hacky. Someone clean it up?
             pos = self.Selector.GetPositionTuple()

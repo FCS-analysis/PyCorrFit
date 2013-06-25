@@ -259,9 +259,9 @@ class ShowInfo(wx.Frame):
         # Parameters and models
         if self.parent.notebook.GetPageCount() == 0:
             self.control.SetValue("")
-            self.Disable()
+            self.panel.Disable()
             return
-        self.Enable()
+        self.panel.Enable()
         Page = self.Page
         InfoMan = InfoClass(CurPage=Page)
         PageInfo = InfoMan.GetCurFancyInfo()

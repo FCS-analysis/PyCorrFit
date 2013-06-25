@@ -270,9 +270,9 @@ check parameters on each page and start 'Global fit'.
         # This is stuff that should be done when the active page
         # of the notebook changes.
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.panel.Disable()
             return
-        self.Enable()
+        self.panel.Enable()
         self.Page = page
         if self.Page is not None:
             weightlist = self.Page.Fitbox[1].GetItems()

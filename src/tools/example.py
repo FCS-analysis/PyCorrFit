@@ -68,8 +68,9 @@ class Tool(wx.Frame):
         # of the notebook changes.
         if self.parent.notebook.GetPageCount() == 0:
             # Do something when there are no pages left.
-            self.Disable()
+            self.panel.Disable()
             return
+        self.panel.Enable()
         self.Page = page
         
 

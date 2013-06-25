@@ -240,9 +240,9 @@ class Slide(wx.Frame):
         # This is stuff that should be done when the active page
         # of the notebook changes.
         if self.parent.notebook.GetPageCount() == 0:
-            self.Disable()
+            self.panel.Disable()
             return
-        self.Enable()
+        self.panel.Enable()
         try:
             # wx._core.PyDeadObjectError: The C++ part of the FittingPanel
             # object has been deleted, attribute access no longer allowed.
