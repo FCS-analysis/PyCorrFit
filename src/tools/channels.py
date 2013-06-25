@@ -103,6 +103,7 @@ class SelectChannels(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         # Show window
         self.Show(True)
+        self.OnPageChanged(self.Page)
 
 
     def Calc_init(self, parent):
