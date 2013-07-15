@@ -155,6 +155,24 @@ def save_figure(self, evt=None):
         pass
 
 
+class MyScrolledDialog(wx.Dialog):
+    def __init__(self, parent, overtext, readtext, title):
+        wx.Dialog.__init__(self, parent, title=title)
+        overtext = wx.StaticText(self, label=overtext)
+        text = wx.TextCtrl(self, -1, readtext, size=(500,400),
+                           style=wx.TE_MULTILINE | wx.TE_READONLY)
+        sizer = wx.BoxSizer(wx.VERTICAL )
+        btnsizer = wx.BoxSizer()
+        btn = wx.Button(self, wx.ID_OK)
+        btnsizer.Add(btn, 0, wx.ALL, 5)
+        btnsizer.Add((5,-1), 0, wx.ALL, 5)
+        btn = wx.Button(self, wx.ID_CANCEL)
+        btnsizer.Add(btn, 0, wx.ALL, 5)
+        sizer.Add(overtext, 0, wx.EXPAND|wx.ALL, 5)   
+        sizer.Add(text, 0, wx.EXPAND|wx.ALL, 5)   
+        sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)   
+        self.SetSizerAndFit (sizer)
+
 
 # Add the save_figure function to the standard class for wx widgets.
 matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure

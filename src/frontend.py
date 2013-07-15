@@ -1336,8 +1336,8 @@ class MyFrame(wx.Frame):
 
         if Page.dataexp is not None:
             Page.Fit_enable_fitting()
-        Page.Fit_WeightedFitCheck()
-        Page.Fit_create_instance()
+            Page.Fit_WeightedFitCheck()
+            Page.Fit_create_instance()
         if Page.weighted_fit_was_performed:
             # We need this to plot std-dev
             Page.calculate_corr()

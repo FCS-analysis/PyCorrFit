@@ -117,6 +117,9 @@ class InfoClass(object):
         Title = list()
         # The tool statistics relys on the string "filename/title".
         # Do not change it!
+        if len(model[1]) == 0:
+            # Prevent saving no title
+            model[1] = "NoName"
         Title.append(["filename/title", model[1] ]) 
         Title.append(["Model ID", str(model[2]) ]) 
         Title.append(["Model name", model[0] ]) 
@@ -203,6 +206,9 @@ class InfoClass(object):
         Background = list()
         if bgselected is not None:
             bgname = Page.parent.Background[bgselected][1]
+            if len(bgname) == 0:
+                # Prevent saving no name
+                bgname = "NoName"
             bgrate = Page.parent.Background[bgselected][0]
             Background.append([ "bg name", bgname ])
             Background.append([ "bg rate [kHz]", bgrate ])

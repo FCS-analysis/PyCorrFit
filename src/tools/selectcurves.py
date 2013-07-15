@@ -21,6 +21,8 @@ import numpy as np
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 
+import edclasses
+
 
 # Menu entry name
 MENUINFO = ["&Overlay tool", "Select experimental curves."]
@@ -154,11 +156,12 @@ class Wrapper_Tools(object):
         # warn the user!
         # First make a list of all pages that need to be removed and then
         # delete those pages.
-        warntext = "The following pages will be removed:\n"
-        for key in keysrem:
-            warntext += "- "+key+" "+self.labels[key]+"\n"
-        dlg = wx.MessageDialog(self.parent, warntext, "Warning",
-                        wx.OK|wx.ICON_EXCLAMATION|wx.CANCEL)
+        overtext = "Keep only pages in this list?"
+        textlist = ""
+        for key in keyskeep:
+            textlist += "- "+key+" "+self.labels[key]+"\n"
+        dlg = edclasses.MyScrolledDialog(self.parent,
+                                          overtext, textlist, "Warning")
         if dlg.ShowModal() == wx.ID_OK:
             N = self.parent.notebook.GetPageCount()
             pagerem = list()
