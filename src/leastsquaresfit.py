@@ -286,7 +286,10 @@ class Fit(object):
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
         # Do not forget to subtract experimental data ;)
-        return (self.function(self.values, x) - self.data) / self.dataweights
+        tominimize = (self.function(self.values, x) - self.data) / self.dataweights
+        # Ther might be NaN values because of zero weights:
+        tominimize = tominimize[~np.isinf(tominimize)]
+        return tominimize
 
 
     def get_chi_squared(self):
