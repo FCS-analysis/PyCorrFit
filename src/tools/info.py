@@ -65,30 +65,30 @@ class InfoClass(object):
         # Title
         Title = "\n"
         for item in InfoDict["title"]:
-            Title = Title + item[0]+": "+ item[1]+"\n"
+            Title = Title + item[0]+"\t"+ item[1]+"\n"
         # Parameters
         Parameters = "\nParameters:\n"
         for item in InfoDict["parameters"]:
-            Parameters = Parameters + "  "+item[0]+" = "+ str(item[1])+"\n"
+            Parameters = Parameters + "  "+item[0]+"\t"+ str(item[1])+"\n"
         # Supplementary variables
         Supplement = "\nSupplementary variables:\n"
         try:
             for item in InfoDict["supplement"]:
-                Supplement = Supplement + "  "+item[0]+" = "+ str(item[1])+"\n"
+                Supplement = Supplement + "  "+item[0]+"\t"+ str(item[1])+"\n"
         except KeyError:
             Supplement = ""
         # Fitting
         Fitting = "\nFitting:\n"
         try:
             for item in InfoDict["fitting"]:
-                Fitting = Fitting + "  "+item[0]+": "+str(item[1])+"\n"
+                Fitting = Fitting + "  "+item[0]+"\t"+str(item[1])+"\n"
         except KeyError:
             Fitting = ""
         # Background
         Background = "\nBackground:\n"
         try:
             for item in InfoDict["background"]:
-                Background = Background + "  "+item[0]+": "+str(item[1])+"\n"
+                Background = Background + "  "+item[0]+"\t"+str(item[1])+"\n"
         except KeyError:
             Background = ""
 
