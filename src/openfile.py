@@ -346,7 +346,9 @@ def saveCSV(parent, dirname, Page):
             res = Page.resid[:,1]
             # Plotting! Because we only export plotted area.
             weight = Page.weights_used_for_plotting
-            if len(weight) != len(exp):
+            if weight is None:
+                pass
+            elif len(weight) != len(exp):
                 text = "Weights have not been calculated for the "+\
                        "area you want to export. Pressing 'Fit' "+\
                        "again should solve this issue. Data will "+\
@@ -354,7 +356,7 @@ def saveCSV(parent, dirname, Page):
                 dlg = wx.MessageDialog(parent, text, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
-                return driname, None
+                return dirname, None
         else:
             tau = Page.datacorr[:,0]
             exp = None
