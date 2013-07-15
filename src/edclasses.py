@@ -163,15 +163,50 @@ class MyScrolledDialog(wx.Dialog):
                            style=wx.TE_MULTILINE | wx.TE_READONLY)
         sizer = wx.BoxSizer(wx.VERTICAL )
         btnsizer = wx.BoxSizer()
-        btn = wx.Button(self, wx.ID_OK)
+        btn = wx.Button(self, wx.ID_OK, "OK ")
         btnsizer.Add(btn, 0, wx.ALL, 5)
         btnsizer.Add((5,-1), 0, wx.ALL, 5)
-        btn = wx.Button(self, wx.ID_CANCEL)
+        btn = wx.Button(self, wx.ID_CANCEL, "Abort ")
         btnsizer.Add(btn, 0, wx.ALL, 5)
         sizer.Add(overtext, 0, wx.EXPAND|wx.ALL, 5)   
         sizer.Add(text, 0, wx.EXPAND|wx.ALL, 5)   
         sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)   
-        self.SetSizerAndFit (sizer)
+        self.SetSizerAndFit(sizer)
+        
+        
+class MyOKAbortDialog(wx.Dialog):
+    def __init__(self, parent, text, title):
+        wx.Dialog.__init__(self, parent, title=title)
+        overtext = wx.StaticText(self, label=text)
+        sizer = wx.BoxSizer(wx.VERTICAL )
+        btnsizer = wx.BoxSizer()
+        btn = wx.Button(self, wx.ID_OK, "OK ")
+        btnsizer.Add(btn, 0, wx.ALL, 5)
+        btnsizer.Add((5,-1), 0, wx.ALL, 5)
+        btn = wx.Button(self, wx.ID_CANCEL, "Abort ")
+        btnsizer.Add(btn, 0, wx.ALL, 5)
+        sizer.Add(overtext, 0, wx.EXPAND|wx.ALL, 5)   
+        sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)   
+        self.SetSizerAndFit(sizer)
+        
+        
+class MyYesNoAbortDialog(wx.Dialog):
+    def __init__(self, parent, text, title):
+        wx.Dialog.__init__(self, parent, title=title)
+        overtext = wx.StaticText(self, label=text)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        btnsizer = wx.BoxSizer()
+        btn1 = wx.Button(self, wx.ID_YES, "Yes ")
+        btnsizer.Add(btn1, 0, wx.ALL, 5)
+        btnsizer.Add((1,-1), 0, wx.ALL, 5)
+        btn2 = wx.Button(self, wx.ID_NO, "No ")
+        btnsizer.Add(btn2, 0, wx.ALL, 5)
+        btnsizer.Add((1,-1), 0, wx.ALL, 5)
+        btn3 = wx.Button(self, wx.ID_CANCEL, "Abort ")
+        btnsizer.Add(btn3, 0, wx.ALL, 5)
+        sizer.Add(overtext, 0, wx.EXPAND|wx.ALL, 5)   
+        sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)   
+        self.SetSizerAndFit(sizer)
 
 
 # Add the save_figure function to the standard class for wx widgets.

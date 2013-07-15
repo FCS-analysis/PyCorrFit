@@ -446,12 +446,19 @@ class MyFrame(wx.Frame):
                 'Do you wish to save this session first?', 
                 'Save current session?', 
                  wx.ICON_QUESTION | wx.CANCEL | wx.YES_NO | wx.NO_DEFAULT )
+#            dial = edclasses.MyYesNoAbortDialog(self, 
+#                    'Do you wish to save this session first?',
+#                    'Save current session?')
             result = dial.ShowModal()
             dial.Destroy()
+#            import IPython
+#            IPython.embed()
             if result == wx.ID_CANCEL:
                 return "abort"      # stop this function - do nothing.
             elif result == wx.ID_YES:
                 self.OnSaveSession()
+            elif result == wx.ID_NO:
+                pass
         # Disable all the dialogs and menus
         self.EnableToolCurrent(False)
         # Delete all the pages
@@ -501,10 +508,9 @@ class MyFrame(wx.Frame):
         # Ask the user if he really wants to delete the page.
         title = self.notebook.GetCurrentPage().tabtitle.GetValue()
         numb = self.notebook.GetCurrentPage().counter.strip().strip(":")
-        text = "Do you really want to close page "+numb+"?\n"+title
-        dlg = wx.MessageDialog(self, text, "Error", 
-            style=wx.ICON_QUESTION|wx.YES_NO|wx.CANCEL|wx.STAY_ON_TOP)
-        if dlg.ShowModal() == wx.ID_YES:
+        text = "This will close page "+numb+"?\n"+title
+        dlg = edclasses.MyOKAbortDialog(self, text, "Warning")
+        if dlg.ShowModal() == wx.ID_OK:
             self.notebook.DeletePage(self.notebook.GetSelection())
             self.OnFNBClosedPage()
             if self.notebook.GetPageCount() == 0:

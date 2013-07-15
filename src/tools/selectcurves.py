@@ -173,6 +173,7 @@ class Wrapper_Tools(object):
             for Page in pagerem:
                 j = self.parent.notebook.GetPageIndex(Page)
                 self.parent.notebook.DeletePage(j)
+        dlg.Destroy()
             # Already triggered by DeletePage:
             # self.OnClose()
 
