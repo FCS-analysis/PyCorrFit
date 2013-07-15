@@ -224,20 +224,6 @@ class MyFrame(wx.Frame):
         if enabled == False:
             # Disable all the dialogs
             keys = self.ToolsOpen.keys()
-        # Tools disable themselves
-        #    for key in keys:
-        #        # Do not close it but disable it
-        #        # self.ToolsOpen[key].Close()
-        #        self.ToolsOpen[key].Disable()
-        #    # Uncheck all the tool menu items
-        #    # for item in self.toolmenu.GetMenuItems():
-        #    #    if item.IsCheckable() is True:
-        #    #        # This means, that we hit a separator
-        #    #        self.toolmenu.Check(item.GetId(), False)
-        #else:
-        #    keys = self.ToolsOpen.keys()
-        #    for key in keys:
-        #        self.ToolsOpen[key].Enable()
 
 
     def MakeMenu(self):

@@ -418,7 +418,7 @@ class FittingPanel(wx.Panel):
         return Fitting
 
         
-    def Fit_function(self, event=None):
+    def Fit_function(self, event=None, noplots=False):
         """ Call the fit function. """
         # Make a busy cursor
         wx.BeginBusyCursor()
@@ -426,7 +426,7 @@ class FittingPanel(wx.Panel):
         # This also applies the background correction, if present
         self.apply_parameters()
         # Create instance of fitting class
-        Fitting = self.Fit_create_instance()
+        Fitting = self.Fit_create_instance(noplots)
         # Reset page counter
         self.GlobalParameterShare = list()
         try:

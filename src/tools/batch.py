@@ -132,7 +132,7 @@ class BatchCtrl(wx.Frame):
             if (OtherPage.modelid == modelid and
                 OtherPage.dataexpfull is not None):
                 #Fit
-                OtherPage.Fit_function()
+                OtherPage.Fit_function(noplots=True)
 
 
     def OnPageChanged(self, Page=None):

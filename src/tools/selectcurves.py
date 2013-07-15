@@ -244,10 +244,14 @@ class UserSelectCurves(wx.Frame):
                     self.SelectBox.Deselect(i)
         self.Bind(wx.EVT_LISTBOX, self.OnUpdatePlot, self.SelectBox)
         self.boxSizer.Add(self.SelectBox)
-        # Button OK
+        # Button APPLY
         btnok = wx.Button(panel_bottom, wx.ID_ANY, 'Apply')
         self.Bind(wx.EVT_BUTTON, self.OnPushResults, btnok)
         self.boxSizer.Add(btnok)
+        # Button CANCEL
+        btncancel = wx.Button(panel_bottom, wx.ID_ANY, 'Cancel')
+        self.Bind(wx.EVT_BUTTON, self.OnCancel, btncancel)
+        self.boxSizer.Add(btncancel)
         # Finish off sizers
         panel_top.SetSizer(self.upperSizer)
         panel_bottom.SetSizer(self.boxSizer)
@@ -296,6 +300,11 @@ class UserSelectCurves(wx.Frame):
             for key in self.curvekeys:
                 self.curvelabels.append(str(key)+" "+self.labels[key])
 
+
+    def OnCancel(self, e=None):
+        """ Close the tool """
+        self.wrapper.OnClose()
+        
 
     def OnPushResults(self, e=None):
         # Get keys from selection

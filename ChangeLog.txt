@@ -1,3 +1,15 @@
+0.7.7
+- Fixed: Tools windows could not be closed (or moved on MS Windows)
+- Fixed: .csv export failed in some cases where no weights were used
+- Enhancement: The user is now asked before a page is closed
+- Enhancement: Tool "Page Info" and in exported .csv files, variables and
+               values are now separated by a tab stop instead of a "="
+- Fixed: Opening a session with an empty page failed in some cases
+- Fixed: Tool "Statistics" missed to output the column "filename/title"
+         if that key value is empty - replaced empty strings with "NoName"
+- Enhancement: Tool "Overlay" now asks the user to check kept curves
+               instead of showing the curves to be removed
+- Enhancement: Tool "Overlay" now has a "Cancel" button
 0.7.6
 - Improved handling
    - Tools are now sorted according to a standard work-flow
