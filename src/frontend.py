@@ -158,8 +158,13 @@ class MyFrame(wx.Frame):
                            self.OnFNBClosedPage)
         self.notebook.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED, 
                            self.OnFNBPageChanged)
+        # This is a hack since version 0.7.7:
+        # When the "X"-button on a page is pressed, ask the user
+        # if he really wants to close that page.
+        self.notebook._pages.Unbind(wx.EVT_LEFT_UP)
+        self.notebook._pages.Bind(wx.EVT_LEFT_UP, self.OnMyLeftUp)
 
-        # If user hits the "x", ask if he wants to save
+        # If user hits the "x", ask if he wants to save the session
         self.Bind(wx.EVT_CLOSE, self.OnExit)
 
         # Set window icon
@@ -464,9 +469,7 @@ class MyFrame(wx.Frame):
         # Disable all the dialogs and menus
         self.EnableToolCurrent(False)
         # Delete all the pages
-        for i in np.arange(numtabs):
-            idp = numtabs-i-1
-            self.notebook.DeletePage(idp)
+        self.notebook.DeleteAllPages()
         self.EnableToolCurrent(False)
         self.OnFNBPageChanged()
         self.tabcounter = 0
@@ -509,10 +512,17 @@ class MyFrame(wx.Frame):
  
         It removes a page from the notebook
         """
-        self.notebook.DeletePage(self.notebook.GetSelection())
-        self.OnFNBClosedPage()
-        if self.notebook.GetPageCount() == 0:
-            self.OnFNBPageChanged()
+        # Ask the user if he really wants to delete the page.
+        title = self.notebook.GetCurrentPage().tabtitle.GetValue()
+        numb = self.notebook.GetCurrentPage().counter.strip().strip(":")
+        text = "Do you really want to close page "+numb+"?\n"+title
+        dlg = wx.MessageDialog(self, text, "Error", 
+            style=wx.ICON_QUESTION|wx.YES_NO|wx.CANCEL|wx.STAY_ON_TOP)
+        if dlg.ShowModal() == wx.ID_YES:
+            self.notebook.DeletePage(self.notebook.GetSelection())
+            self.OnFNBClosedPage()
+            if self.notebook.GetPageCount() == 0:
+                self.OnFNBPageChanged()
 
 
     def OnExit(self,e=None):
@@ -683,6 +693,41 @@ class MyFrame(wx.Frame):
             self.dirname = dlg.GetDirectory()
             dlg.Destroy()
             return
+
+
+    def OnMyLeftUp(self, event):
+        """
+        Wrapper for LeftUp:
+        We want to have a wrapper for the page closing event.
+        The code was copied from "flatnotebook.py"        
+        Handles the ``wx.EVT_LEFT_UP`` event for L{PageContainer}.
+        :param `event`: a `wx.MouseEvent` event to be processed.
+        """
+        # Get the page container
+        pc = self.notebook._pages
+        # forget the zone that was initially clicked
+        self._nLeftClickZone = fnb.FNB_NOWHERE
+        where, tabIdx = pc.HitTest(event.GetPosition())
+        FNB_X = 2
+        FNB_TAB_X = 3
+        if not pc.HasAGWFlag(fnb.FNB_NO_TAB_FOCUS):
+            # Make sure selected tab has focus
+            self.SetFocus()
+        if where == FNB_X:
+            # Make sure that the button was pressed before
+            if pc._nXButtonStatus != fnb.FNB_BTN_PRESSED:
+                return
+            pc._nXButtonStatus = fnb.FNB_BTN_HOVER
+            self.OnDeletePage(self.notebook.GetCurrentPage())
+        elif where == FNB_TAB_X:
+            # Make sure that the button was pressed before
+            if pc._nTabXButtonStatus != fnb.FNB_BTN_PRESSED:
+                return 
+            pc._nTabXButtonStatus = fnb.FNB_BTN_HOVER
+            self.OnDeletePage(self.notebook.GetCurrentPage())
+        else:
+            # Call what should have been called.
+            pc.OnLeftUp(event)
 
 
     def ImportData(self, Page, dataexp, trace, curvetype="",
