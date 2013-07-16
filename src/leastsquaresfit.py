@@ -89,6 +89,10 @@ class Fit(object):
         # It is possible to edit tolerance for fitting
         # ftol, xtol and gtol.
         # Those parameters could be added to the fitting routine later.
+        # Should we do a weighted fit?
+        # Standard is yes. If there are no weights
+        # (self.fittype not set) then this value becomes False
+        self.weightedfit=True
         
 
 
@@ -120,6 +124,10 @@ class Fit(object):
             if self.valuestofit[i]:
                 self.fitparms[index] = np.float(self.values[i])
                 index = index + 1
+        # Assume we have a weighted fit. If this is not the case then
+        # this is changed in the else statement of the following 
+        # "if"-statement:
+        self.weightedfit=True
         if self.fittype[:6] == "spline":
             # Number of knots to use for spline
             try:
@@ -265,9 +273,9 @@ class Fit(object):
                       "self.external_deviations not set for fit type 'other'."
         else:
             # The fit.Fit() class will divide the function to minimize
-            # by the dataweights. If there is no weighted fit, just divide
-            # by one.
-            dataweights = 1.
+            # by the dataweights only if we have weights
+            self.weightedfit=False
+            dataweights=None
         self.dataweights = dataweights
 
 
@@ -285,10 +293,16 @@ class Fit(object):
                 index = index + 1
         # Only allow physically correct parameters
         self.values = self.check_parms(self.values)
-        # Do not forget to subtract experimental data ;)
-        tominimize = (self.function(self.values, x) - self.data) / self.dataweights
-        # Ther might be NaN values because of zero weights:
-        tominimize = tominimize[~np.isinf(tominimize)]
+        tominimize = (self.function(self.values, x) - self.data)
+        # Check if we have a weighted fit
+        if self.weightedfit is True:
+            # Check dataweights for zeros and don't use these
+            # values for the least squares method.
+            with np.errstate(divide='ignore'):
+                tominimize = np.where(self.dataweights!=0, 
+                                      tominimize/self.dataweights, 0)
+            ## There might be NaN values because of zero weights:
+            #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
 
