@@ -120,28 +120,19 @@ class Wrapper_Tools(object):
         # This is stuff that should be done when the active page
         # of the notebook changes.
         if self.parent.notebook.GetPageCount() == 0:
+            self.Selector.SelectBox.SetItems([])
             self.Selector.sp.Disable()
         else:
-            # This is quite hacky. Someone clean it up?
-            pos = self.Selector.GetPositionTuple()
-            size = self.Selector.GetSizeTuple()
-            del self.Bind
-            self.Selector.Close()
-            del self.Selector
+            # Sticky behavior cleaned up in 0.7.8
             curvedict, labels = self.GetCurvedict()
+            self.Selector.curvedict = curvedict
+            self.Selector.labels = labels
+            self.Selector.ProcessDict()
             self.labels = labels
-            self.Selector = UserSelectCurves(self.parent, curvedict,
-                                             wrapper=self, labels=labels)
-            self.Bind = self.Selector.Bind
-            self.Selector.SetSize(size)
-            self.Selector.SetPosition(pos)
-            # Tell the parent that we are still there
-            self.parent.ToolsOpen[self.MyID] = self
-            self.parent.ToolsOpen[self.MyID].MyID = self.MyID
-            self.parent.ToolsOpen[self.MyID].Bind(wx.EVT_CLOSE, 
-                              self.parent.ToolsOpen[self.MyID].OnClose)
-            self.parent.toolmenu.Check(self.MyID, True)
-
+            self.Selector.SelectBox.SetItems(self.Selector.curvelabels)
+            for i in np.arange(len(self.Selector.curvekeys)):
+                self.Selector.SelectBox.SetSelection(i)
+            self.Selector.OnUpdatePlot()
 
 
     def OnResults(self, keyskeep, keysrem):
@@ -174,8 +165,8 @@ class Wrapper_Tools(object):
                 j = self.parent.notebook.GetPageIndex(Page)
                 self.parent.notebook.DeletePage(j)
         dlg.Destroy()
-            # Already triggered by DeletePage:
-            # self.OnClose()
+        self.OnPageChanged()
+
 
 
 class UserSelectCurves(wx.Frame):
