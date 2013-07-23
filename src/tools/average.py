@@ -62,6 +62,9 @@ class Average(wx.Frame):
                wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
 
         self.topSizer.Add(self.WXDropSelMod)
+        textinit3 = wx.StaticText(self.panel,
+         label="This tool averages only over pages with the same type (AC/CC).")
+        self.topSizer.Add(textinit3)
         # Set all values of Text and Strin
         self.SetValues()
         btnavg = wx.Button(self.panel, wx.ID_CLOSE, 'Create average')
@@ -99,23 +102,51 @@ class Average(wx.Frame):
         self.Page = page
 
 
-
     def OnAverage(self, evt=None):
-        # Check if current page has experimental data:
-        if self.Page.dataexpfull == None:
-            dlg = wx.MessageDialog(self, "No data in current page.", "Error", 
-                style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
+        strFull = self.WXTextPages.GetValue()
+        listFull = strFull.split(",")
+        PageNumbers = list()
+        try:
+            for item in listFull:
+                pagerange = item.split("-")
+                start = int(pagerange[0].strip())
+                end = int(pagerange[-1].strip())
+                for i in np.arange(end-start+1)+start:
+                    PageNumbers.append(i)
+        except:
+            print "Syntax invalid for page selection in tool average."
             return
-        # Get all pages with the same model
         pages = list()
+        referencePage = None
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            if (Page.modelid == self.Page.modelid and 
-                Page.IsCrossCorrelation == self.Page.IsCrossCorrelation):
-                # If there is an empty page somewhere, don't bother
-                if Page.dataexpfull is not None:
-                    pages.append(Page)
+            # Get the first page of the array
+            if referencePage is None:
+                referencePage = Page
+            j = filter(lambda x: x.isdigit(), Page.counter)
+            if int(j) in PageNumbers:
+                    ## Check if current page has experimental data:
+                    #if self.Page.dataexpfull == None:
+                    #    dlg = wx.MessageDialog(self, "No data in current page.", "Error", 
+                    #        style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                    #    dlg.ShowModal() == wx.ID_OK
+                    #    return
+
+                    #pages = list()
+                    #for i in np.arange(self.parent.notebook.GetPageCount()):
+                    #    Page = self.parent.notebook.GetPage(i)
+                # Get all pages with the same model?
+                if self.WXCheckMono.GetValue() == True:
+                    if (Page.modelid == self.Page.modelid and 
+                        Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
+                        # If there is an empty page somewhere, don't bother
+                        if Page.dataexpfull is not None:
+                            pages.append(Page)
+                else:
+                    if Page.IsCrossCorrelation == referencePage.IsCrossCorrelation:
+                        # If there is an empty page somewhere, don't bother
+                        if Page.dataexpfull is not None:
+                            pages.append(Page)
         # Now get all the experimental data
         explist = list()
         # Two components in case of Cross correlation
