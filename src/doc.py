@@ -250,10 +250,6 @@ def SoftwareUsed():
 
     
 # Text that is displayed once someone wishes to average all his curves
-average = """Create an average over all curves that were
-imported using the same model as the
-current page. A new page will be created
-that contains the averaged data."""
 
 averagedifflen = """It looks like you are trying to average over curves
 that have different lengths. This was not

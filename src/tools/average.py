@@ -42,8 +42,28 @@ class Average(wx.Frame):
          ## Content
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        textinit = wx.StaticText(self.panel, label=doc.average)
+        textinit = wx.StaticText(self.panel,
+                    label="Create an average of the following pages:")
         self.topSizer.Add(textinit)
+        ## Page selection
+        self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
+        self.topSizer.Add(self.WXTextPages)
+        ## Chechbox asking for Mono-Model
+        self.WXCheckMono = wx.CheckBox(self.panel,
+                  label="Only use pages with the same model as the first page.")
+        self.WXCheckMono.SetValue(True)
+        self.topSizer.Add(self.WXCheckMono)
+        ## Model selection Dropdown
+        textinit2 = wx.StaticText(self.panel,
+                                        label="Select a model for the average:")
+        self.topSizer.Add(textinit2)
+
+        self.WXDropSelMod = wx.ComboBox(self.panel, -1, "", (15,30),
+               wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
+
+        self.topSizer.Add(self.WXDropSelMod)
+        # Set all values of Text and Strin
+        self.SetValues()
         btnavg = wx.Button(self.panel, wx.ID_CLOSE, 'Create average')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnAverage, btnavg)
@@ -71,11 +91,13 @@ class Average(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        self.SetValues()
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
         self.panel.Enable()
         self.Page = page
+
 
 
     def OnAverage(self, evt=None):
@@ -240,3 +262,37 @@ class Average(wx.Frame):
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
         self.OnClose()
 
+
+    def SetValues(self, e=None):
+        # Text input
+        # Find maximum page number
+        ## TODO:
+        ## Check if curve-selector is open and use its page numbers
+        j = 0
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            j = max(j, int(filter(lambda x: x.isdigit(), Page.counter)))
+        if j != 0:
+            self.WXTextPages.SetValue("0-"+str(j))
+        else:
+            self.WXTextPages.SetValue("0")
+        # Dropdown
+        self.DropdownIndex = []          # Contains corresponsing model
+        modelkeys = mdls.modeltypes.keys()
+        modelkeys.sort()
+        try:
+            current_model = self.parent.notebook.GetCurrentPage().modelid
+        except:
+            current_model = -1
+        i = 0
+        DropdownList = list()
+        current_index = 0
+        for modeltype in modelkeys:
+            for modelid in mdls.modeltypes[modeltype]:
+                DropdownList.append(modeltype+": "+mdls.modeldict[modelid][1])
+                self.DropdownIndex.append(str(modelid))
+                if str(current_model) == str(modelid):
+                    current_index = i
+                i+=1
+        self.WXDropSelMod.SetItems(DropdownList)
+        self.WXDropSelMod.SetSelection(current_index)
