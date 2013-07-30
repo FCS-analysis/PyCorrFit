@@ -120,11 +120,12 @@ class Average(wx.Frame):
                     PageNumbers.append(i)
         except:
             dlg = wx.MessageDialog(self, 
-                          "Invalid syntax in page selection.", "Error", 
+                  "Invalid syntax in page selection: "+strFull, "Error", 
                               style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             dlg.ShowModal() == wx.ID_OK
             return
         pages = list()
+        UsedPagenumbers = list()
         referencePage = self.parent.notebook.GetCurrentPage()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
@@ -138,11 +139,13 @@ class Average(wx.Frame):
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
                             pages.append(Page)
+                            UsedPagenumbers.append(int(j))
                 else:
                     if Page.IsCrossCorrelation == referencePage.IsCrossCorrelation:
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
                             pages.append(Page)
+                            UsedPagenumbers.append(int(j))
         # If there are no pages in the list, exit gracefully
         if len(pages) <= 1:
             texterr_a = "At least two pages with experimental data are\n"+\
@@ -277,7 +280,7 @@ class Average(wx.Frame):
                 self.AvgPage.tracecc = None
         self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
-        self.AvgPage.tabtitle.SetValue("Average")
+        self.AvgPage.tabtitle.SetValue("Average "+str(UsedPagenumbers))
         # Set the addition information about the variance from averaging
         Listname = "Average"
         standarddev = exparray.std(axis=0)[:,1]

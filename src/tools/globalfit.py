@@ -139,12 +139,17 @@ check parameters on each page and start 'Global fit'.
         try:
             for item in listFull:
                 pagerange = item.split("-")
-                start = int(pagerange[0].strip())
-                end = int(pagerange[-1].strip())
+                start = pagerange[0].strip()
+                start = int(filter(type(start).isdigit, start))
+                end = pagerange[-1].strip()
+                end = int(filter(type(end).isdigit, end))
                 for i in np.arange(end-start+1)+start:
                     PageNumbers.append(i)
         except:
-            print "Syntax invalid for page selection in global fitting."
+            dlg = wx.MessageDialog(self, 
+                 "Invalid syntax in page selection: "+strFull, "Error", 
+                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal() == wx.ID_OK
             return
         ## Get the corresponding pages, if they exist:
         self.PageData = dict()
