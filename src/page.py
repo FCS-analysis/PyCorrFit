@@ -471,7 +471,9 @@ class FittingPanel(wx.Panel):
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
         weighted = (self.Fitbox[1].GetSelection() != 0)
-        if weighted is True:
+        # In the case of "Average" we do not enable the
+        # "Calculation of variance" part.
+        if weighted is True and self.Fitbox[1].GetValue() != "Average":
             self.Fitbox[2].Enable()
             self.Fitbox[3].Enable()
             self.Fitbox[4].Enable()

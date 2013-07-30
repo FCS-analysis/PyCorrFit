@@ -122,16 +122,16 @@ frame = gui.MyFrame(None, -1, version)
 # in the arguments.
 sysarg = sys.argv
 for arg in sysarg:
-	if len(arg) >= 18:
-		if arg[-18:] == "fcsfit-session.zip":
-			print "\nLoading Session "+arg
-			frame.OnOpenSession(sessionfile=arg)
-	elif arg[:6] == "python":
-		pass
-	elif arg[-12:] == "PyCorrFit.py":
-		pass
-	else:
-		print "I do not know what to do with this argument: "+arg
+    if len(arg) >= 18:
+        if arg[-18:] == "fcsfit-session.zip":
+            print "\nLoading Session "+arg
+            frame.OnOpenSession(sessionfile=arg)
+    elif arg[:6] == "python":
+        pass
+    elif arg[-12:] == "PyCorrFit.py":
+        pass
+    else:
+        print "I do not know what to do with this argument: "+arg
 # Now start the app
 app.MainLoop()
 

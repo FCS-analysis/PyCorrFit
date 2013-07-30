@@ -194,6 +194,7 @@ class MyFrame(wx.Frame):
             # Set the tabcounter right, so the tabs are counted continuously.
             counterint = int(counter.strip().strip(":").strip("#"))
             self.tabcounter = max(counterint, self.tabcounter)
+        modelid = int(modelid)
         counter = "#"+str(self.tabcounter)+": "
         # Get the model for the page together
         valuepack = mdls.valuedict[modelid]

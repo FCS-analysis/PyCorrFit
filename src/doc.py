@@ -249,12 +249,6 @@ def SoftwareUsed():
 
 
     
-# Text that is displayed once someone wishes to average all his curves
-
-averagedifflen = """It looks like you are trying to average over curves
-that have different lengths. This was not
-anticipated when writing this program."""
-
 backgroundinit = """Correct the amplitude for non-correlated background.
 The background intensity <B> can be either imported
 from a blank measurement or set manually."""

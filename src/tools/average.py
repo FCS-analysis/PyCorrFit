@@ -33,7 +33,7 @@ class Average(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Average curves",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+            pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
@@ -43,27 +43,27 @@ class Average(wx.Frame):
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         textinit = wx.StaticText(self.panel,
-                    label="Create an average of the following pages:")
+                    label="Create an average from the following pages:")
         self.topSizer.Add(textinit)
         ## Page selection
         self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
         self.topSizer.Add(self.WXTextPages)
         ## Chechbox asking for Mono-Model
         self.WXCheckMono = wx.CheckBox(self.panel,
-                  label="Only use pages with the same model as the first page.")
+         label="Only use pages with the same model as the current page.")
         self.WXCheckMono.SetValue(True)
         self.topSizer.Add(self.WXCheckMono)
         ## Model selection Dropdown
         textinit2 = wx.StaticText(self.panel,
-                                        label="Select a model for the average:")
+                                label="Select a model for the average:")
         self.topSizer.Add(textinit2)
-
         self.WXDropSelMod = wx.ComboBox(self.panel, -1, "", (15,30),
                wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
-
         self.topSizer.Add(self.WXDropSelMod)
         textinit3 = wx.StaticText(self.panel,
-         label="This tool averages only over pages with the same type (AC/CC).")
+         label="This tool averages only over pages with the same type"+\
+               "\n(auto- or cross-correlation). Intensity data are"+\
+               "\nappended sequentially.")
         self.topSizer.Add(textinit3)
         # Set all values of Text and Strin
         self.SetValues()
@@ -94,7 +94,10 @@ class Average(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        idsel = self.WXDropSelMod.GetSelection()
         self.SetValues()
+        # Set back user selection:
+        self.WXDropSelMod.SetSelection(idsel)
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
@@ -109,36 +112,29 @@ class Average(wx.Frame):
         try:
             for item in listFull:
                 pagerange = item.split("-")
-                start = int(pagerange[0].strip())
-                end = int(pagerange[-1].strip())
+                start = pagerange[0].strip()
+                start = int(filter(type(start).isdigit, start))
+                end = pagerange[-1].strip()
+                end = int(filter(type(end).isdigit, end))
                 for i in np.arange(end-start+1)+start:
                     PageNumbers.append(i)
         except:
-            print "Syntax invalid for page selection in tool average."
+            dlg = wx.MessageDialog(self, 
+                          "Invalid syntax in page selection.", "Error", 
+                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal() == wx.ID_OK
             return
         pages = list()
-        referencePage = None
+        referencePage = self.parent.notebook.GetCurrentPage()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            # Get the first page of the array
-            if referencePage is None:
-                referencePage = Page
             j = filter(lambda x: x.isdigit(), Page.counter)
             if int(j) in PageNumbers:
-                    ## Check if current page has experimental data:
-                    #if self.Page.dataexpfull == None:
-                    #    dlg = wx.MessageDialog(self, "No data in current page.", "Error", 
-                    #        style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                    #    dlg.ShowModal() == wx.ID_OK
-                    #    return
-
-                    #pages = list()
-                    #for i in np.arange(self.parent.notebook.GetPageCount()):
-                    #    Page = self.parent.notebook.GetPage(i)
                 # Get all pages with the same model?
                 if self.WXCheckMono.GetValue() == True:
-                    if (Page.modelid == self.Page.modelid and 
+                    if (Page.modelid == referencePage.modelid and 
                         Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
+                        ## Check if current page has experimental data:
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
                             pages.append(Page)
@@ -147,6 +143,18 @@ class Average(wx.Frame):
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
                             pages.append(Page)
+        # If there are no pages in the list, exit gracefully
+        if len(pages) <= 1:
+            texterr_a = "At least two pages with experimental data are\n"+\
+                        "required for averaging. Please check the pages\n"+\
+                        "that you selected for averaging."
+            if self.WXCheckMono.GetValue() == True:
+                texterr_a += " Note: You selected\n"+\
+                 "to only use pages with same model as the current page."
+            dlg = wx.MessageDialog(self, texterr_a, "Error", 
+                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal() == wx.ID_OK
+            return
         # Now get all the experimental data
         explist = list()
         # Two components in case of Cross correlation
@@ -190,8 +198,11 @@ class Average(wx.Frame):
         for item in explist[1:]:
             if len(item) != len0:
                 # print an error  message
-                dlg = wx.MessageDialog(self, doc.averagedifflen, "Error", 
-                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                dlg = wx.MessageDialog(self,
+                "Averaging over curves with different lengths is not"+\
+                "\nsupported. When measuring, please make sure that"+\
+                "\nthe measurement time for all curves is the same.",
+                "Error", style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal() == wx.ID_OK
                 return
         # Now shorten the trace, because we want as little memory usage as
@@ -243,7 +254,10 @@ class Average(wx.Frame):
         # create new page
         self.IsCrossCorrelation = self.Page.IsCrossCorrelation
         interval = (self.Page.startcrop, self.Page.endcrop)
-        self.parent.add_fitting_tab(modelid = self.Page.modelid)
+        # Obtain the model ID from the dropdown selection.
+        idsel = self.WXDropSelMod.GetSelection()
+        modelid = self.DropdownIndex[idsel]
+        self.parent.add_fitting_tab(modelid = modelid)
         self.AvgPage = self.parent.notebook.GetCurrentPage()
         (self.AvgPage.startcrop, self.AvgPage.endcrop) = interval
         self.AvgPage.dataexpfull = average
@@ -291,7 +305,8 @@ class Average(wx.Frame):
                 WeightKinds += [key]
             self.AvgPage.Fitbox[1].SetItems(WeightKinds)
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
-        self.OnClose()
+        # Keep the average open.
+        # self.OnClose()
 
 
     def SetValues(self, e=None):
@@ -308,7 +323,6 @@ class Average(wx.Frame):
         else:
             self.WXTextPages.SetValue("0")
         # Dropdown
-        self.DropdownIndex = []          # Contains corresponsing model
         modelkeys = mdls.modeltypes.keys()
         modelkeys.sort()
         try:
@@ -317,6 +331,7 @@ class Average(wx.Frame):
             current_model = -1
         i = 0
         DropdownList = list()
+        self.DropdownIndex = list() # Contains model ids with same index
         current_index = 0
         for modeltype in modelkeys:
             for modelid in mdls.modeltypes[modeltype]:
