@@ -29,6 +29,10 @@ MENUINFO = ["&Global fitting",
 class GlobalFit(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
+        # Define a unique name that identifies this tool
+        # Do not change this value. It is important for the Overlay tool
+        # (selectcurves.py, *Wrapper_Tools*).
+        self.MyName="GLOBALFIT"
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # Get the window positioning correctly

@@ -185,17 +185,24 @@ class Wrapper_Tools(object):
             return
         # Find ToolAverage
         ToolAverage = None
+        ToolGlobalFit = None
         for key in toolkeys:
             tool = self.parent.ToolsOpen[key]
             try:
                 if tool.MyName=="AVERAGE":
                     ToolAverage = tool
+                elif tool.MyName=="GLOBALFIT":
+                    ToolGlobalFit = tool
             except:
                 pass
         if ToolAverage is not None:
             # Write page data
             string = misc.parsePagenum2String(pagelist)
             ToolAverage.WXTextPages.SetValue(string)
+        if ToolGlobalFit is not None:
+            # Write page data
+            string = misc.parsePagenum2String(pagelist)
+            ToolGlobalFit.WXTextPages.SetValue(string)
         
         
         
