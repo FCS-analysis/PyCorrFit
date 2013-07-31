@@ -19,6 +19,7 @@ import wx
 import numpy as np
 from scipy import optimize as spopt
 
+import misc
 import models as mdls
 
 # Menu entry name
@@ -134,22 +135,10 @@ check parameters on each page and start 'Global fit'.
     def OnFit(self, e=None):
         # process a string like this: "1,2,4-9,10"
         strFull = self.WXTextPages.GetValue()
-        listFull = strFull.split(",")
-        PageNumbers = list()
-        try:
-            for item in listFull:
-                pagerange = item.split("-")
-                start = pagerange[0].strip()
-                start = int(filter(type(start).isdigit, start))
-                end = pagerange[-1].strip()
-                end = int(filter(type(end).isdigit, end))
-                for i in np.arange(end-start+1)+start:
-                    PageNumbers.append(i)
-        except:
-            dlg = wx.MessageDialog(self, 
-                 "Invalid syntax in page selection: "+strFull, "Error", 
-                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
+        PageNumbers = misc.parseString2Pagenum(self, strFull)
+        if PageNumbers is None:
+            # Something went wrong and parseString2Pagenum already displayed
+            # an error message.
             return
         ## Get the corresponding pages, if they exist:
         self.PageData = dict()
@@ -179,7 +168,10 @@ check parameters on each page and start 'Global fit'.
                               weightname+"'!"
                     Page.Fit_WeightedFitCheck()
                     Fitting = Page.Fit_create_instance(noplots=True)
-                    dataset["dataweights"] = Fitting.dataweights
+                    if Fitting.dataweights is None:
+                        dataset["dataweights"] = 1.
+                    else:
+                        dataset["dataweights"] = Fitting.dataweights
                     self.PageData[int(j)] = dataset
                     # Get the parameters to fit from that page
                     labels = Page.active_parms[0]

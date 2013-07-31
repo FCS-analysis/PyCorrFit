@@ -179,11 +179,22 @@ class Wrapper_Tools(object):
             key = Page.counter
             if keylist.count(key) == 1:
                 pagelist.append(i)
-        
-        #TODO:
-        # - check if the average tool is open and get it
-        # - write the comma separated list of pages into
-        #   ToolAverage.WXTextPages.SetValue("1,2,3,4")
+        # Get open tools
+        toolkeys = self.parent.ToolsOpen.keys()
+        if len(toolkeys) == 0:
+            return
+        # Find ToolAverage
+        ToolAverage = None
+        for key in toolkeys:
+            tool = self.parent.ToolsOpen[key]
+            try:
+                if tool.MyName=="AVERAGE":
+                    ToolAverage = tool
+            except:
+                pass
+        if ToolAverage is not None:
+            # Write page data
+            ToolAverage.WXTextPages.SetValue("1,2,3,4")
         
         
         

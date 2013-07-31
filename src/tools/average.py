@@ -18,6 +18,7 @@
 import numpy as np
 import wx
 
+import misc
 import models as mdls
 import doc
 
@@ -27,6 +28,10 @@ MENUINFO = ["&Average data", "Create an average curve from whole session."]
 class Average(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
+        # Define a unique name that identifies this tool
+        # Do not change this value. It is important for the Overlay tool
+        # (selectcurves.py, *Wrapper_Tools*).
+        self.MyName="AVERAGE"
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # Get the window positioning correctly
@@ -107,22 +112,10 @@ class Average(wx.Frame):
 
     def OnAverage(self, evt=None):
         strFull = self.WXTextPages.GetValue()
-        listFull = strFull.split(",")
-        PageNumbers = list()
-        try:
-            for item in listFull:
-                pagerange = item.split("-")
-                start = pagerange[0].strip()
-                start = int(filter(type(start).isdigit, start))
-                end = pagerange[-1].strip()
-                end = int(filter(type(end).isdigit, end))
-                for i in np.arange(end-start+1)+start:
-                    PageNumbers.append(i)
-        except:
-            dlg = wx.MessageDialog(self, 
-                  "Invalid syntax in page selection: "+strFull, "Error", 
-                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
+        PageNumbers = misc.parseString2Pagenum(self, strFull)
+        if PageNumbers is None:
+            # Something went wrong and parseString2Pagenum already displayed
+            # an error message.
             return
         pages = list()
         UsedPagenumbers = list()

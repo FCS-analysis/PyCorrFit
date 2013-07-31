@@ -71,7 +71,39 @@ class wxHTML(wx.html.HtmlWindow):
     def OnLinkClicked(parent, link):
          webbrowser.open(link.GetHref())
 
+def parseString2Pagenum(parent, string):
+    """ Parse a string with a list of pagenumbers to an integer list with
+        page numbers.
+        e.g. "1-3,5,7" --> [1,2,3,5,7]
+        parent is important
+    """
+    listFull = string.split(",")
+    PageNumbers = list()
+    try:
+        for item in listFull:
+            pagerange = item.split("-")
+            start = pagerange[0].strip()
+            start = int(filter(type(start).isdigit, start))
+            end = pagerange[-1].strip()
+            end = int(filter(type(end).isdigit, end))
+            for i in np.arange(end-start+1)+start:
+                PageNumbers.append(i)
+            return PageNumbers
+    except:
+        errstring = "Invalid syntax in page selection: "+string+\
+                    ". Please use a comma separated list with"+\
+                    " optional dashes, e.g. '1-3,6,8'." 
+        try:
+            dlg = wx.MessageDialog(parent, errstring, "Error", 
+                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal() == wx.ID_OK
+        except:
+            print "ERROR: "+errstring
+        return None
 
+
+def parsePagenum2String(pagenumlist):
+    pass
 
 def getMainIcon(pxlength=32):
     """ *pxlength* is the side length in pixels of the icon """
