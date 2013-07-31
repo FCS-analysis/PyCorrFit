@@ -51,15 +51,13 @@ check parameters on each page and start 'Global fit'.
         self.topSizer.Add(wx.StaticText(self.panel, label=textinit))
         ## Page selection
         self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
-        # Find maximum page number
-        j = 0
+        # Set initial value in text control
+        pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            j = max(j, int(filter(lambda x: x.isdigit(), Page.counter)))
-        if j != 0:
-            self.WXTextPages.SetValue("0-"+str(j))
-        else:
-            self.WXTextPages.SetValue("0")
+            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+        valstring=misc.parsePagenum2String(pagenumlist)
+        self.WXTextPages.SetValue(valstring)
         self.topSizer.Add(self.WXTextPages)
         ## Weighted fitting
         # The weighted fit of the current page will be applied to

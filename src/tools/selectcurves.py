@@ -22,7 +22,7 @@ import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 
 import edclasses
-
+import misc
 
 # Menu entry name
 MENUINFO = ["&Overlay tool", "Select experimental curves."]
@@ -194,7 +194,8 @@ class Wrapper_Tools(object):
                 pass
         if ToolAverage is not None:
             # Write page data
-            ToolAverage.WXTextPages.SetValue("1,2,3,4")
+            string = misc.parsePagenum2String(pagelist)
+            ToolAverage.WXTextPages.SetValue(string)
         
         
         

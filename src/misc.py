@@ -88,7 +88,8 @@ def parseString2Pagenum(parent, string):
             end = int(filter(type(end).isdigit, end))
             for i in np.arange(end-start+1)+start:
                 PageNumbers.append(i)
-            return PageNumbers
+        PageNumbers.sort()
+        return PageNumbers
     except:
         errstring = "Invalid syntax in page selection: "+string+\
                     ". Please use a comma separated list with"+\
@@ -103,7 +104,46 @@ def parseString2Pagenum(parent, string):
 
 
 def parsePagenum2String(pagenumlist):
-    pass
+    """ Make a string with dashes and commas from a list of pagenumbers.
+        e.g. [1,2,3,5,7] --> "1-3,5,7"
+    """
+    # Make sure we have integers
+    newlist = list()
+    for num in pagenumlist:
+        newlist.append(int(num))
+    newlist.sort()
+    # begin string
+    string = str(newlist[0])
+    # iteration through list:
+    dash = False
+    for i in np.arange(len(newlist)-1)+1:
+        if dash == True:
+            if newlist[i]-1 == newlist[i-1]:
+                pass
+            else:
+                string += "-"+str(newlist[i-1])+", "+str(newlist[i])
+                dash = False
+        else:
+            if newlist[i]-1 == newlist[i-1]:
+                 if newlist[i]-2 == newlist[i-2]:
+                     dash = True
+                 elif len(newlist) != i+1 and newlist[i]+1 == newlist[i+1]:
+                     dash = True
+                 else:
+                     string += ", "+str(newlist[i])
+                     dash = False
+            else:
+                dash = False
+                string += ", "+str(newlist[i])
+        # Put final number
+        if newlist[i] == newlist[-1]:
+            if parseString2Pagenum(None, string)[-1] != newlist[i]:
+                if dash == True:
+                    string += "-"+str(newlist[i])
+                else:
+                    string += ", "+str(newlist[i])
+    return string
+
 
 def getMainIcon(pxlength=32):
     """ *pxlength* is the side length in pixels of the icon """

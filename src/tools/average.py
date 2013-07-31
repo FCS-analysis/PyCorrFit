@@ -273,7 +273,8 @@ class Average(wx.Frame):
                 self.AvgPage.tracecc = None
         self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
-        self.AvgPage.tabtitle.SetValue("Average "+str(UsedPagenumbers))
+        self.AvgPage.tabtitle.SetValue("Average ["+
+                                misc.parsePagenum2String(UsedPagenumbers)+"]")
         # Set the addition information about the variance from averaging
         Listname = "Average"
         standarddev = exparray.std(axis=0)[:,1]
@@ -307,17 +308,12 @@ class Average(wx.Frame):
 
     def SetValues(self, e=None):
         # Text input
-        # Find maximum page number
-        ## TODO:
-        ## Check if curve-selector is open and use its page numbers
-        j = 0
+        pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            j = max(j, int(filter(lambda x: x.isdigit(), Page.counter)))
-        if j != 0:
-            self.WXTextPages.SetValue("0-"+str(j))
-        else:
-            self.WXTextPages.SetValue("0")
+            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+        valstring=misc.parsePagenum2String(pagenumlist)
+        self.WXTextPages.SetValue(valstring)
         # Dropdown
         modelkeys = mdls.modeltypes.keys()
         modelkeys.sort()
