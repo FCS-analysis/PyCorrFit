@@ -168,7 +168,25 @@ class Wrapper_Tools(object):
         self.OnPageChanged()
 
 
-
+    def OnSelectionChanged(self, keylist):
+        if len(keylist) == 0:
+            return
+        # integer type list with page number
+        pagelist = list()
+        N = self.parent.notebook.GetPageCount()
+        for i in np.arange(N):
+            Page = self.parent.notebook.GetPage(i)
+            key = Page.counter
+            if keylist.count(key) == 1:
+                pagelist.append(i)
+        
+        #TODO:
+        # - check if the average tool is open and get it
+        # - write the comma separated list of pages into
+        #   ToolAverage.WXTextPages.SetValue("1,2,3,4")
+        
+        
+        
 class UserSelectCurves(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent, curvedict, wrapper=None, selkeys=None,
@@ -311,6 +329,14 @@ class UserSelectCurves(wx.Frame):
 
 
     def OnUpdatePlot(self, e=None):
+        """ What should happen when the selection in *self.SelectBox*
+            is changed?
+            This function will alsy try to call the function
+            *self.parent.OnSelectionChanged* and hand over the list of
+            currently selected curves. This is an addon for 0.7.8
+            where we will control the page selection in the average
+            tool.
+        """
         # Get selected curves
         curves = list()
         legends = list()
@@ -335,4 +361,9 @@ class UserSelectCurves(wx.Frame):
             self.canvas.Draw(plot.PlotGraphics(lines, 
                          xLabel=u'lag time τ [s]', 
                          yLabel=u'G(τ)'))
+        ## This is an addon for 0.7.8
+        keyskeep = list()
+        for i in self.SelectBox.GetSelections():
+            keyskeep.append(self.curvekeys[i])
+        self.wrapper.OnSelectionChanged(keyskeep)
 
