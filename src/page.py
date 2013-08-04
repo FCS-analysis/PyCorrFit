@@ -57,6 +57,7 @@ class FittingPanel(wx.Panel):
         self.tracecc = None      # List of traces (in CC mode only)
         self.bgselected = None   # integer, index for parent.Background
         self.bgcorrect = 1.      # Background correction factor for dataexp
+        self.normfactor = 1.     # Normalization factor (e.g. n)
         self.startcrop = None    # Where cropping of dataexp starts
         self.endcrop = None      # Where cropping of dataexp ends
         self.dataexp = None      # Experimental data (cropped)
@@ -256,6 +257,7 @@ class FittingPanel(wx.Panel):
         self.datacorr[:, 0] = self.tau
         self.datacorr[:, 1] = y
 
+
     def crop_data(self):
         """ Crop the pages data for plotting
             This will create slices from
@@ -332,7 +334,7 @@ class FittingPanel(wx.Panel):
                     # Calculate correction factor
                     self.bgcorrect = (S/(S-B))**2
                     # self.dataexp should be set, since we have self.trace
-                    modified[:,1] = modified[:,1] * self.bgcorrect
+                    modified[:,1] *= self.bgcorrect
             return modified
         else:
             return None
@@ -524,6 +526,86 @@ class FittingPanel(wx.Panel):
         return sizer, check, spin
 
 
+    def OnAmplitudeCheck(self, event=None):
+        """ Enable/Disable BG rate text line.
+            New feature introduced in 0.7.8
+        """
+        #self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
+        #                           normtoNDropdown]
+        ## Normalization to a certain parameter in plots
+        # Find all parameters that start with an "N"
+        # ? and "C" ?
+        # Create List
+        normlist = list()
+        normlist.append("None")
+        # Add parameters
+        parameterlist = list()
+        for i in np.arange(len(self.active_parms[0])):
+            label = self.active_parms[0][i]
+            if label[0] == "n" or label[0] == "N":
+                normlist.append("*"+label)
+                parameterlist.append(i)
+        normsel = self.AmplitudeInfo[4].GetSelection()
+        if normsel > 0:
+            # Make sure we are not normalizing with a background
+            parameterid = normsel-1
+            self.normfactor = self.active_parms[1][parameterid]
+            # No internal parameters will be changed
+            # Only the plotting
+        else:
+            self.normfactor = 1.
+            normsel = 0
+        if len(parameterlist) > 0:
+            self.AmplitudeInfo[4].Enable()
+        else:
+            self.AmplitudeInfo[4].Disable()
+        # Set dropdown values
+        self.AmplitudeInfo[4].SetItems(normlist)
+        self.AmplitudeInfo[4].SetSelection(normsel)
+        ## Background correction
+        bgsel = self.AmplitudeInfo[0].GetSelection()
+        # Standard is the background of the page
+        # Read bg selection
+        if event == "init":
+            if self.bgselected is not None:
+                bgsel = self.bgselected + 1
+            else:
+                bgsel = 0
+        else:
+            if bgsel <= 0:
+                if self.bgselected is not None:
+                    bgsel = self.bgselected + 1
+                else:
+                    bgsel = 0 #None
+            else:
+                self.bgselected = bgsel - 1
+        # Rebuild itemlist
+        bglist = list()
+        bglist.append("None")
+        for item in self.parent.Background:
+            bglist.append(item[1])
+        self.AmplitudeInfo[0].SetItems(bglist)
+        self.AmplitudeInfo[0].SetSelection(bgsel)
+        # self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
+        #                        normtoNDropdown]
+        if self.bgselected is None:
+            #self.AmplitudeInfo[0].Disable()
+            self.AmplitudeInfo[1].Disable()
+            self.AmplitudeInfo[2].Disable()
+            self.AmplitudeInfo[2].SetValue("--")
+            self.AmplitudeInfo[3].Disable()
+        else:
+            #self.AmplitudeInfo[0].Enable()
+            self.AmplitudeInfo[1].Enable()
+            self.AmplitudeInfo[2].Enable()
+            # [0] average signal [kHz]
+            # [1] signal name (edited by user)
+            # [2] signal trace (tuple) ([ms], [kHz])
+            kHz = self.parent.Background[self.bgselected][0]
+            self.AmplitudeInfo[2].SetValue(str(kHz))
+            self.AmplitudeInfo[3].Enable()
+
+
     def OnSize(self, event):
         """ Resize the fitting Panel, when Window is resized. """
         size = self.parent.notebook.GetSize()
@@ -541,6 +623,8 @@ class FittingPanel(wx.Panel):
         - Apply Parameters (separate function)
         - Drawing of plots
         """
+        ## Enable/Disable, set values frontend normalization
+        self.OnAmplitudeCheck()
         self.crop_data()
         ## Calculate trace average
         if self.trace is not None:
@@ -615,6 +699,9 @@ class FittingPanel(wx.Panel):
                         w1 = w1[idstart[0][0]:]
                         w2 = w2[idstart[0][0]:]
                         wend = wend[idstart[0][0]:]
+                # Normalization with self.normfactor
+                w1 *= self.normfactor
+                w2 *= self.normfactor
                 self.weights_used_for_plotting = wend
                 self.weights_plot_fill_area = [w1,w2]
                 lineweight1 = plot.PolyLine(w1, legend='',
@@ -626,9 +713,14 @@ class FittingPanel(wx.Panel):
                 
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
-            linecorr = plot.PolyLine(self.datacorr, legend='', colour=colfit,
+            # Normalization with self.normfactor, new feature in 0.7.8
+            datacorr_norm = 1*self.datacorr
+            datacorr_norm[:,1] *= self.normfactor
+            dataexp_norm = 1*self.dataexp
+            dataexp_norm[:,1] *= self.normfactor
+            linecorr = plot.PolyLine(datacorr_norm, legend='', colour=colfit,
                                      width=width)
-            lineexp = plot.PolyLine(self.dataexp, legend='', colour=colexp,
+            lineexp = plot.PolyLine(dataexp_norm, legend='', colour=colexp,
                                     width=width)
             # Draw linezero first, so it is in the background
             lines.append(lineexp)
@@ -640,19 +732,12 @@ class FittingPanel(wx.Panel):
             self.resid = np.zeros((len(self.tau), 2))
             self.resid[:, 0] = self.tau
             self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
-             ## REMOVED in 0.7.5:
-             ## Calculate weighted residuals, if weights are available from
-             ## a the fitting class
-             #Fitting = self.Fit_create_instance(noplots=True)
-             #Fitting.parmoptim = Fitting.fitparms
-             #self.resid[:, 1] /= Fitting.dataweights
-             ## Also check if chi squared has been calculated. This is not the
-             ## case when a session has been loaded. Do it.
-             ## (Usually it is done right after fitting)
-             #if self.chi2 is None:
-             #    self.chi2 = Fitting.get_chi_squared()
             # Plot residuals
-            lineres = plot.PolyLine(self.resid, legend='', colour=colfit,
+            # Normalization with self.normfactor, new feature in 0.7.8
+            resid_norm = np.zeros((len(self.tau), 2))
+            resid_norm[:, 0] = self.tau
+            resid_norm[:, 1] = dataexp_norm[:, 1] - datacorr_norm[:, 1]
+            lineres = plot.PolyLine(resid_norm, legend='', colour=colfit,
                                     width=width)
             # residuals or weighted residuals?
             if self.weighted_fit_was_performed:
@@ -664,7 +749,10 @@ class FittingPanel(wx.Panel):
                                    yLabel=yLabelRes)
             self.canvaserr.Draw(PlotRes)
         else:
-            linecorr = plot.PolyLine(self.datacorr, legend='', colour='blue',
+            # Amplitude normalization, new feature in 0.7.8
+            datacorr_norm = 1*self.datacorr
+            datacorr_norm[:,1] *= self.normfactor
+            linecorr = plot.PolyLine(datacorr_norm, legend='', colour='blue',
                                      width=1)
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
                        xLabel='Lag time τ [ms]', yLabel='G(τ)')
@@ -711,6 +799,34 @@ class FittingPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)
         # Add it to the parameters box
         box1.Add(buttonapply)
+        ## More info
+        normbox = wx.StaticBox(self.panelsettings, label="Amplitude")
+        miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
+        # Type of normalization
+        bgnorm = wx.ComboBox(self.panelsettings)
+        self.Bind(wx.EVT_COMBOBOX, self.PlotAll, bgnorm)
+        sizeh = wx.BoxSizer(wx.HORIZONTAL)
+        sizeh.Add(wx.StaticText(self.panelsettings, label="BG:"))
+        sizeh.Add(bgnorm)
+        miscsizer.Add(sizeh)
+        # Background rate
+        sizerh = wx.BoxSizer(wx.HORIZONTAL)
+        bgratetext = wx.StaticText(self.panelsettings, label="BG rate:")
+        sizerh.Add(bgratetext)
+        bgrate = wx.TextCtrl(self.panelsettings, value="--")
+        sizerh.Add(bgrate)
+        bghztext = wx.StaticText(self.panelsettings, label="kHz")
+        sizerh.Add(bghztext)
+        miscsizer.Add(sizerh)
+        self.panelsettings.sizer.Add(miscsizer)
+        ## Normalize to n?
+        textnor = wx.StaticText(self.panelsettings, label="Normalize graph to:")
+        miscsizer.Add(textnor)
+        normtoNDropdown = wx.ComboBox(self.panelsettings)
+        self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
+        miscsizer.Add(normtoNDropdown)
+        self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
+                                   normtoNDropdown]
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Data fitting")
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)
@@ -720,7 +836,7 @@ class FittingPanel(wx.Panel):
         weightedfitdrop.SetItems(self.weightlist)
         weightedfitdrop.SetSelection(0)
         fitsizer.Add(weightedfitdrop)
-         # WeightedFitCheck() Enables or Disables the variance part
+        # WeightedFitCheck() Enables or Disables the variance part
         weightedfitdrop.Bind(wx.EVT_COMBOBOX, self.Fit_WeightedFitCheck)
         # Add the variance part.
         # In order to do a weighted fit, we need to calculate the variance
@@ -732,15 +848,15 @@ class FittingPanel(wx.Panel):
                                 label="Calculation of Variance.")
         fitsizer.Add(fittext)
         fittext2 = wx.StaticText(self.panelsettings, 
-                                 label="Include n points from left and right,")
+                                 label="Include j points from left and right,")
         fitsizer.Add(fittext2)
         fitsizerspin = wx.BoxSizer(wx.HORIZONTAL)
-        fittextvar = wx.StaticText(self.panelsettings, label="n = ")
+        fittextvar = wx.StaticText(self.panelsettings, label="j = ")
         fitspin = wx.SpinCtrl(self.panelsettings, -1, initial=3, min=1, max=100)
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
-        # Add button "Fit", but not active
+        # Add button "Fit"
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
         fitsizer.Add(buttonfit)

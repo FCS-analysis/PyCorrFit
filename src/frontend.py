@@ -1339,6 +1339,8 @@ class MyFrame(wx.Frame):
         if len(Parms) >= 7:
             if len(self.Background) > Parms[6][0]:
                 Page.bgselected = Parms[6][0]
+                # New feature since 0.7.8: BG selection on Page panel
+                Page.OnAmplitudeCheck("init")
         # Set if Newtab is of type cross-correlation:
         if len(Parms) >= 8:
             Page.IsCrossCorrelation = Parms[7]
