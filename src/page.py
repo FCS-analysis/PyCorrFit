@@ -57,7 +57,8 @@ class FittingPanel(wx.Panel):
         self.tracecc = None      # List of traces (in CC mode only)
         self.bgselected = None   # integer, index for parent.Background
         self.bgcorrect = 1.      # Background correction factor for dataexp
-        self.normfactor = 1.     # Normalization factor (e.g. n)
+        self.normparm = None     # Parameter number used for graph normalization
+        self.normfactor = 1.     # Graph normalization factor (e.g. value of n)
         self.startcrop = None    # Where cropping of dataexp starts
         self.endcrop = None      # Where cropping of dataexp ends
         self.dataexp = None      # Experimental data (cropped)
@@ -530,8 +531,7 @@ class FittingPanel(wx.Panel):
         """ Enable/Disable BG rate text line.
             New feature introduced in 0.7.8
         """
-        #self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
-        #                           normtoNDropdown]
+        #self.AmplitudeInfo = [ bgnorm, bgtext, normtoNDropdown]
         ## Normalization to a certain parameter in plots
         # Find all parameters that start with an "N"
         # ? and "C" ?
@@ -545,65 +545,77 @@ class FittingPanel(wx.Panel):
             if label[0] == "n" or label[0] == "N":
                 normlist.append("*"+label)
                 parameterlist.append(i)
-        normsel = self.AmplitudeInfo[4].GetSelection()
-        if normsel > 0:
-            # Make sure we are not normalizing with a background
-            parameterid = normsel-1
-            self.normfactor = self.active_parms[1][parameterid]
-            # No internal parameters will be changed
-            # Only the plotting
+        normsel = self.AmplitudeInfo[2].GetSelection()
+        if event == "init":
+            # Read everything from the page not from the panel
+            # self.normparm was set and we need to set
+            #  self.normfactor
+            #  self.AmplitudeInfo[2]
+            if self.normparm is not None:
+                self.normfactor =  self.active_parms[1][self.normparm]
+                for j in np.arange(len(parameterlist)):
+                    if parameterlist[j] == self.normparm:
+                        normsel = j+1
+            else:
+                self.normfactor = 1.
+                normsel = 0
         else:
-            self.normfactor = 1.
-            normsel = 0
+            if normsel > 0:
+                # Make sure we are not normalizing with a background
+                parameterid = parameterlist[normsel-1]
+                self.normfactor = self.active_parms[1][parameterid]
+                # For parameter export:
+                self.normparm = parameterlist[parameterid]
+                # No internal parameters will be changed
+                # Only the plotting
+            else:
+                self.normfactor = 1.
+                normsel = 0
+                # For parameter export
+                self.normparm = None
         if len(parameterlist) > 0:
-            self.AmplitudeInfo[4].Enable()
+            self.AmplitudeInfo[2].Enable()
         else:
-            self.AmplitudeInfo[4].Disable()
+            self.AmplitudeInfo[2].Disable()
         # Set dropdown values
-        self.AmplitudeInfo[4].SetItems(normlist)
-        self.AmplitudeInfo[4].SetSelection(normsel)
+        self.AmplitudeInfo[2].SetItems(normlist)
+        self.AmplitudeInfo[2].SetSelection(normsel)
         ## Background correction
         bgsel = self.AmplitudeInfo[0].GetSelection()
         # Standard is the background of the page
         # Read bg selection
         if event == "init":
+            # Read everything from the page not from the panel
             if self.bgselected is not None:
                 bgsel = self.bgselected + 1
             else:
                 bgsel = 0
         else:
             if bgsel <= 0:
-                if self.bgselected is not None:
-                    bgsel = self.bgselected + 1
-                else:
-                    bgsel = 0 #None
+                self.bgselected = None
+                bgsel = 0 #None
             else:
                 self.bgselected = bgsel - 1
         # Rebuild itemlist
+        # self.parent.Background[self.bgselected][i]
+        # [0] average signal [kHz]
+        # [1] signal name (edited by user)
+        # [2] signal trace (tuple) ([ms], [kHz])
         bglist = list()
         bglist.append("None")
         for item in self.parent.Background:
-            bglist.append(item[1])
+            bgname = item[1]+" (%.2f kHz)" %item[0]
+            bglist.append(bgname)
         self.AmplitudeInfo[0].SetItems(bglist)
         self.AmplitudeInfo[0].SetSelection(bgsel)
-        # self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
-        #                        normtoNDropdown]
-        if self.bgselected is None:
-            #self.AmplitudeInfo[0].Disable()
+        #self.AmplitudeInfo = [ bgnorm, bgtext, normtoNDropdown]
+        if len(bglist) <= 1:
+            self.AmplitudeInfo[0].Disable()
             self.AmplitudeInfo[1].Disable()
-            self.AmplitudeInfo[2].Disable()
-            self.AmplitudeInfo[2].SetValue("--")
-            self.AmplitudeInfo[3].Disable()
         else:
-            #self.AmplitudeInfo[0].Enable()
+            self.AmplitudeInfo[0].Enable()
             self.AmplitudeInfo[1].Enable()
-            self.AmplitudeInfo[2].Enable()
-            # [0] average signal [kHz]
-            # [1] signal name (edited by user)
-            # [2] signal trace (tuple) ([ms], [kHz])
-            kHz = self.parent.Background[self.bgselected][0]
-            self.AmplitudeInfo[2].SetValue(str(kHz))
-            self.AmplitudeInfo[3].Enable()
+
 
 
     def OnSize(self, event):
@@ -800,33 +812,22 @@ class FittingPanel(wx.Panel):
         # Add it to the parameters box
         box1.Add(buttonapply)
         ## More info
-        normbox = wx.StaticBox(self.panelsettings, label="Amplitude")
+        normbox = wx.StaticBox(self.panelsettings, label="Amplitude parameters")
         miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
         # Type of normalization
+        bgtex = wx.StaticText(self.panelsettings, label="Background correction")
+        miscsizer.Add(bgtex)
         bgnorm = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, bgnorm)
-        sizeh = wx.BoxSizer(wx.HORIZONTAL)
-        sizeh.Add(wx.StaticText(self.panelsettings, label="BG:"))
-        sizeh.Add(bgnorm)
-        miscsizer.Add(sizeh)
-        # Background rate
-        sizerh = wx.BoxSizer(wx.HORIZONTAL)
-        bgratetext = wx.StaticText(self.panelsettings, label="BG rate:")
-        sizerh.Add(bgratetext)
-        bgrate = wx.TextCtrl(self.panelsettings, value="--")
-        sizerh.Add(bgrate)
-        bghztext = wx.StaticText(self.panelsettings, label="kHz")
-        sizerh.Add(bghztext)
-        miscsizer.Add(sizerh)
-        self.panelsettings.sizer.Add(miscsizer)
+        miscsizer.Add(bgnorm)
         ## Normalize to n?
         textnor = wx.StaticText(self.panelsettings, label="Normalize graph to:")
         miscsizer.Add(textnor)
         normtoNDropdown = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
         miscsizer.Add(normtoNDropdown)
-        self.AmplitudeInfo = [ bgnorm, bgratetext, bgrate, bghztext,
-                                   normtoNDropdown]
+        self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown]
+        self.panelsettings.sizer.Add(miscsizer)
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Data fitting")
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)

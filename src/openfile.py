@@ -483,7 +483,7 @@ def SaveSession(parent, dirname, Infodict):
         Parmlist = list()
         for idparm in ParmsKeys:
             # Make sure we do not accidently save arrays.
-            # This will not work correctly with yaml.
+            # This would not work correctly with yaml.
             Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
             Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
             Parmlist.append(Parms[idparm])

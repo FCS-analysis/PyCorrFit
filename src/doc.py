@@ -203,6 +203,7 @@ Parameters.yaml
           {No. of bins from left and right}, {No. of knots (of e.g. spline)}]
       - [{Background to use (line in backgrounds.csv)}]
       - Data type is Cross-correlation?
+      - Parameter id (int) used for normalization in plotting.
  - Order in Parameters.yaml defines order of pages in a session
  - Order in Parameters.yaml defines order in comments.txt
 

@@ -1255,9 +1255,16 @@ class MyFrame(wx.Frame):
         # Which Background signal is selected?
         # The Background information is in the list *self.Background*.
         Parms.append([Page.bgselected])
-        # Additional parameters as of v.0.5.8
+        # Additional parameter as of v.0.5.8
         # Is the Experimental data (if it exists) AC or CC?
         Parms.append(Page.IsCrossCorrelation)
+        # Additional parameter as of v.0.7.8
+        # The selection of a normalization parameter (None or integer)
+        if Page.normparm is not None:
+            # We need to do this because yaml export would not work
+            # in safe mode.
+            Page.normparm=int(Page.normparm)
+        Parms.append(Page.normparm)
         return Parms
 
 
@@ -1337,6 +1344,7 @@ class MyFrame(wx.Frame):
             Page.data4weight = 1.*Page.datacorr
         # Set which background correction the Page uses:
         if len(Parms) >= 7:
+            # causality check:
             if len(self.Background) > Parms[6][0]:
                 Page.bgselected = Parms[6][0]
                 # New feature since 0.7.8: BG selection on Page panel
@@ -1344,9 +1352,14 @@ class MyFrame(wx.Frame):
         # Set if Newtab is of type cross-correlation:
         if len(Parms) >= 8:
             Page.IsCrossCorrelation = Parms[7]
+        if len(Parms) >= 9:
+            # New feature in 0.7.8 includes normalization to a fitting
+            # parameter.
+            Page.normparm = Parms[8]
+            Page.OnAmplitudeCheck("init")
         ## If we want to add more stuff, we should do something like:
-        ##   if len(Parms) >= 9:
-        ##       nextvalue = Parms[8]
+        ##   if len(Parms) >= 10:
+        ##       nextvalue = Parms[9]
         ## Such that we are compatible to earlier versions of 
         ## PyCorrFit sessions.
 
