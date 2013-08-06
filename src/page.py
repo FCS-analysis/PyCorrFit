@@ -531,7 +531,7 @@ class FittingPanel(wx.Panel):
         """ Enable/Disable BG rate text line.
             New feature introduced in 0.7.8
         """
-        #self.AmplitudeInfo = [ bgnorm, bgtext, normtoNDropdown]
+        #self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
         ## Normalization to a certain parameter in plots
         # Find all parameters that start with an "N"
         # ? and "C" ?
@@ -575,8 +575,10 @@ class FittingPanel(wx.Panel):
                 self.normparm = None
         if len(parameterlist) > 0:
             self.AmplitudeInfo[2].Enable()
+            self.AmplitudeInfo[3].Enable()
         else:
             self.AmplitudeInfo[2].Disable()
+            self.AmplitudeInfo[3].Disable()
         # Set dropdown values
         self.AmplitudeInfo[2].SetItems(normlist)
         self.AmplitudeInfo[2].SetSelection(normsel)
@@ -608,7 +610,7 @@ class FittingPanel(wx.Panel):
             bglist.append(bgname)
         self.AmplitudeInfo[0].SetItems(bglist)
         self.AmplitudeInfo[0].SetSelection(bgsel)
-        #self.AmplitudeInfo = [ bgnorm, bgtext, normtoNDropdown]
+        #self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
         if len(bglist) <= 1:
             self.AmplitudeInfo[0].Disable()
             self.AmplitudeInfo[1].Disable()
@@ -683,8 +685,8 @@ class FittingPanel(wx.Panel):
                 # Add the weights to the graph.
                 # This is done by drawing two lines.
                 w = 1*self.data4weight
-                w1 = 1*self.data4weight
-                w2 = 1*self.data4weight
+                w1 = 1*w
+                w2 = 1*w
                 w1[:, 1] = w[:, 1] + self.weights_used_for_fitting 
                 w2[:, 1] = w[:, 1] - self.weights_used_for_fitting 
                 wend = 1*self.weights_used_for_fitting 
@@ -711,9 +713,9 @@ class FittingPanel(wx.Panel):
                         w1 = w1[idstart[0][0]:]
                         w2 = w2[idstart[0][0]:]
                         wend = wend[idstart[0][0]:]
-                # Normalization with self.normfactor
-                w1 *= self.normfactor
-                w2 *= self.normfactor
+                ## Normalization with self.normfactor
+                w1[:,1] *= self.normfactor
+                w2[:,1] *= self.normfactor
                 self.weights_used_for_plotting = wend
                 self.weights_plot_fill_area = [w1,w2]
                 lineweight1 = plot.PolyLine(w1, legend='',
@@ -826,7 +828,7 @@ class FittingPanel(wx.Panel):
         normtoNDropdown = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
         miscsizer.Add(normtoNDropdown)
-        self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown]
+        self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
         self.panelsettings.sizer.Add(miscsizer)
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Data fitting")

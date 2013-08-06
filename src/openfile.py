@@ -338,12 +338,14 @@ def saveCSV(parent, dirname, Page):
         openedfile.write("#\r\n#\r\n")
         # Get all the data we need from the Page
         # Modeled data
-        corr = Page.datacorr[:,1]
+        # Since 0.7.8 the user may normalize the curves. The normalization
+        # factor is set in *Page.normfactor*.
+        corr = Page.datacorr[:,1]*Page.normfactor
         if Page.dataexp is not None:
             # Experimental data
             tau = Page.dataexp[:,0]
-            exp = Page.dataexp[:,1]
-            res = Page.resid[:,1]
+            exp = Page.dataexp[:,1]*Page.normfactor
+            res = Page.resid[:,1]*Page.normfactor
             # Plotting! Because we only export plotted area.
             weight = Page.weights_used_for_plotting
             if weight is None:

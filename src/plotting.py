@@ -121,9 +121,18 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         plt.close()
     except:
         pass
-    dataexp = Page.dataexp
-    resid = Page.resid
-    fit = Page.datacorr
+    # As of version 0.7.8 the user may export data normalized to a certain
+    # parameter.
+    if Page.dataexp is not None:
+        dataexp = 1*Page.dataexp
+        resid = 1*Page.resid
+        dataexp[:,1] *= Page.normfactor
+        resid[:,1] *= Page.normfactor
+    else:
+        dataexp = Page.dataexp
+        resid = Page.resid
+    fit = 1*Page.datacorr
+    fit[:,1] *= Page.normfactor
     weights = Page.weights_plot_fill_area
     tabtitle = Page.tabtitle.GetValue()
     fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
@@ -148,6 +157,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
             fitlabel = Page.modelname
         else:
             fitlabel = tabtitle
+    if Page.normparm is not None:
+        fitlabel += ur", normalized to "+Page.active_parms[0][Page.normparm]
 
     ## Check if we can use latex or plotting:
     (r1, path) = findprogram("latex")
@@ -375,12 +386,15 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
 
 
 def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
-    """ Show log plot of correlation function without residuals. 
+    """ CURRENTLY THIS FUNCTION IS NOT USED BY PYCORRFIT
+        Show log plot of correlation function without residuals. 
         Parameters:
-        *parent*    the parent window
-        *dirname*   directory to set on saving
-        *Page*      Page containing all variables
-        *uselatex*  Whether to use latex for the ploting or not.
+        *name*      name of curve in legend
+        *x*         tau-values to plot
+        *dataexp*   correlation data to plot
+        *datafit*   fitted curve to correlation data
+        *dirname*   initial directory for dialog (not used here)
+        *uselatex*  use latex for plotting
         This function uses a hack in misc.py to change the function
         for saving the final figure. We wanted save in the same directory
         as PyCorrFit was working and the filename should be the tabtitle.

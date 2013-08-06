@@ -145,9 +145,9 @@ class InfoClass(object):
                 func_info = mdls.supplement[model[2]]
             except KeyError:
                 # No information available
-                a=0
+                pass
             else:
-                InfoDict["modelsupdoc"] = [func_info .func_doc]
+                InfoDict["modelsupdoc"] = [func_info.func_doc]
         ## Fitting
         weightedfit = Page.weighted_fit_was_performed
         weightedfit_type = Page.weighted_fittype
@@ -201,6 +201,12 @@ class InfoClass(object):
                         # Do not change it!
                         Fitting.append(["Err "+savekey[0], saveval[0]])
             InfoDict["fitting"] = Fitting
+        ## Normalization
+        if Page.normparm is None:
+            normparmtext = "None"
+        else:
+            normparmtext = Page.active_parms[0][Page.normparm]
+        Title.append(["Normalization", normparmtext ]) 
         ## Background
         bgselected = Page.bgselected # Selected Background
         Background = list()

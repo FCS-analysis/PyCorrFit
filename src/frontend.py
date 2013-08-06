@@ -82,7 +82,7 @@ class MyFrame(wx.Frame):
         self.StatusBar.SetStatusText("Find help and updates online:"+
                                      " 'Help > Update'")
         ## Properties of the Frame
-        initial_size = (768,586)
+        initial_size = (768,700)
         self.SetSize(initial_size)
         self.SetMinSize(initial_size)
 
