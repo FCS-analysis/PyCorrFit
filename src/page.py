@@ -58,6 +58,8 @@ class FittingPanel(wx.Panel):
         self.bgselected = None   # integer, index for parent.Background
         self.bgcorrect = 1.      # Background correction factor for dataexp
         self.normparm = None     # Parameter number used for graph normalization
+                                 # if greater than number of fitting parms,
+                                 # then supplementary parm is used.
         self.normfactor = 1.     # Graph normalization factor (e.g. value of n)
         self.startcrop = None    # Where cropping of dataexp starts
         self.endcrop = None      # Where cropping of dataexp ends
@@ -538,13 +540,23 @@ class FittingPanel(wx.Panel):
         # Create List
         normlist = list()
         normlist.append("None")
-        # Add parameters
+        ## Add parameters
         parameterlist = list()
         for i in np.arange(len(self.active_parms[0])):
             label = self.active_parms[0][i]
             if label[0] == "n" or label[0] == "N":
                 normlist.append("*"+label)
                 parameterlist.append(i)
+        ## Add supplementary parameters
+        # Get them from models
+        supplement = mdls.GetMoreInfo(self.modelid, self)
+        for i in np.arange(len(supplement)):
+            label = supplement[i][0]
+            if label[0] == "n" or label[0] == "N":
+                normlist.append("*"+label)
+                # Add the id of the supplement starting at the
+                # number of fitting parameters of current page.
+                parameterlist.append(i+len(self.active_parms[0]))
         normsel = self.AmplitudeInfo[2].GetSelection()
         if event == "init":
             # Read everything from the page not from the panel
@@ -552,7 +564,14 @@ class FittingPanel(wx.Panel):
             #  self.normfactor
             #  self.AmplitudeInfo[2]
             if self.normparm is not None:
-                self.normfactor =  self.active_parms[1][self.normparm]
+                if self.normparm < len(self.active_parms[1]):
+                    # use fitting parameter from page
+                    self.normfactor =  self.active_parms[1][self.normparm]
+                else:
+                    # use supplementary parameter
+                    supnum = self.normparm - len(self.active_parms[1])
+                    self.normfactor =  supplement[supnum][1]
+                # Set initial selection
                 for j in np.arange(len(parameterlist)):
                     if parameterlist[j] == self.normparm:
                         normsel = j+1
@@ -562,10 +581,22 @@ class FittingPanel(wx.Panel):
         else:
             if normsel > 0:
                 # Make sure we are not normalizing with a background
+                # Use the parameter id from the internal parameterlist
                 parameterid = parameterlist[normsel-1]
-                self.normfactor = self.active_parms[1][parameterid]
+                if parameterid < len(self.active_parms[1]):
+                    # fitting parameter
+                    self.normfactor = self.active_parms[1][parameterid]
+                else:
+                    # supplementary parameter
+                    supnum = parameterid - len(self.active_parms[1])
+                    self.normfactor =  supplement[supnum][1]
+                
+                #### supplement are somehow sorted !!!!
+                
+                #import IPython
+                #IPython.embed()
                 # For parameter export:
-                self.normparm = parameterlist[parameterid]
+                self.normparm = parameterid
                 # No internal parameters will be changed
                 # Only the plotting
             else:

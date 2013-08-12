@@ -98,28 +98,28 @@ def Check_xy_T_gauss(parms):
 # 2D + 2D + Triplet Gauß
     # Model 6031
 def CF_Gxyz_gauss_2D2DT(parms, tau):
-    """ Two-component, two-dimensional diffusion with a Gaussian laser
+    u""" Two-component, two-dimensional diffusion with a Gaussian laser
         profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F/( 1+tau/τ_1 )
-        particle2 = alpha²*(1-F)/( 1+tau/τ_2 )
+        particle1 = F\u2081/( 1+tau/τ\u2081 )
+        particle2 = alpha²*(1-F\u2081)/( 1+tau/τ\u2082 )
         triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
-        norm = (F + alpha*(1-F))²
+        norm = (F\u2081 + alpha*(1-F\u2081))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal area
-                    (n = n1+n2)
+                    (n = n\u2081+n\u2082)
         [1] τ_1     Diffusion time of particle species 1
         [2] τ_2     Diffusion time of particle species 2
-        [3] F       Fraction of molecules of species 1 (n1 = n*F)
-                    0 <= F <= 1
+        [3] F\u2081       Fraction of molecules of species 1 (n\u2081 = n*F\u2081)
+                    0 <= F\u2081 <= 1
         [4] alpha   Relative molecular brightness of particle
-                    2 compared to particle 1 (alpha = q2/q1)
+                    2 compared to particle 1 (alpha = q\u2082/q\u2081)
         [5] τ_trip  Characteristic residence time in triplet state
         [6] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -178,6 +178,24 @@ def MoreInfo_6001(parms, countrate):
     # We can only give you the effective particle number
     n = parms[0]
     Info = list()
+    if countrate is not None:
+        # CPP
+        cpp = countrate/n
+        Info.append(["cpp [kHz]", cpp])
+    return Info
+    
+    
+def MoreInfo_6031(parms, countrate):
+    """ 
+    """
+    # We can only give you the effective particle number
+    n = parms[0]
+    F1 = parms[3]
+    Info = list()
+    # The enumeration of these parameters is very important for
+    # plotting the normalized curve. Countrate must come out last!
+    Info.append([u"n\u2081", n*F1])
+    Info.append([u"n\u2082", n*(1.-F1)])
     if countrate is not None:
         # CPP
         cpp = countrate/n
@@ -270,7 +288,7 @@ model2["Verification"] = Check_xy_T_gauss
 model3 = dict()
 model3["Parameters"] = parms_6031
 model3["Definitions"] = m_gauss_2d_2d_t_mix_6031
-model3["Supplements"] = MoreInfo_6001
+model3["Supplements"] = MoreInfo_6031
 model3["Verification"] = Check_6031
 
 
