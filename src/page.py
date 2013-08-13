@@ -91,6 +91,10 @@ class FittingPanel(wx.Panel):
         self.GlobalParameterShare = list()
         # Counts number of Pages already created:
         self.counter = counter
+        # Has inital plot been performed?
+        # Call PlotAll("init") to set this to true. If it is true, then
+        # nothing will be plotted if called with "init"
+        self.InitialPlot = False
         # Model we are using
         self.modelid = modelid
         # modelpack:
@@ -668,6 +672,15 @@ class FittingPanel(wx.Panel):
         - Apply Parameters (separate function)
         - Drawing of plots
         """
+        if event == "init":
+            # We use this to have the page plotted at least once before
+            # readout of parameters (e.g. startcrop, endcrop)
+            # This is a performence tweak.
+            self.crop_data()
+            if self.InitialPlot is True:
+                return
+            else:
+                self.InitialPlot = True
         ## Enable/Disable, set values frontend normalization
         self.OnAmplitudeCheck()
         self.crop_data()

@@ -61,7 +61,7 @@ def openCSV(dirname, filename):
     for row in readdata:
         if len(row) == 0 or len(str(row[0]).strip()) == 0:
             # Do nothing with empty/whitespace lines
-            papst = 0
+            pass
             # Beware that the len(row) statement has to be called first
             # (before the len(str(row[0]).strip()) ). Otherwise some
             # error would be raised.
