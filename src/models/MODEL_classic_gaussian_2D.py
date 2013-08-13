@@ -104,10 +104,10 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F\u2081/( 1+tau/τ\u2081 )
-        particle2 = alpha²*(1-F\u2081)/( 1+tau/τ\u2082 )
+        particle1 = F\u2081/(1+tau/τ\u2081)
+        particle2 = α*(1-F\u2081)/(1+tau/τ\u2082)
         triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
-        norm = (F\u2081 + alpha*(1-F\u2081))²
+        norm = (F\u2081 + \u03b1*(1-F\u2081))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
@@ -118,8 +118,8 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         [2] τ_2     Diffusion time of particle species 2
         [3] F\u2081       Fraction of molecules of species 1 (n\u2081 = n*F\u2081)
                     0 <= F\u2081 <= 1
-        [4] alpha   Relative molecular brightness of particle
-                    2 compared to particle 1 (alpha = q\u2082/q\u2081)
+        [4] \u03b1       Relative molecular brightness of particle 2
+                    compared to particle 1 (alpha = q\u2082/q\u2081)
         [5] τ_trip  Characteristic residence time in triplet state
         [6] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -268,7 +268,7 @@ values_factor_human_readable_6031 = [
                 1.,     # "T",
                 1.      # "offset"
                 ]
-valuestofit_6031 = [True, True, False, False, False, True, True, False]
+valuestofit_6031 = [True, True, True, True, False, False, False, False]
 parms_6031 = [labels_6031, values_6031, valuestofit_6031,
               labels_human_readable_6031, values_factor_human_readable_6031]
 

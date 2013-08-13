@@ -199,8 +199,21 @@ def GetMoreInfo(modelid, Page):
     # Get the parameters from the current page.
     parms = Page.active_parms[1]
     Info = list()
-    # Some Trace information:
     if Page.IsCrossCorrelation is False:
+        ## First import the supplementary parameters of the model
+        ## The order is important for plot normalization and session
+        ## saving as of version 0.7.8
+        # Try to get the dictionary entry of a model
+        try:
+            # This function should return all important information
+            # that can be calculated from the given parameters.
+            func_info = supplement[modelid]
+            data = func_info(parms, countrate)
+            for item in data:
+                Info.append([item[0], item[1]])
+        except KeyError:
+            # No information available
+            pass
         # In case of cross correlation, we don't show this kind of
         # information.
         if Page.traceavg is not None:
@@ -222,19 +235,24 @@ def GetMoreInfo(modelid, Page):
             if countrate is not None:
                 # might be that there is no countrate.
                 countrate = countrate - bgaverage
-
+    else:
+        ## Cross correlation curves usually have two traces. Since we
+        ## do not know how to compute the cpp, we will pass the argument
+        ## "None" as the countrate.
+        ## First import the supplementary parameters of the model
+        ## The order is important for plot normalization and session
+        ## saving as of version 0.7.8
         # Try to get the dictionary entry of a model
         try:
             # This function should return all important information
             # that can be calculated from the given parameters.
             func_info = supplement[modelid]
-            data = func_info(parms, countrate)
+            data = func_info(parms, None)
             for item in data:
                 Info.append([item[0], item[1]])
         except KeyError:
             # No information available
-            a=0
-    else:
+            pass
         if Page.tracecc is not None:
             # Measurement time
             duration = Page.tracecc[0][-1,0]/1000
@@ -245,6 +263,8 @@ def GetMoreInfo(modelid, Page):
             avg1 = Page.tracecc[1][:,1].mean()
             Info.append(["avg. signal A [kHz]", avg0])
             Info.append(["avg. signal B [kHz]", avg1])
+
+
     if len(Info) == 0:
         # If nothing matched until now:
         return None

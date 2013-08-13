@@ -204,8 +204,12 @@ class InfoClass(object):
         ## Normalization
         if Page.normparm is None:
             normparmtext = "None"
-        else:
+        elif Page.normparm < len(Page.active_parms[0]):
             normparmtext = Page.active_parms[0][Page.normparm]
+        else:
+            # supplementary parameters
+            supnum = Page.normparm - len(Page.active_parms[1])
+            normparmtext =  MoreInfo[supnum][0]
         Title.append(["Normalization", normparmtext ]) 
         ## Background
         bgselected = Page.bgselected # Selected Background
