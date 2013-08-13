@@ -16,6 +16,7 @@
 
 
 import csv
+from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
 import platform
@@ -104,6 +105,25 @@ def OpenSession(parent, dirname, sessionfile=None):
             dlg.Destroy()
             return None, dirname, None
     Arc = zipfile.ZipFile(path, mode='r')
+    try:
+        ## Check PyCorrFit version:
+        readmefile = Arc.open("Readme.txt")
+        # e.g. "This file was created using PyCorrFit version 0.7.6"
+        identifier = readmefile.readline()
+        arcv = LooseVersion(identifier[46:])
+        thisv = LooseVersion(parent.version)
+        if arcv > thisv:
+            errstring = "Your version of Pycorrfit ("+str(thisv)+")"+\
+                   " is too old to open this session ("+\
+                   str(arcv).strip()+")."+\
+                   " Please download the lates version of "+\
+                   " PyCorrFit from \n"+doc.HomePage+"."
+            dlg = wx.MessageDialog(parent, errstring, "Error", 
+                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal() == wx.ID_OK
+            return None, dirname, None
+    except:
+        pass
     # Get the yaml parms dump:
     yamlfile = Arc.open("Parameters.yaml")
     # Parameters: Fitting and drawing parameters of correlation curve

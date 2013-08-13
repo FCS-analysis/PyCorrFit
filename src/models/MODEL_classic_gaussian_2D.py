@@ -119,7 +119,7 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
                     0 <= F₁ <= 1
         [4] α       Relative molecular brightness of particle 2
-                    compared to particle 1 (alpha = q₂/q₁)
+                    compared to particle 1 (α = q₂/q₁)
         [5] τ_trip  Characteristic residence time in triplet state
         [6] T       Fraction of particles in triplet (non-fluorescent)
                     state 0 <= T < 1
