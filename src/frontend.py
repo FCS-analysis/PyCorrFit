@@ -269,7 +269,9 @@ class MyFrame(wx.Frame):
                             kind=wx.ITEM_CHECK)
         self.MenuShowWeights.Check()
         # toolmenu
-        for ttype in tools.ToolDict:
+        toolkeys = tools.ToolDict.keys()
+        toolkeys.sort()
+        for ttype in toolkeys:
             for tool in np.arange(len(tools.ToolDict[ttype])):
                 menu = self.toolmenu.Append(wx.ID_ANY, 
                        tools.ToolName[ttype][tool][0],
@@ -280,7 +282,9 @@ class MyFrame(wx.Frame):
                 # Bindings
                 # On tool only needs the Id of the wx.EVT_MENU
                 self.Bind(wx.EVT_MENU, self.OnTool, menu)
-            self.toolmenu.AppendSeparator()
+            if ttype != toolkeys[-1]:
+                print "12"
+                self.toolmenu.AppendSeparator()
         # curmenu
         menuImportData = self.curmenu.Append(wx.ID_ANY, "&Import Data",
                                              "Import experimental FCS curve")
