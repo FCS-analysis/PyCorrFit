@@ -104,25 +104,25 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F\u2081/(1+tau/τ\u2081)
-        particle2 = α*(1-F\u2081)/(1+tau/τ\u2082)
-        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
-        norm = (F\u2081 + \u03b1*(1-F\u2081))²
+        particle1 = F₁/(1+tau/τ₁)
+        particle2 = α*(1-F₁)/(1+tau/τ₂)
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        norm = (F₁ + α*(1-F₁))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal area
-                    (n = n\u2081+n\u2082)
-        [1] τ_1     Diffusion time of particle species 1
-        [2] τ_2     Diffusion time of particle species 2
-        [3] F\u2081       Fraction of molecules of species 1 (n\u2081 = n*F\u2081)
-                    0 <= F\u2081 <= 1
-        [4] \u03b1       Relative molecular brightness of particle 2
-                    compared to particle 1 (alpha = q\u2082/q\u2081)
+                    (n = n₁+n₂)
+        [1] τ₁      Diffusion time of particle species 1
+        [2] τ₂      Diffusion time of particle species 2
+        [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
+                    0 <= F₁ <= 1
+        [4] α       Relative molecular brightness of particle 2
+                    compared to particle 1 (alpha = q₂/q₁)
         [5] τ_trip  Characteristic residence time in triplet state
-        [6] T       Fraction of particles in triplet (non-fluorescent) state
-                    0 <= T < 1
+        [6] T       Fraction of particles in triplet (non-fluorescent)
+                    state 0 <= T < 1
         [7] offset
         *tau* - lag time
     """

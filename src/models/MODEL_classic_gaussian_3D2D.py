@@ -5,16 +5,16 @@ import numpy as np                  # NumPy
 
 # 3D + 2D + T
 def CF_Gxyz_3d2dT_gauss(parms, tau):
-    """ Two-component, two- and three-dimensional diffusion
+    u""" Two-component, two- and three-dimensional diffusion
         with a Gaussian laser profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         particle2D = (1-F)/ (1+tau/τ_2D) 
-        particle3D = alpha²*F/( (1+tau/τ_3D) * sqrt(1+tau/(τ_3D*SP²)))
+        particle3D = α*F/( (1+tau/τ_3D) * sqrt(1+tau/(τ_3D*SP²)))
         triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
-        norm = (1-F + alpha*F)²
+        norm = (1-F + α*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
@@ -27,8 +27,8 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
                     (n3D = n*F), 0 <= F <= 1
         [4] SP      SP=z0/r0 Structural parameter,
                          describes elongation of the confocal volume
-        [5] alpha   Relative molecular brightness of particle
-                    3D compared to particle 2D (alpha = q3D/q2D)
+        [5] α       Relative molecular brightness of particle
+                    3D compared to particle 2D (α = q3D/q2D)
         [6] τ_trip  Characteristic residence time in triplet state
         [7] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -64,11 +64,6 @@ def Checkme(parms):
     tautrip=np.abs(parms[6])
     T=parms[7]
     off=parms[8]
-    
-    # REMOVED (issue #2)
-     ## Force triplet component to be smaller than diffusion times
-     #tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
-     
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one
@@ -87,7 +82,12 @@ def MoreInfo(parms, countrate):
     """
     # We can only give you the effective particle number
     n = parms[0]
+    F3d = parms[3]
     Info = list()
+    # The enumeration of these parameters is very important for
+    # plotting the normalized curve. Countrate must come out last!
+    Info.append([u"n3D", n*F3d])
+    Info.append([u"n2D", n*(1.-F3d)])
     if countrate is not None:
         # CPP
         cpp = countrate/n

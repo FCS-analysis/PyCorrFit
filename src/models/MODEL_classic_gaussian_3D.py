@@ -105,30 +105,30 @@ def Check_6011(parms):
 # 3D + 3D + Triplet Gauß
     # Model 6030
 def CF_Gxyz_gauss_3D3DT(parms, tau):
-    """ Two-component three-dimensional free diffusion
+    u""" Two-component three-dimensional free diffusion
         with a Gaussian laser profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
 
-        particle1 = F/( (1+tau/τ_1) * np.sqrt(1+tau/(τ_1*SP²)))
-        particle2 = alpha²*(1-F)/( (1+tau/τ_2) * np.sqrt(1+tau/(τ_2*SP²)))
-        triplet = 1 + T/(1-T)*np.exp(-tau/τ_trip)
-        norm = (F + alpha*(1-F))²
+        particle1 = F₁/( (1+tau/τ₁) * sqrt(1+tau/(τ₁*SP²)))
+        particle2 = α*(1-F₁)/( (1+tau/τ₂) * sqrt(1+tau/(τ₂*SP²)))
+        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        norm = (F₁ + α*(1-F₁))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal volume
-                    (n = n1+n2)
-        [1] τ_1     Diffusion time of particle species 1
-        [2] τ_2     Diffusion time of particle species 2
-        [3] F       Fraction of molecules of species 1 (n1 = n*F)
-                    0 <= F <= 1
+                    (n = n₁+n₂)
+        [1] τ₁      Diffusion time of particle species 1
+        [2] τ₂      Diffusion time of particle species 2
+        [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
+                    0 <= F₁ <= 1
         [4] SP      SP=z0/r0, Structural parameter,
                     describes elongation of the confocal volume
-        [5] alpha   Relative molecular brightness of particle
-                    2 compared to particle 1 (alpha = q2/q1)
+        [5] α       Relative molecular brightness of particle
+                    2 compared to particle 1 (α = q₂/q₁)
         [6] τ_trip  Characteristic residence time in triplet state
         [7] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -190,6 +190,24 @@ def MoreInfo_1C(parms, countrate):
     # We can only give you the effective particle number
     n = parms[0]
     Info = list()
+    if countrate is not None:
+        # CPP
+        cpp = countrate/n
+        Info.append(["cpp [kHz]", cpp])
+    return Info
+
+
+def MoreInfo_6030(parms, countrate):
+    """ 
+    """
+    # We can only give you the effective particle number
+    n = parms[0]
+    F1 = parms[3]
+    Info = list()
+    # The enumeration of these parameters is very important for
+    # plotting the normalized curve. Countrate must come out last!
+    Info.append([u"n\u2081", n*F1])
+    Info.append([u"n\u2082", n*(1.-F1)])
     if countrate is not None:
         # CPP
         cpp = countrate/n
@@ -264,7 +282,7 @@ values_factor_human_readable_6030 = [
                         1.,     # T
                         1.      # offset
                 ]
-valuestofit_6030 = [True, True, False, False, False, False, True, True, False]
+valuestofit_6030 = [True, True, True, True, False, False, False, False, False]
 parms_6030 = [labels_6030, values_6030, valuestofit_6030,
               labels_human_readable_6030, values_factor_human_readable_6030]
 
@@ -284,6 +302,7 @@ model2["Supplements"] = MoreInfo_1C
 model3 = dict()
 model3["Parameters"] = parms_6030
 model3["Definitions"] = m_gauss_3d_3d_t_mix_6030
+model3["Supplements"] = MoreInfo_6030
 model3["Verification"] = Check_3D3DT
 
 

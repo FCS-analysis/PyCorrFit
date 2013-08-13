@@ -22,7 +22,7 @@ def wixi(x):
 
 # 3D + 3D + T
 def CF_Gxyz_3D3DT_gauss(parms, tau):
-    """ Two-component three-dimensional diffusion with a Gaussian
+    u""" Two-component three-dimensional diffusion with a Gaussian
         lateral detection profile and an exponentially decaying profile
         in axial direction, including a triplet component.
         The triplet factor takes into account blinking according to triplet
@@ -30,37 +30,38 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
 
         w(i*x) = exp(x²)*erfc(x)
-        taud1 = r_0²/(4*D_1)
-        x1 = sqrt(D_1*tau)*kappa
+        taud1 = r_0²/(4*D₁)
+        kappa = 1/d_eva
+        x1 = sqrt(D₁*tau)*kappa
         gz1 = kappa * 
-             [ sqrt(D_1*tau/pi) + (1 - 2*D_1*tau*kappa²)/(2*kappa) * w(i*x1) ]
+             [ sqrt(D₁*tau/pi) + (1 - 2*D₁*tau*kappa²)/(2*kappa) * w(i*x1) ]
         g2D1 = 1 / [ 1.+tau/taud1 ]
-        particle1 = F * g2D1 * gz1
+        particle1 = F₁ * g2D1 * gz1
 
-        taud2 = r_0²/(4*D_2)
-        x2 = sqrt(D_2*tau)*kappa
+        taud2 = r_0²/(4*D₂)
+        x2 = sqrt(D₂*tau)*kappa
         gz2 = kappa * 
-             [ sqrt(D_2*tau/pi) + (1 - 2*D_2*tau*kappa²)/(2*kappa) * w(i*x2) ]
+             [ sqrt(D₂*tau/pi) + (1 - 2*D₂*tau*kappa²)/(2*kappa) * w(i*x2) ]
         g2D2 = 1 / [ 1.+tau/taud2 ]
-        particle2 =  alpha²*(1-F) * g2D2 * gz2
+        particle2 =  α*(1-F₁) * g2D2 * gz2
 
 
         triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
-        norm = (1-F + alpha*F)²
+        norm = (1-F₁ + α*F₁)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal volume
-                    (n = n2D+n3D)
-        [1] D_1     Diffusion coefficient of species 1
-        [2] D_2     Diffusion coefficient of species 2
-        [3] F       Fraction of molecules of species 1 (n1 = n*F)
-                    0 <= F <= 1
+                    (n = n₁+n₂)
+        [1] D₁      Diffusion coefficient of species 1
+        [2] D₂      Diffusion coefficient of species 2
+        [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
+                    0 <= F₁ <= 1
         [4] r_0     Lateral extent of the detection volume
         [5] d_eva   Evanescent field depth
-        [6] alpha   Relative molecular brightness of particle
-                    2 compared to particle 1 (alpha = q2/q1)
+        [6] α       Relative molecular brightness of particle
+                    2 compared to particle 1 (α = q₂/q₁)
         [7] τ_trip  Characteristic residence time in triplet state
         [8] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -162,6 +163,10 @@ def MoreInfo(parms, countrate):
     alpha=parms[6]
 
     Info=list()
+    # The enumeration of these parameters is very important for
+    # plotting the normalized curve. Countrate must come out last!
+    Info.append([u"n\u2081", n*F])
+    Info.append([u"n\u2082", n*(1.-F)])
     # Detection area:
     Veff = np.pi * r0**2 * deva
     C1 = n*F / Veff

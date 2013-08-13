@@ -30,17 +30,16 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         states of excited molecules.
         Set *T* or *tautrip* to 0, if no triplet component is wanted.
 
+        kappa = 1/d_eva
         x = sqrt(D_3D*tau)*kappa
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa * 
              [ sqrt(D_3D*tau/pi) + (1 - 2*D_3D*tau*kappa²)/(2*kappa) * w(i*x) ]
         g2D3D = 1 / [ 1+4*D_3D*tau/r_0² ]
-        particle3D = alpha²*F * g2D3D * gz
-
+        particle3D = α*F * g2D3D * gz
         particle2D = (1-F)/ (1+4*D_2D*tau/r_0²) 
-
         triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
-        norm = (1-F + alpha*F)²
+        norm = (1-F + α*F)²
         G = 1/n*(particle2D + particle3D)*triplet/norm + offset
 
         *parms* - a list of parameters.
@@ -53,8 +52,8 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
                     (n3D = n*F), 0 <= F <= 1
         [4] r_0     Lateral extent of the detection volume
         [5] d_eva   Evanescent field depth
-        [6] alpha   Relative molecular brightness of freely diffusing
-                    compared to surface bound particles (alpha = q3D/q2D)
+        [6] α       Relative molecular brightness of freely diffusing
+                    compared to surface bound particles (α = q3D/q2D)
         [7] τ_trip  Characteristic residence time in triplet state
         [8] T       Fraction of particles in triplet (non-fluorescent) state
                     0 <= T < 1
@@ -145,6 +144,10 @@ def MoreInfo(parms, countrate):
     alpha=parms[6]
 
     Info=list()
+    # The enumeration of these parameters is very important for
+    # plotting the normalized curve. Countrate must come out last!
+    Info.append([u"n3D", n*F])
+    Info.append([u"n2D", n*(1.-F)])
     # Detection area:
     Veff = np.pi * r0**2 * deva
     C3D = n*F / Veff
