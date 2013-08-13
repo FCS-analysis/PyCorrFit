@@ -107,8 +107,6 @@ class InfoClass(object):
     def GetPageInfo(self, Page):
         """ Needs a Page and gets all information from it """
         Page.PlotAll("init")
-        import IPython
-        IPython.embed()
         # A dictionary with headings as keys and lists of singletts/tuples as 
         # values. If it is a tuple, it might me interesting for a table.
         InfoDict = dict()

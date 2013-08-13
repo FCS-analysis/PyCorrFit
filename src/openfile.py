@@ -370,31 +370,29 @@ def saveCSV(parent, dirname, Page):
         ## Now we want to write all that data into the file
         # This is for csv writing:
         ## Correlation curve
-        dataWriter = csv.writer(openedfile, delimiter=',')
+        dataWriter = csv.writer(openedfile, delimiter='\t')
         if exp is not None:
-            header = '# Channel (tau [s])'+"\t,"+ \
-                     'Experimental correlation'+"\t,"+ \
-                     'Fitted correlation'+ "\t,"+ \
+            header = '# Channel (tau [s])'+"\t"+ \
+                     'Experimental correlation'+"\t"+ \
+                     'Fitted correlation'+ "\t"+ \
                      'Residuals'+"\r\n"
             data = [tau, exp, corr, res]
             if Page.weighted_fit_was_performed is True \
             and weight is not None:
-                header = header.strip() + "\t,"+'Weights (fit)'+"\r\n"
+                header = header.strip() + "\t"+'Weights (fit)'+"\r\n"
                 data.append(weight)
         else:
-            header = '# Channel (tau [s])'+"\t,"+ \
+            header = '# Channel (tau [s])'+"\t"+ \
                      'Correlation function'+"\r\n"
             data = [tau, corr]
         # Write header
         openedfile.write(header)
         # Write data
         for i in np.arange(len(data[0])):
-            # row-wise
+            # row-wise, data may have more than two elements per row
             datarow = list()
             for j in np.arange(len(data)):
-                rowcoli = str(data[j][i])
-                if j < len(data)-1:
-                    rowcoli += "\t"
+                rowcoli = str("%.10e") % data[j][i]
                 datarow.append(rowcoli)
             dataWriter.writerow(datarow)
         ## Trace
@@ -409,10 +407,11 @@ def saveCSV(parent, dirname, Page):
                 time = Page.trace[:,0]*timefactor
                 intensity = Page.trace[:,1]
                 # Write
-                openedfile.write('# Time [s]'+" \t," 
+                openedfile.write('# Time [s]'+"\t" 
                                      'Intensity trace [kHz]'+" \r\n")
                 for i in np.arange(len(time)):
-                    dataWriter.writerow([str(time[i])+" \t", str(intensity[i])])
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
             elif Page.tracecc is not None:
                 # We have some cross-correlation here:
                 # Mark beginning of Trace A
@@ -421,20 +420,22 @@ def saveCSV(parent, dirname, Page):
                 time = Page.tracecc[0][:,0]*timefactor
                 intensity = Page.tracecc[0][:,1]
                 # Write
-                openedfile.write('# Time [s]'+" \t," 
+                openedfile.write('# Time [s]'+"\t" 
                                      'Intensity trace [kHz]'+" \r\n")
                 for i in np.arange(len(time)):
-                    dataWriter.writerow([str(time[i])+" \t", str(intensity[i])])
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
                 # Mark beginning of Trace B
                 openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
                 # Columns
                 time = Page.tracecc[1][:,0]*timefactor
                 intensity = Page.tracecc[1][:,1]
                 # Write
-                openedfile.write('# Time [s]'+" \t," 
+                openedfile.write('# Time [s]'+"\t" 
                                      'Intensity trace [kHz]'+" \r\n")
                 for i in np.arange(len(time)):
-                    dataWriter.writerow([str(time[i])+" \t", str(intensity[i])])
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
         dlg.Destroy()
         openedfile.close()
         return dirname, filename
@@ -526,19 +527,20 @@ def SaveSession(parent, dirname, Infodict):
             dataWriter = csv.writer(expfile, delimiter=',')
             if exp is not None:
                 # Names of Columns
-                dataWriter.writerow(['# tau'+' \t', 'experimental data'])
+                dataWriter.writerow(['# tau', 'experimental data'])
                 # Actual Data
                 # Do not use len(tau) instead of len(exp[:,0])) !
                 # Otherwise, the experimental data will not be saved entirely,
                 # if it has been cropped. Because tau might be smaller, than
                 # exp[:,0] --> tau = exp[startcrop:endcrop,0]
                 for j in np.arange(len(exp[:,0])):
-                    dataWriter.writerow([str(exp[j,0])+" \t", str(exp[j,1])])
+                    dataWriter.writerow(["%.20e" % exp[j,0],
+                                         "%.20e" % exp[j,1]])
             else:
                 # Only write tau
                 dataWriter.writerow(['# tau'+' only'])
                 for j in np.arange(len(tau)):
-                    dataWriter.writerow([str(tau[j])])
+                    dataWriter.writerow(["%.20e" % tau[j]])
             expfile.close()
             # Add to archive
             Arc.write(expfilename)
@@ -559,10 +561,11 @@ def SaveSession(parent, dirname, Infodict):
                     time = Infodict["Traces"][pageid][0][:,0]
                     rate = Infodict["Traces"][pageid][0][:,1]
                     # Names of Columns
-                    traceWriter.writerow(['# time'+' \t', 'count rate'])
+                    traceWriter.writerow(['# time', 'count rate'])
                     # Actual Data
                     for j in np.arange(len(time)):
-                        traceWriter.writerow([str(time[j])+" \t", str(rate[j])])
+                        traceWriter.writerow(["%.20e" % time[j],
+                                              "%.20e" % rate[j]])
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilenamea)
@@ -574,10 +577,11 @@ def SaveSession(parent, dirname, Infodict):
                     time = Infodict["Traces"][pageid][1][:,0]
                     rate = Infodict["Traces"][pageid][1][:,1]
                     # Names of Columns
-                    traceWriter.writerow(['# time'+' \t', 'count rate'])
+                    traceWriter.writerow(['# time', 'count rate'])
                     # Actual Data
                     for j in np.arange(len(time)):
-                        traceWriter.writerow([str(time[j])+" \t", str(rate[j])])
+                        traceWriter.writerow(["%.20e" % time[j],
+                                              "%.20e" % rate[j]])
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilenameb)
@@ -590,10 +594,11 @@ def SaveSession(parent, dirname, Infodict):
                     time = Infodict["Traces"][pageid][:,0]
                     rate = Infodict["Traces"][pageid][:,1]
                     # Names of Columns
-                    traceWriter.writerow(['# time'+' \t', 'count rate'])
+                    traceWriter.writerow(['# time', 'count rate'])
                     # Actual Data
                     for j in np.arange(len(time)):
-                        traceWriter.writerow([str(time[j])+" \t", str(rate[j])])
+                        traceWriter.writerow(["%.20e" % time[j],
+                                              "%.20e" % rate[j]])
                     tracefile.close()
                     # Add to archive
                     Arc.write(tracefilename)
@@ -625,12 +630,13 @@ def SaveSession(parent, dirname, Infodict):
                 bgtracefilename = "bg_trace"+str(i)+".csv"
                 bgtracefile = open(bgtracefilename, 'wb')
                 bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
-                bgtraceWriter.writerow(['# time'+' \t', 'count rate'])
+                bgtraceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
                 time = Background[i][2][:,0]
                 rate = Background[i][2][:,1]
                 for j in np.arange(len(time)):
-                    bgtraceWriter.writerow([str(time[j])+" \t", str(rate[j])])
+                    bgtraceWriter.writerow(["%.20e" % time[j],
+                                            "%.20e" % rate[j]])
                 bgtracefile.close()
                 # Add to archive
                 Arc.write(bgtracefilename)

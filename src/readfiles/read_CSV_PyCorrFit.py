@@ -10,22 +10,22 @@ def openCSV(dirname, filename):
         # Comment
         # Data type: Autocorrelation
         [...]
-        1.000000e-006 , 3.052373e-001
-        1.020961e-006 , 3.052288e-001
-        1.042361e-006 , 3.052201e-001
-        1.064209e-006 , 3.052113e-001
-        1.086516e-006 , 3.052023e-001
-        1.109290e-006 , 3.051931e-001
+        1.000000e-006   3.052373e-001
+        1.020961e-006   3.052288e-001
+        1.042361e-006   3.052201e-001
+        1.064209e-006   3.052113e-001
+        1.086516e-006   3.052023e-001
+        1.109290e-006   3.051931e-001
         [...]
         # BEGIN TRACE
         [...]
-        10.852761 	,31.41818
-        12.058624 	,31.1271
-        13.264486 	,31.27305
-        14.470348 	,31.33442
-        15.676211 	,31.15861
-        16.882074 	,31.08564
-        18.087936 	,31.21335
+        10.852761   31.41818
+        12.058624   31.1271
+        13.264486   31.27305
+        14.470348   31.33442
+        15.676211   31.15861
+        16.882074   31.08564
+        18.087936   31.21335
         [...]
 
         Data type:
@@ -65,14 +65,15 @@ def openCSV(dirname, filename):
             # Beware that the len(row) statement has to be called first
             # (before the len(str(row[0]).strip()) ). Otherwise some
             # error would be raised.
-        elif str(row[0])[0:30] == '# Data type: Cross-correlation':
-            # We will later try to import a second trace
-            DataType="CC"
-            DataType += row[0][30:].strip()
-        elif str(row[0])[0:28] == '# Data type: Autocorrelation':
-            # We will later try to import a second trace
-            DataType="AC"
-            DataType += row[0][28:].strip()         
+        elif str(row[0])[:12] == "# Type AC/CC":
+            corrtype = str(row[0])[12:].strip().strip(":").strip()
+            if corrtype[:17] == "Cross-Correlation":
+                # We will later try to import a second trace
+                DataType="CC"
+                DataType += corrtype[17:].strip()
+            elif corrtype[0:15] == "Autocorrelation":
+                DataType="AC"
+                DataType += corrtype[15:].strip()         
         elif str(row[0])[0:13] == '# BEGIN TRACE':
             # Correlation is over. We have a trace
             corr = np.array(data)
@@ -88,6 +89,10 @@ def openCSV(dirname, filename):
             # Read the 1st section
             # On Windows we had problems importing nan values that
             # had some white-spaces around them. Therefore: strip()
+            ## As of version 0.7.8 we are supporting white space
+            ## separated values as well
+            if len(row) == 1:
+                row = row[0].split()
             data.append((np.float(row[0].strip())*timefactor, 
                          np.float(row[1].strip())))
     # Collect the rest of the trace, if there is any:

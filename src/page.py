@@ -554,13 +554,14 @@ class FittingPanel(wx.Panel):
         ## Add supplementary parameters
         # Get them from models
         supplement = mdls.GetMoreInfo(self.modelid, self)
-        for i in np.arange(len(supplement)):
-            label = supplement[i][0]
-            if label[0] == "n" or label[0] == "N":
-                normlist.append("*"+label)
-                # Add the id of the supplement starting at the
-                # number of fitting parameters of current page.
-                parameterlist.append(i+len(self.active_parms[0]))
+        if supplement is not None:
+            for i in np.arange(len(supplement)):
+                label = supplement[i][0]
+                if label[0] == "n" or label[0] == "N":
+                    normlist.append("*"+label)
+                    # Add the id of the supplement starting at the
+                    # number of fitting parameters of current page.
+                    parameterlist.append(i+len(self.active_parms[0]))
         normsel = self.AmplitudeInfo[2].GetSelection()
         if event == "init":
             # Read everything from the page not from the panel
