@@ -348,6 +348,9 @@ class BackgroundCorrection(wx.Frame):
         self.dropdown.SetSelection(len(self.BGlist)-1)
         self.btnremyall.Enable(True)
         self.OnDraw()
+        # Update BG dropdown of each page
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            self.parent.notebook.GetPage(i).OnAmplitudeCheck()
 
 
     def OnPageChanged(self, page):

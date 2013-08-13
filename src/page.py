@@ -642,6 +642,8 @@ class FittingPanel(wx.Panel):
         bglist = list()
         bglist.append("None")
         for item in self.parent.Background:
+            if len(item[1]) > 10:
+                item[1] = item[1][:7]+"..."
             bgname = item[1]+" (%.2f kHz)" %item[0]
             bglist.append(bgname)
         self.AmplitudeInfo[0].SetItems(bglist)
