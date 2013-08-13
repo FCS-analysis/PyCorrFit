@@ -283,7 +283,6 @@ class MyFrame(wx.Frame):
                 # On tool only needs the Id of the wx.EVT_MENU
                 self.Bind(wx.EVT_MENU, self.OnTool, menu)
             if ttype != toolkeys[-1]:
-                print "12"
                 self.toolmenu.AppendSeparator()
         # curmenu
         menuImportData = self.curmenu.Append(wx.ID_ANY, "&Import Data",
