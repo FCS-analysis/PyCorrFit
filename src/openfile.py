@@ -110,8 +110,8 @@ def OpenSession(parent, dirname, sessionfile=None):
         readmefile = Arc.open("Readme.txt")
         # e.g. "This file was created using PyCorrFit version 0.7.6"
         identifier = readmefile.readline()
-        arcv = LooseVersion(identifier[46:])
-        thisv = LooseVersion(parent.version)
+        arcv = LooseVersion(identifier[46:].strip())
+        thisv = LooseVersion(parent.version-strip())
         if arcv > thisv:
             errstring = "Your version of Pycorrfit ("+str(thisv)+")"+\
                    " is too old to open this session ("+\
