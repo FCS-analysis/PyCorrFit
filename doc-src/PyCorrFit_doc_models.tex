@@ -1,4 +1,5 @@
-\subsection{Included model functions}
+\subsection{Implemented model functions}
+\label{sec:mdls}
 This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. To each model a unique model ID is assigned by PyCorrFit. Most of the following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
 
 \subsubsection{Confocal FCS}
@@ -27,7 +28,7 @@ The parameters in the equation above need to be calibrated to obtain the diffusi
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D (Gauß)} \\ 
 ID & \textbf{6001} \\ 
-Descr. &  Two-dimensional diffusion with a Gaussian laser profile. \\ 
+Descr. &  Two-dimensional diffusion with a Gaussian laser profile\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}
@@ -46,7 +47,7 @@ $\tau_\mathrm{diff}$ &   Characteristic residence time in confocal area \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D+T (Gauß)} \\ 
 ID & \textbf{6002} \\ 
-Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Aragon1976, Qian1991, Rigler1993,Widengren1994, Widengren1995, Haupts1998}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
@@ -67,7 +68,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D (Gauß)} \\ 
 ID & \textbf{6012} \\ 
-Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical). \\ 
+Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical)\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}}
@@ -87,7 +88,7 @@ $\mathit{SP}$ & Structural parameter, describes elongation of the confocal volum
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+T (Gauß)} \\ 
 ID & \textbf{6011} \\ 
-Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical), including a triplet component. \\ 
+Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical), including a triplet component\cite{Widengren1994, Widengren1995, Haupts1998}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
@@ -109,7 +110,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D+2D+T (Gauß)} \\ 
 ID & \textbf{6031} \\ 
-Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
@@ -133,7 +134,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+2D+T (Gauß)} \\ 
 ID & \textbf{6032} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component. \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{N (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
@@ -158,7 +159,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+3D+T (Gauß)} \\ 
 ID & \textbf{6030} \\ 
-Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component. \\ 
+Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) &= A_0 + \frac{1}{N (F + \alpha (1-F))²}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -204,7 +205,7 @@ The lateral detection area has the same shape as in confocal FCS. Thus, correlat
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D (Gauß/exp)} \\ 
 ID & \textbf{6013} \\ 
-Descr. &  Three-dimensional free diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction. \\ 
+Descr. &  Three-dimensional free diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction\cite{Starr2001, Hassler2005, Ohsugi2006}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = \frac{1}{C}  \frac{ \kappa^2}{ \pi (R_0^2 +4D\tau)}
@@ -225,7 +226,7 @@ $D$ & Diffusion coefficient  \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+2D+T (Gauß/exp)} \\ 
 ID & \textbf{6033} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component. \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -255,7 +256,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D+3D+T (Gauß/exp)} \\ 
 ID & \textbf{6034} \\ 
-Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component. \\
+Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\
 \end{tabular}
 \begin{align}
 G(\tau) = &A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -303,7 +304,7 @@ w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D (□x$\upsigma$)} \\ 
 ID & \textbf{6000} \\ 
-Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function. \\ 
+Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function\cite{Ries2008390, Yordanov2011}\footnote{The reader is made aware, that reference \cite{Ries2008390} contains several unfortunate misprints.}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = \frac{1}{C} \left[
@@ -327,7 +328,7 @@ $D$ & Diffusion coefficient \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{3D (□x$\upsigma$/exp)} \\ 
 ID & \textbf{6010} \\ 
-Descr. &  Three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. \\ 
+Descr. &  Three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction\cite{Ries2008390, Yordanov2011}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) =  \frac{\kappa^2}{C} &
@@ -353,7 +354,7 @@ $D$ & Diffusion coefficient \\
 Name & \textbf{2D+2D (□x$\upsigma$/exp)} \\ 
 ID & \textbf{6022} \\ 
 Descr. &  Two-component two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function. \newline
-The correlation function is a superposition of two-dimensional model functions of the type \textbf{2D (□x$\upsigma$)} (6000). \\
+The correlation function is a superposition of two-dimensional model functions of the type \textbf{2D (□x$\upsigma$)} (6000)\cite{Ries2008390, Yordanov2011}. \\
 \end{tabular}
 \vspace{2em}
 
@@ -363,7 +364,7 @@ The correlation function is a superposition of two-dimensional model functions o
 Name & \textbf{3D+2D (□x$\upsigma$/exp)} \\ 
 ID & \textbf{6020} \\ 
 Descr. &  Two-component two- and three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction.  \newline
-The correlation function is a superposition of the two-dimensional model function \textbf{2D (□x$\upsigma$)} (6000) and the three-dimensional model function \textbf{3D (□x$\upsigma$)} (6010).
+The correlation function is a superposition of the two-dimensional model function \textbf{2D (□x$\upsigma$)} (6000) and the three-dimensional model function \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}.
 \end{tabular}
 \vspace{2em}
 
@@ -373,7 +374,7 @@ The correlation function is a superposition of the two-dimensional model functio
 Name & \textbf{3D+3D (□x$\upsigma$/exp)} \\ 
 ID & \textbf{6023} \\ 
 Descr. &  Two-component three-dimensional free diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. \newline
-The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010). \\
+The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}. \\
 \end{tabular}
 \vspace{2em}
 

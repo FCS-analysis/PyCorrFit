@@ -44,6 +44,8 @@ This documentation addresses the processing of correlation curves with PyCorrFit
 \label{cha:soft}
 The latest version of PyCorrFit can be obtained from the internet at \url{http://pycorrfit.craban.de}.
 \begin{itemize}
+\item \textbf{MacOSx}.
+Binary files for MacOSx $>$10.6.8 are available from the download page but have not yet been fully tested for stability.
 \item \textbf{Windows}.
 For Windows XP or Windows 7, stand-alone binary executables are available from the download page. 
 \item \textbf{Linux}.
@@ -71,7 +73,7 @@ For older versions of Ubuntu, some of the above package versions are not listed 
 Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be used to install up-to-date python modules.
 
 \noindent \textbf{\LaTeX}.
-PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
+PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
 
 \section{Theoretical background}
@@ -94,7 +96,7 @@ This section introduces the calculation of FCS model functions. It supplies some
 	\item[$G(\tau)$] normalized autocorrelation curve
 	\item[$\tau$] lag time
 	\item[$\langle F \rangle$] the expectation value of $F(t)$. Applying the ergodic theorem, this can be rewritten as the time average \[ \langle F(t) \rangle = \lim_{T \rightarrow \inf }\frac{1}{T} \int_0^T F(t) \mathrm{d}t. \]	
-	\item[$\delta F(t)$] $= F(t) - \langle F(t) \rangle$ fluctiation of the fluorescence signal
+	\item[$\delta F(t)$] $= F(t) - \langle F(t) \rangle$ fluctuation of the fluorescence signal
 	\item[$g(\tau)$] non normalized autocorrelation curve
 	\end{itemize}
 	\end{minipage}
@@ -103,7 +105,7 @@ This section introduces the calculation of FCS model functions. It supplies some
 	\newline
 	\newline
 	\newline
-	The Fluorescence signal is dependent on the size and shape of the detection volume (e.g. Gaussian shaped for confocal setups or exponential decaying for TIRF setups), on the propagator of the diffusing dye (free diffusion, diffusion with flow, etc.) and the brightness and concentration of the dye under observation.  \\
+	The fluorescence signal is dependent on the size and shape of the detection volume (e.g. Gaussian shaped for confocal setups or exponential decaying for TIRF setups), on the propagator of the diffusing dye (free diffusion, diffusion with flow, etc.), and the brightness and concentration of the dye under observation\cite{Burkhardt2010}.  \\
 	\newline
 	%\fbox{ {
 	\begin{minipage}{\textwidth}
@@ -112,20 +114,21 @@ This section introduces the calculation of FCS model functions. It supplies some
 	G(\tau) = \frac{  q^2 C \int \! \mathrm{d}^3 r \int \! \mathrm{d}^3 r'  \, \Omega(\mathbf{r})\Phi(\mathbf{r}, \mathbf{r'}, \tau) \Omega(\mathbf{r'})  }{\langle F(t) \rangle^2}
 	\end{equation}
 	\begin{itemize} \small
-	\item[$q$] molecular brightness, dependent on quantum yields, absorption cross sections, detection efficiencies and excitation intensity.
-	\item[$\Omega$] 3D molecule detection function, dependent on point spread function (PSF), shape of pinholes used for detection, excitation laser profile.
+	\item[$q$] molecular brightness, dependent on excitation intensity, quantum yield, i.e. emission properties and absorption cross sections of the dye, and the detection efficiency of the instrument.
+	\item[$\Omega$] 3D molecule detection function, dependent on the shape of the pinholes used for detection and the excitation laser profile, i.e. the point spread function (PSF).
 	\item[$\Phi$] diffusion propagator. The distribution of dyes in a liquid follows Fick's laws of diffusion. For free diffusion, this is a simple Gaussian distribution.
 	\item[$F$] fluorescence signal of the sample. It is defined as
 	\[ F(t) = q \int \! \mathrm{d}^3 r \, \Omega(\mathbf{r}) c(\mathbf{r}, t) \] with $c(\mathbf{r}, t)$ being dye distribution (particle concentration) inside the detection volume.
-		\item[$C$] average concentration of the dye following the dynamics of the propagator $\Phi$. Using the ergodic hypothesis and assuming a normalized molecule detection function $\Omega$, $ C = \langle F(t) \rangle / q $.
+		\item[$C$] average concentration of the dye following the dynamics of the propagator $\Phi$. Using the ergodic hypothesis and assuming a normalized molecule detection function (${V_\mathrm{eff} = \int \!\! d^3r \, \Omega(\mathbf{r}) = 1}$), the concentration computes to $ C = \langle F(t) \rangle / q$.
 	\end{itemize}
 	\end{minipage}
 	%} 
 	%}
 	
 	
-	\subsubsection{General Autocorrelation function for multiple species}
-	Most experiments do not only include a single species of fluorescent dye. When considering a three dimensional detection volume with a freely diffusing dye, adding a lipid bilayer with a different fluorescent dye (diffusing in two dimensions inside the bilayer) will result in two distinct contributions to the fluorescence signal, namely 2D diffusion and 3D diffusion. For $n$ different species inside the detection volume, the autocorrelation function becomes:
+\subsubsection{General Autocorrelation function for multiple species}
+%Most experiments do not only include a single species of fluorescent dye. When considering a three dimensional detection volume with a freely diffusing dye, adding a lipid bilayer with a different fluorescent dye (diffusing in two dimensions inside the bilayer) will result in two distinct contributions to the fluorescence signal, namely 2D diffusion and 3D diffusion. For $n$ different species inside the detection volume, the autocorrelation function becomes:
+Most experiments include particles with more than one dynamic property. Labeled particles may have different size or the temporal dynamics may include a triplet term. For $n$ different species inside the detection volume, the autocorrelation function becomes:
 	\newline
 	\newline
 	%\fbox{ {
@@ -139,7 +142,7 @@ This section introduces the calculation of FCS model functions. It supplies some
 	\end{equation}
 	\begin{itemize} \small
 	\item[$g(\tau)$] non normalized correlation function
-	\item[$g_{ij}(\tau)$] non normalized cross correlation between two species $i$ and $j$
+	\item[$g_{ij}(\tau)$] non normalized cross correlation between two species $i$ and $j$. For $n$ species, $i,j \in [1,...,n]$.
 	\item[$q_i$] molecular brightness of species $i$
 	\item[$\Omega$] 3D molecule detection function
 	\item[$\Phi_{ij}$] diffusion propagator computed from species $i$ with species $j$. If species $i$ and $j$ are independently diffusing, then $\Phi_{ij}$ is zero. 
@@ -176,14 +179,14 @@ This section introduces the calculation of FCS model functions. It supplies some
 	\end{eqnarray*}
 
 	\subsubsection{Cross-correlation}
-	Cross-correlation is a generalization of autocorrelation. Cross-correlation functions are derived in the same manner as autocorrelation functions. Here, two signals are cross-correlated to obtain the correlation function.
+	Cross-correlation is a generalization of autocorrelation. Cross-correlation functions are derived in the same manner as autocorrelation functions. Here, signals recorded in two detection channels are cross-correlated to obtain the correlation function.
 	\begin{equation}
 	G_{XY}(\tau) = \frac{\langle \delta F_X(t) \delta F_Y(t+\tau) \rangle}{\langle F_X(t) \rangle \langle F_Y(t) \rangle}
 	\end{equation}
-	In binding assays, the cross-correlation is computed from the signals of two different marker dyes. In this case, a non-vanishing cross-correlation implies binding (the dyes diffuse together).
+A cross-correlation analysis of two species labeled by two types of dyes observed in two corresponding detection channels can be used for binding assays. Only complexes giving simultaneous signal in both channels contribute to the cross-correlation amplitude. Thus a finite cross-correlation indicates co-diffusion.
 	
    \subsubsection{Extension of the theory}
-	By modifying the propagator $\Phi$ and the detection volume $\Omega$, other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals can not be found and approximations have to be made. The Gaussian shaped detection profile in confocal FCS is already an approximation. However, it is close to the real shape and deviations from the true results are considered to be small \cite{Zhang2007}.
+	By modifying the propagator $\Phi$ and the detection volume $\Omega$, other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals are not straightforward and approximations have to be made. For example, the Gaussian shaped detection profile in confocal FCS is already an approximation. However, deviations from the true results are considered to be small \cite{Zhang2007}. \hyref{Section}{sec:mdls} introduces several model functions with various detection symmetries and particle dynamics.
 
 
 \subsection{Non-linear least-squares fit}
@@ -210,7 +213,82 @@ PyCorrFit is able to calculate the weights $\sigma_i$ from the experimental data
 
 
 \section{Working with PyCorrFit}
+
+
+\subsection{Workflow}
+\label{cha_graphint}
+\label{sec:PyCorrFitUserInterface}
+\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
+ \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
+\end{figure}
+
+
+\subsubsection{A First Look} PyCorrFit is operated through the menu bar. The \texttt{File} menu lets the user load and save files as discussed in section \ref{sec:fileformats}. The \texttt{Tools} menu contains several tools that are described below. The \texttt{Current Page} menu allows the user to perform tasks on the current page. This includes loading experimental data files or saving the currently viewable correlation curve as \mytilde .csv file or as an image. The \texttt{Model} menu lets the user select a model to create a new page. The \texttt{Preferences} menu allows the user to use Latex for plotting (\hyref{section}{cha:soft}) or tells the program to be more verbose (spline fits for calculation of weights will be displayed). The \texttt{Help} menu contains an update function that checks the current program version against the official release of PyCorrFit.
+\label{sec:tools}
+The graphical user interface comes with a bunch of tools located in the \texttt{Tools} menu. The \texttt{Tools} menu will become active, once a page is added to the notebook. Each tool opens in a new window. Tools are updated or closed upon change of the current page.
+
+
+\subsubsection{Loading Experimental Data}
+Via \texttt{File - Load data files} experimental data files are opened and displayed on tab page. Within the page, the user may choose starting parameters for the fitting, select which parameters should be variable during fitting (checked means variable) and select a weighting method. The page displays the experimental and fitted curve, as well as the residuals in the lower plot.
+
+
+\subsubsection{Data Range Selection}
+This selects the lag times $\tau$ from the experimental curve that will be displayed. By default, all data from a file will be displayed. 
+
+
+\subsubsection{Background Correction}
+ Performs a background correction according to \cite{Thomps:bookFCS2002}. The result is a higher amplitude of the correlation fuction $G(0)$. Backgrounds may be manually set or imported from background measurements (see supported file formats).
+\begin{equation}
+G_\mathrm{corrected}(\tau) = G_\mathrm{measured}(\tau) \cdot \left[ \frac{S}{S-B} \right]^2
+\label{eq:BG_correction}
+\end{equation}
+where $S$ is the average signal of the correlation curve and $B$ is the average background signal.
+
+
+\subsubsection{Performing a (weighted) Fit}
+Weights can be calculated for each data point using the standard deviation from neighboring points. Since FCS curves naturally have regions where the standard deviation of the experimental data is large (falling inflection points), the standard deviation has to be calculated from curves that mimic the experimental data. If weighted fitting is used, the weighted residuals are shown instead of the plain residuals (difference of experimental and theoretical curve). The following methods for weighting have been implemented:
+\begin{itemize}
+\item[] \textbf{Spline}. A spline is fitted to the experimental curve. Weights are calculated from the deviation of the experimental data from the spline. If  the \texttt{Verbose mode} is enabled in  the \texttt{Preferences} menu, the spline fit will be displayed. The number of knots of the spline can be changed by adjusting the number in the dropdown menu. In case of multiple component data, a higher number of knots is required to obtain a fitting spline. For single component data, up to three knots are sufficient.
+\item[] \textbf{Model function}. Instead of calculating the weights from a spline, calculate the weights from the previously fitted model function. This method of weighting is iterative - the fit should converge!
+\item[] \textbf{Average}. If an average was created using the \texttt{Average data} tool, the standard deviation $\sigma_i$ at all data points $i$, calculated from all curves can be used as weights for fitting. 
+\end{itemize}
+
+
+\subsubsection{Overlay Tool: Selecting valid Runs} 
+Display all curves and easily remove outliers by deselecting them.
+
+\subsubsection{Batch Control: Fitting Several Curves at Once}
+Perform fitting operations on all pages. Parameters may be imported from other \mytilde .fcsfit-session.zip-files. Application of parameters and fitting of curves is only executed for pages with the same model as the current page.
+
+
+\subsubsection{Global Fitting: When Curves Share Parameters}
+If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
+
+
+\subsubsection{Average Data: Obtaining an Average of all Runs}
+Averaging of curves within the session. The \texttt{Overlay tool} may be used to select a subset of curves. The tool asks if only pages with the same model as the current page should be used. Pages that do not have the same correlation type (autocorrelation or cross-correlation) as the current page are not used. The averaging does not work for data where the length of the correlation curves are not identical. Averaging in this case is not well-defined. For averaging, please make sure all curves in a series have the same measurement time.
+A new page will be created containing the resulting average. The resulting trace is constructed by appending the traces of the averaged curves. After averaging, the standard deviaton from all curves can be used as weights for fitting.
+
+
+\subsubsection{Slider Simulation: Which Parameter does What?}
+This tool is useful to visualize the impact of certain parameters on the shape of the correlation function or to set proper starting parameters for a fit.
+
+
+\subsubsection{Page Info: a Summary for each Curve}
+\label{Tool:PageInfo} A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
+
+\subsubsection{Trace View: Verification and Troubleshooting}
+If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
+
+
+\subsubsection{Statistics: Excel-ready Export of Results} Used for large data sets. Save selected parameters (of all pages with the same model as the current page) as a table of tab separated values into one single file.
+
+
 \subsection{Data file formats}
+\subsubsection{Import: Support for common FCS file formats}
 \label{sec:fileformats}
 PyCorrFit supports numerous data file formats. If a file format is not listed here, there are two options to make them work with PyCorrFit:
 \begin{itemize}
@@ -228,7 +306,8 @@ Supported file formats:
 \item[] \textbf{\mytilde .zip files} may contain any of the files listed here.
 \end{itemize}
 
-\subsection{PyCorrFit file formats}
+
+\subsubsection{Export and More: Interaction with the User}
 These are file formats that were designed for PyCorrFit.
 
 
@@ -351,53 +430,5 @@ G = 1./n * gThrD * gScan * gTrip
 \end{figure}
 \hyref{Figure}{fig:extxt} shows a working example. External models will be imported with internal model function IDs starting at $7000$. Model functions are checked upon import by PyCorrFit. If the model function does not work, it might be a syntax error, or just an error of \texttt{sympy}. Sympy is used to check the model and is still under development. Model functions will be saved upon session saving.
 
-\subsection{The graphical user interface}
-\label{cha_graphint}
-\label{sec:PyCorrFitUserInterface}
-\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
-\end{figure}
-\subparagraph*{Page}
-Within the page, the user may choose starting parameters for the fitting, select which parameters should be variable during fitting (checked means variable) and select a weighting method. The page displays the experimental and fitted curve, as well as the residuals in the lower plot.
-
-\subparagraph*{Weighting}
-Weights can be calculated for each data point using the standard deviation from neighboring points. Since FCS curves naturally have regions where the standard deviation of the experimental data is large (falling inflection points), the standard deviation has to be calculated from curves that mimic the experimental data. If weighted fitting is used, the weighted residuals are shown instead of the plain residuals (difference of experimental and theoretical curve). The following methods for weighting have been implemented:
-\begin{itemize}
-\item[] \textbf{Spline}. A spline is fitted to the experimental curve. Weights are calculated from the deviation of the experimental data from the spline. If  the \texttt{Verbose mode} is enabled in  the \texttt{Preferences} menu, the spline fit will be displayed. The number of knots of the spline can be changed by adjusting the number in the dropdown menu. In case of multiple component data, a higher number of knots is required to obtain a fitting spline. For single component data, up to three knots are sufficient.
-\item[] \textbf{Model function}. Instead of calculating the weights from a spline, calculate the weights from the previously fitted model function. This method of weighting is iterative - the fit should converge!
-\item[] \textbf{Average}. If an average was created using the \texttt{Average data} tool, the standard deviation $\sigma_i$ at all data points $i$, calculated from all curves can be used as weights for fitting. 
-\end{itemize}
-
-\subparagraph*{Menus} PyCorrFit is operated through the menu bar. The \texttt{File} menu lets the user load and save files as discussed in section \ref{sec:fileformats}. The \texttt{Tools} menu contains several tools that are described below. The \texttt{Current Page} menu allows the user to perform tasks on the current page. This includes loading experimental data files or saving the currently viewable correlation curve as \mytilde .csv file or as an image. The \texttt{Model} menu lets the user select a model to create a new page. The \texttt{Preferences} menu allows the user to use Latex for plotting (\hyref{section}{cha:soft}) or tells the program to be more verbose (spline fits for calculation of weights will be displayed). The \texttt{Help} menu contains an update function that checks the current program version against the official release of PyCorrFit.
-
-\subsection{Tools}
-\label{sec:tools}
-The graphical user interface comes with a bunch of tools located in the \texttt{Tools} menu. The \texttt{Tools} menu will become active, once a page is added to the notebook. Each tool opens in a new window. Tools are updated or closed upon change of the current page. All tools are generally self-explanatory:
-\begin{itemize}
-\item \textbf{Average curves}: Averages experimental curves from all pages, except:
-		\begin{itemize}
-		\item pages with a different model than the current page,
-		\item pages that do not have the same correlation type (autocorrelation or cross-correlation) as the current page,
-		\item pages, where the length of the correlation curve does not match the length of the curve of the current page.
-		\end{itemize}
-		A new page will be created containing the resulting average. The resulting trace is constructed by appending the traces of the averaged curves. After averaging, the standard deviaton from all curves can be used as weights for fitting.
-		
-\item \textbf{Background correction}: Performs a background correction according to \cite{Thomps:bookFCS2002}. The result is a higher amplitude of the correlation fuction $G(0)$. Backgrounds may be manually set or imported from background measurements (see supported file formats).
-\begin{equation}
-G_\mathrm{corrected}(\tau) = G_\mathrm{measured}(\tau) \cdot \left[ \frac{S}{S-B} \right]^2
-\label{eq:BG_correction}
-\end{equation}
-where $S$ is the average signal of the correlation curve and $B$ is the average background signal.
-\item \textbf{Batch control}: Perform fitting operations on all pages. Parameters may be imported from other \mytilde .fcsfit-session.zip-files. Application of parameters and fitting of curves is only executed for pages with the same model as the current page.
-\item \textbf{Data range selection}: This selects the lag times $\tau$ from the experimental curve that will be displayed. By default, all data from a file will be displayed. 
-\item \textbf{Global fitting}: If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
-\item \textbf{Slider simulation}: This is useful to visualize the impact of certain parameters on the shape of the correlation function or to set proper starting parameters for a fit.
-\item \label{Tool:PageInfo}  \textbf{Page info}: A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
-\item \textbf{Trace view}: If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
-\item  \textbf{Statistics}: Used for large data sets. Save selected parameters (of all pages with the same model as the current page) as a table of tab separated values into one single file.
-\end{itemize}
 
 \input{PyCorrFit_doc_models}

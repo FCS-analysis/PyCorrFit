@@ -58,8 +58,11 @@ import scipy
 
 # A missing import hook prevented us from bundling PyCorrFit on Mac using
 # pyinstaller. The following imports solved that issue:
-from scipy.sparse.csgraph import shortest_path
-from scipy.sparse.csgraph import _validation
+try:
+    from scipy.sparse.csgraph import shortest_path
+    from scipy.sparse.csgraph import _validation
+except:
+    pass
 
 # Sympy is optional:
 try:
