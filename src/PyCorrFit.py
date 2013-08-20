@@ -55,6 +55,13 @@ with warnings.catch_warnings():
 import numpy as np                  # NumPy
 import os
 import scipy
+
+# A missing import hook prevented us from bundling PyCorrFit on Mac using
+# pyinstaller. The following imports solved that issue:
+from scipy.sparse.csgraph import shortest_path
+from scipy.sparse.csgraph import _validation
+
+# Sympy is optional:
 try:
     import sympy
 except ImportError:
