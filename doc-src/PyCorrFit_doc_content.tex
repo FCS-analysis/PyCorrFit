@@ -265,7 +265,7 @@ Perform fitting operations on all pages. Parameters may be imported from other \
 
 
 \subsubsection{Global Fitting: When Curves Share Parameters}
-If multiple correlation curves share some of their parameters, a global fit can be applied. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. This is useful in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are the same for all curves.
+If multiple correlation curves share some of their parameters, a global fit can be applied.  The \texttt{Overlay tool} may be used to select a subset of curves. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. For example, this is used in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are identical for all curves.
 
 
 \subsubsection{Average Data: Obtaining an Average of all Runs}
@@ -313,29 +313,31 @@ These are file formats that were designed for PyCorrFit.
 
 \subsubsection{.csv data files}
 \label{text:csv}
-This is the recommended way to store data from FCS experiments. \mytilde .csv files are directly readable by any editor from any platform, allow comments throughout the file and have a well-defined structure. There is a certain syntax that has to be followed for \mytilde .csv files to be successfully imported by PyCorrFit:
-
-
+The \mytilde .csv file format contains experimental correlation curves and optionally the fitted curve, the residuals, as well as weighting factors that have been used for fitting. The data are stored as tab-separated values.
+PyCorrFit uses this format to export single correlation curves. The \mytilde .csv files are directly readable by any editor on any platform, allow comments throughout the file and have a well-defined structure. There is a certain syntax that has to be followed for \mytilde .csv files to be successfully imported by PyCorrFit:
 \begin{itemize}
-
 \item The \textbf{encoding} is preferably UTF-8. However, since no special characters are needed to save experimental data, any encoding might work. New line characters are \texttt{\textbackslash r\textbackslash n} (Windows).
 
 \item \textbf{Comments}: Lines starting with a hash (\texttt{\#}) as well as empty lines or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
 
 \item \textbf{Units}: A \mytilde .csv file may contain one correlation curve, as well as up to two intensity traces. The time unit is seconds and the count rate (intensity) is measured in \SI{}{kHz}. Correlation curves are assumed to be calculated from fluctuations around zero, thus the correlation curve has to decrease to zero at large lag times.
 
-\item The first table inside a \mytilde .csv file contains the \textbf{correlation curve}. The table consists of either two or four columns of comma separated values (plus some tab-stops \texttt{\textbackslash t} added by PyCorrFit for better visualization). The first column contains the lag times in seconds and the second column contains the correlation curve. PyCorrFit also saves fitted curve and residuals in the third and fourth column. This additional information is ignored during file import.
+\item The first table inside a \mytilde .csv file contains the \textbf{correlation curve}. The table consists of either two or four columns of tab-separated values. The first column contains the lag times in seconds and the second column contains the correlation curve. PyCorrFit also saves the fitted curve and the residuals in the third and fourth column, as well as optional weighting factors that were used for fitting. This additional information is ignored during file import.
 
-\item \textbf{First trace}: The table containing the correlation curve is considered to have ended as soon as the keyword \texttt{\# BEGIN TRACE} appears at the beginning of a line. Then, the trace will be read, again as comma separated values: first column contains time in seconds and second column contains the corresponding signal in \SI{}{KHz}.
+\item \textbf{First trace}: The table containing the correlation curve is considered to have ended as soon as the keyword \texttt{\# BEGIN TRACE} appears at the beginning of a line. Then, the trace will be read, again as tab-separated values: The first column contains the time in seconds and second column contains the corresponding signal in \SI{}{KHz}.
 
 \item The optional \textbf{second trace} is initiated with the keyword \texttt{\# BEGIN SECOND TRACE}.
 
-\item \textbf{AC/CC}: There is another keyword, that describes the type of the curve (autocorrelation or cross-correlation). If a line starts with
-	\begin{itemize}
-	\item \texttt{\# Data type: Cross-correlation} or
-	\item \texttt{\# Data type: Autocorrelation},
-	\end{itemize}
-the corresponding string \texttt{AC} or \texttt{CC} will be used to identify the curve. If no data type is specified, autocorrelation will be assumed. Curves may be personalized by using: \texttt{\# Data type: Autocorrelation \_A1}, which will result in the identifier \texttt{AC\_A1} during import. This is necessary to distinguish many \mytilde .csv files inside a \mytilde .zip file.
+\item \textbf{AC/CC}: To distinguish the types of imported experimental curves (autocorrelation or cross-correlation), the keyword \texttt{Data type} can be used. If a line starts with either of the following:
+\begin{itemize}
+\item[] \texttt{\# Data type	Cross-correlation} 
+\item[] \texttt{\# Data type	Autocorrelation} 
+\end{itemize}
+then the corresponding string \texttt{AC} or \texttt{CC} will be used to identify the type of the curve in the user interface. If no data type is specified, an autocorrelation curve is assumed. Curves may be personalized by using:
+\begin{itemize}
+\item[] \texttt{\# Data type	Autocorrelation \_A1}
+\end{itemize}
+This will result in the identifier \texttt{AC\_A1} during import in the user interface. This feature is useful to e.g. distinguish many \mytilde .csv files of different type inside a \mytilde .zip file.
 
 \end{itemize}
 
