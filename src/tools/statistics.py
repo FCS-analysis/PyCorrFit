@@ -25,9 +25,19 @@ from info import InfoClass
 # Menu entry name
 MENUINFO = ["&Statistics", "Show some session statistics."]
 
+def run_once(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+    wrapper.has_run = False
+    return wrapper
+
+
 class Stat(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
+        self.MyName="STATISTICS"
         # parent is the main frame of PyCorrFit
         self.boxsizerlist = list()
         self.parent = parent
@@ -104,7 +114,8 @@ class Stat(wx.Frame):
             for cb in self.Checkboxes:
                 checklist.append(cb.GetValue())
                 self.Page.StatisticsCheckboxes = checklist
-        
+
+
     def OnChooseValues(self, event=None):
         self.InfoClass.CurPage = self.Page
         # Now that we know our Page, we may change the available
@@ -213,6 +224,10 @@ class Stat(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        #
+        # Prevent this function to be run twice at once:
+        #
+        
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)
         if self.parent.notebook.GetPageCount() == 0:
@@ -221,9 +236,11 @@ class Stat(wx.Frame):
         self.panel.Enable()
         for i in np.arange(len(self.Checkboxes)):
             self.Checkboxes[i].Destroy()
+        del self.Checkboxes
             #self.Checklabels[i].Destroy() # those cannot be destroyed.
         for i in np.arange(len(self.boxsizerlist)):
             self.boxsizer.Remove(0)
+        self.boxsizer.Layout()
         self.boxsizerlist = list()
         self.Checkboxes = list()
         self.Checklabels = list()
@@ -321,3 +338,5 @@ class Stat(wx.Frame):
                     # No data available
                     pageinfo.append([label, "NaN"])
             self.SaveInfo.append(pageinfo)
+
+

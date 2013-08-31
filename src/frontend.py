@@ -210,6 +210,27 @@ class MyFrame(wx.Frame):
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
         self.EnableToolCurrent(True)
+        #
+        #######
+        #
+        # This is a work-around to prevent a weird bug in version 0.7.8:
+        # The statistics OnPageChanged function is called but the parameters
+        # are displayed double if a new page is created and the statistics
+        # window is open.
+        # Find Tool Statistics
+        # Get open tools
+        toolkeys = self.ToolsOpen.keys()
+        for key in toolkeys:
+            tool = self.ToolsOpen[key]
+            try:
+                if tool.MyName=="STATISTICS":
+                    # Call the function properly.
+                    tool.OnPageChanged(Newtab)
+            except:
+                pass
+        #
+        #######
+        #
         return Newtab
 
 
