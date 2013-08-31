@@ -107,6 +107,8 @@ def parsePagenum2String(pagenumlist):
     """ Make a string with dashes and commas from a list of pagenumbers.
         e.g. [1,2,3,5,7] --> "1-3,5,7"
     """
+    if len(pagenumlist) == 0:
+        return ""
     # Make sure we have integers
     newlist = list()
     for num in pagenumlist:
