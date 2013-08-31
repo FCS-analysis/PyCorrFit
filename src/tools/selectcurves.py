@@ -385,5 +385,7 @@ class UserSelectCurves(wx.Frame):
         keyskeep = list()
         for i in self.SelectBox.GetSelections():
             keyskeep.append(self.curvekeys[i])
-        self.wrapper.OnSelectionChanged(keyskeep)
-
+        try:
+            self.wrapper.OnSelectionChanged(keyskeep)
+        except:
+            pass

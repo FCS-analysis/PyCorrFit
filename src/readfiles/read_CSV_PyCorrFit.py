@@ -67,19 +67,19 @@ def openCSV(dirname, filename):
             # error would be raised.
         elif str(row[0])[:12] == "# Type AC/CC":
             corrtype = str(row[0])[12:].strip().strip(":").strip()
-            if corrtype[:17] == "Cross-Correlation":
+            if corrtype[:17].lower() == "cross-correlation":
                 # We will later try to import a second trace
                 DataType="CC"
                 DataType += corrtype[17:].strip()
-            elif corrtype[0:15] == "Autocorrelation":
+            elif corrtype[0:15].lower() == "autocorrelation":
                 DataType="AC"
                 DataType += corrtype[15:].strip()         
-        elif str(row[0])[0:13] == '# BEGIN TRACE':
+        elif str(row[0])[0:13].upper() == '# BEGIN TRACE':
             # Correlation is over. We have a trace
             corr = np.array(data)
             data=list()
             numtraces = 1
-        elif str(row[0])[0:20] == '# BEGIN SECOND TRACE':
+        elif str(row[0])[0:20].upper() == '# BEGIN SECOND TRACE':
             # First trace is over. We have a second trace
             traceA = np.array(data)
             data = list()
