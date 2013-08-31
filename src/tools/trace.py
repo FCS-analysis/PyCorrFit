@@ -94,6 +94,10 @@ class ShowTrace(wx.Frame):
         # When parent changes
         if self.parent.notebook.GetPageCount() == 0:
             # Nothing to do
+            try:
+                self.canvas.Clear()
+            except:
+                pass
             return
         self.OnDraw()
 
