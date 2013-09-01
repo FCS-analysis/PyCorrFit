@@ -131,8 +131,13 @@ def Checkme(parms):
 
 
 def MoreInfo(parms, countrate):
-    """ Return more information on the given model by using
-        a given set of parameters.
+    u"""     Supplementary parameters:
+    [10] n3D            Effective number of freely diffusing particles in 3D
+    [11] n2D            Effective number particles diffusing on 2D surface
+    [12] G(0)           Value of the correlation function at lag time zero
+    [13] V_eff [al]     Effective measurement volume
+    [14] C_2D [1/µm²]   Concentration of the 2D species
+    [15] C_3D [nM]      Concentration of the 3D species
     """
     # We can only give you the effective particle number
     n=parms[0]

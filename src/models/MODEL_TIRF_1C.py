@@ -110,14 +110,13 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
 
 
 def MoreInfo_6000(parms, countrate):
-    """
-        Supplementary variables:
-         Effective detection area:
-          A_eff  = a**2
-         Effective particle number in detection area:
-          N_eff = A_eff * C_2D
-         For a>>sigma, the correlation function at tau=0 corresponds to:
-          G(tau=0) = 1/(N_eff) * (1-2*sigma/(sqrt(pi)*a))^2
+    """    Supplementary parameters:
+        For a>>sigma, the correlation function at tau=0 corresponds to:
+        [3] G(tau=0) = 1/(N_eff) * (1-2*sigma/(sqrt(pi)*a))^2
+        Effective detection area:
+        [4] A_eff [µm²] = a**2
+        Effective particle number in detection area:
+        [5] N_eff = A_eff * C_2D
     """
     D = parms[0]
     sigma = parms[1]

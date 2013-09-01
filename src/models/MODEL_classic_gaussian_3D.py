@@ -184,9 +184,6 @@ def Check_3D3DT(parms):
 
 
 def MoreInfo_1C(parms, countrate):
-    """ Return more information on the given model by using
-        a given set of parameters.
-    """
     # We can only give you the effective particle number
     n = parms[0]
     Info = list()
@@ -198,7 +195,9 @@ def MoreInfo_1C(parms, countrate):
 
 
 def MoreInfo_6030(parms, countrate):
-    """ 
+    u"""Supplementary parameters:
+        [9]  n₁ = n*F₁     Particle number of species 1
+        [10] n₂ = n*(1-F₁) Particle number of species 2
     """
     # We can only give you the effective particle number
     n = parms[0]
