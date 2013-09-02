@@ -27,26 +27,24 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
         in axial direction, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         w(i*x) = exp(x²)*erfc(x)
-        taud1 = r_0²/(4*D₁)
-        kappa = 1/d_eva
-        x1 = sqrt(D₁*tau)*kappa
-        gz1 = kappa * 
-             [ sqrt(D₁*tau/pi) + (1 - 2*D₁*tau*kappa²)/(2*kappa) * w(i*x1) ]
-        g2D1 = 1 / [ 1.+tau/taud1 ]
+        taud1 = r₀²/(4*D₁)
+        κ = 1/d_eva
+        x1 = sqrt(D₁*τ)*κ
+        gz1 = κ * [ sqrt(D₁*τ/π) + (1 - 2*D₁*τ*κ)/(2*κ) * w(i*x1) ]
+        g2D1 = 1 / [ 1+τ/taud1 ]
         particle1 = F₁ * g2D1 * gz1
 
-        taud2 = r_0²/(4*D₂)
-        x2 = sqrt(D₂*tau)*kappa
-        gz2 = kappa * 
-             [ sqrt(D₂*tau/pi) + (1 - 2*D₂*tau*kappa²)/(2*kappa) * w(i*x2) ]
-        g2D2 = 1 / [ 1.+tau/taud2 ]
+        taud2 = r₀²/(4*D₂)
+        x2 = sqrt(D₂*τ)*κ
+        gz2 = κ * [ sqrt(D₂*τ/π) + (1 - 2*D₂*τ*κ)/(2*κ) * w(i*x2) ]
+        g2D2 = 1 / [ 1+τ/taud2 ]
         particle2 =  α*(1-F₁) * g2D2 * gz2
 
 
-        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
         norm = (1-F₁ + α*F₁)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
@@ -58,7 +56,7 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
         [2] D₂      Diffusion coefficient of species 2
         [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
                     0 <= F₁ <= 1
-        [4] r_0     Lateral extent of the detection volume
+        [4] r₀      Lateral extent of the detection volume
         [5] d_eva   Evanescent field depth
         [6] α       Relative molecular brightness of particle
                     2 compared to particle 1 (α = q₂/q₁)
@@ -150,8 +148,19 @@ def Checkme(parms):
 
 
 def MoreInfo(parms, countrate):
-    """ Return more information on the given model by using
-        a given set of parameters.
+    u"""Supplementary parameters:
+        Effective number of particle species 1:
+        [10] n₁ = n*F₁
+        Effective number of particle species 2:
+        [11] n₂ = n*(1-F₁)
+        Value of the correlation function at lag time zero:
+        [12] G(0)
+        Effective measurement volume:
+        [13] V_eff [al] = π * r₀² * d_eva
+        Concentration of particle species 1:
+        [14] C₁ [nM] = n₁/V_eff
+        Concentration of particle species 2:
+        [15] C₂ [nM] = n₂/V_eff
     """
     # We can only give you the effective particle number
     n=parms[0]
@@ -193,7 +202,7 @@ labels  = ["n",
                 "D"+u"\u2081"+" [10 µm²/s]",
                 "D"+u"\u2082"+" [10 µm²/s]",
                 "F"+u"\u2081", 
-                "r_0 [100 nm]",
+                "r₀ [100 nm]",
                 "d_eva [100 nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
                 "τ_trip [ms]",
@@ -217,7 +226,7 @@ labelshr  = ["n",
                 "D"+u"\u2081"+u" [µm²/s]",
                 "D"+u"\u2082"+u" [µm²/s]",
                 "F"+u"\u2081", 
-                "r_0 [nm]",
+                "r₀ [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
                 "τ_trip [µs]",

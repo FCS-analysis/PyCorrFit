@@ -79,6 +79,7 @@ def latexmath(string):
     unicodechars[codecs.decode("³", "UTF-8")] = r"^3"
     unicodechars[codecs.decode("₁", "UTF-8")] = r"_1"
     unicodechars[codecs.decode("₂", "UTF-8")] = r"_2"
+    unicodechars[codecs.decode("₀", "UTF-8")] = r"_0"
     #unicodechars[codecs.decode("α", "UTF-8")] = r"\alpha"
     # We need lambda in here, because unicode names it lamda sometimes.
     unicodechars[codecs.decode("λ", "UTF-8")] = r"\lambda"

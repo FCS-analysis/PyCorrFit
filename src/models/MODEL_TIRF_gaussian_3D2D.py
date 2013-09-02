@@ -28,17 +28,17 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         kappa = 1/d_eva
-        x = sqrt(D_3D*tau)*kappa
+        x = sqrt(D_3D*τ)*kappa
         w(i*x) = exp(x²)*erfc(x)
         gz = kappa * 
-             [ sqrt(D_3D*tau/pi) + (1 - 2*D_3D*tau*kappa²)/(2*kappa) * w(i*x) ]
-        g2D3D = 1 / [ 1+4*D_3D*tau/r_0² ]
+             [ sqrt(D_3D*τ/pi) + (1 - 2*D_3D*τ*kappa²)/(2*kappa) * w(i*x) ]
+        g2D3D = 1 / [ 1+4*D_3D*τ/r₀² ]
         particle3D = α*F * g2D3D * gz
-        particle2D = (1-F)/ (1+4*D_2D*tau/r_0²) 
-        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        particle2D = (1-F)/ (1+4*D_2D*τ/r₀²) 
+        triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
         norm = (1-F + α*F)²
         G = 1/n*(particle2D + particle3D)*triplet/norm + offset
 
@@ -50,7 +50,7 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         [2] D_3D    Diffusion coefficient of freely diffusing particles
         [3] F       Fraction of molecules of the freely diffusing species
                     (n3D = n*F), 0 <= F <= 1
-        [4] r_0     Lateral extent of the detection volume
+        [4] r₀      Lateral extent of the detection volume
         [5] d_eva   Evanescent field depth
         [6] α       Relative molecular brightness of freely diffusing
                     compared to surface bound particles (α = q3D/q2D)
@@ -131,13 +131,19 @@ def Checkme(parms):
 
 
 def MoreInfo(parms, countrate):
-    u"""     Supplementary parameters:
-    [10] n3D            Effective number of freely diffusing particles in 3D
-    [11] n2D            Effective number particles diffusing on 2D surface
-    [12] G(0)           Value of the correlation function at lag time zero
-    [13] V_eff [al]     Effective measurement volume
-    [14] C_2D [1/µm²]   Concentration of the 2D species
-    [15] C_3D [nM]      Concentration of the 3D species
+    u"""Supplementary parameters:
+        Effective number of freely diffusing particles in 3D:
+        [10] n3D = n*F
+        Effective number particles diffusing on 2D surface:
+        [11] n2D = n*(1-F)
+        Value of the correlation function at lag time zero:
+        [12] G(0)
+        Effective measurement volume:
+        [13] V_eff [al] = π * r₀² * d_eva
+        Concentration of the 2D species:
+        [14] C_2D [1/µm²] = n2D / ( π * r₀² )
+        Concentration of the 3D species:
+        [15] C_3D [nM] = n3D/V_eff
     """
     # We can only give you the effective particle number
     n=parms[0]
@@ -179,7 +185,7 @@ labels  = ["n",
                 "D_2D [10 µm²/s]",
                 "D_3D [10 µm²/s]",
                 "F_3D", 
-                "r_0 [100 nm]",
+                "r₀ [100 nm]",
                 "d_eva [100 nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
                 "τ_trip [ms]",
@@ -203,7 +209,7 @@ labelshr  = ["n",
                 "D_2D [µm²/s]",
                 "D_3D [µm²/s]",
                 "F_3D", 
-                "r_0 [nm]",
+                "r₀ [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
                 "τ_trip [µs]",

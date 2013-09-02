@@ -21,14 +21,14 @@ def wixi(x):
 
 def CF_Gxy_TIR_square(parms, tau):
     # Model 6000
-    """ Two-dimensional diffusion with a square shaped lateral detection
+    u""" Two-dimensional diffusion with a square shaped lateral detection
         area taking into account the size of the point spread function.
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D      Diffusion coefficient
-        [1] sigma  Lateral size of the point spread function
-                   sigma = sigma_0 * lambda / NA
+        [1] σ      Lateral size of the point spread function
+                   σ = σ₀ * λ / NA
         [2] a      Side size of the square-shaped detection area
         [3] C_2D   Particle concentration in detection area
         *tau* - lag time
@@ -59,7 +59,7 @@ def CF_Gxy_TIR_square(parms, tau):
 # 3D free tir
 def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
     # Model 6010
-    """ Three-dimensional diffusion with a square-shaped lateral
+    u""" Three-dimensional diffusion with a square-shaped lateral
         detection area taking into account the size of the
         point spread function; and an exponential decaying profile
         in axial direction.
@@ -67,8 +67,8 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D      Diffusion coefficient
-        [1] sigma  Lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
+        [1] σ      Lateral size of the point spread function
+                   σ = σ₀ * λ / NA
         [2] a      Side size of the square-shaped detection area
         [3] d_eva  Evanescent penetration depth
         [4] C_3D   Particle concentration in detection volume
@@ -110,13 +110,13 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
 
 
 def MoreInfo_6000(parms, countrate):
-    """    Supplementary parameters:
+    u"""Supplementary parameters:
         For a>>sigma, the correlation function at tau=0 corresponds to:
-        [3] G(tau=0) = 1/(N_eff) * (1-2*sigma/(sqrt(pi)*a))^2
+        [4] G(τ=0) = 1/(N_eff) * ( 1-2*σ/(sqrt(π)*a) )²
         Effective detection area:
-        [4] A_eff [µm²] = a**2
+        [5] A_eff [µm²] = a²
         Effective particle number in detection area:
-        [5] N_eff = A_eff * C_2D
+        [6] N_eff = A_eff * C_2D
     """
     D = parms[0]
     sigma = parms[1]
@@ -146,16 +146,15 @@ def MoreInfo_6000(parms, countrate):
 
 
 def MoreInfo_6010(parms, countrate):
-    """ 
-        Supplementary variables:
-         Molarity:
-          C_3D [nM] = C_3D [1000/µm³] * 10000/6.0221415
-         Effective detection volume:
-          V_eff = a**2 * d_eva
-         Effective particle number:
-          N_eff = V_eff * C_3D
-         For a>>sigma, the correlation function at tau=0 corresponds to:
-          G(tau=0) = 1/(2*N_eff) * (1-2*sigma/(sqrt(pi)*a))**2
+    u"""Supplementary parameters:
+        Molarity:
+        [5] C_3D [nM] = C_3D [1000/µm³] * 10000/6.0221415
+        Effective detection volume:
+        [6] V_eff = a² * d_eva
+        Effective particle number:
+        [7] N_eff = V_eff * C_3D
+        For a>>σ, the correlation function at τ=0 corresponds to:
+        [8] G(τ=0) = 1/(2*N_eff) * ( 1-2*σ/(sqrt(π)*a) )²
     """
     # 3D Model TIR square
     # 3D TIR (□xσ/exp),Simple 3D diffusion w/ TIR, fct.CF_Gxyz_square_tir

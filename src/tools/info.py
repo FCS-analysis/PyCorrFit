@@ -70,8 +70,8 @@ class InfoClass(object):
         Parameters = "\nParameters:\n"
         for item in InfoDict["parameters"]:
             Parameters = Parameters + "  "+item[0]+"\t"+ str(item[1])+"\n"
-        # Supplementary variables
-        Supplement = "\nSupplementary variables:\n"
+        # Supplementary parameters
+        Supplement = "\nSupplementary parameters:\n"
         try:
             for item in InfoDict["supplement"]:
                 Supplement = Supplement + "  "+item[0]+"\t"+ str(item[1])+"\n"

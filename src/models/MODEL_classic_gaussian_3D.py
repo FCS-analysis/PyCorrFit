@@ -9,15 +9,15 @@ def CF_Gxyz_gauss(parms, tau):
     """ Three-dimanesional free diffusion with a Gaussian laser profile
         (eliptical).
 
-        G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
+        G(τ) = offset + 1/( n*(1+τ/τ_diff) * sqrt(1 + τ/(SP²*τ_diff)) )
 
         Calculation of diffusion coefficient and concentration
-        from the effective radius of the detection profile:
-        D = r0²/(4*τ_diff)
-        Conc = n/( sqrt(pi³)*r0²*z0 )
+        from the effective radius of the detection profile (r₀ = 2*σ):
+        D = r₀²/(4*τ_diff)
+        Conc = n/( sqrt(π³)*r₀²*z₀ )
 
-            r0   lateral detection radius (waist of lateral gaussian)
-            z0   axial detection length (waist of axial gaussian)
+            r₀   lateral detection radius (waist of lateral gaussian)
+            z₀   axial detection length (waist of axial gaussian)
             D    Diffusion coefficient
             Conc Concentration of dye
 
@@ -51,8 +51,8 @@ def CF_Gxyz_blink(parms, tau):
         See *CF_Gxyz_gauss* for more information)
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        G(tau) = offset + 1/( n*(1+tau/τ_diff) * sqrt(1 + tau/(SP²*τ_diff)) )
-                    * ( 1+T/(1.-T)*exp(-tau/τ_trip) )
+        G(τ) = offset + 1/( n*(1+τ/τ_diff) * sqrt(1 + τ/(SP²*τ_diff)) )
+                    * ( 1+T/(1.-T)*exp(-τ/τ_trip) )
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
@@ -109,11 +109,11 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
         with a Gaussian laser profile, including a triplet component.
         The triplet factor takes into account blinking according to triplet
         states of excited molecules.
-        Set *T* or *tautrip* to 0, if no triplet component is wanted.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F₁/( (1+tau/τ₁) * sqrt(1+tau/(τ₁*SP²)))
-        particle2 = α*(1-F₁)/( (1+tau/τ₂) * sqrt(1+tau/(τ₂*SP²)))
-        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        particle1 = F₁/( (1+τ/τ₁) * sqrt(1+τ/(τ₁*SP²)))
+        particle2 = α*(1-F₁)/( (1+τ/τ₂) * sqrt(1+τ/(τ₂*SP²)))
+        triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
         norm = (F₁ + α*(1-F₁))²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 

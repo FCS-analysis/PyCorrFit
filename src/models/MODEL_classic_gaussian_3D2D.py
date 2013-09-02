@@ -11,9 +11,9 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         states of excited molecules.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle2D = (1-F)/ (1+tau/τ_2D) 
-        particle3D = α*F/( (1+tau/τ_3D) * sqrt(1+tau/(τ_3D*SP²)))
-        triplet = 1 + T/(1-T)*exp(-tau/τ_trip)
+        particle2D = (1-F)/ (1+τ/τ_2D) 
+        particle3D = α*F/( (1+τ/τ_3D) * sqrt(1+τ/(τ_3D*SP²)))
+        triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
         norm = (1-F + α*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset
 
@@ -77,9 +77,11 @@ def Checkme(parms):
 
 
 def MoreInfo(parms, countrate):
-    u"""     Supplementary parameters:
-        [10] n3D    Effective number of freely diffusing particles in 3D
-        [11] n2D    Effective number particles diffusing on 2D surface
+    u"""Supplementary parameters:
+        Effective number of freely diffusing particles in 3D solution:
+        [9]  n3D = n*F
+        Effective number particles diffusing on 2D surface:
+        [10] n2D = n*(1-F)
     """
     # We can only give you the effective particle number
     n = parms[0]
