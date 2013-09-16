@@ -41,8 +41,8 @@
    - PyCorrFit remembers checked parameters for a page (not saved in session)
 - Improved tool "Overlay" (#23)
    - New feature: Overlay shows run number of each file (upon import),
-     the run (or index) of an experimental file is uniqe to PyCorrFit
-   - Upon import filenames and runs are displayed
+     the run (or index) of an experimental file is unique to PyCorrFit
+   - Upon import, filenames and runs are displayed
    - In a session, the filename/title is displayed
 - Web address of PyCorrFit changed
   from "fcstools.dyndns.org/pycorrfit" to "pycorrfit.craban.de"
@@ -62,8 +62,8 @@
  - New tool: Colorful curve selection
  - Import data: Curve selection possible
  - Average: Crop average according to current page.
- - Fixed: Page now displays Chi� of global fit.
- - Fixed: Chi� and parameters of global fitting are now stored in sessions.
+ - Fixed: Page now displays Chi-squared of global fit.
+ - Fixed: Chi-squared and parameters of global fitting are now stored in sessions.
 0.7.3
  - Issue closed. External weights from averages saved in session (#11).
  - Solved minor bugs
