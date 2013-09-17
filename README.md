@@ -12,5 +12,6 @@ diffusional  species or total internal reflection (TIR-) FCS. For more informati
 
 
 - [Download the latest version](https://github.com/paulmueller/PyCorrFit/releases)  
+- [Documentation](https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf)
 - [Run PyCorrFit from source](https://github.com/paulmueller/PyCorrFit/wiki/Running-PyCorrFit-from-source)
 - [Writing model functions](https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions)
