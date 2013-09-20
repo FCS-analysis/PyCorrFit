@@ -330,7 +330,7 @@ class Stat(wx.Frame):
                 label_in_there = False
                 for item in AllInfo[Info]:
                     for subitem in AllInfo[Info][item]:
-                        if len(subitem) == 2:
+                        if subitem != None and len(subitem) == 2:
                             if label == subitem[0]:
                                 label_in_there = True
                                 pageinfo.append(subitem)
