@@ -33,8 +33,9 @@ class ChooseImportTypes(wx.Dialog):
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
-        super(ChooseImportTypes, self).__init__(parent=parent, 
-            title="Choose types", size=(250, 200))
+        #super(ChooseImportTypes, self).__init__(parent=parent, 
+        #    title="Choose types", size=(250, 200))
+        wx.Dialog.__init__(self, parent, -1, "Choose types")
         self.keys = list()
          ## Content
         self.panel = wx.Panel(self)
@@ -92,8 +93,9 @@ class ChooseImportTypesModel(wx.Dialog):
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
-        super(ChooseImportTypesModel, self).__init__(parent=parent, 
-            title="Choose types", size=(250, 200))
+        #super(ChooseImportTypesModel, self).__init__(parent=parent, 
+        #    title="Choose types", size=(250, 200))
+        wx.Dialog.__init__(self, parent, -1, "Choose Types")
         self.curvedict = curvedict
         self.kept_curvedict = curvedict.copy() # Can be edited by user
         self.correlations = correlations
