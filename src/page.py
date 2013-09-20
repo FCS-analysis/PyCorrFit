@@ -676,6 +676,18 @@ class FittingPanel(wx.Panel):
             self.AmplitudeInfo[1].Enable()
 
 
+    def OnSetRange(self, e):
+        """ Open a new Frame where the parameter range can be set.
+            Rewrites self.parameter_range
+            Parameter ranges are treated like parameters: They are saved in
+            sessions and applied in batch mode.
+        """
+        # We write a separate tool for that.
+        # This tool does not show up in the Tools menu.
+        pass
+        
+            
+        
 
     def OnSize(self, event):
         """ Resize the fitting Panel, when Window is resized. """
