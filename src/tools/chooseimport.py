@@ -60,14 +60,14 @@ class ChooseImportTypes(wx.Dialog):
         #Icon
         if parent.MainIcon is not None:
             wx.Dialog.SetIcon(self, parent.MainIcon)
-        self.Show(True)
+        #self.Show(True)
+        self.SetFocus()
 
 
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
         self.EndModal(wx.ID_OK)
-        #self.Show
         #self.Destroy()
 
 
@@ -148,11 +148,11 @@ class ChooseImportTypesModel(wx.Dialog):
         self.sizer.Add(btnok)
         self.panel.SetSizer(self.sizer)
         self.sizer.Fit(self)
-        self.Show(True)
-
+        #self.Show(True)
+        self.SetFocus()
         if parent.MainIcon is not None:
             wx.Dialog.SetIcon(self, parent.MainIcon)
-        self.Show(True)
+
 
 
     def OnClose(self, event=None):
