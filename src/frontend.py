@@ -580,7 +580,14 @@ class MyFrame(wx.Frame):
         keys = self.ToolsOpen.keys()
         for key in keys:
             # Update the information
-            self.ToolsOpen[key].OnPageChanged(Page)
+            self.ToolsOpen[key].OnPageChanged(Page)    
+        # Workaround for mac:
+        # non-existing tabs are still displayed upon clearing session
+        if platform.system().lower() == "darwin":
+            if self.notebook.GetPageCount() == 0:
+                self.notebook.Hide()
+            else:
+                self.notebook.Show()
             
 
 
