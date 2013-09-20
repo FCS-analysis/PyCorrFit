@@ -171,7 +171,7 @@ class Stat(wx.Frame):
                 body += Infodict[key]
             else:
                 for item in Infodict[key]:
-                    if len(item) == 2:
+                    if if item is not None and len(item) == 2:
                         tail.append(item)
         # Bring lists together
         head = headtitle + headparm
