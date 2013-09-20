@@ -112,12 +112,14 @@ class FittingPanel(wx.Panel):
         self.active_fct = modelpack[3]
         # Parameter verification function.
         # This checks parameters concerning their physical meaningfullness :)
-        self.check_parms = mdls.verification[modelid]
+        self.check_parms_model = mdls.verification[modelid]
         # active_parameters:
         # [0] labels
         # [1] values
         # [2] bool values to fit
         self.active_parms = active_parms
+        # Parameter range for fitting (defaults to zero)
+        self.parameter_range = np.zeros((len(active_parms[0]),2))
         # Some timescale
         self.taufull = tau
         self.tau = 1*self.taufull
@@ -265,6 +267,23 @@ class FittingPanel(wx.Panel):
         self.datacorr[:, 1] = y
 
 
+    def check_parms(self, parms):
+        """ Check parameters using self.check_parms_model and the user defined
+            borders for each parameter.
+        """
+        p = 1.*np.array(parms)
+        p = self.check_parms_model(p)
+        r = self.parameter_range
+        for i in range(len(p)):
+            if r[i][0] == r[i][1]:
+                pass
+            elif p[i] < r[i][0]:
+                p[i] = r[i][0]
+            elif p[i] > r[i][1]:
+                p[i] = r[i][1]
+        return p
+            
+        
     def crop_data(self):
         """ Crop the pages data for plotting
             This will create slices from
