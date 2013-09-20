@@ -97,7 +97,7 @@ class InfoClass(object):
         # Supplementary variables
         try:
             SupDoc = "\n"+8*" "+InfoDict["modelsupdoc"][0]
-        except KeyError:
+        except:
             SupDoc = ""
         PageInfo = Version+Title+Parameters+Supplement+Fitting+Background+\
                    ModelDoc+SupDoc
