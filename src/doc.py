@@ -277,7 +277,7 @@ chooseimportmulti = """Select a fitting model for each type of data found.
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
-ChangeLog = "ChangeLogs.txt"
+ChangeLog = "ChangeLog.txt"
 if hasattr(sys, 'frozen'):
     try:
         StaticChangeLog = os.path.join(sys._MEIPASS, "doc/"+ChangeLog)
