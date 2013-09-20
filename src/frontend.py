@@ -128,7 +128,6 @@ class MyFrame(wx.Frame):
         # A dictionary for all the tools
         self.Tools = dict()
 
-
         ## Setting up the menus.
         # models, modeldict, modeltypes only for compatibility!
         # I should use mdls for anything, since it's globally imported
@@ -137,13 +136,12 @@ class MyFrame(wx.Frame):
         self.modeldict = mdls.modeldict
         self.modeltypes = mdls.modeltypes
 
-
         self.modelmenudict = dict()
         self.MakeMenu()
 
-
         ## Create the Flatnotebook (Tabs Tabs Tabs!)
         panel = wx.Panel(self)
+        self.panel = panel
 
         self.notebook = FlatNotebookDemo(panel)
         self.notebook.SetRightClickMenu(self.curmenu)
@@ -209,7 +207,9 @@ class MyFrame(wx.Frame):
         # Create New Tab
         Newtab = page.FittingPanel(self, counter, modelid, active_parms,
                                    self.tau)
+        self.Freeze()
         self.notebook.AddPage(Newtab, counter+model, select=True)
+        self.Thaw()
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
         self.EnableToolCurrent(True)
@@ -246,9 +246,6 @@ class MyFrame(wx.Frame):
         # self.menuBar.EnableTop(tid, enabled)
         cid = self.menuBar.FindMenu("Current &Page")
         self.menuBar.EnableTop(cid, enabled)
-        if enabled == False:
-            # Disable all the dialogs
-            keys = self.ToolsOpen.keys()
 
 
     def MakeMenu(self):
@@ -487,10 +484,9 @@ class MyFrame(wx.Frame):
                 self.OnSaveSession()
             elif result == wx.ID_NO:
                 pass
-        # Disable all the dialogs and menus
-        self.EnableToolCurrent(False)
         # Delete all the pages
         self.notebook.DeleteAllPages()
+        # Disable all the dialogs and menus
         self.EnableToolCurrent(False)
         self.OnFNBPageChanged()
         self.tabcounter = 0
