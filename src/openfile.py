@@ -29,6 +29,7 @@ import yaml
 import zipfile
 
 import doc
+import edclasses
 import models as mdls
 from tools import info
 # This contains all the information necessary to import data files:
@@ -111,17 +112,21 @@ def OpenSession(parent, dirname, sessionfile=None):
         # e.g. "This file was created using PyCorrFit version 0.7.6"
         identifier = readmefile.readline()
         arcv = LooseVersion(identifier[46:].strip())
-        thisv = LooseVersion(parent.version-strip())
+        thisv = LooseVersion(parent.version.strip())
         if arcv > thisv:
             errstring = "Your version of Pycorrfit ("+str(thisv)+")"+\
                    " is too old to open this session ("+\
-                   str(arcv).strip()+")."+\
-                   " Please download the lates version of "+\
-                   " PyCorrFit from \n"+doc.HomePage+"."
-            dlg = wx.MessageDialog(parent, errstring, "Error", 
-                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
-            return None, dirname, None
+                   str(arcv).strip()+").\n"+\
+                   "Please download the lates version of "+\
+                   " PyCorrFit from \n"+doc.HomePage+".\n"+\
+                   "Continue opening this session?"
+            dlg = edclasses.MyOKAbortDialog(parent, errstring, "Warning")
+            returns = dlg.ShowModal()
+            if returns == wx.ID_OK:
+                dlg.Destroy()
+            else:
+                dlg.Destroy()
+                return None, dirname, None
     except:
         pass
     # Get the yaml parms dump:
