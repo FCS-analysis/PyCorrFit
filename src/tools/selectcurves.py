@@ -250,8 +250,12 @@ class UserSelectCurves(wx.Frame):
         # Top panel
         panel_top = wx.Panel(self.sp, size=(500,200))
         self.upperSizer = wx.BoxSizer(wx.VERTICAL)
+        if platform.system().lower() == 'darwin':
+            ctrl = "Apple"
+        else:
+            ctrl = "Ctrl"
         text = "Select the curves to keep. \n" +\
-               "By holding down the 'Ctrl' key, single curves can be \n" +\
+               "By holding down the '"+ctrl+"' key, single curves can be \n" +\
                "selected or deselected. The 'Shift' key can be used \n" +\
                "to select groups."
         self.upperSizer.Add(wx.StaticText(panel_top, label=text))
