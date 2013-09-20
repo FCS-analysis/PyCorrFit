@@ -52,8 +52,9 @@ class ChoicesDialog(wx.Dialog):
     def __init__(self, parent, dropdownlist, title, text):
         # parent is main frame
         self.parent = parent
-        super(ChoicesDialog, self).__init__(parent=parent, 
-            title=title)
+        #super(ChoicesDialog, self).__init__(parent=parent, 
+        #    title=title)
+        wx.Dialog.__init__(self, parent, -1, title)
         ## Controls
         panel = wx.Panel(self)
         # text1
@@ -77,8 +78,8 @@ class ChoicesDialog(wx.Dialog):
         topSizer.Add(btnSizer)
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
-        self.Show(True)
-
+        #self.Show(True)
+        self.SetFocus()
 
     def OnOK(self, event=None):
         self.SelcetedID = self.dropdown.GetSelection()
