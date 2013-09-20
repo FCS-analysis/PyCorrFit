@@ -62,12 +62,15 @@ class FlatNotebookDemo(fnb.FlatNotebook):
     """
     def __init__(self, parent):
         """Constructor"""
-        self.fnb = fnb.FlatNotebook.__init__(self, parent, wx.ID_ANY,
-        agwStyle=fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
+        style = fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
               fnb.FNB_DROPDOWN_TABS_LIST|fnb.FNB_NODRAG|\
               fnb.FNB_TABS_BORDER_SIMPLE|\
-              fnb.FNB_HIDE_ON_SINGLE_TAB|\
-              fnb.FNB_X_ON_TAB|fnb.FNB_NO_X_BUTTON)
+              fnb.FNB_X_ON_TAB|fnb.FNB_NO_X_BUTTON
+        # Bugfix for Mac
+        if platform.system().lower() in ["windows", "linux"]:
+            style = style|fnb.FNB_HIDE_ON_SINGLE_TAB
+        self.fnb = fnb.FlatNotebook.__init__(self, parent, wx.ID_ANY,
+        agwStyle=style)
 
 
 ###########################################################
