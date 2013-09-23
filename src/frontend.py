@@ -1295,6 +1295,8 @@ class MyFrame(wx.Frame):
             # in safe mode.
             Page.normparm=int(Page.normparm)
         Parms.append(Page.normparm)
+        # Parameter ranges
+        Parms.append(Page.parameter_range)
         return Parms
 
 
@@ -1387,11 +1389,15 @@ class MyFrame(wx.Frame):
             # parameter.
             Page.normparm = Parms[8]
             Page.OnAmplitudeCheck("init")
+        if len(Parms) >= 10:
+            Page.parameter_range = np.array(Parms[9])
         ## If we want to add more stuff, we should do something like:
-        ##   if len(Parms) >= 10:
-        ##       nextvalue = Parms[9]
+        ##   if len(Parms) >= 11:
+        ##       nextvalue = Parms[10]
         ## Such that we are compatible to earlier versions of 
         ## PyCorrFit sessions.
+
+        
 
 
     def SetTitleFCS(self, title):

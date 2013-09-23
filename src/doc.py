@@ -279,14 +279,20 @@ HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
 if hasattr(sys, 'frozen'):
-    StaticChangeLog = os.path.join(sys._MEIPASS, "doc/"+ChangeLog)
+    try:
+        StaticChangeLog = os.path.join(sys._MEIPASS, "doc/"+ChangeLog)
+    except:
+        StaticChangeLog = os.path.join("./", ChangeLog)
 else:
     StaticChangeLog = os.path.join(os.path.dirname(sys.argv[0]), "../"+ChangeLog)
 
-clfile = open(StaticChangeLog, 'r')
-__version__ = clfile.readline().strip()
-clfile.close()     
-
+try:
+    clfile = open(StaticChangeLog, 'r')
+    __version__ = clfile.readline().strip()
+    clfile.close()     
+except:
+    __version__ = "0.0.0-unknown"
+    
 # Github homepage
 GitChLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
 GitHome = "https://github.com/paulmueller/PyCorrFit"
