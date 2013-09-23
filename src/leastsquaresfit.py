@@ -346,6 +346,9 @@ class Fit(object):
         try:
             self.covar = pcov * self.chi # The covariance matrix
         except:
+            print "PyCorrFit Warning: Error estimate not possible, because we"
+            print "          could not calculate covariance matrix. Please try"
+            print "          reducing the number of fitting parameters."
             self.parmoptim_error = None
         else:
             # Error estimation of fitted parameters
