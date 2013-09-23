@@ -18,6 +18,7 @@
 
 from matplotlib import cm
 import numpy as np
+import platform
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 
