@@ -78,6 +78,8 @@ for i in np.arange(len(ImpB)):
 from chooseimport import ChooseImportTypes
 from chooseimport import ChooseImportTypesModel
 from comment import EditComment
+# the "special" tool RangeSelector
+from parmrange import RangeSelector
 
 ToolDict = dict()
 ToolDict["A"] = ToolsActive

@@ -29,6 +29,7 @@ import doc
 import edclasses                    # Cool stuf like better floatspin
 import leastsquaresfit as fit       # For fitting
 import models as mdls
+import tools
 
 
 ## On Windows XP I had problems with the unicode Characters.
@@ -684,9 +685,10 @@ class FittingPanel(wx.Panel):
         """
         # We write a separate tool for that.
         # This tool does not show up in the Tools menu.
-        pass
-        
-            
+        if self.parent.RangeSelector is None:
+            self.parent.RangeSelector = tools.RangeSelector(self)
+        else:
+            self.parent.RangeSelector.OnClose()
         
 
     def OnSize(self, event):
@@ -886,10 +888,9 @@ class FittingPanel(wx.Panel):
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(sizerti)
         self.panelsettings.sizer.Add(box1)
-        # Add button "Apply"
+        # Add button "Apply" and "Set Range"
         buttonapply = wx.Button(self.panelsettings, label="Apply")
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)
-        # Add it to the parameters box
         box1.Add(buttonapply)
         ## More info
         normbox = wx.StaticBox(self.panelsettings, label="Amplitude parameters")
@@ -937,10 +938,17 @@ class FittingPanel(wx.Panel):
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
-        # Add button "Fit"
+        # Add button "Fit" and "Set Range"
+        horzs = wx.BoxSizer(wx.HORIZONTAL)
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
-        fitsizer.Add(buttonfit)
+        horzs.Add(buttonfit)
+        buttonrange = wx.Button(self.panelsettings, label="Set Range")
+        self.Bind(wx.EVT_BUTTON, self.OnSetRange, buttonrange)
+        horzs.Add(buttonrange)
+        fitsizer.Add(horzs)
+        
+        
         self.panelsettings.sizer.Add(fitsizer)
         # Squeeze everything into the sizer
         self.panelsettings.SetSizer(self.panelsettings.sizer)

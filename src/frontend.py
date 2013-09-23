@@ -128,6 +128,11 @@ class MyFrame(wx.Frame):
         # A dictionary for all the tools
         self.Tools = dict()
 
+        # Range selector (None if inactive)
+        # Fitting parameter range selection
+        # New as of 0.7.9
+        self.RangeSelector = None
+        
         ## Setting up the menus.
         # models, modeldict, modeltypes only for compatibility!
         # I should use mdls for anything, since it's globally imported
@@ -580,8 +585,11 @@ class MyFrame(wx.Frame):
         keys = self.ToolsOpen.keys()
         for key in keys:
             # Update the information
-            self.ToolsOpen[key].OnPageChanged(Page)    
-        # Workaround for mac:
+            self.ToolsOpen[key].OnPageChanged(Page)
+        # parameter range selection tool for page.
+        if self.RangeSelector is not None:
+            self.RangeSelector.OnPageChanged(Page)
+        # Bugfix-workaround for mac:
         # non-existing tabs are still displayed upon clearing session
         if platform.system().lower() == "darwin":
             if self.notebook.GetPageCount() == 0:
