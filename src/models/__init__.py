@@ -79,7 +79,7 @@ def AppendNewModel(Modelarray):
              supper = Model["Supplements"]
         except KeyError:
             # Nothing to do
-            a = 0
+            pass
         else:
             supplement[texts[0]] = supper
         # Check functions - check for correct values
@@ -91,7 +91,8 @@ def AppendNewModel(Modelarray):
             verification[texts[0]] = lambda parms: parms
         else:
             verification[texts[0]] = verify
-            
+
+
 def GetHumanReadableParms(model, parameters):
     """ From a set of parameters that have internal units e.g. [100 nm],
         Calculate the parameters in human readable units e.g. [nm].
