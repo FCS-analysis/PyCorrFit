@@ -52,11 +52,14 @@ class RangeSelector(wx.Frame):
     def FillPanel(self):
         """ Fill the panel with parameters from the page
         """
-        self.parameter_range = 1.*self.Page.parameter_range
+        
+        self.parameter_range = np.zeros(self.Page.parameter_range.shape)
         labels, parmleft = mdls.GetHumanReadableParms(self.Page.modelid,
-                                                 self.parameter_range[:,0])
+                                                 self.Page.parameter_range[:,0])
         labels, parmright = mdls.GetHumanReadableParms(self.Page.modelid,
-                                                  self.parameter_range[:,1])
+                                                 self.Page.parameter_range[:,1])
+        self.parameter_range[:,0] = np.array(parmleft)
+        self.parameter_range[:,1] = np.array(parmright)
         # create line
         
         # = wx.BoxSizer(wx.VERTICAL)
@@ -123,7 +126,12 @@ class RangeSelector(wx.Frame):
                self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
                self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
         # Set parameters
-        self.Page.parameter_range = 1.*self.parameter_range
+        l, parm0 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+                                                     self.parameter_range[:,0])
+        l, parm1 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+                                                     self.parameter_range[:,1])
+        self.Page.parameter_range[:,0] = np.array(parm0)
+        self.Page.parameter_range[:,1] = np.array(parm1)
         #self.Page.PlotAll()
         
 

@@ -514,6 +514,8 @@ def SaveSession(parent, dirname, Infodict):
             # This would not work correctly with yaml.
             Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
             Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
+            # Range of fitting parameters
+            Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
             Parmlist.append(Parms[idparm])
         yaml.dump(Parmlist, open(parmsfilename, "wb"))
         Arc.write(parmsfilename)
