@@ -60,6 +60,7 @@ class BackgroundCorrection(wx.Frame):
         # Radio buttons
         self.rbtnfile = wx.RadioButton (panel, -1, 'Blank measurement: ', 
                                         style = wx.RB_GROUP)
+        self.rbtnfile.SetValue(True)
         self.btnbrowse = wx.Button(panel, wx.ID_ANY, 'Browse ...')
         self.rbtnhand = wx.RadioButton (panel, -1, 'Manual, <B> [kHz]: ')
         # Spincontrol
