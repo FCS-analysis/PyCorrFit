@@ -688,7 +688,11 @@ class FittingPanel(wx.Panel):
         if self.parent.RangeSelector is None:
             self.parent.RangeSelector = tools.RangeSelector(self)
         else:
-            self.parent.RangeSelector.OnClose()
+            try:
+                self.parent.RangeSelector.OnClose()
+            except:
+                pass
+            self.parent.RangeSelector = None
         
 
     def OnSize(self, event):

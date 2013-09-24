@@ -588,7 +588,10 @@ class MyFrame(wx.Frame):
             self.ToolsOpen[key].OnPageChanged(Page)
         # parameter range selection tool for page.
         if self.RangeSelector is not None:
-            self.RangeSelector.OnPageChanged(Page)
+            try:
+                self.RangeSelector.OnPageChanged(Page)
+            except:
+                pass
         # Bugfix-workaround for mac:
         # non-existing tabs are still displayed upon clearing session
         if platform.system().lower() == "darwin":
