@@ -43,9 +43,10 @@ class BatchCtrl(wx.Frame):
         panel = wx.Panel(self)
         self.panel = panel
         text1 = wx.StaticText(panel, label="Choose source of parameters:")
-        self.rbtnhere = wx.RadioButton (panel, -1, 'This session', 
+        self.rbtnhere = wx.RadioButton(panel, -1, 'This session', 
                                         style = wx.RB_GROUP)
-        self.rbtnthere = wx.RadioButton (panel, -1, 'Other session')
+        self.rbtnhere.SetValue(True)
+        self.rbtnthere = wx.RadioButton(panel, -1, 'Other session')
         self.dropdown = wx.ComboBox(panel, -1, "Current page", (15, 30),
                          wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
         # Create the dropdownlist
