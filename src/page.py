@@ -22,6 +22,7 @@ DEMO = False
 import os
 import wx                               # GUI interface wxPython
 import wx.lib.plot as plot              # Plotting in wxPython
+import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
 import sys                              # System stuff
 
@@ -131,15 +132,17 @@ class FittingPanel(wx.Panel):
         size = parent.notebook.GetSize()
         tabsize = 33
         size[1] = size[1] - tabsize
-        self.sizepanelx = 250
-        canvasx = size[0]-self.sizepanelx
+        self.sizepanelx = 270
+        canvasx = size[0]-self.sizepanelx+5
         sizepanel = (self.sizepanelx, size[1])
         sizecanvas = (canvasx, size[1])
         self.sp = wx.SplitterWindow(self, size=size, style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.sp.SetMinimumPaneSize(1)
         ## Settings Section (left side)
-        self.panelsettings = wx.Panel(self.sp, size=sizepanel)
+        #self.panelsettings = wx.Panel(self.sp, size=sizepanel)
+        self.panelsettings = scrolled.ScrolledPanel(self.sp, size=sizepanel)
+        self.panelsettings.SetupScrolling(scroll_x=False)
         ## Setting up Plot (correlation + chi**2)
         self.spcanvas = wx.SplitterWindow(self.sp, size=sizecanvas,
                                           style=wx.SP_3DSASH)
@@ -868,7 +871,7 @@ class FittingPanel(wx.Panel):
         boxti = wx.StaticBox(self.panelsettings, label="filename/title")
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
-                                    size=(self.sizepanelx-20, -1))
+                                    size=(self.sizepanelx-40, -1))
         sizerti.Add(self.tabtitle)                       
         # Create StaticBoxSizer
         box1, check, spin = self.MakeStaticBoxSizer("Fit parameters")
@@ -965,4 +968,8 @@ class FittingPanel(wx.Panel):
         # Disable Fitting since no data has been loaded yet
         for element in self.Fitbox:
             element.Disable()
+        x = self.panelsettings.GetSize()[0]
+        y = self.parent.GetSize()[1] - 33
+        self.parent.SetSize((x,y))
+        self.parent.Layout()
 
