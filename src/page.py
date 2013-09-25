@@ -690,6 +690,8 @@ class FittingPanel(wx.Panel):
         # This tool does not show up in the Tools menu.
         if self.parent.RangeSelector is None:
             self.parent.RangeSelector = tools.RangeSelector(self)
+            self.parent.RangeSelector.Bind(wx.EVT_CLOSE,
+                                           self.parent.RangeSelector.OnClose)
         else:
             try:
                 self.parent.RangeSelector.OnClose()
