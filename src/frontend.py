@@ -274,8 +274,8 @@ class MyFrame(wx.Frame):
         self.menuComm = self.filemenu.Append(wx.ID_ANY, "Co&mment session", 
                            "Add a comment to this session", kind=wx.ITEM_CHECK)
         self.filemenu.Check(self.menuComm.GetId(), False)
-        menuClear = self.filemenu.Append(wx.ID_CLEAR, "&Clear session", 
-                                "Deletes all progress made during this session")
+        menuClear = self.filemenu.Append(wx.ID_ANY, "&Clear session", 
+                          "Remove all pages but keep imported model functions.")
         menuOpen = self.filemenu.Append(wx.ID_OPEN, "&Open session", 
                                            "Restore a previously saved session")
         menuSave = self.filemenu.Append(wx.ID_SAVE, "&Save session", 
@@ -569,7 +569,7 @@ class MyFrame(wx.Frame):
         if self.notebook.GetPageCount() == 0:
             # Grey out tools
             self.EnableToolCurrent(False)
-            
+
 
 
     def OnFNBPageChanged(self,e=None, Page=None):
