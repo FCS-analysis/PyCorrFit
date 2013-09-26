@@ -215,7 +215,7 @@ def MoreInfo_6030(parms, countrate):
 
 
 # 3D Model blink gauss
-m_3dblink6011 = [6011, "3D+T (Gauß)","Simple 3D diffusion w/ triplet", 
+m_3dblink6011 = [6011, "3D+T (Gauß)","3D confocal diffusion with triplet", 
                  CF_Gxyz_blink]
 labels_6011 = ["n","T","τ_trip [ms]", "τ_diff [ms]", "SP", "offset"]
 values_6011 = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
@@ -226,7 +226,7 @@ parms_6011 = [labels_6011, values_6011, valuestofit_6011,
               labels_hr_6011, factors_hr_6011]
 
 # 3D Model gauss
-m_3dgauss6012 = [6012, "3D (Gauß)","Simple 3D diffusion", CF_Gxyz_gauss]
+m_3dgauss6012 = [6012, "3D (Gauß)","3D confocal diffusion", CF_Gxyz_gauss]
 labels_6012 = ["n", "τ_diff [ms]", "SP", "offset"]
 values_6012 = [4.0, 0.4, 5.0, 0.0]
 valuestofit_6012 = [True, True, False, False]
