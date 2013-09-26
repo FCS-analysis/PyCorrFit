@@ -341,7 +341,17 @@ class MyFrame(wx.Frame):
             for modelid in mdls.modeltypes[modeltype]:
                 # Now we add every model that belongs to that type
                 model = mdls.modeldict[modelid]
-                menuentry = submenu.Append(model[0], model[1], model[2])
+                if platform.system().lower() == "darwin" and hasattr(sys, 'frozen'):
+                    ###
+                    ### Work-around for freezed mac version
+                    ###
+                    ### (strange UTF-8 decoding error,
+                    ###  would work with misc.removewrongUTF8)
+                    b = model[1].split("(")[0].strip()
+                    c = misc.removewrongUTF8(model[2])
+                    menuentry = submenu.Append(model[0],b,c)
+                else:
+                    menuentry = submenu.Append(model[0], model[1], model[2])
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
         # help menu
         menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software used",

@@ -5,7 +5,7 @@
     Module misc
 """
 
-
+import codecs
 from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
@@ -146,6 +146,18 @@ def parsePagenum2String(pagenumlist):
                     string += ", "+str(newlist[i])
     return string
 
+
+def removewrongUTF8(name):
+    newname = u""
+    for char in name:
+       try:
+           uchar = codecs.decode(char, "UTF-8")
+       except:
+           pass
+       else:
+           newname += char
+    return newname
+    
 
 def getMainIcon(pxlength=32):
     """ *pxlength* is the side length in pixels of the icon """
