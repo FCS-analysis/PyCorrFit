@@ -59,13 +59,17 @@ def greek2tex(char):
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
     string = codecs.decode(string, "UTF-8")
-    escapechars = ["#", "$", "%", "&", "~", "_", "^", "\\", "{", "}", 
-                    "(", ")", "[", "]"]
+    escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"] 
     retstr = ur""
     for char in string:
         if char in escapechars:
             retstr += "\\"
-        retstr += char
+            retstr += char
+        elif char == "^":
+            # Make a hat in latex without $$?
+            retstr += "$\widehat{~}$"
+        else:
+            retstr += char
     return retstr
 
 
@@ -136,7 +140,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     fit[:,1] *= Page.normfactor
     weights = Page.weights_plot_fill_area
     tabtitle = Page.tabtitle.GetValue()
-    fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
+    #fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
+    fitlabel = Page.modelname
     labelweights = ur"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                Page.active_parms[1])
@@ -154,10 +159,13 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     labels = np.array(labels)[parmids]
     parms = np.array(parms)[parmids]
     if dataexp is None:
-        if tabtitle == "":
+        if tabtitle.strip() == "":
             fitlabel = Page.modelname
         else:
             fitlabel = tabtitle
+    else:
+        if tabtitle.strip() == "":
+            tabtitle = "page"+str(Page.counter).strip().strip(":")
     if Page.normparm is not None:
         fitlabel += ur", normalized to "+Page.active_parms[0][Page.normparm]
 
@@ -320,6 +328,8 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     # Trace must be displayed in s
     timefactor = 1e-3
     tabtitle = Page.tabtitle.GetValue()
+    if tabtitle.strip() == "":
+        tabtitle = "page"+str(Page.counter).strip().strip(":")
     # Intensity trace in kHz may stay the same
     if Page.trace is not None:
         # Set trace
