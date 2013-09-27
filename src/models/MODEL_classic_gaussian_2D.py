@@ -205,7 +205,7 @@ def MoreInfo_6031(parms, countrate):
 
 # 2D Model Gauss
 m_twodga6001 = [6001, u"2D (Gauß)", u"2D confocal diffusion", CF_Gxy_gauss]
-labels_6001 = ["n", "τ_diff [ms]", "offset"]
+labels_6001 = ["n", u"τ_diff [ms]", "offset"]
 values_6001 = [4.0, 0.4, 0.0]
 valuestofit_6001 = [True, True, False]
 parms_6001 = [labels_6001, values_6001, valuestofit_6001]
@@ -214,9 +214,9 @@ parms_6001 = [labels_6001, values_6001, valuestofit_6001]
 # 2D Model Gauss with Triplet
 m_twodga6002 = [6002, u"2D+T (Gauß)", u"2D confocal diffusion with triplet", 
                 CF_Gxy_T_gauss]
-labels_6002 = ["n", "τ_diff [ms]",  "τ_trip [ms]", "T", "offset"]
+labels_6002 = ["n", u"τ_diff [ms]",  u"τ_trip [ms]", u"T", u"offset"]
 values_6002 = [4.0, 0.4, 0.001, 0.01, 0.0]
-labels_hr_6002 = ["n", "τ_diff [ms]",  "τ_trip [µs]", "T", "offset"]
+labels_hr_6002 = ["n", u"τ_diff [ms]",  u"τ_trip [µs]", u"T", u"offset"]
 factors_hr_6002 = [1., 1., 1000., 1., 1.]
 valuestofit_6002 = [True, True, True, True, False]
 parms_6002 = [labels_6002, values_6002, valuestofit_6002,
@@ -224,17 +224,17 @@ parms_6002 = [labels_6002, values_6002, valuestofit_6002,
 
 
 # 2D + 2D + T model gauss
-m_gauss_2d_2d_t_mix_6031 = [6031, "2D+2D+T (Gauß)",
-                            "Separate 2D diffusion + triplet, Gauß",
+m_gauss_2d_2d_t_mix_6031 = [6031, u"2D+2D+T (Gauß)",
+                            u"Separate 2D diffusion + triplet, Gauß",
                             CF_Gxyz_gauss_2D2DT]
 labels_6031  = ["n",
-                "τ"+u"\u2081"+" [ms]",
-                "τ"+u"\u2082"+" [ms]",
-                "F"+u"\u2081", 
-                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ_trip [ms]",
-                "T",
-                "offset"
+                u"τ"+u"\u2081"+u" [ms]",
+                u"τ"+u"\u2082"+u" [ms]",
+                u"F"+u"\u2081", 
+                u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                u"τ_trip [ms]",
+                u"T",
+                u"offset"
                 ]
 values_6031 = [ 
                 25,      # n
@@ -249,14 +249,14 @@ values_6031 = [
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6031  = [
-                        "n",
-                        "τ"+u"\u2081"+" [ms]",
-                        "τ"+u"\u2082"+" [ms]",
-                        "F"+u"\u2081", 
+                        u"n",
+                        u"τ"+u"\u2081"+u" [ms]",
+                        u"τ"+u"\u2082"+u" [ms]",
+                        u"F"+u"\u2081", 
                         u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                        "τ_trip [µs]",
-                        "T",
-                        "offset"
+                        u"τ_trip [µs]",
+                        u"T",
+                        u"offset"
                             ]
 values_factor_human_readable_6031 = [
                 1.,     # "n",

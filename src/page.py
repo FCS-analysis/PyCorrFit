@@ -829,7 +829,7 @@ class FittingPanel(wx.Panel):
             lines.append(lineexp)
             lines.append(linecorr)
             PlotCorr = plot.PlotGraphics(lines, 
-                                xLabel='lag time τ [ms]', yLabel='G(τ)')
+                                xLabel=u'lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
             ## Calculate residuals
             self.resid = np.zeros((len(self.tau), 2))
@@ -848,7 +848,7 @@ class FittingPanel(wx.Panel):
             else:
                 yLabelRes = "residuals"
             PlotRes = plot.PlotGraphics([linezero, lineres], 
-                                   xLabel='lag time τ [ms]',
+                                   xLabel=u'lag time τ [ms]',
                                    yLabel=yLabelRes)
             self.canvaserr.Draw(PlotRes)
         else:
@@ -858,7 +858,7 @@ class FittingPanel(wx.Panel):
             linecorr = plot.PolyLine(datacorr_norm, legend='', colour='blue',
                                      width=1)
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
-                       xLabel='Lag time τ [ms]', yLabel='G(τ)')
+                       xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
         self.parent.OnFNBPageChanged()
 
