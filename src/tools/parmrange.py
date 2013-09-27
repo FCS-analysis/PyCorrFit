@@ -80,9 +80,9 @@ class RangeSelector(wx.Frame):
             self.WXparmlist.append([left, [text, text2], right])
 
         self.topSizer.Add(self.WXboxsizer)
-        btnapply = wx.Button(self.panel, wx.ID_ANY, 'Apply')
-        self.Bind(wx.EVT_BUTTON, self.OnSetParmRange, btnapply)
-        self.topSizer.Add(btnapply)
+        self.btnapply = wx.Button(self.panel, wx.ID_ANY, 'Apply')
+        self.Bind(wx.EVT_BUTTON, self.OnSetParmRange, self.btnapply)
+        self.topSizer.Add(self.btnapply)
         
 
     def OnClose(self, event=None):
@@ -102,6 +102,10 @@ class RangeSelector(wx.Frame):
             self.panel.Disable()
             return
         self.panel.Enable()
+        try:
+            self.btnapply.Destroy()
+        except:
+            pass
         for i in np.arange(len(self.WXparmlist)):
             self.WXparmlist[i][0].Destroy() #start
             self.WXparmlist[i][1][0].Destroy() #pname

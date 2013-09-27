@@ -206,6 +206,9 @@ Parameters.yaml
       - Parameter id (int) used for normalization in plotting.
         This number first enumerates the model parameters and then
         the supplemental parameters (e.g. "n1").
+      - - [min, max] fitting parameter range of 1st parameter
+        - [min, max] fitting parameter range of 2nd parameter
+        - etc.
  - Order in Parameters.yaml defines order of pages in a session
  - Order in Parameters.yaml defines order in comments.txt
 
