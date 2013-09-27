@@ -6,8 +6,7 @@
    - Improved waring message when opening sessions from future versions
    - New feature lets user set the range for the fitting parameters
 - Bugfixes:
-   - Cleaned minor tracebacks and exceptions created by the frontend:
-     Statistics, 
+   - Cleaned minor tracebacks and exceptions created by the frontend
    - Mac version now works as expected, but .app bundling failed
    - Latex plotting features now support more characters such as "[]{}^"
 0.7.8
