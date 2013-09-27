@@ -1,5 +1,17 @@
+0.7.9
+- Support for Mac OSx
+- Enhancements:
+   - Export file format (.csv) layout improved
+   - Model function info text in UTF-8
+   - Improved waring message when opening sessions from future versions
+   - New feature lets user set the range for the fitting parameters
+- Bugfixes:
+   - Cleaned minor tracebacks and exceptions created by the frontend:
+     Statistics, 
+   - Mac version now works as expected, but .app bundling failed
+   - Latex plotting features now support more cahracters, e.g. "[]{}^"
 0.7.8
-- Features:
+- Enhancements:
    - Averages can now be calculated from user-selected pages
    - Pages selected in the Overlay tool are now automatically set
      for computation of average and for global fitting
