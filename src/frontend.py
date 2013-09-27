@@ -212,9 +212,9 @@ class MyFrame(wx.Frame):
         # Create New Tab
         Newtab = page.FittingPanel(self, counter, modelid, active_parms,
                                    self.tau)
-        self.Freeze()
+        #self.Freeze()
         self.notebook.AddPage(Newtab, counter+model, select=True)
-        self.Thaw()
+        #self.Thaw()
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
         self.EnableToolCurrent(True)
