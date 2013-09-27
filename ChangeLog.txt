@@ -9,7 +9,7 @@
    - Cleaned minor tracebacks and exceptions created by the frontend:
      Statistics, 
    - Mac version now works as expected, but .app bundling failed
-   - Latex plotting features now support more cahracters, e.g. "[]{}^"
+   - Latex plotting features now support more characters such as "[]{}^"
 0.7.8
 - Enhancements:
    - Averages can now be calculated from user-selected pages
