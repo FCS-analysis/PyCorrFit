@@ -680,6 +680,12 @@ class FittingPanel(wx.Panel):
             self.AmplitudeInfo[1].Enable()
 
 
+    def OnTitleChanged(self, e):
+        pid = int(self.counter.strip("#: "))
+        text = self.counter + self.tabtitle.GetValue()[:7]
+        self.parent.notebook.SetPageText(pid,text)        
+
+        
     def OnSetRange(self, e):
         """ Open a new Frame where the parameter range can be set.
             Rewrites self.parameter_range
@@ -874,6 +880,7 @@ class FittingPanel(wx.Panel):
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
                                     size=(self.sizepanelx-40, -1))
+        self.Bind(wx.EVT_TEXT, self.OnTitleChanged, self.tabtitle)
         sizerti.Add(self.tabtitle)                       
         # Create StaticBoxSizer
         box1, check, spin = self.MakeStaticBoxSizer("Fit parameters")
