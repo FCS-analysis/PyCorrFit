@@ -681,9 +681,16 @@ class FittingPanel(wx.Panel):
 
 
     def OnTitleChanged(self, e):
-        pid = int(self.counter.strip("#: "))
-        text = self.counter + self.tabtitle.GetValue()[:7]
+        pid = self.parent.notebook.GetPageIndex(self)
+        if self.tabtitle.GetValue() == "":
+            text = self.counter + mdls.modeldict[self.modelid][1]
+        else:
+            # How many characters of the the page title should be displayed
+            # in the tab? We choose 9: AC1-1 012 plus 2 whitespaces
+            text = self.counter + self.tabtitle.GetValue()[:8]
         self.parent.notebook.SetPageText(pid,text)        
+        #import IPython
+        #IPython.embed()
 
         
     def OnSetRange(self, e):
