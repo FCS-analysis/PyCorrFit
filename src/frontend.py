@@ -809,7 +809,7 @@ class MyFrame(wx.Frame):
         CurPage.Fit_enable_fitting()
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
-        title = filename+" "+curvetype+" "+run
+        title = "{}-{:03d}  {}".format(curvetype,int(run),filename)
         CurPage.tabtitle.SetValue(title.strip())
         # Plot everything
         CurPage.PlotAll()
