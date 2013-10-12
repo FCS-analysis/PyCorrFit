@@ -85,7 +85,7 @@ class BackgroundCorrection(wx.Frame):
         self.BGlist.append("File/User")
         for item in self.parent.Background:
             self.BGlist.append(item[1])
-        self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, 30),
+        self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, -1),
                      wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
         self.textafterdropdown = wx.StaticText(panel, label="")
         # Apply buttons
