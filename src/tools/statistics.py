@@ -22,6 +22,7 @@ import numpy as np
 import os
 
 from info import InfoClass
+import misc
 
 # Menu entry name
 MENUINFO = ["&Statistics", "Show some session statistics."]
@@ -50,6 +51,7 @@ class Stat(wx.Frame):
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
+        self.MyName = "STATISTICS"
         # List of parameters that are plotted or not
         self.PlotParms = list(["None", 0])
         # Page - the currently active page of the notebook.
@@ -76,8 +78,17 @@ class Stat(wx.Frame):
                                    "same model as the current page.")
 
         ## Page selection as in average tool
-
+        self.WXTextPages = wx.TextCtrl(self.panel, value="",
+                                       size=(text.GetSize()[0],-1))
+        # Set number of pages
+        pagenumlist = list()
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+        valstring=misc.parsePagenum2String(pagenumlist)
+        self.WXTextPages.SetValue(valstring)
         ## Plot parameter dropdown box
+        
         
         # Parameter settings.
         if self.parent.notebook.GetPageCount() != 0:
@@ -96,6 +107,7 @@ class Stat(wx.Frame):
         # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(text)
+        self.topSizer.Add(self.WXTextPages)
         self.topSizer.Add(self.boxsizer)
         self.topSizer.Add(self.btnSave)
         # Set size of window
@@ -106,7 +118,6 @@ class Stat(wx.Frame):
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
-
         self.SetMinSize((px+400, py))
         ## Icon
         if parent.MainIcon is not None:
@@ -139,6 +150,8 @@ class Stat(wx.Frame):
 
 
     def GetWantedParameters(self):
+        strFull = self.WXTextPages.GetValue()
+        PageNumbers = misc.parseString2Pagenum(self, strFull)
         # Get the wanted parameters from the selection.
         checked = list()
         for i in np.arange(len(self.Checkboxes)):
@@ -149,7 +162,10 @@ class Stat(wx.Frame):
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             if Page.modelid == self.Page.modelid:
-                pages.append(Page)
+                # Only pages with same modelid
+                if int(Page.counter.strip("#: ")) in PageNumbers:
+                    # Only pages selected in self.WXTextPages
+                    pages.append(Page)
         self.InfoClass.Pagelist = pages
         AllInfo = self.InfoClass.GetAllInfo()
         self.SaveInfo = list()
@@ -303,7 +319,6 @@ class Stat(wx.Frame):
         for sizer in self.boxsizerlist:
             self.boxsizer.Add(sizer)
         self.OnCheckboxChecked("restore")
-
 
 
     def OnClose(self, event=None):

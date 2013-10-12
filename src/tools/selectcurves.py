@@ -188,6 +188,7 @@ class Wrapper_Tools(object):
         # Find ToolAverage
         ToolAverage = None
         ToolGlobalFit = None
+        ToolStats = None
         for key in toolkeys:
             tool = self.parent.ToolsOpen[key]
             try:
@@ -195,6 +196,8 @@ class Wrapper_Tools(object):
                     ToolAverage = tool
                 elif tool.MyName=="GLOBALFIT":
                     ToolGlobalFit = tool
+                elif tool.MyName=="STATISTICS":
+                    ToolStats = tool
             except:
                 pass
         if ToolAverage is not None:
@@ -205,7 +208,10 @@ class Wrapper_Tools(object):
             # Write page data
             string = misc.parsePagenum2String(pagelist)
             ToolGlobalFit.WXTextPages.SetValue(string)
-        
+        if ToolStats is not None:
+            # Write page data
+            string = misc.parsePagenum2String(pagelist)
+            ToolStats.WXTextPages.SetValue(string)
         
         
 class UserSelectCurves(wx.Frame):

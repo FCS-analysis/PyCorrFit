@@ -51,7 +51,8 @@ class Average(wx.Frame):
                     label="Create an average from the following pages:")
         self.topSizer.Add(textinit)
         ## Page selection
-        self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
+        self.WXTextPages = wx.TextCtrl(self.panel, value="",
+                                       size=(textinit.GetSize()[0],-1))
         self.topSizer.Add(self.WXTextPages)
         ## Chechbox asking for Mono-Model
         self.WXCheckMono = wx.CheckBox(self.panel,
