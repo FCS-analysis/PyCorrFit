@@ -17,6 +17,7 @@
 
 
 import wx
+import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np
 import os
 
@@ -49,8 +50,15 @@ class Stat(wx.Frame):
         ## MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
+        # List of parameters that are plotted or not
+        self.PlotParms = list(["None", 0])
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
+        ## Splitter window. left side: checkboxes
+        ##                  right side: plot with parameters
+        self.sp = wx.SplitterWindow(self, style=wx.SP_3DSASH)
+        # This is necessary to prevent "Unsplit" of the SplitterWindow:
+        self.sp.SetMinimumPaneSize(1)
         ## Content
         # We will display a dialog that conains all the settings
         # - Which model we want statistics on
@@ -59,13 +67,18 @@ class Stat(wx.Frame):
         #   If on another page, the parameter is not available,
         #   do not make a mess out of it.
         # Then the user presses a button and sees/saves the table
-        # with all the cool info.
-        self.panel = wx.Panel(self)
+        # with all the info.
+        self.panel = wx.Panel(self.sp)
         # A dropdown menu for the source Page:
         text = wx.StaticText(self.panel, 
                              label="Create a table with all the selected\n"+
                                    "variables below from pages with the\n"+
                                    "same model as the current page.")
+
+        ## Page selection as in average tool
+
+        ## Plot parameter dropdown box
+        
         # Parameter settings.
         if self.parent.notebook.GetPageCount() != 0:
             self.InfoClass = InfoClass(CurPage=self.Page)
@@ -88,11 +101,93 @@ class Stat(wx.Frame):
         # Set size of window
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        (px, py) = self.topSizer.GetMinSizeTuple()
+
+        ## Plotting panel
+        self.canvas = plot.PlotCanvas(self.sp)
+        self.sp.SplitVertically(self.panel, self.canvas, px+5)
+
+        self.SetMinSize((px+400, py))
         ## Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
+
+
+    def GetListOfPlottableParms(self, e=None):
+        """
+            Walk through the parameters and check which of them contains
+            "numbers" that we could plot. Returns a list of parameters.
+        """
+        Info = self.InfoClass.GetPageInfo(self.Page)
+        keys = Info.keys()
+        keys.sort()
+        alllist = list()
+        for key in keys:
+            alllist += Info[key]
+        parmlist = list()
+        for item in alllist:
+            if item is not None and len(item) == 2:
+                try:
+                    val = float(item[1])
+                except ValueError:
+                    pass
+                else:
+                    # Also save the key so we can find the parameter afterwards
+                    parmlist.append([key, item[0]])
+        return parmlist
+
+
+    def GetWantedParameters(self):
+        # Get the wanted parameters from the selection.
+        checked = list()
+        for i in np.arange(len(self.Checkboxes)):
+            if self.Checkboxes[i].IsChecked() == True:
+                checked.append(self.Checklabels[i])
+        # Collect all the relevant pages
+        pages = list()
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            if Page.modelid == self.Page.modelid:
+                pages.append(Page)
+        self.InfoClass.Pagelist = pages
+        AllInfo = self.InfoClass.GetAllInfo()
+        self.SaveInfo = list()
+        # Some nasty iteration through the dictionaries.
+        # Collect all checked variables.
+        pagekeys = AllInfo.keys()
+        # If pagenumber is larger than 10,
+        # pagekeys.sort will not work, because we have strings
+        # Define new compare function
+        cmp_func = lambda a,b: cmp(int(a.strip().strip("#")),
+                                   int(b.strip().strip("#")))
+        pagekeys.sort(cmp=cmp_func)
+        #for Info in pagekeys:
+        #    pageinfo = list()
+        #    for item in AllInfo[Info]:
+        #        for subitem in AllInfo[Info][item]:
+        #            if len(subitem) == 2:
+        #                for label in checked:
+        #                    if label == subitem[0]:
+        #                        pageinfo.append(subitem)
+        #
+        # We want to replace the above iteration with an iteration that
+        # covers missing values. This means checking for "label == subitem[0]"
+        # and iteration over AllInfo with that consition.
+        for Info in pagekeys:
+            pageinfo = list()
+            for label in checked:
+                label_in_there = False
+                for item in AllInfo[Info]:
+                    for subitem in AllInfo[Info][item]:
+                        if subitem is not None and len(subitem) == 2:
+                            if label == subitem[0]:
+                                label_in_there = True
+                                pageinfo.append(subitem)
+                if label_in_there == False:
+                    # No data available
+                    pageinfo.append([label, "NaN"])
+            self.SaveInfo.append(pageinfo)
 
 
     def OnCheckboxChecked(self, e="restore"):
@@ -227,9 +322,10 @@ class Stat(wx.Frame):
         #
         # Prevent this function to be run twice at once:
         #
-        
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)
+
+        self.PlotParms = self.GetListOfPlottableParms()
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
@@ -246,9 +342,12 @@ class Stat(wx.Frame):
         self.Checklabels = list()
         self.OnChooseValues()
         self.boxsizer.Layout()
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
         self.topSizer.Fit(self)
-
+        (ax, ay) = self.GetSizeTuple()
+        (px, py) = self.topSizer.GetMinSizeTuple()
+        self.sp.SetSashPosition(px+5)
+        self.SetSize((max(px+400,ax), max(py,ay)))
+        self.SetMinSize((px+400, py))
 
 
     def OnSaveTable(self, event=None):
@@ -286,57 +385,5 @@ class Stat(wx.Frame):
             dlg.Destroy()
         # Give parent the current dirname
         self.parent.dirname = dirname
-
-
-    def GetWantedParameters(self):
-        # Get the wanted parameters from the selection.
-        checked = list()
-        for i in np.arange(len(self.Checkboxes)):
-            if self.Checkboxes[i].IsChecked() == True:
-                checked.append(self.Checklabels[i])
-        # Collect all the relevant pages
-        pages = list()
-        for i in np.arange(self.parent.notebook.GetPageCount()):
-            Page = self.parent.notebook.GetPage(i)
-            if Page.modelid == self.Page.modelid:
-                pages.append(Page)
-        self.InfoClass.Pagelist = pages
-        AllInfo = self.InfoClass.GetAllInfo()
-        self.SaveInfo = list()
-        # Some nasty iteration through the dictionaries.
-        # Collect all checked variables.
-        pagekeys = AllInfo.keys()
-        # If pagenumber is larger than 10,
-        # pagekeys.sort will not work, because we have strings
-        # Define new compare function
-        cmp_func = lambda a,b: cmp(int(a.strip().strip("#")),
-                                   int(b.strip().strip("#")))
-        pagekeys.sort(cmp=cmp_func)
-        #for Info in pagekeys:
-        #    pageinfo = list()
-        #    for item in AllInfo[Info]:
-        #        for subitem in AllInfo[Info][item]:
-        #            if len(subitem) == 2:
-        #                for label in checked:
-        #                    if label == subitem[0]:
-        #                        pageinfo.append(subitem)
-        #
-        # We want to replace the above iteration with an iteration that
-        # covers missing values. This means checking for "label == subitem[0]"
-        # and iteration over AllInfo with that consition.
-        for Info in pagekeys:
-            pageinfo = list()
-            for label in checked:
-                label_in_there = False
-                for item in AllInfo[Info]:
-                    for subitem in AllInfo[Info][item]:
-                        if subitem is not None and len(subitem) == 2:
-                            if label == subitem[0]:
-                                label_in_there = True
-                                pageinfo.append(subitem)
-                if label_in_there == False:
-                    # No data available
-                    pageinfo.append([label, "NaN"])
-            self.SaveInfo.append(pageinfo)
 
 
