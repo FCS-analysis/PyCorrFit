@@ -56,6 +56,8 @@ class Stat(wx.Frame):
         self.PlotParms = list(["None", 0])
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
+        # Pagenumbers
+        self.PageNumbers = np.arange(self.parent.notebook.GetPageCount())
         ## Splitter window. left side: checkboxes
         ##                  right side: plot with parameters
         self.sp = wx.SplitterWindow(self, style=wx.SP_3DSASH)
@@ -81,7 +83,6 @@ class Stat(wx.Frame):
                              label="Create a table with all the selected\n"+
                                    "variables below from pages with the\n"+
                                    "same model as the current page.")
-
         ## Page selection as in average tool
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
                                        size=(text.GetSize()[0],-1))
@@ -97,9 +98,13 @@ class Stat(wx.Frame):
         Parmlist = list()
         for item in self.PlotParms:
             Parmlist.append(item[0])
-        self.WXDropdown = wx.ComboBox(self.panel, -1, "", (text.GetSize()[0],-1),
-                        wx.DefaultSize, Parmlist, wx.CB_DROPDOWN|wx.CB_READONLY)
+        DDtext = wx.StaticText(self.panel, 
+                             label="Plot parameter ")
+        DDsize = text.GetSize()[0] - DDtext.GetSize()[0]
+        self.WXDropdown = wx.ComboBox(self.panel, -1, "", size=(DDsize,-1),
+                        choices=Parmlist, style=wx.CB_DROPDOWN|wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnDropDown, self.WXDropdown)
+        self.Bind(wx.EVT_TEXT, self.OnDropDown, self.WXTextPages)
         self.WXDropdown.SetSelection(0)
         # Create space for parameters
         self.box = wx.StaticBox(self.panel, label="variables:")
@@ -114,7 +119,10 @@ class Stat(wx.Frame):
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(text)
         self.topSizer.Add(self.WXTextPages)
-        self.topSizer.Add(self.WXDropdown)
+        DDsizer = wx.BoxSizer(wx.HORIZONTAL)
+        DDsizer.Add(DDtext)
+        DDsizer.Add(self.WXDropdown)
+        self.topSizer.Add(DDsizer)
         self.topSizer.Add(self.boxsizer)
         self.topSizer.Add(self.btnSave)
         # Set size of window
@@ -130,6 +138,7 @@ class Stat(wx.Frame):
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
+        self.OnDropDown()
 
 
     def GetListOfPlottableParms(self, e=None):
@@ -141,19 +150,18 @@ class Stat(wx.Frame):
             Info = self.InfoClass.GetPageInfo(self.Page)
             keys = Info.keys()
             keys.sort()
-            alllist = list()
-            for key in keys:
-                alllist += Info[key]
             parmlist = list()
-            for item in alllist:
-                if item is not None and len(item) == 2:
-                    try:
-                        val = float(item[1])
-                    except ValueError:
-                        pass
-                    else:
-                        # Also save the key so we can find the parameter afterwards
-                        parmlist.append([item[0], key])
+            for key in keys:
+                alllist = Info[key]
+                for item in alllist:
+                    if item is not None and len(item) == 2:
+                        try:
+                            val = float(item[1])
+                        except ValueError:
+                            pass
+                        else:
+                            # save the key so we can find the parameter later
+                            parmlist.append([item[0], key])
         else:
             parmlist = [["<No Pages>", "None"]]
         parmlist.sort()
@@ -344,12 +352,21 @@ class Stat(wx.Frame):
         """ Plot the parameter selected in WXDropdown
             Uses info stored in self.PlotParms and self.InfoClass
         """
+        if self.parent.notebook.GetPageCount() == 0 or self.Page is None:
+            self.canvas.Clear()
+            return
         # Get valid pages
         strFull = self.WXTextPages.GetValue()
-        PageNumbers = misc.parseString2Pagenum(self, strFull)
+        try:
+            PageNumbers = misc.parseString2Pagenum(self, strFull, nodialog=True)
+        except:
+            PageNumbers = self.PageNumbers
+        else:
+            self.PageNumbers = PageNumbers
+        
         # Get plot parameters
         DDselid = self.WXDropdown.GetSelection()
-        [key, label] = self.PlotParms[DDselid]
+        [label, key] = self.PlotParms[DDselid]
         # Get potential pages
         pages = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -376,10 +393,22 @@ class Stat(wx.Frame):
                             pass
         # Prepare plotting
         self.canvas.Clear()
-        linesig = plot.PolyLine(plotcurve, legend='', colour='blue', width=1)
-        self.canvas.Draw(plot.PlotGraphics([linesig], 
-                         xLabel='page number', 
-                         yLabel=label))
+        linesig = plot.PolyMarker(plotcurve, size=1.5, fillstyle=wx.TRANSPARENT,
+                                  marker='circle')
+        # average line
+        avg = np.average(np.array(plotcurve)[:,1])
+        maxpage =  np.max(np.array(plotcurve)[:,0])
+        plotavg = [[0, avg], [maxpage, avg]]
+        lineclear = plot.PolyLine(plotavg, colour="black")
+        # Draw
+        self.canvas.Draw(plot.PlotGraphics([linesig, lineclear], 
+                             xLabel='page number', 
+                             yLabel=label))
+        
+        # Correctly set x-axis
+        minticks = 2
+        self.canvas.SetXSpec(max(maxpage, minticks))
+        self.canvas.Redraw()
                          
         
     def OnPageChanged(self, page):
@@ -390,6 +419,14 @@ class Stat(wx.Frame):
         #
         # Prevent this function to be run twice at once:
         #
+        if self.WXTextPages.GetValue() == "":
+            # Set number of pages
+            pagenumlist = list()
+            for i in np.arange(self.parent.notebook.GetPageCount()):
+                Page = self.parent.notebook.GetPage(i)
+                pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+            valstring=misc.parsePagenum2String(pagenumlist)
+            self.WXTextPages.SetValue(valstring)
         DDselection = self.WXDropdown.GetValue()
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)

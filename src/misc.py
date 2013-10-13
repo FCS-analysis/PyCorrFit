@@ -71,7 +71,7 @@ class wxHTML(wx.html.HtmlWindow):
     def OnLinkClicked(parent, link):
          webbrowser.open(link.GetHref())
 
-def parseString2Pagenum(parent, string):
+def parseString2Pagenum(parent, string, nodialog=False):
     """ Parse a string with a list of pagenumbers to an integer list with
         page numbers.
         e.g. "1-3,5,7" --> [1,2,3,5,7]
@@ -91,17 +91,20 @@ def parseString2Pagenum(parent, string):
         PageNumbers.sort()
         return PageNumbers
     except:
-        errstring = "Invalid syntax in page selection: "+string+\
-                    ". Please use a comma separated list with"+\
-                    " optional dashes, e.g. '1-3,6,8'." 
-        try:
-            dlg = wx.MessageDialog(parent, errstring, "Error", 
-                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
-        except:
-            print "ERROR: "+errstring
+        if nodialog is False:
+            errstring = "Invalid syntax in page selection: "+string+\
+                        ". Please use a comma separated list with"+\
+                        " optional dashes, e.g. '1-3,6,8'." 
+            try:
+                dlg = wx.MessageDialog(parent, errstring, "Error", 
+                                  style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                dlg.ShowModal() == wx.ID_OK
+            except:
+                raise ValueError(errstring)
+        else:
+            raise ValueError(errstring)
         return None
-
+        
 
 def parsePagenum2String(pagenumlist):
     """ Make a string with dashes and commas from a list of pagenumbers.
