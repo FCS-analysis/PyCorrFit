@@ -401,13 +401,19 @@ class Stat(wx.Frame):
         self.canvas.Clear()
         linesig = plot.PolyMarker(plotcurve, size=1.5, fillstyle=wx.TRANSPARENT,
                                   marker='circle')
+        plotlist = [linesig]
         # average line
-        avg = np.average(np.array(plotcurve)[:,1])
         maxpage =  np.max(np.array(plotcurve)[:,0])
-        plotavg = [[0, avg], [maxpage, avg]]
-        lineclear = plot.PolyLine(plotavg, colour="black")
+        try:
+            avg = np.average(np.array(plotcurve)[:,1])
+        except:
+            pass
+        else:
+            plotavg = [[0, avg], [maxpage, avg]]
+            lineclear = plot.PolyLine(plotavg, colour="black")
+            plotlist.append(lineclear)
         # Draw
-        self.canvas.Draw(plot.PlotGraphics([linesig, lineclear], 
+        self.canvas.Draw(plot.PlotGraphics(plotlist, 
                              xLabel='page number', 
                              yLabel=label))
         
