@@ -180,7 +180,7 @@ class Wrapper_Tools(object):
             Page = self.parent.notebook.GetPage(i)
             key = Page.counter
             if keylist.count(key) == 1:
-                pagelist.append(i)
+                pagelist.append(int(key.strip("#: ")))
         # Get open tools
         toolkeys = self.parent.ToolsOpen.keys()
         if len(toolkeys) == 0:

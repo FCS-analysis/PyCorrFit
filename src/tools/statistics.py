@@ -84,8 +84,11 @@ class Stat(wx.Frame):
                                    "variables below from pages with the\n"+
                                    "same model as the current page.")
         ## Page selection as in average tool
+        Pagetext = wx.StaticText(self.panel, 
+                             label="Curves ")
+        Psize = text.GetSize()[0] - Pagetext.GetSize()[0]
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
-                                       size=(text.GetSize()[0],-1))
+                                       size=(Psize,-1))
         # Set number of pages
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -118,10 +121,13 @@ class Stat(wx.Frame):
         # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(text)
-        self.topSizer.Add(self.WXTextPages)
+        Psizer = wx.BoxSizer(wx.HORIZONTAL)
+        Psizer.Add(Pagetext)
+        Psizer.Add(self.WXTextPages)
         DDsizer = wx.BoxSizer(wx.HORIZONTAL)
         DDsizer.Add(DDtext)
         DDsizer.Add(self.WXDropdown)
+        self.topSizer.Add(Psizer)
         self.topSizer.Add(DDsizer)
         self.topSizer.Add(self.boxsizer)
         self.topSizer.Add(self.btnSave)
@@ -157,7 +163,7 @@ class Stat(wx.Frame):
                     if item is not None and len(item) == 2:
                         try:
                             val = float(item[1])
-                        except ValueError:
+                        except:
                             pass
                         else:
                             # save the key so we can find the parameter later
