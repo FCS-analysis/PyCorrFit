@@ -403,11 +403,12 @@ class Stat(wx.Frame):
                                   marker='circle')
         plotlist = [linesig]
         # average line
-        maxpage =  np.max(np.array(plotcurve)[:,0])
+
         try:
             avg = np.average(np.array(plotcurve)[:,1])
+            maxpage =  np.max(np.array(plotcurve)[:,0])
         except:
-            pass
+            maxpage = 0
         else:
             plotavg = [[0, avg], [maxpage, avg]]
             lineclear = plot.PolyLine(plotavg, colour="black")
