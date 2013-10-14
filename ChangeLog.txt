@@ -1,3 +1,7 @@
+0.8.0
+- Filename/title of each tab now shows up in the notebook (#39)
+- Statistics tool can plot parameters and page selection with the Overlay
+  tool is possible (#31)
 0.7.9
 - Support for Mac OSx
 - Enhancements:
