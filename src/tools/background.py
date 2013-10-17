@@ -75,7 +75,8 @@ class BackgroundCorrection(wx.Frame):
         self.textmean = wx.StaticText(panel, label="")
         # name
         textname = wx.StaticText(panel, label="User defined background name: ")
-        self.bgname = wx.TextCtrl(panel, value="", size=(330,-1))
+        sizeTextn = textname.GetSize()[0]
+        self.bgname = wx.TextCtrl(panel, value="", size=(sizeTextn,-1))
         self.bgname.Enable(False)
         self.btnimport = wx.Button(panel, wx.ID_ANY, 'Import into session')
         self.btnimport.Enable(False)
@@ -89,13 +90,13 @@ class BackgroundCorrection(wx.Frame):
                      wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
         self.textafterdropdown = wx.StaticText(panel, label="")
         # Apply buttons
-        textapply = wx.StaticText(panel, label="Apply background to: ")
+        textapply = wx.StaticText(panel, label="Apply correction: ")
         self.btnapply = wx.Button(panel, wx.ID_ANY, 'Current page only')
         self.btnapplyall = wx.Button(panel, wx.ID_ANY, 'All pages')
         self.btnapply.Enable(False)
         self.btnapplyall.Enable(False)
         # Remove Backgrounds
-        textrem = wx.StaticText(panel, label="Remove background from: ")
+        textrem   = wx.StaticText(panel, label="Dismiss correction: ")
         self.btnrem = wx.Button(panel, wx.ID_ANY, 'Current page only')
         self.btnremyall = wx.Button(panel, wx.ID_ANY, 'All pages')
         if len(self.BGlist) <= 1:
