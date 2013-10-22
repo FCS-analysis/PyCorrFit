@@ -204,7 +204,7 @@ def openFCS_Multiple(dirname, filename):
             corrlist.append(ac_correlations[i])
         else:
             if traces[i] is not None:
-                warnings.warn(filename+ " does not contain AC data.")
+                warnings.warn("File {} curve {} does not contain AC data.".format(filename, i))
     ## The CC traces are more tricky:
     # Add traces to CC-correlation functions.
     # It seems reasonable, that if number of AC1,AC2 and CC are equal,
@@ -245,7 +245,7 @@ def openFCS_Multiple(dirname, filename):
                 elif cclist[i] == "CC21":
                     tracelist.append([traces[i-1], traces[i]])
             else:
-                traclist.append(None)
+                tracelist.append(None)
     dictionary = dict()
     dictionary["Correlation"] = corrlist
     dictionary["Trace"] = tracelist
