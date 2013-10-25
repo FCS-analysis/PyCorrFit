@@ -339,7 +339,7 @@ class UserSelectCurves(wx.Frame):
             # Use given labels instead of curvekeys.
             self.curvelabels = list()
             for key in self.curvekeys:
-                self.curvelabels.append(str(key)+" "+self.labels[key])
+                self.curvelabels.append("#"+str(key).strip(":# ")+" "+self.labels[key])
 
 
     def OnCancel(self, e=None):
