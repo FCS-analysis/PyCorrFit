@@ -491,8 +491,6 @@ class MyFrame(wx.Frame):
 #                    'Save current session?')
             result = dial.ShowModal()
             dial.Destroy()
-#            import IPython
-#            IPython.embed()
             if result == wx.ID_CANCEL:
                 return "abort"      # stop this function - do nothing.
             elif result == wx.ID_YES:
@@ -710,14 +708,18 @@ class MyFrame(wx.Frame):
                 # Show a nice progress dialog:
                 style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
                         wx.PD_CAN_ABORT
-                dlg = wx.ProgressDialog("Import", "Loading pages..."
-                , maximum = num, parent=self, style=style)
-                # get current page and populate
+                dlg = wx.ProgressDialog("Import", "Loading pages...",
+                                        maximum = num, parent=self, style=style)
+                # Get current page and populate
                 CurPage = self.notebook.GetCurrentPage()
                 for i in np.arange(num):
                     # Fill Page with data
                     self.ImportData(CurPage, dataexp[i], trace[i],
-                                    curvelist[i], filename[i])
+                                   curvetype=curvelist[i], filename=filename[i],
+                                   curveid=i)
+
+
+
                     # Let the user abort, if he wants to:
                     # We want to do this here before an empty page is added
                     # to the notebok.
@@ -775,7 +777,7 @@ class MyFrame(wx.Frame):
 
 
     def ImportData(self, Page, dataexp, trace, curvetype="",
-                   filename="", run=""):
+                   filename="", curveid="", run=""):
         CurPage = Page
         # Import traces. Traces are usually put into a list, even if there
         # is only one trace. The reason is, that for cross correlation, we 
@@ -810,9 +812,10 @@ class MyFrame(wx.Frame):
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
         if run != "":
-            title = "{}-{:03d}   {}".format(curvetype,int(run),filename)
+            title = "{}-{:03d}   id{:03d} {}".format(curvetype,int(run),
+                                                   int(curveid), filename)
         else:
-            title = "{}   {}".format(curvetype,filename)
+            title = "{} id{:03d}   {}".format(curvetype, int(curveid), filename)
         CurPage.tabtitle.SetValue(title.strip())
         # Plot everything
         CurPage.PlotAll()
@@ -842,6 +845,8 @@ class MyFrame(wx.Frame):
             self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
         if dlg.ShowModal() == wx.ID_OK:
             Datafiles = dlg.GetFilenames()
+            # We rely on sorted filenames
+            Datafiles.sort()
             # Workaround since 0.7.5
             paths = dlg.GetPaths()
             if len(paths) != 0:
@@ -860,8 +865,9 @@ class MyFrame(wx.Frame):
         Correlation = list()
         Trace = list()
         Type = list()
-        Filename = list() # there might be zipfiles with additional name info
-        Run = list()
+        Filename = list()   # there might be zipfiles with additional name info
+        Run = list()        # Run number connecting AC1 AC2 CC12 CC21
+        Curveid = list()    # Curve ID of each curve in a file
         for afile in Datafiles:
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
@@ -874,19 +880,19 @@ class MyFrame(wx.Frame):
                     Trace.append(Stuff["Trace"][i])
                     Type.append(Stuff["Type"][i])
                     Filename.append(Stuff["Filename"][i])
-        # Add number of the run within a file.
-        Run = list()
+                    #Curveid.append(str(i+1))
+        # Add number of the curve within a file.
         nameold = None
         counter = 1
         for name in Filename:
             if name == nameold:
-                Run.append(counter)
+                Curveid.append(counter)
                 counter += 1
             else:
                 counter = 1
                 nameold = name
-                Run.append(counter)
-                counter += 1 
+                Curveid.append(counter)
+                counter += 1
         # If there are any BadFiles, we will let the user know.
         if len(BadFiles) > 0:
             # The file does not seem to be what it seems to be.
@@ -911,6 +917,33 @@ class MyFrame(wx.Frame):
                 curvetypes[Type[i]].append(i)
             except KeyError:
                 curvetypes[Type[i]] = [i]
+        # Fill in the Run information
+        keys = curvetypes.keys()
+        # Check if the type of curves have equal length
+        lentypes = np.zeros(len(keys), dtype=int)
+        for i in range(len(keys)):
+            lentypes[i] = len(curvetypes[keys[i]])
+        if len(np.unique(np.array(lentypes))) == 1 and lentypes[0] != 0:
+            # Made sure that AC1 AC2 CC12 CC21 have same length
+            # Create Runs such that they are matched.
+            # We assume that the curves are somehow interlaced and that
+            # the Nth occurence of the keys in Types correspond to the
+            # matching curves.
+            # Also make sure that number starts at one for each selected file.
+            coords = np.zeros(len(keys), dtype=np.int)
+            Run = np.zeros(len(Curveid), dtype=np.int)
+            WorkType = 1*Type
+            d = 0
+            for fname in np.unique(Filename):
+                # unique returns sorted file names.
+                for i in range(Filename.count(fname)/len(keys)):
+                    for k in range(len(keys)):
+                        coords[k] = WorkType.index(keys[k])
+                        WorkType[coords[k]] = None
+                    Run[coords] = i + 1
+                #del WorkType
+        else:
+            Run = [""] * len(Curveid)
         # Now we have a dictionary curvetypes with keys that name
         # items in *Type* and which point to indices in *Type*.
         # We will display a dialog that lets the user choose what
@@ -920,7 +953,13 @@ class MyFrame(wx.Frame):
         # Version 0.7.6 - add support for Filenames in curve selection.
         labels=list()
         for i in np.arange(len(Filename)):
-            labels.append(Filename[i]+" "+str(Run[i]))
+            print Run[i]
+            if Run[i] != "":
+                labels.append("{}-r{:03d} {}".format(Type[i], Run[i],
+                                                     Filename[i]))
+            else:
+                labels.append("{}-id{:03d} {}".format(Type[i], Curveid[i],
+                                                      Filename[i]))
         Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation,
                                               labels=labels)
         newCorrelation = list()
@@ -928,6 +967,7 @@ class MyFrame(wx.Frame):
         newType = list()
         newFilename = list()
         modelList = list()
+        newCurveid = list()
         newRun = list()
         if Chosen.ShowModal() == wx.ID_OK:
             keys = Chosen.typekeys
@@ -949,11 +989,13 @@ class MyFrame(wx.Frame):
                         newType.append(Type[index])
                         newFilename.append(Filename[index])
                         modelList.append(modelids[index])
+                        newCurveid.append(Curveid[index])
                         newRun.append(Run[index])
             Correlation = newCorrelation
             Trace = newTrace
             Type = newType
             Filename = newFilename
+            Curveid = newCurveid
             Run = newRun
         else:
             return
@@ -976,7 +1018,8 @@ class MyFrame(wx.Frame):
                                      counter=None)
             # Fill Page with data
             self.ImportData(CurPage, Correlation[i], Trace[i],
-                            Type[i], Filename[i], str(Run[i]))
+                            curvetype=Type[i], filename=Filename[i],
+                            curveid=str(Curveid[i]), run=str(Run[i]))
             # Let the user abort, if he wants to:
             # We want to do this here before an empty page is added
             # to the notebok.
