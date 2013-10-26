@@ -812,7 +812,7 @@ class MyFrame(wx.Frame):
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
         if run != "":
-            title = "{}-{:03d}   id{:03d} {}".format(curvetype,int(run),
+            title = "{}-r{:03d}   id{:03d} {}".format(curvetype,int(run),
                                                    int(curveid), filename)
         else:
             title = "{} id{:03d}   {}".format(curvetype, int(curveid), filename)
@@ -866,7 +866,7 @@ class MyFrame(wx.Frame):
         Trace = list()
         Type = list()
         Filename = list()   # there might be zipfiles with additional name info
-        Run = list()        # Run number connecting AC1 AC2 CC12 CC21
+        #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
         for afile in Datafiles:
             try:
@@ -919,6 +919,20 @@ class MyFrame(wx.Frame):
                 curvetypes[Type[i]] = [i]
         # Fill in the Run information
         keys = curvetypes.keys()
+        # This part is a little tricky. We assume at some point, that different
+        # types of curves (AC1, AC2) belong to the same run. The only possible
+        # chek/assumtion that we can make is:
+        # If all curvetypes have the same amount of curves, then the curves
+        # from different curvetypes belong together.
+        # Unfortunately, we do not know how the curves are ordered. It could
+        # be like this:
+        # AC1-r1, AC2-r1, CC12-r1, CC21-r1, AC1-r2, AC1-r2, ...
+        # or otherwise interlaced like this:
+        # AC1-r1, AC2-r1, AC1-r2, AC1-r2, ... ,  CC12-r1, CC21-r1, ...
+        # What we do know is that the first occurence of AC1 matches up with
+        # the first occurences of AC2, CC12, etc.
+        # We create the list/array *Run* whose elements are the run-number
+        # at the position of the curves in *Types*.
         # Check if the type of curves have equal length
         lentypes = np.zeros(len(keys), dtype=int)
         for i in range(len(keys)):
@@ -950,10 +964,8 @@ class MyFrame(wx.Frame):
         # to import.
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
-        # Version 0.7.6 - add support for Filenames in curve selection.
-        labels=list()
+p        labels=list()
         for i in np.arange(len(Filename)):
-            print Run[i]
             if Run[i] != "":
                 labels.append("{}-r{:03d} {}".format(Type[i], Run[i],
                                                      Filename[i]))

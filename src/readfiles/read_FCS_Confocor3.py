@@ -23,6 +23,9 @@ def openFCS(dirname, filename):
 
 def openFCS_Multiple(dirname, filename):
     """ Load data from Zeiss Confocor3
+        Data is imported sequenially from the file.
+        PyCorrFit will give each curve an id which corresponds to the position
+        of the curve in the .fcs file.
     """
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
