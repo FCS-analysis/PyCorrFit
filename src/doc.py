@@ -74,7 +74,7 @@ def info(version):
     """ Returns a little info about our program and what it can do.
     """
     textwin = u"""
-    Copyright 20011-2012 Paul Müller, Biotec - TU Dresden
+    Copyright 2011-2012 Paul Müller, Biotec - TU Dresden
 
     A versatile tool for fitting and analyzing correlation curves.
 
@@ -86,7 +86,7 @@ def info(version):
     unit of inverse area: 100 /µm²
     unit of inv. volume : 1000 /µm^3 """
     textlin = """
-    © 20011-2012 Paul Müller, Biotec - TU Dresden
+    © 2011-2012 Paul Müller, Biotec - TU Dresden
 
     A versatile tool for fitting and analyzing correlation curves.
 

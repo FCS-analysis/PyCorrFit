@@ -964,7 +964,7 @@ class MyFrame(wx.Frame):
         # to import.
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
-p        labels=list()
+        labels=list()
         for i in np.arange(len(Filename)):
             if Run[i] != "":
                 labels.append("{}-r{:03d} {}".format(Type[i], Run[i],
