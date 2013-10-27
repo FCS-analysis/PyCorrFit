@@ -306,7 +306,9 @@ class Average(wx.Frame):
         # Keep the average open.
         # self.OnClose()
 
-
+    def SetPageNumbers(self, pagestring):
+        self.WXTextPages.SetValue(pagestring)
+        
     def SetValues(self, e=None):
         # Text input
         pagenumlist = list()

@@ -517,4 +517,6 @@ class Stat(wx.Frame):
         # Give parent the current dirname
         self.parent.dirname = dirname
 
+    def SetPageNumbers(self, pagestring):
+        self.WXTextPages.SetValue(pagestring)
 

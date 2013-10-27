@@ -24,6 +24,7 @@ from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot    
 
 import doc
+import misc
 import openfile as opf                  # How to treat an opened file
 import readfiles
 
@@ -32,6 +33,7 @@ MENUINFO = ["&Background correction", "Open a file for background correction."]
 
 class BackgroundCorrection(wx.Frame):
     def __init__(self, parent):
+        self.MyName="BACKGROUND"
         # Parent is main frame
         self.parent = parent
         # Get the window positioning correctly
@@ -83,22 +85,37 @@ class BackgroundCorrection(wx.Frame):
         # Dropdown
         textdropdown = wx.StaticText(panel, label="Show background: ")
         self.BGlist = list()
-        self.BGlist.append("File/User")
+        #self.BGlist.append("File/User")
         for item in self.parent.Background:
-            self.BGlist.append(item[1])
+            bgname = "{} ({:.2f} kHz)".format(item[1],item[0])
+            self.BGlist.append(bgname)
+        if len(self.BGlist) == 0:
+            ddlist = ["File/User"]
+        else:
+            ddlist = 1*self.BGlist
         self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, -1),
-                     wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
-        self.textafterdropdown = wx.StaticText(panel, label="")
+                     wx.DefaultSize, ddlist, wx.CB_DROPDOWN|wx.CB_READONLY)
+        #self.textafterdropdown = wx.StaticText(panel, label="")
         # Apply buttons
-        textapply = wx.StaticText(panel, label="Apply correction: ")
-        self.btnapply = wx.Button(panel, wx.ID_ANY, 'Current page only')
-        self.btnapplyall = wx.Button(panel, wx.ID_ANY, 'All pages')
+        self.btnapply = wx.Button(panel, wx.ID_ANY, 'Apply')
+        textor = wx.StaticText(panel, label=" or ")
+        self.btnrem = wx.Button(panel, wx.ID_ANY, 'Dismiss')
+        textpages   = wx.StaticText(panel, label=" correction for pages: ")
+        self.WXTextPages = wx.TextCtrl(panel, value="")
+        # Initial value for WXTextPages
+        pagenumlist = list()
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+        valstring=misc.parsePagenum2String(pagenumlist)
+        self.WXTextPages.SetValue(valstring)
+        
+        textyma   = wx.StaticText(panel, label="You may also: ")
+        self.btnapplyall = wx.Button(panel, wx.ID_ANY, 'Apply to all pages')
         self.btnapply.Enable(False)
         self.btnapplyall.Enable(False)
-        # Remove Backgrounds
-        textrem   = wx.StaticText(panel, label="Dismiss correction: ")
-        self.btnrem = wx.Button(panel, wx.ID_ANY, 'Current page only')
-        self.btnremyall = wx.Button(panel, wx.ID_ANY, 'All pages')
+        textor2 = wx.StaticText(panel, label=" or ")
+        self.btnremyall = wx.Button(panel, wx.ID_ANY, 'Dismiss from all pages')
         if len(self.BGlist) <= 1:
             self.btnrem.Enable(False)
             self.btnremyall.Enable(False)
@@ -129,15 +146,20 @@ class BackgroundCorrection(wx.Frame):
         droprightsizer = wx.BoxSizer(wx.VERTICAL)
         dropsizer.Add(droprightsizer)
         droprightsizer.Add(self.dropdown)
-        droprightsizer.Add(self.textafterdropdown)
+        #droprightsizer.Add(self.textafterdropdown)
         applysizer = wx.BoxSizer(wx.HORIZONTAL)
-        applysizer.Add(textapply)
         applysizer.Add(self.btnapply)
+        applysizer.Add(textor)
+        applysizer.Add(self.btnrem)
+        applysizer.Add(textpages)
+        applysizer.Add(self.WXTextPages)
         applysizer.Add(self.btnapplyall)
-        remsizer = wx.BoxSizer(wx.HORIZONTAL)
-        remsizer.Add(textrem)
-        remsizer.Add(self.btnrem)
-        remsizer.Add(self.btnremyall)
+        allsizer = wx.BoxSizer(wx.HORIZONTAL)
+        allsizer.Add(textyma)
+        allsizer.Add(self.btnapplyall)
+        allsizer.Add(textor2)
+        allsizer.Add(self.btnremyall)
+        
         topSizer.Add(textinit)
         topSizer.Add(text1sizer)
         topSizer.Add(text2sizer)
@@ -148,7 +170,7 @@ class BackgroundCorrection(wx.Frame):
         topSizer.Add(self.btnimport)
         topSizer.Add(dropsizer)
         topSizer.Add(applysizer)
-        topSizer.Add(remsizer)
+        topSizer.Add(allsizer)
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
         self.SetMinSize(topSizer.GetMinSizeTuple())
@@ -171,22 +193,35 @@ class BackgroundCorrection(wx.Frame):
 
 
     def OnApply(self, event):
-        Page = self.parent.notebook.GetCurrentPage()
+        strFull = self.WXTextPages.GetValue()
+        PageNumbers = misc.parseString2Pagenum(self, strFull)
+        if PageNumbers is None:
+            # Something went wrong and parseString2Pagenum already displayed
+            # an error message.
+            return
+        # BG number
         item = self.dropdown.GetSelection()
-        Page.bgselected = item - 1
-        self.btnrem.Enable(True)
-        Page.PlotAll()
+        # Apply to corresponding pages
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            j = filter(lambda x: x.isdigit(), Page.counter)
+            if int(j) in PageNumbers:
+                Page.bgselected = item
+                Page.OnAmplitudeCheck("init")
+                Page.PlotAll()
 
 
     def OnApplyAll(self, event):
+        self.btnrem.Enable(True)
+        self.btnremyall.Enable(True)
         N = self.parent.notebook.GetPageCount()
         item = self.dropdown.GetSelection()
-        self.btnrem.Enable(True)
         for i in np.arange(N):
             # Set Page 
             Page = self.parent.notebook.GetPage(i)
-            Page.bgselected = item - 1
+            Page.bgselected = item
             try:
+                Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
             except OverflowError:
                 errstr = "Could not apply background to Page "+Page.counter+\
@@ -195,7 +230,7 @@ class BackgroundCorrection(wx.Frame):
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal()
                 Page.bgselected = None
-                
+
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
@@ -304,7 +339,7 @@ class BackgroundCorrection(wx.Frame):
 
     def OnDraw(self, event=None):
         item = self.dropdown.GetSelection()
-        if item <= 0:
+        if item < 0:
             # Disable Apply Buttons
             self.btnapply.Enable(False)
             self.btnapplyall.Enable(False)
@@ -313,15 +348,15 @@ class BackgroundCorrection(wx.Frame):
                 # Calculate average
                 self.average = self.trace[:,1].mean()
                 self.activetrace = self.trace
-                self.textafterdropdown.SetLabel(" Avg:  "+str(self.average)+
-                                                " kHz")
+                #self.textafterdropdown.SetLabel(" Avg:  "+str(self.average)+
+                #                                " kHz")
                 self.textmean.SetLabel(str(self.average))
                 self.spinctrl.SetValue(self.average)
             else:
                 # Clear the canvas. Looks better.
                 self.canvas.Clear()
                 # Don't show the average
-                self.textafterdropdown.SetLabel("")
+                #self.textafterdropdown.SetLabel("")
                 self.textmean.SetLabel("")
                 return
         else:
@@ -330,8 +365,8 @@ class BackgroundCorrection(wx.Frame):
             self.btnapplyall.Enable(True)
             # Draw a trace from the list
             self.activetrace = self.parent.Background[item-1][2]
-            self.textafterdropdown.SetLabel(" Avg:  "+
-                                str(self.parent.Background[item-1][0]))
+            #self.textafterdropdown.SetLabel(" Avg:  "+
+            #                    str(self.parent.Background[item-1][0]))
         # We want to have the trace in [s] here.
         trace = 1.*self.activetrace
         trace[:,0] = trace[:,0]/1000
@@ -344,11 +379,15 @@ class BackgroundCorrection(wx.Frame):
     def OnImport(self, event):
         self.parent.Background.append([self.average, self.bgname.GetValue(), 
                                       self.trace])
-        self.BGlist.append(self.bgname.GetValue())
+        name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
+        self.BGlist.append(name)
         self.UpdateDropdown()
         # Let the user see the imported file
         self.dropdown.SetSelection(len(self.BGlist)-1)
         self.btnremyall.Enable(True)
+        self.btnrem.Enable(True)
+        self.btnapplyall.Enable(True)
+        self.btnapply.Enable(True)
         self.OnDraw()
         # Update BG dropdown of each page
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -359,15 +398,24 @@ class BackgroundCorrection(wx.Frame):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.
+        if len(self.parent.Background) == 0:
+            self.BGlist = list()
+            self.UpdateDropdown()
+            self.dropdown.SetValue("File/User")
         if self.parent.notebook.GetPageCount() == 0:
             self.sp.Disable()
             return
         self.sp.Enable()
-        if page is not None:
-            if page.bgselected is None:
-                self.btnrem.Enable(False)
-            else:
-                self.btnrem.Enable(True)
+        if (self.WXTextPages.GetValue() == ""
+            and self.parent.notebook.GetPageCount() != 0):
+            # Initial value for WXTextPages
+            pagenumlist = list()
+            for i in np.arange(self.parent.notebook.GetPageCount()):
+                Page = self.parent.notebook.GetPage(i)
+                pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+            valstring=misc.parsePagenum2String(pagenumlist)
+            self.WXTextPages.SetValue(valstring)
+        
 
 
     def OnRadioFile(self, event):
@@ -408,10 +456,22 @@ class BackgroundCorrection(wx.Frame):
 
 
     def OnRemove(self, event):
-        Page = self.parent.notebook.GetCurrentPage()
-        Page.bgselected = None
-        self.btnrem.Enable(False)
-        Page.PlotAll()
+        strFull = self.WXTextPages.GetValue()
+        PageNumbers = misc.parseString2Pagenum(self, strFull)
+        if PageNumbers is None:
+            # Something went wrong and parseString2Pagenum already displayed
+            # an error message.
+            return
+        # BG number
+        item = self.dropdown.GetSelection()
+        # Apply to corresponding pages
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            j = filter(lambda x: x.isdigit(), Page.counter)
+            if int(j) in PageNumbers:
+                Page.bgselected = None
+                Page.OnAmplitudeCheck("init")
+                Page.PlotAll()
 
 
     def OnRemoveAll(self, event):
@@ -419,8 +479,11 @@ class BackgroundCorrection(wx.Frame):
         for i in np.arange(N):
             Page = self.parent.notebook.GetPage(i)
             Page.bgselected = None
+            Page.OnAmplitudeCheck("init")
             Page.PlotAll()
 
+    def SetPageNumbers(self, pagestring):
+        self.WXTextPages.SetValue(pagestring)
     
     def SpinCtrlChange(self, event=None):
         # Let user see the continuous trace we will generate
