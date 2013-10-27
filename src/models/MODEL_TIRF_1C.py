@@ -34,7 +34,7 @@ def CF_Gxy_TIR_square(parms, tau):
         *tau* - lag time
 
         Please refer to the documentation of PyCorrFit
-        for further information on the model function.
+        for further information on this model function.
         
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
@@ -75,7 +75,7 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
         *tau* - lag time
 
         Please refer to the documentation of PyCorrFit
-        for further information on the model function.
+        for further information on this model function.
         
         Returns: 3D correlation function for TIR-FCS w/square pinhole
     """

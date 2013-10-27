@@ -245,7 +245,7 @@ def CF_gz_AA(parms, tau, wixi=wixi):
 def CF_Gxyz_TIR_square_ubibi(parms, tau, 
                          gAAz=CF_gz_AA, gACz=CF_gz_AC, gCCz=CF_gz_CC,
                          gxy=CF_gxy_square):
-    """ Two-component two- and three-dimensional diffusion
+    u""" Two-component two- and three-dimensional diffusion
         with a square-shaped lateral detection area taking into account
         the size of the point spread function; and an exponential
         decaying profile in axial direction. This model covers binding
@@ -255,14 +255,14 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
         Parameters (parms[i]):
         [0] D_3D    Diffusion coefficient of freely diffusing species A
         [1] D_2D    Diffusion coefficient of bound species C
-        [2] sigma   Lateral size of the point spread function
-                    sigma = simga_0 * lambda / NA
+        [2] σ       Lateral size of the point spread function
+                    σ = σ₀ * λ / NA
         [3] a       Side size of the square-shaped detection area 
         [4] d_eva   Evanescent decay constant
         [5] C_3D    Concentration of species A in observation volume
         [6] C_2D    Concentration of species C in observation area
-        [7] eta_3D  Molecular brightness of species A
-        [8] eta_2D  Molecular brightness of species C
+        [7] η_3D    Molecular brightness of species A
+        [8] η_2D    Molecular brightness of species C
         [9] k_a     Surface association rate constant
         [10] k_d    Surface dissociation rate constant
         *tau* - lag time
