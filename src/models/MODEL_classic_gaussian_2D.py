@@ -42,6 +42,8 @@ def Check_xy_gauss(parms):
 def CF_Gxy_T_gauss(parms, tau):
     u""" Two-dimensional diffusion with a Gaussian laser profile,
         including a triplet component.
+        The triplet factor takes into account a blinking term.
+        Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
 

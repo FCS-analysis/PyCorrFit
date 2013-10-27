@@ -205,7 +205,7 @@ labels  = ["n",
                 "r₀ [100 nm]",
                 "d_eva [100 nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ_trip [ms]",
+                u"τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -229,7 +229,7 @@ labelshr  = ["n",
                 "r₀ [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ_trip [µs]",
+                u"τ_trip [µs]",
                 "T",
                 "offset"
                 ]

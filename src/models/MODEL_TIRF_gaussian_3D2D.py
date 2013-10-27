@@ -182,13 +182,13 @@ m_gauss_3d_2d_t = [6033, "3D+2D+T (Gauß/exp)",
                             "Separate 3D and 2D diffusion + triplet w/ TIR",
                             CF_Gxyz_3d2dT_gauss]
 labels  = ["n",
-                "D_2D [10 µm²/s]",
-                "D_3D [10 µm²/s]",
+                u"D_2D [10 µm²/s]",
+                u"D_3D [10 µm²/s]",
                 "F_3D", 
-                "r₀ [100 nm]",
+                u"r₀ [100 nm]",
                 "d_eva [100 nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ_trip [ms]",
+                u"τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -206,13 +206,13 @@ values = [
                 ]  
 # Human readable stuff
 labelshr  = ["n",
-                "D_2D [µm²/s]",
-                "D_3D [µm²/s]",
+                u"D_2D [µm²/s]",
+                u"D_3D [µm²/s]",
                 "F_3D", 
-                "r₀ [nm]",
+                u"r₀ [nm]",
                 "d_eva [nm]",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ_trip [µs]",
+                u"τ_trip [µs]",
                 "T",
                 "offset"
                 ] 

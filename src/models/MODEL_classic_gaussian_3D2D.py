@@ -25,7 +25,7 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         [2] τ_3D    Diffusion time of freely diffusing particles
         [3] F       Fraction of molecules of the freely diffusing species
                     (n3D = n*F), 0 <= F <= 1
-        [4] SP      SP=z0/r0 Structural parameter,
+        [4] SP      SP=z₀/r₀ Structural parameter,
                          describes elongation of the confocal volume
         [5] α       Relative molecular brightness of particle
                     3D compared to particle 2D (α = q3D/q2D)

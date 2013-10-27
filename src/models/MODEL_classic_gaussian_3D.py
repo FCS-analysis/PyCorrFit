@@ -6,7 +6,7 @@ import numpy as np                  # NumPy
 # 3D simple gauss
 def CF_Gxyz_gauss(parms, tau):
     # Model 6012
-    """ Three-dimanesional free diffusion with a Gaussian laser profile
+    u""" Three-dimanesional free diffusion with a Gaussian laser profile
         (eliptical).
 
         G(τ) = offset + 1/( n*(1+τ/τ_diff) * sqrt(1 + τ/(SP²*τ_diff)) )
@@ -25,8 +25,8 @@ def CF_Gxyz_gauss(parms, tau):
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal volume
         [1] τ_diff  Characteristic residence time in confocal volume
-        [2] SP      SP=z0/r0 Structural parameter,
-                    describes elongation of the confocal volume
+        [2] SP      SP=z₀/r₀ Structural parameter,
+                    describes the axis ratio of the confocal volume
         [3] offset
         *tau* - lag time
     """
@@ -43,16 +43,18 @@ def CF_Gxyz_gauss(parms, tau):
 # 3D blinking gauss
     # Model 6011
 def CF_Gxyz_blink(parms, tau):
-    """ Three-dimanesional free diffusion with a Gaussian laser profile
+    u""" Three-dimanesional free diffusion with a Gaussian laser profile
         (eliptical), including a triplet component.
-        Due to pH-reigned (de-)protonation (or other factors), blinking of 
-        fluorescent molecules can be observed.
-        (This is *CF_Gxyz_gauss* + blinking.
-        See *CF_Gxyz_gauss* for more information)
+        The triplet factor takes into account a blinking term.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         G(τ) = offset + 1/( n*(1+τ/τ_diff) * sqrt(1 + τ/(SP²*τ_diff)) )
                     * ( 1+T/(1.-T)*exp(-τ/τ_trip) )
+
+        Calculation of diffusion coefficient and concentration
+        from the effective radius of the detection profile (r₀ = 2*σ):
+        D = r₀²/(4*τ_diff)
+        Conc = n/( sqrt(π³)*r₀²*z₀ )
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
@@ -61,8 +63,8 @@ def CF_Gxyz_blink(parms, tau):
                     0 <= T < 1
         [2] τ_trip  Characteristic residence time in triplet state
         [3] τ_diff  Characteristic residence time in confocal volume
-        [4] SP      SP=z0/r0 Structural parameter,
-                    describes elongation of the confocal volume
+        [4] SP      SP=z₀/r₀ Structural parameter,
+                    describes the axis ratio of the confocal volume
         [5] offset
         *tau* - lag time
     """
@@ -107,8 +109,7 @@ def Check_6011(parms):
 def CF_Gxyz_gauss_3D3DT(parms, tau):
     u""" Two-component three-dimensional free diffusion
         with a Gaussian laser profile, including a triplet component.
-        The triplet factor takes into account blinking according to triplet
-        states of excited molecules.
+        The triplet factor takes into account a blinking term.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         particle1 = F₁/( (1+τ/τ₁) * sqrt(1+τ/(τ₁*SP²)))
@@ -125,7 +126,7 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
         [2] τ₂      Diffusion time of particle species 2
         [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
                     0 <= F₁ <= 1
-        [4] SP      SP=z0/r0, Structural parameter,
+        [4] SP      SP=z₀/r₀, Structural parameter,
                     describes elongation of the confocal volume
         [5] α       Relative molecular brightness of particle
                     2 compared to particle 1 (α = q₂/q₁)

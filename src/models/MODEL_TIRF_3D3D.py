@@ -23,7 +23,7 @@ def wixi(x):
 
 # 3D + 3D no binding TIRF
 def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
-    """ Two-component three-dimensional free diffusion
+    u""" Two-component three-dimensional free diffusion
         with a square-shaped lateral detection area taking into account
         the size of the point spread function; and an exponential
         decaying profile in axial direction.
@@ -32,14 +32,14 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
         Parameters (parms[i]):
         [0] D_3D1  3D Diffusion coefficient (species 1)
         [1] D_3D2  3D Diffusion coefficient of bound species 2
-        [2] sigma  Lateral size of the point spread function
-                   sigma = simga_0 * lambda / NA
+        [2] σ      Lateral size of the point spread function
+                   σ = σ₀ * λ / NA
         [3] a      Side size of the square-shaped detection area
         [4] d_eva  Evanescent penetration depth
         [5] C_3D1  Concentration of species 1
         [6] C_3D2  Concentration of species 2
-        [7] alpha  Relative molecular brightness of particle
-                   2 compared to 1 (alpha = q2/q1)
+        [7] α      Relative molecular brightness of particle
+                   2 compared to particle 1 (α = q₂/q₁)
         *tau* - lag time
     """
     D_3D1 = parms[0]
