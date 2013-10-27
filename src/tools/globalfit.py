@@ -295,4 +295,5 @@ check parameters on each page and start 'Global fit'.
             # The user might want to edit the knotnumbers.
             # self.FitKnots = Page.FitKnots   # 5 by default
 
-
+    def SetPageNumbers(self, pagestring):
+        self.WXTextPages.SetValue(pagestring)
