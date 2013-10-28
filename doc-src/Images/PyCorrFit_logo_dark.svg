@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="786.55231"
+   width="787.474"
    height="230.34308"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="PyCorrFit_logo_dark.svg"
    inkscape:export-filename="/home/paul/repos/PyCorrFit/doc-src/Images/PyCorrFit_logo_dark.png"
-   inkscape:export-xdpi="23.443293"
-   inkscape:export-ydpi="23.443293">
+   inkscape:export-xdpi="23.429344"
+   inkscape:export-ydpi="23.429344">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -29,7 +29,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="414.12721"
-     inkscape:cy="90.812104"
+     inkscape:cy="90.812106"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -61,7 +61,7 @@
      transform="translate(-79.58144,-210.26787)">
     <path
        sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:0.17210681999999999;stroke:#000000;stroke-width:6.37775277999999979;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510385;stroke-dasharray:none"
+       style="fill:#000000;fill-opacity:0.17210681;stroke:#000000;stroke-width:6.37775278;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.44510384;stroke-dasharray:none"
        id="path3820"
        sodipodi:cx="112.14286"
        sodipodi:cy="46.627132"
@@ -77,7 +77,7 @@
        sodipodi:nodetypes="csc" />
     <path
        sodipodi:type="arc"
-       style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985-3"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -87,7 +87,7 @@
        transform="matrix(0.5624713,0,0,0.68746496,129.9134,45.15562)" />
     <path
        sodipodi:type="arc"
-       style="fill:#c48d0a;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#c48d0a;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -97,7 +97,7 @@
        transform="matrix(0.5624713,0,0,0.68746496,47.268604,93.89513)" />
     <path
        sodipodi:type="arc"
-       style="fill:#303dc7;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#303dc7;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985-1"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -107,7 +107,7 @@
        transform="matrix(0.5624713,0,0,0.68746496,195.09091,-23.441194)" />
     <text
        xml:space="preserve"
-       style="font-size:99.34378815000000884px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:0.80473375;stroke:none;font-family:Sans"
+       style="font-size:99.34378815px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:0.80473376;stroke:none;font-family:Sans"
        x="337.98184"
        y="364.08014"
        id="text3793"
@@ -116,6 +116,6 @@
          id="tspan3795"
          x="337.98184"
          y="364.08014"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:0.80473375000000003;font-family:Courier New;-inkscape-font-specification:Courier New">PyCorrFit</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:0.80473376;font-family:Courier New;-inkscape-font-specification:Courier New">PyCorrFit</tspan></text>
   </g>
 </svg>

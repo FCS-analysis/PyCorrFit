@@ -9,7 +9,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="786.55231"
+   width="787.474"
    height="230.34308"
    id="svg2"
    version="1.1"
@@ -29,7 +29,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
      inkscape:cx="-44.858191"
-     inkscape:cy="46.809138"
+     inkscape:cy="46.809141"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -77,7 +77,7 @@
        sodipodi:nodetypes="csc" />
     <path
        sodipodi:type="arc"
-       style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985-3"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -87,7 +87,7 @@
        transform="matrix(0.5624713,0,0,0.68746496,129.9134,45.15562)" />
     <path
        sodipodi:type="arc"
-       style="fill:#c48d0a;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#c48d0a;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -97,7 +97,7 @@
        transform="matrix(0.5624713,0,0,0.68746496,47.268604,93.89513)" />
     <path
        sodipodi:type="arc"
-       style="fill:#303dc7;fill-opacity:1;stroke:#008000;stroke-width:11.25699711000000036;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#303dc7;fill-opacity:1;stroke:#008000;stroke-width:11.25699711;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path2985-1"
        sodipodi:cx="161.6244"
        sodipodi:cy="424.0473"
@@ -116,6 +116,6 @@
          id="tspan3795"
          x="337.98184"
          y="364.08014"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:0.80473375999999996;font-family:Courier New;-inkscape-font-specification:Courier New">PyCorrFit</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:0.80473376;font-family:Courier New;-inkscape-font-specification:Courier New">PyCorrFit</tspan></text>
   </g>
 </svg>
