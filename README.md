@@ -1,14 +1,15 @@
 ![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/doc-src/Images/PyCorrFit_logo_dark.png)
 =========
 
-In current research, fluorescence correlation spectrsocopy (FCS) is  applied to
-characterize dynamical processes in vitro and in vivo.  Commercial FCS setups only
+In current biomedical research, fluorescence correlation spectroscopy (FCS) is  applied to
+characterize molecular dynamic processes in vitro and in living cells.  Commercial FCS setups only
 permit data analysis that is limited to  a specific instrument by the use of in-house
 file formats or a  finite number of implemented correlation model functions.
 PyCorrFit is a general-purpose FCS evaluation software that,  amongst other formats,
-supports the established ConfoCor3 ~.fcs  file format and which comes with several
-built-in model functions,  covering a wide range of applications including multiple
-diffusional  species or total internal reflection (TIR-) FCS. For more information, visit the official homepage at http://pycorrfit.craban.de.
+supports the established Zeiss ConfoCor3 ~.fcs  file format. PyCorrFit comes with several
+built-in model functions, covering a wide range of applications in standard confocal FCS.
+In addition, it contains equations dealing with different excitation geometries like
+total internal reflection (TIR). For more information, visit the official homepage at http://pycorrfit.craban.de.
 
 
 - [Download the latest version](https://github.com/paulmueller/PyCorrFit/releases)  
