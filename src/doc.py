@@ -264,10 +264,6 @@ from a blank measurement or set manually."""
 #a factor of [<S>/(<S>-<B>)]² where <S> is the average
 #trace signal of the measurement"""
 
-# Channel selection tools text for  fixing channels
-channelsel = """Channel settings will affect all subsequent panels
-as long as this window stays open."""
-
 # For the selection of types to import when doing import Data
 chooseimport = """Several types of data were found in
 the chosen file. Please select
