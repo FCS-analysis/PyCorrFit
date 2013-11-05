@@ -67,16 +67,19 @@ class SelectChannels(wx.Frame):
         # Buttons
         btnapply = wx.Button(panel, wx.ID_ANY, 'Apply')
         btnapplyall = wx.Button(panel, wx.ID_ANY, 'Apply to all pages')
+        self.ButtonApply = btnapply
+        self.ButtonApplyAll = btnapplyall
         self.Bind(wx.EVT_BUTTON, self.OnApply, btnapply)
         self.Bind(wx.EVT_BUTTON, self.OnApplyAll, btnapplyall)
         self.Bind(wx.EVT_SPINCTRL, self.OnChangeChannels, self.spinend)
         self.Bind(wx.EVT_SPINCTRL, self.OnChangeChannels, self.spinstart)
         # Checkbox
         self.fixcheck = wx.CheckBox(panel, -1,
-             label="Fix channel selection for all (new) pages.")
+             label="Fix current channel selection for all pages.")
         self.Bind(wx.EVT_CHECKBOX, self.OnCheckbox, self.fixcheck)
         # Text
-        text3 = wx.StaticText(panel, label=doc.channelsel)
+        channelsel = "Leave this window open for a fixed selection."
+        text3 = wx.StaticText(panel, label=channelsel)
         # Sizer
         topSizer = wx.BoxSizer(wx.VERTICAL)
         buttonsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -141,7 +144,7 @@ class SelectChannels(wx.Frame):
 
     def OnApply(self, event=None):
         self.SetValues()
-        self.Page.PlotAll()
+        self.Page.PlotAll(event="init")
 
 
     def OnApplyAll(self, event=None):
@@ -196,15 +199,22 @@ class SelectChannels(wx.Frame):
         t2 = 1.*self.Page.taufull[end]
         self.TextTimesStart.SetLabel("%.4e" % t1)
         self.TextTimesEnd.SetLabel("%.4e" % t2)
+        self.OnCheckbox()
 
 
     def OnCheckbox(self, event=None):
         """ Set the correct value in the spincontrol, if the checkbox
             is not checked.
         """
-        #state = self.fixcheck.GetValue()
-        #if state == False:
-        self.OnPageChanged(self.Page)
+        state = self.fixcheck.GetValue()
+        if state == True:
+            self.OnApplyAll()
+            self.ButtonApply.Disable()
+            self.ButtonApplyAll.Disable()
+        else:
+            self.ButtonApply.Enable()
+            self.ButtonApplyAll.Enable()
+        #self.OnPageChanged(self.Page)
             
 
     def OnClose(self, event=None):
@@ -228,6 +238,8 @@ class SelectChannels(wx.Frame):
             if state == True:
                 # We do not need to run Calc_init
                 self.Page = page
+                self.SetValues()
+                self.Page.PlotAll(event="init")
             else:
                 # We will run it
                 self.Calc_init(page)
@@ -236,7 +248,7 @@ class SelectChannels(wx.Frame):
                 self.spinend.SetRange(self.start0+1, self.end0)
                 self.spinend.SetValue(self.right)
                 self.textend.SetLabel("%d." % self.lentau)
-            self.OnChangeChannels(),
+                self.OnChangeChannels()
 
 
 
