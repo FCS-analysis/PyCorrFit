@@ -82,7 +82,7 @@ def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
 
 
 # 3D-2D Model TIR
-m_tir_3d_2d_mix_6020 = [6020, u"3D+2D (□xσ/exp)",
+m_tir_3d_2d_mix_6020 = [6020, u"3D+2D",
                         "Separate 3D and 2D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d2d]
 labels_6020 = [u"D_3D [10 µm²/s]",

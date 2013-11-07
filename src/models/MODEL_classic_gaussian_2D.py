@@ -206,7 +206,7 @@ def MoreInfo_6031(parms, countrate):
 
 
 # 2D Model Gauss
-m_twodga6001 = [6001, u"2D (Gauß)", u"2D confocal diffusion", CF_Gxy_gauss]
+m_twodga6001 = [6001, u"2D", u"2D confocal diffusion", CF_Gxy_gauss]
 labels_6001 = ["n", u"τ_diff [ms]", "offset"]
 values_6001 = [4.0, 0.4, 0.0]
 valuestofit_6001 = [True, True, False]
@@ -214,7 +214,7 @@ parms_6001 = [labels_6001, values_6001, valuestofit_6001]
 
 
 # 2D Model Gauss with Triplet
-m_twodga6002 = [6002, u"2D+T (Gauß)", u"2D confocal diffusion with triplet", 
+m_twodga6002 = [6002, u"T+2D", u"2D confocal diffusion with triplet", 
                 CF_Gxy_T_gauss]
 labels_6002 = ["n", u"τ_diff [ms]",  u"τ_trip [ms]", u"T", u"offset"]
 values_6002 = [4.0, 0.4, 0.001, 0.01, 0.0]
@@ -226,7 +226,7 @@ parms_6002 = [labels_6002, values_6002, valuestofit_6002,
 
 
 # 2D + 2D + T model gauss
-m_gauss_2d_2d_t_mix_6031 = [6031, u"2D+2D+T (Gauß)",
+m_gauss_2d_2d_t_mix_6031 = [6031, u"T+2D+2D",
                             u"Separate 2D diffusion + triplet, Gauß",
                             CF_Gxyz_gauss_2D2DT]
 labels_6031  = ["n",

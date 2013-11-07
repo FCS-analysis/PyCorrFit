@@ -266,18 +266,18 @@ class MyFrame(wx.Frame):
         helpmenu = wx.Menu()
         # wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         # self.filemenu
-        menuLoadBatch = self.filemenu.Append(wx.ID_ANY, 
-                         "&Load data files", "Loads one or multiple data files")
         menuAddModel = self.filemenu.Append(wx.ID_ANY, 
-                          "&Import model function", "Add a user defined model.")
+                          "&Import model", "Add a user defined model.")
+        menuLoadBatch = self.filemenu.Append(wx.ID_ANY, 
+                         "&Load data", "Loads one or multiple data files")
+        menuOpen = self.filemenu.Append(wx.ID_OPEN, "&Open session", 
+                                           "Restore a previously saved session")
         self.filemenu.AppendSeparator()
         self.menuComm = self.filemenu.Append(wx.ID_ANY, "Co&mment session", 
                            "Add a comment to this session", kind=wx.ITEM_CHECK)
         self.filemenu.Check(self.menuComm.GetId(), False)
         menuClear = self.filemenu.Append(wx.ID_ANY, "&Clear session", 
                           "Remove all pages but keep imported model functions.")
-        menuOpen = self.filemenu.Append(wx.ID_OPEN, "&Open session", 
-                                           "Restore a previously saved session")
         menuSave = self.filemenu.Append(wx.ID_SAVE, "&Save session", 
                                    "Save entire Session")
         self.filemenu.AppendSeparator()

@@ -35,7 +35,7 @@ class ChooseImportTypes(wx.Dialog):
         # init
         #super(ChooseImportTypes, self).__init__(parent=parent, 
         #    title="Choose types", size=(250, 200))
-        wx.Dialog.__init__(self, parent, -1, "Choose types")
+        wx.Dialog.__init__(self, parent, -1, "Choose models")
         self.keys = list()
          ## Content
         self.panel = wx.Panel(self)
@@ -95,7 +95,7 @@ class ChooseImportTypesModel(wx.Dialog):
         # init
         #super(ChooseImportTypesModel, self).__init__(parent=parent, 
         #    title="Choose types", size=(250, 200))
-        wx.Dialog.__init__(self, parent, -1, "Choose Types")
+        wx.Dialog.__init__(self, parent, -1, "Choose models")
         self.curvedict = curvedict
         self.kept_curvedict = curvedict.copy() # Can be edited by user
         self.correlations = correlations
@@ -108,7 +108,8 @@ class ChooseImportTypesModel(wx.Dialog):
         self.panel = wx.Panel(self)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.boxes = dict()
-        textinit = wx.StaticText(self.panel, label=doc.chooseimportmulti)
+        labelim = "Select a fitting model for each correlation channel (AC,CC)."
+        textinit = wx.StaticText(self.panel, label=labelim)
         self.sizer.Add(textinit)
         curvekeys = curvedict.keys()
         curvekeys.sort()

@@ -331,7 +331,7 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
 
 
 # 3D-2D binding Model TIR
-m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin (□xσ/exp)",
+m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin",
                         "Surface binding and unbinding, 3D TIR",
                         CF_Gxyz_TIR_square_ubibi]
 labels_6021 = [u"D_3D [10 µm²/s]",
