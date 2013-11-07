@@ -325,8 +325,13 @@ AppendNewModel(MODEL_TIRF_3D2Dkin_Ries.Modelarray)
 # Create a list for the differentiation between the models
 # This should make everything look a little cleaner
 modeltypes = dict()
-modeltypes[u"Classic (Gauß)"] = [6001, 6002, 6012, 6011, 6031, 6032, 6030]
-modeltypes[u"TIR-FCS (Gauß/exp)"] = [6013, 6033, 6034]
-modeltypes[u"TIR-FCS (□xσ/exp)"] = [6000, 6010, 6022, 6020, 6023, 6021]
+#modeltypes[u"Confocal (Gaussian)"] = [6001, 6002, 6012, 6011, 6031, 6032, 6030]
+#modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6033, 6034]
+#modeltypes[u"TIR (□xσ/Exp.)"] = [6000, 6010, 6022, 6020, 6023, 6021]
+
+modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032]
+modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6034, 6033]
+modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
+
 modeltypes["User"] = list()
 

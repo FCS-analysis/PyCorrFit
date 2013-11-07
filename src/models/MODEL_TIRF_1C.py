@@ -192,7 +192,7 @@ def MoreInfo_6010(parms, countrate):
 
 
 # 2D Model Square
-m_twodsq6000 = [6000, u"2D (□xσ)", u"2D diffusion w/ square pinhole",
+m_twodsq6000 = [6000, u"2D", u"2D diffusion w/ square pinhole",
                 CF_Gxy_TIR_square]
 labels_6000 = [u"D [10 µm²/s]", u"σ [100 nm]", "a [100 nm]", u"C_2D [100 /µm²]"]
 values_6000 = [0.054, 2.3, 7.5, .6] # [D,lamb,NA,a,conc]
@@ -206,7 +206,7 @@ parms_6000 = [labels_6000, values_6000, valuestofit_6000,
               labels_human_readable_6000, values_factor_human_readable_6000]
 
 # 3D Model TIR square
-m_3dtirsq6010 = [6010, u"3D (□xσ/exp)", "Simple 3D diffusion w/ TIR",
+m_3dtirsq6010 = [6010, u"3D", "Simple 3D diffusion w/ TIR",
                  CF_Gxyz_TIR_square]
 labels_6010 = [u"D [10 µm²/s]", u"σ [100 nm]","a [100 nm]", "d_eva [100 nm]",
                u"C_3D [1000 /µm³]"]

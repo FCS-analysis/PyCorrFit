@@ -270,8 +270,7 @@ the chosen file. Please select
 what type(s) you would like to
 import. """
 
-chooseimportmulti = """Select a fitting model for each type of data found.
-"""
+
 
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"

@@ -77,7 +77,7 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
 
 
 # 2D-2D Model TIR
-m_tir_2d_2d_mix_6022 = [6022, u"2D+2D (□xσ)","Separate 2D diffusion, TIR", 
+m_tir_2d_2d_mix_6022 = [6022, u"2D+2D","Separate 2D diffusion, TIR", 
                         CF_Gxy_TIR_square_2d2d]
 labels_6022 = [ "D"+u"\u2081"+u" [10 µm²/s]",
                 "D"+u"\u2082"+u" [10 µm²/s]",
