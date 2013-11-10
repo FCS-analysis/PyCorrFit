@@ -205,6 +205,18 @@ def GetMoreInfo(modelid, Page):
         ## The order is important for plot normalization and session
         ## saving as of version 0.7.8
         # Try to get the dictionary entry of a model
+        # Background information
+        if Page.bgselected is not None:
+            # Background list consists of items with
+            #  [0] average
+            #  [1] name
+            #  [2] trace
+            bgaverage = Page.parent.Background[Page.bgselected][0]
+            # Now set the correct countrate
+            # We already printed the countrate, so there's no harm done.
+            if countrate is not None:
+                # might be that there is no countrate.
+                countrate = countrate - bgaverage
         try:
             # This function should return all important information
             # that can be calculated from the given parameters.
@@ -224,18 +236,6 @@ def GetMoreInfo(modelid, Page):
             # countrate has to be printed before background.
             # Background might overwrite countrate.
             Info.append(["avg. signal [kHz]", Page.traceavg])
-        # Background information
-        if Page.bgselected is not None:
-            # Background list consists of items with
-            #  [0] average
-            #  [1] name
-            #  [2] trace
-            bgaverage = Page.parent.Background[Page.bgselected][0]
-            # Now set the correct countrate
-            # We already printed the countrate, so there's no harm done.
-            if countrate is not None:
-                # might be that there is no countrate.
-                countrate = countrate - bgaverage
     else:
         ## Cross correlation curves usually have two traces. Since we
         ## do not know how to compute the cpp, we will pass the argument
