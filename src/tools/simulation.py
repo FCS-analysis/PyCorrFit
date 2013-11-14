@@ -48,9 +48,10 @@ class Slide(wx.Frame):
         self.Page = self.parent.notebook.GetCurrentPage()
         ## Content
         self.panel = wx.Panel(self)
-        self.rbtnB = wx.RadioButton (self.panel, -1, 'Fix parameter B', 
+        self.rbtnB = wx.RadioButton (self.panel, -1, 'Vary A and B', 
                                         style = wx.RB_GROUP)
-        self.rbtnOp = wx.RadioButton (self.panel, -1, 'Fix operation result')
+        self.rbtnOp = wx.RadioButton (self.panel, -1, 'Fix relation')
+        self.btnreset = wx.Button(self.panel, wx.ID_ANY, 'Reset')
         # Set starting variables
         self.SetStart()
         # Populate panel
@@ -78,7 +79,7 @@ class Slide(wx.Frame):
         dropsizer.Add(self.dropop)
         dropsizer.Add(self.droppB)
         textfix = wx.StaticText(self.panel,
-                                label="\nSelect intervals and slide.\n")
+                                label="\nEdit intervals and drag the slider.\n")
         # Parameter A
         slidesizer = wx.FlexGridSizer(rows=3, cols=5, vgap=5, hgap=5)
         self.textstartA = wx.StaticText(self.panel, label=self.labelA)
@@ -133,6 +134,7 @@ class Slide(wx.Frame):
         # Bindings for radiobuttons
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, self.rbtnB)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadio, self.rbtnOp)
+        self.Bind(wx.EVT_BUTTON, self.OnReset, self.btnreset)
         # Bindings for spin controls
         # Our self-made spin controls alread have wx_EVT_SPINCTRL bound to
         # the increment function. We will call that function manually here.
@@ -155,13 +157,14 @@ class Slide(wx.Frame):
         self.topSizer.Add(dropsizer)
         self.topSizer.Add(self.rbtnB)
         self.topSizer.Add(self.rbtnOp)
+        self.topSizer.Add(self.btnreset)
         self.topSizer.Add(textfix)
         self.topSizer.Add(slidesizer)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         #self.SetMinSize(self.topSizer.GetMinSizeTuple())
         self.OnRadio()
-        self.OnPageChanged(self.Page)
+        self.OnPageChanged(self.Page, init=True)
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -234,7 +237,10 @@ class Slide(wx.Frame):
         self.OnSize()
 
 
-    def OnPageChanged(self, page=None):
+    def OnPageChanged(self, page=None, init=False):
+        #if init:
+        #    # Get the parameters of the current page.
+        #    self.SavedParms = self.parent.PackParameters(self.Page)
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
@@ -242,7 +248,6 @@ class Slide(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
-        self.panel.Enable()
         try:
             # wx._core.PyDeadObjectError: The C++ part of the FittingPanel
             # object has been deleted, attribute access no longer allowed.
@@ -262,6 +267,7 @@ class Slide(wx.Frame):
                 self.Ondrop()
         else:
             self.Page = page
+        self.panel.Enable()
 
 
     def OnRadio(self, event=None):
@@ -283,6 +289,13 @@ class Slide(wx.Frame):
             self.endspinB.Enable(False)
         self.Ondrop()
 
+
+    def OnReset(self, e=None):
+        self.parent.UnpackParameters(self.SavedParms, self.Page)
+        self.Page.apply_parameters_reverse()
+        #self.OnPageChanged(self.Page)
+        self.SetStart()
+        self.Ondrop()
 
     def OnSize(self, event=None):
         # We need this funciton, because contents of the flexgridsizer
@@ -348,6 +361,7 @@ class Slide(wx.Frame):
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
+        self.SavedParms = self.parent.PackParameters(self.Page)
         if self.parent.notebook.GetPageCount() == 0:
             self.modelid = 6000
             ParmLabels, ParmValues = \

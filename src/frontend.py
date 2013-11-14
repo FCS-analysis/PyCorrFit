@@ -1392,7 +1392,6 @@ class MyFrame(wx.Frame):
         # use sigma instead of lambda, NA and sigma_0. This
         # is for backwards compatibility:
         changeTIRF = False
-        
         if modelid in [6000, 6010]:
             if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
                 lindex = 1
@@ -1475,7 +1474,6 @@ class MyFrame(wx.Frame):
         ##       nextvalue = Parms[10]
         ## Such that we are compatible to earlier versions of 
         ## PyCorrFit sessions.
-
         
 
 
