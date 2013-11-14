@@ -184,6 +184,27 @@ def GetInternalFromHumanReadableParm(model, parameters):
         return stdparms[0], parameters
         
 
+def GetModelType(modelid):
+    """ Given a modelid, get the type of model function
+        (Confocal, TIR-Conf., TIR-□, User)
+    """
+    if modelid >= 7000:
+        return u"User"
+    else:
+        shorttype = dict()
+        shorttype[u"Confocal (Gaussian)"] = u"Confocal"
+        shorttype[u"TIR (Gaussian/Exp.)"] = u"TIR Conf."
+        shorttype[u"TIR (□xσ/Exp.)"] = u"TIR □xσ"
+        for key in modeltypes.keys():
+            mlist = modeltypes[key]
+            if mlist.count(modelid) == 1:
+                return shorttype[key]
+                try:
+                    return shorttype[key]
+                except:
+                    return ""
+
+
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated
         some stuff or wants to know more about the model he is looking at.
@@ -332,6 +353,5 @@ modeltypes = dict()
 modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032]
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
-
-modeltypes["User"] = list()
+modeltypes[u"User"] = list()
 
