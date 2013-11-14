@@ -881,16 +881,21 @@ class FittingPanel(wx.Panel):
             of the window.
             Parameters:
         """
+        horizontalsize = self.sizepanelx-10
         # Title
         # Create empty tab title
-        boxti = wx.StaticBox(self.panelsettings, label="filename/title")
+        mddat = mdls.modeldict[self.modelid]
+        modelshort = mdls.GetModelType(self.modelid)
+        titlelabel = "Data set ({} {})".format(modelshort, mddat[1])
+        boxti = wx.StaticBox(self.panelsettings, label=titlelabel)
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
+        sizerti.SetMinSize((horizontalsize, -1))
         self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
-                                    size=(self.sizepanelx-40, -1))
+                                    size=(horizontalsize-20, -1))
         self.Bind(wx.EVT_TEXT, self.OnTitleChanged, self.tabtitle)
         sizerti.Add(self.tabtitle)                       
         # Create StaticBoxSizer
-        box1, check, spin = self.MakeStaticBoxSizer("Fit parameters")
+        box1, check, spin = self.MakeStaticBoxSizer("Model parameters")
         # Make the check boxes and spin-controls available everywhere
         self.checkboxes = check
         self.spincontrol = spin
@@ -911,13 +916,21 @@ class FittingPanel(wx.Panel):
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(sizerti)
         self.panelsettings.sizer.Add(box1)
-        # Add button "Apply" and "Set Range"
+        # Add button "Apply" and "Set range"
+        horzs = wx.BoxSizer(wx.HORIZONTAL)
         buttonapply = wx.Button(self.panelsettings, label="Apply")
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)
-        box1.Add(buttonapply)
+        horzs.Add(buttonapply)
+        buttonrange = wx.Button(self.panelsettings, label="Set range")
+        self.Bind(wx.EVT_BUTTON, self.OnSetRange, buttonrange)
+        horzs.Add(buttonrange)
+        box1.Add(horzs)
+        # Set horizontal size
+        box1.SetMinSize((horizontalsize, -1))
         ## More info
-        normbox = wx.StaticBox(self.panelsettings, label="Amplitude parameters")
+        normbox = wx.StaticBox(self.panelsettings, label="Amplitude corrections")
         miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
+        miscsizer.SetMinSize((horizontalsize, -1))
         # Type of normalization
         bgtex = wx.StaticText(self.panelsettings, label="Background correction")
         miscsizer.Add(bgtex)
@@ -925,7 +938,7 @@ class FittingPanel(wx.Panel):
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, bgnorm)
         miscsizer.Add(bgnorm)
         ## Normalize to n?
-        textnor = wx.StaticText(self.panelsettings, label="Normalize graph to:")
+        textnor = wx.StaticText(self.panelsettings, label="Plot normalization")
         miscsizer.Add(textnor)
         normtoNDropdown = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
@@ -933,8 +946,9 @@ class FittingPanel(wx.Panel):
         self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
         self.panelsettings.sizer.Add(miscsizer)
         ## Add fitting Box
-        fitbox = wx.StaticBox(self.panelsettings, label="Data fitting")
+        fitbox = wx.StaticBox(self.panelsettings, label="Fitting options")
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)
+        fitsizer.SetMinSize((horizontalsize, -1))
         # Add a checkbox for weighted fitting
         weightedfitdrop = wx.ComboBox(self.panelsettings)
         self.weightlist = ["No weights", "Spline (5 knots)", "Model function"]
@@ -950,10 +964,10 @@ class FittingPanel(wx.Panel):
         # and right of the interesting data point we want to include in that
         # calculation.
         fittext = wx.StaticText(self.panelsettings, 
-                                label="Calculation of Variance.")
+                                label="Calculation of the variance")
         fitsizer.Add(fittext)
         fittext2 = wx.StaticText(self.panelsettings, 
-                                 label="Include j points from left and right,")
+                                 label="from 2j+1 data points")
         fitsizer.Add(fittext2)
         fitsizerspin = wx.BoxSizer(wx.HORIZONTAL)
         fittextvar = wx.StaticText(self.panelsettings, label="j = ")
@@ -961,16 +975,10 @@ class FittingPanel(wx.Panel):
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
-        # Add button "Fit" and "Set Range"
-        horzs = wx.BoxSizer(wx.HORIZONTAL)
+        # Add button "Fit"
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
-        horzs.Add(buttonfit)
-        buttonrange = wx.Button(self.panelsettings, label="Set Range")
-        self.Bind(wx.EVT_BUTTON, self.OnSetRange, buttonrange)
-        horzs.Add(buttonrange)
-        fitsizer.Add(horzs)
-        
+        fitsizer.Add(buttonfit)
         
         self.panelsettings.sizer.Add(fitsizer)
         # Squeeze everything into the sizer
