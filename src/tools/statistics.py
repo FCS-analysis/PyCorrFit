@@ -99,8 +99,9 @@ class Stat(wx.Frame):
         ## Plot parameter dropdown box
         self.PlotParms = self.GetListOfPlottableParms()
         Parmlist = list()
-        for item in self.PlotParms:
-            Parmlist.append(item[0])
+        #for item in self.PlotParms:
+        #    Parmlist.append(item[0])
+        Parmlist = self.PlotParms
         DDtext = wx.StaticText(self.panel, 
                              label="Plot parameter ")
         DDsize = text.GetSize()[0] - DDtext.GetSize()[0]
@@ -147,31 +148,119 @@ class Stat(wx.Frame):
         self.OnDropDown()
 
 
-    def GetListOfPlottableParms(self, e=None):
+    def GetListOfAllParameters(self, e=None, return_std_checked=False):
+        """ Returns sorted list of parameters.
+            If return_std_checked is True, then a second list with
+            standart checked parameters is returned.
         """
-            Walk through the parameters and check which of them contains
-            "numbers" that we could plot. Returns a list of parameters.
+        self.InfoClass.CurPage = self.Page
+        # Now that we know our Page, we may change the available
+        # parameter options.
+        Infodict = self.InfoClass.GetCurInfo()
+        # We want to sort the information and have some prechecked values
+        # in the statistics window afterwards.
+        # new iteration
+        keys = Infodict.keys()
+        head = list()
+        body = list()
+        tail = list()
+
+        for key in keys:
+            # "title" - filename/title first
+            if key == "title":
+                for item in Infodict[key]:
+                    if len(item) == 2:
+                        if item[0] == "filename/title":
+                            headtitle = [item]
+                        else:
+                            tail.append(item)
+            # "title" - filename/title first
+            elif key == "parameters":
+                headparm = list()
+                bodyparm = list()
+                for parm in Infodict[key]:
+                    parminlist = False
+                    try:
+                        for fitp in Infodict["fitting"]:
+                            parmname = parm[0]
+                            errname = "Err "+parmname
+                            if fitp[0] == errname:
+                                headparm.append(parm)
+                                parminlist = True
+                                headparm.append(fitp)
+                    except:
+                        # Maybe there was not fit...
+                        pass
+                    if parminlist == False:
+                        bodyparm.append(parm)
+            elif key == "fitting":
+                for fitp in Infodict[key]:
+                    # We added the error data before in the parameter section
+                    if str(fitp[0])[0:4] != "Err ":
+                        tail.append(fitp)
+            elif key == "supplement":
+                body += Infodict[key]
+            # Append all other items
+            elif key == "background":
+                body += Infodict[key]
+            else:
+                for item in Infodict[key]:
+                    if item is not None and len(item) == 2:
+                        tail.append(item)
+        # Bring lists together
+        head = headtitle + headparm
+        body = bodyparm + body
+        
+        Info = head + body + tail
+
+        # List of default checked parameters:
+        checked = np.zeros(len(Info), dtype=np.bool)
+        checked[:len(head)] = True
+        # A list with additional strings that should be default checked if found
+        # somewhere in the data.
+        checklist = ["cpp", "duration", "bg rate"]
+        for i in range(len(Info)):
+            item = Info[i]
+            for checkitem in checklist:
+                if item[0].count(checkitem):
+                    checked[i] = True
+
+        if return_std_checked:
+            return Info, checked
+        else:
+            return Info
+
+        
+    def GetListOfPlottableParms(self, e=None, return_values=False):
+        """ Returns sorted list of parameters that can be plotted.
+            (This means that the values are convertable to floats)
+            If return_values is True, then a second list with
+            the corresponding values is returned.
         """
         if self.parent.notebook.GetPageCount() != 0:
-            Info = self.InfoClass.GetPageInfo(self.Page)
-            keys = Info.keys()
-            keys.sort()
+            #Info = self.InfoClass.GetPageInfo(self.Page)
+            Info = self.GetListOfAllParameters()
+            #keys = Info.keys()
+            #keys.sort()
             parmlist = list()
-            for key in keys:
-                alllist = Info[key]
-                for item in alllist:
-                    if item is not None and len(item) == 2:
-                        try:
-                            val = float(item[1])
-                        except:
-                            pass
-                        else:
-                            # save the key so we can find the parameter later
-                            parmlist.append([item[0], key])
+            parmvals = list()
+            for item in Info:
+                if item is not None and len(item) == 2:
+                    try:
+                        val = float(item[1])
+                    except:
+                        pass
+                    else:
+                        # save the key so we can find the parameter later
+                        parmlist.append(item[0])
+                        parmvals.append(val)
         else:
-            parmlist = [["<No Pages>", "None"]]
-        parmlist.sort()
-        return parmlist
+            parmlist = ["<No Pages>"]
+            parmvals = [0]
+        if return_values:
+            return parmlist, parmvals
+        else:
+            return parmlist
 
 
     def GetWantedParameters(self):
@@ -253,68 +342,13 @@ class Stat(wx.Frame):
 
 
     def OnChooseValues(self, event=None):
-        self.InfoClass.CurPage = self.Page
-        # Now that we know our Page, we may change the available
-        # parameter options.
-        Infodict = self.InfoClass.GetCurInfo()
-        # We want to sort the information and have some prechecked values
-        # in the statistics window afterwards.
-        # new iteration
-        keys = Infodict.keys()
-        head = list()
-        body = list()
-        tail = list()
-        # A list with additional strings that should be default checked if found
-        # somewhere in the data.
-        checklist = ["cpp", "duration", "bg rate"]
-        for key in keys:
-            # "title" - filename/title first
-            if key == "title":
-                for item in Infodict[key]:
-                    if len(item) == 2:
-                        if item[0] == "filename/title":
-                            headtitle = [item]
-                        else:
-                            tail.append(item)
-            # "title" - filename/title first
-            elif key == "parameters":
-                headparm = list()
-                bodyparm = list()
-                for parm in Infodict[key]:
-                    parminlist = False
-                    try:
-                        for fitp in Infodict["fitting"]:
-                            parmname = parm[0]
-                            errname = "Err "+parmname
-                            if fitp[0] == errname:
-                                headparm.append(parm)
-                                parminlist = True
-                                headparm.append(fitp)
-                    except:
-                        # Maybe there was not fit...
-                        pass
-                    if parminlist == False:
-                        bodyparm.append(parm)
-            elif key == "fitting":
-                for fitp in Infodict[key]:
-                    # We added the error data before in the parameter section
-                    if str(fitp[0])[0:4] != "Err ":
-                        tail.append(fitp)
-            elif key == "supplement":
-                body += Infodict[key]
-            # Append all other items
-            elif key == "background":
-                body += Infodict[key]
-            else:
-                for item in Infodict[key]:
-                    if item is not None and len(item) == 2:
-                        tail.append(item)
-        # Bring lists together
-        head = headtitle + headparm
-        body = bodyparm + body
-        Info = head + body + tail
-        headcounter = 0
-        headlen = len(head)
+
+                    
+        Info, checked = self.GetListOfAllParameters(return_std_checked=True)
+
+        
+        #headcounter = 0
+        #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
         # are more than *maxitemsincolumn*
         maxitemsincolumn = np.float(25)
@@ -323,27 +357,29 @@ class Stat(wx.Frame):
         for i in np.arange(Sizernumber):
             self.boxsizerlist.append(wx.BoxSizer(wx.VERTICAL))
         # Start at -1 so the indexes will start at 0 (see below).
-        itemcount = -1
-        for item in Info:
-            itemcount += 1
-            headcounter += 1
-            checkbox = wx.CheckBox(self.panel, label=item[0])
-            if headcounter <= headlen:
-                checkbox.SetValue(True)
+        #itemcount = -1
+        for i in range(len(Info)):
+            #itemcount += 1
+            #headcounter += 1
+            checkbox = wx.CheckBox(self.panel, label=Info[i][0])
+            #if headcounter <= headlen:
+            #    checkbox.SetValue(True)
             # Additionally default checked items
-            for checkitem in checklist:
-                if item[0].count(checkitem):
-                    checkbox.SetValue(True)
+            #for checkitem in checklist:
+            #    if item[0].count(checkitem):
+            #        checkbox.SetValue(True)
+            checkbox.SetValue(checked[i])
             # Add checkbox to column sizers
-            sizern = int(np.floor(itemcount/maxitemsincolumn))
+            sizern = int(np.floor(i/maxitemsincolumn))
             self.boxsizerlist[sizern].Add(checkbox)
             self.Checkboxes.append(checkbox)
-            self.Checklabels.append(item[0])
+            self.Checklabels.append(Info[i][0])
             self.Bind(wx.EVT_CHECKBOX, self.OnCheckboxChecked, checkbox)
         # Add sizers to boxsizer
         for sizer in self.boxsizerlist:
             self.boxsizer.Add(sizer)
         self.OnCheckboxChecked("restore")
+        self.AllPlotParms = Info
 
 
     def OnClose(self, event=None):
@@ -372,7 +408,8 @@ class Stat(wx.Frame):
         
         # Get plot parameters
         DDselid = self.WXDropdown.GetSelection()
-        [label, key] = self.PlotParms[DDselid]
+        #[label, key] = self.PlotParms[DDselid]
+        label = self.PlotParms[DDselid]
         # Get potential pages
         pages = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -384,19 +421,22 @@ class Stat(wx.Frame):
                     pages.append(Page)
         plotcurve = list()
         InfoCl = InfoClass()
+        oldpage = self.Page
         for page in pages:
-            data = InfoCl.GetPageInfo(page)
-            # Check if Page has parameter
-            for k in data.keys():
-                if k == key:
-                    for item in data[key]:
-                        try:
-                            if item[0] == label:
-                                x = int(page.counter.strip("#: "))
-                                y = item[1]
-                                plotcurve.append([x,y])
-                        except:
-                            pass
+            self.Page = page
+            pllabel, pldata = self.GetListOfPlottableParms(return_values=True)
+            # Get the labels and make a plot of the parameters
+            if pllabel[DDselid] == label:
+                x = int(page.counter.strip("#: "))
+                y = pldata[DDselid]
+                plotcurve.append([x,y])
+            else:
+                # try to get the label by searching for the first instance
+                for k in range(len(pllabel)):
+                    if pllabel[k] == label:
+                        x = int(page.counter.strip("#: "))
+                        y = pldata[k]
+                        plotcurve.append([x,y])
         # Prepare plotting
         self.canvas.Clear()
         linesig = plot.PolyMarker(plotcurve, size=1.5, fillstyle=wx.TRANSPARENT,
@@ -444,13 +484,15 @@ class Stat(wx.Frame):
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)
         self.PlotParms = self.GetListOfPlottableParms()
-        Parmlist = list()
+        #Parmlist = list()
         # Make sure the selection stays the same
         DDselid = 0
         for i in range(len(self.PlotParms)):
-            Parmlist.append(self.PlotParms[i][0])
-            if DDselection == self.PlotParms[i][0]:
+            #Parmlist.append(self.PlotParms[i][0])
+            #if DDselection == self.PlotParms[i][0]:
+            if DDselection == self.PlotParms[i]:
                 DDselid = i
+        Parmlist = self.PlotParms
         self.WXDropdown.SetItems(Parmlist)
         self.WXDropdown.SetSelection(DDselid)
         # Disable if there are no pages left
