@@ -30,10 +30,10 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-import channels
+import datarange
 import background
-import selectcurves
-import batch
+import overlaycurves
+import batchcontrol
 import globalfit
 import average
 import simulation
@@ -44,19 +44,19 @@ import trace
 # Load all of the classes
 # This also defines the order of the tools in the menu
 ImpA = [ 
-        ["channels", "SelectChannels"],
-        ["background", "BackgroundCorrection"],
-        ["selectcurves", "Wrapper_Tools"],
-        ["batch", "BatchCtrl"],
-        ["globalfit", "GlobalFit"],
+        ["datarange", "SelectChannels"],
+        ["overlaycurves", "Wrapper_Tools"],
+        ["batchcontrol", "BatchCtrl"],
+        ["globalfit", "GlobalFit"],        
         ["average", "Average"],
-        ["simulation", "Slide"]
+        ["background", "BackgroundCorrection"]
        ]
 
 ImpB = [
-        ["info", "ShowInfo"],
+        ["trace", "ShowTrace"],
         ["statistics", "Stat"],
-        ["trace", "ShowTrace"]
+        ["info", "ShowInfo"],
+        ["simulation", "Slide"]
        ]
 
 ModuleActive = list()

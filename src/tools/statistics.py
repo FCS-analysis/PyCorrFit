@@ -25,7 +25,7 @@ from info import InfoClass
 import misc
 
 # Menu entry name
-MENUINFO = ["&Statistics", "Show some session statistics."]
+MENUINFO = ["&Statistics view", "Show some session statistics."]
 
 def run_once(f):
     def wrapper(*args, **kwargs):
