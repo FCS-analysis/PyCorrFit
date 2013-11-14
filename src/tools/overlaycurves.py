@@ -26,7 +26,7 @@ import edclasses
 import misc
 
 # Menu entry name
-MENUINFO = ["&Overlay tool", "Select experimental curves."]
+MENUINFO = ["&Overlay curves", "Select experimental curves."]
 
 class Wrapper_OnImport(object):
     """ Wrapper for import function.
