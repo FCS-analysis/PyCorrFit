@@ -345,11 +345,7 @@ class Stat(wx.Frame):
 
 
     def OnChooseValues(self, event=None):
-
-                    
         Info, checked = self.GetListOfAllParameters(return_std_checked=True)
-
-        
         #headcounter = 0
         #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
@@ -466,10 +462,13 @@ class Stat(wx.Frame):
         minticks = 2
         self.canvas.SetXSpec(max(maxpage, minticks))
         # Zoom out such that we can see the end of all curves
-        xcenter = np.average(np.array(plotcurve)[:,0])
-        ycenter = np.average(np.array(plotcurve)[:,1])
-        scale = 1.1
-        self.canvas.Zoom((xcenter,ycenter), (scale, scale))
+        try:
+            xcenter = np.average(np.array(plotcurve)[:,0])
+            ycenter = np.average(np.array(plotcurve)[:,1])
+            scale = 1.1
+            self.canvas.Zoom((xcenter,ycenter), (scale, scale))
+        except:
+            pass
         # Redraw result
         self.canvas.Redraw()
                          
@@ -506,11 +505,6 @@ class Stat(wx.Frame):
         Parmlist = self.PlotParms
         self.WXDropdown.SetItems(Parmlist)
         self.WXDropdown.SetSelection(DDselid)
-        # Disable if there are no pages left
-        if self.parent.notebook.GetPageCount() == 0:
-            self.panel.Disable()
-            self.canvas.Clear()
-            return
         self.panel.Enable()
         for i in np.arange(len(self.Checkboxes)):
             self.Checkboxes[i].Destroy()
@@ -522,6 +516,11 @@ class Stat(wx.Frame):
         self.boxsizerlist = list()
         self.Checkboxes = list()
         self.Checklabels = list()
+        # Disable if there are no pages left
+        if self.parent.notebook.GetPageCount() == 0:
+            self.panel.Disable()
+            self.canvas.Clear()
+            return
         self.OnChooseValues()
         self.boxsizer.Layout()
         self.topSizer.Fit(self)
