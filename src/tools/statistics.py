@@ -482,6 +482,7 @@ class Stat(wx.Frame):
         #
         # Prevent this function to be run twice at once:
         #
+        oldsize = self.GetSizeTuple()
         if self.WXTextPages.GetValue() == "":
             # Set number of pages
             pagenumlist = list()
@@ -527,7 +528,7 @@ class Stat(wx.Frame):
         (ax, ay) = self.GetSizeTuple()
         (px, py) = self.topSizer.GetMinSizeTuple()
         self.sp.SetSashPosition(px+5)
-        self.SetSize((max(px+400,ax), max(py,ay)))
+        self.SetSize((np.max([px+400,ax,oldsize[0]]), np.max([py,ay,oldsize[1]])))
         self.SetMinSize((px+400, py))
         # Replot
         self.OnDropDown()
