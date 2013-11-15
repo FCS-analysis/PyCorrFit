@@ -111,8 +111,11 @@ class Stat(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.OnDropDown, self.WXTextPages)
         self.WXDropdown.SetSelection(0)
         # Create space for parameters
-        self.box = wx.StaticBox(self.panel, label="variables:")
-        self.boxsizer = wx.StaticBoxSizer(self.box, wx.HORIZONTAL)
+        self.box = wx.StaticBox(self.panel, label="Export parameters")
+        self.masterboxsizer = wx.StaticBoxSizer(self.box, wx.VERTICAL)
+        self.masterboxsizer.Add(text)
+        self.boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.masterboxsizer.Add(self.boxsizer)
         self.Checkboxes = list()
         self.Checklabels = list()
         if self.parent.notebook.GetPageCount() != 0:
@@ -121,7 +124,7 @@ class Stat(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnSaveTable, self.btnSave)
         # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        self.topSizer.Add(text)
+        #self.topSizer.Add(text)
         Psizer = wx.BoxSizer(wx.HORIZONTAL)
         Psizer.Add(Pagetext)
         Psizer.Add(self.WXTextPages)
@@ -130,7 +133,7 @@ class Stat(wx.Frame):
         DDsizer.Add(self.WXDropdown)
         self.topSizer.Add(Psizer)
         self.topSizer.Add(DDsizer)
-        self.topSizer.Add(self.boxsizer)
+        self.topSizer.Add(self.masterboxsizer)
         self.topSizer.Add(self.btnSave)
         # Set size of window
         self.panel.SetSizer(self.topSizer)
