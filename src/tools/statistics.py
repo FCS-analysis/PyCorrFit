@@ -426,7 +426,7 @@ class Stat(wx.Frame):
             self.Page = page
             pllabel, pldata = self.GetListOfPlottableParms(return_values=True)
             # Get the labels and make a plot of the parameters
-            if pllabel[DDselid] == label:
+            if len(pllabel)-1 >= DDselid and pllabel[DDselid] == label:
                 x = int(page.counter.strip("#: "))
                 y = pldata[DDselid]
                 plotcurve.append([x,y])
@@ -451,7 +451,8 @@ class Stat(wx.Frame):
             maxpage = 0
         else:
             plotavg = [[0, avg], [maxpage, avg]]
-            lineclear = plot.PolyLine(plotavg, colour="black")
+            lineclear = plot.PolyLine(plotavg, colour="black",
+            style= wx.SHORT_DASH)
             plotlist.append(lineclear)
         # Draw
         self.canvas.Draw(plot.PlotGraphics(plotlist, 
@@ -461,6 +462,12 @@ class Stat(wx.Frame):
         # Correctly set x-axis
         minticks = 2
         self.canvas.SetXSpec(max(maxpage, minticks))
+        # Zoom out such that we can see the end of all curves
+        xcenter = np.average(np.array(plotcurve)[:,0])
+        ycenter = np.average(np.array(plotcurve)[:,1])
+        scale = 1.1
+        self.canvas.Zoom((xcenter,ycenter), (scale, scale))
+        # Redraw result
         self.canvas.Redraw()
                          
         
