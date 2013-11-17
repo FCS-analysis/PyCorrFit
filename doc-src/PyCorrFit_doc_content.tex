@@ -75,20 +75,27 @@ Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be
 \noindent \textbf{\LaTeX}.
 PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
-
-
+\subsection{Running PyCorrFit}
+\label{sec:run}
+\paragraph*{Windows}
+Download the executable file and double-click on the \texttt{PyCorrFit.exe} icon.
+\paragraph*{Linux/Ubuntu}
+Make sure the binary has the executable bit set, then simply double-click on the binary  \texttt{PyCorrFit}.
+\paragraph*{Mac OSx}
+When downloading the archive \texttt{PyCorrFit.zip}, the binary should be extracted automatically (if not, extract the archive) and you can double-click it to run PyCorrFit.
+\paragraph*{from source}
+Invoke \texttt{python PyCorrFit.py} from the command line.
 
 
 \section{Working with PyCorrFit}
-
 
 \subsection{Workflow}
 \label{cha_graphint}
 \label{sec:PyCorrFitUserInterface}
 
-The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models. Each correlation function refers to a single contiguous signal trace or {\textquotesingle}run{\textquotesingle}. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless the fit of different models to the same data can be explored by loading the data twice or simply by to creating two different sessions.
+The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models. Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
 
-Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with to two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
+Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
 
 
 \begin{enumerate}
@@ -98,21 +105,20 @@ Let's briefly discuss a typical example: To determine the diffusion coefficient 
 \end{enumerate}
 
 
+The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters can be visually compared during the fitting analysis within the same session. In this case, batch fitting is still possible because it discriminates data sets assigned to different models. In the third case, simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
 
-The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters can be visually compared during the fitting analysis within the same session. In this case batch fitting is still possible because it discriminates data sets assigned to different models. In the third case simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
-
-The fitting itself is usually explored with a representative data set. Here, the user has to decide on starting parameters, the range in which they should be varied, corrections like background, and other fitting options. Once the fit looks good, the chosen settings can be transferred at once to all other pages assigned to the same model using the \textit{Batch control} tool (Section 3.2.3). After flipping through the data for visual inspection one may check the parameters across all pages in the \textit{Statistics view} tool and re-visit outliers (Section 3.2.8). From there, the numerical fit values and example correlation functions can be exported.
+The fitting itself is usually explored with a representative data set. Here, the user has to decide on starting parameters, the range in which they should be varied, corrections like background, and other fitting options. Once the fit looks good, the chosen settings can be transferred at once to all other pages assigned to the same model using the \textit{Batch control} tool (\hyref{Section}{sec:tm.bc}). After flipping through the data for visual inspection one may check the parameters across all pages in the \textit{Statistics view} tool and re-visit outliers (\hyref{Section}{sec:tm.sv}). From there, the numerical fit values and example correlation functions can be exported.
 
 \subsection{The \textit{main window}}
 
 %\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
 
 
-Together with a system{\textquotesingle}s terminal of the platform on which PyCorrFit was installed (Windows, Linux, MacOS), the \textit{main window} opens when double-clicking the PyCorrFit.exe icon. The header contains a title specifying the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in Chapter 3. 
+Together with a system's terminal of the platform on which PyCorrFit was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{section}{sec:run}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:mb}. 
 
-There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File / Load data}, \textit{File / Open session}, and \textit{Current page / Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and an internal identifier […].When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
+There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File / Load data}, \textit{File / Open session}, and \textit{Current page / Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in case there are multiple runs in one experimental data file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
  \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
@@ -123,25 +129,26 @@ The page containing a correlation function is divided in two halves. At the left
 
 
 \begin{itemize}
-\item \textit{Filename/title}, a unique identifier for each correlation curve which is automatically assembled from different fields during the loading procedure (Section 3.1.2). This window can also be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis. 
-\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function. Initially, starting values are loaded as they were defined in the model description (Section 3.1.1). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to {\textquotesingle}varied{\textquotesingle} (checked) or {\textquotesingle}fixed{\textquotesingle} (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (Section 3.1.6). 
-\item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles \textit{n} or fractions thereof associated with different correlation times (\textit{n}\textit{\textsubscript{1}}, \textit{n}\textit{\textsubscript{2}}, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition the correlation curves can be normalized, to facilitate a visual comparison of their time dependence.
-\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighborhood (Section xxx). The number of neighboring data points at each side (j {\textgreater} 0) can be set. For such a smooth representation a 5-knot spline function or the model function with the current parameter set can be used. The latter should improve when repeatedly fitting.
+\item \textit{Data set}, a unique identifier for each correlation curve which is automatically assembled from different fields during the loading procedure (\hyref{Section}{sec:fm.ld}). This window can also be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis. 
+\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function. Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:fm.im}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:fm.ss}). 
+\item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles $n$ or fractions thereof associated with different correlation times ($n_1$, $n_2$, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition, the correlation curves can be normalized, to facilitate a visual comparison of their time dependence.
+\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighborhood. The number of neighboring data points at each side ($j > 0$) can be set. For such a smooth representation a 5-knot spline function or the model function with the current parameter set can be used. The latter should improve when repeatedly fitting.
 \end{itemize}
-At the right hand side are two graphics windows. The dimensionless correlation functions G(tau) are plotted against the lag time (tau) in logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero (x-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the x-axis at any time scale.
+At the right hand side are two graphics windows. The dimensionless correlation functions $G(\tau)$ are plotted against the lag time ($\tau$) in logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero ($x$-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the $x$-axis at any time scale.
 
 The main window can be rescaled as a whole to improve data representation. In addition, to zoom in, one can drag a rectangle within the plot area; a double click then restores the initial scale. Experimental data points are linked by grey lines, the state of the model function is shown in blue. When a weighted fit was applied, the variance of the fit is calculated for each data point and displayed in cyan.
 
 \section{The menu bar}
+\label{sec:mb}
 
 PyCorrFit is organized in panels which group certain functions. The menu organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help). The documentation refers to the version 0.8.1.
 
 \subsection{File menu}
-
+\label{sec:fm}
 The File menu organizes the import of theoretical models, experimental correlation data, and opening and saving of entire \textit{PyCorrFit} fitting sessions. However, the numerical fit results are exported from the \textit{Statistics view} panel which can be found under \textit{Tools} (Section 3.2).
 
 \subsubsection{File / Import model}
-
+\label{sec:fm.im}
 Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume etc. While a number of standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS [REF] or a combination of diffusion and directed flow [REF].
 
 Model functions are imported as text files (*.txt) using certain syntax:
@@ -230,7 +237,7 @@ G = 1./n * gThrD * gScan * gTrip
 
 
 \subsubsection{File / Load data}
-
+\label{sec:fm.ld}
 \textit{Load data }is the first way to import multiple correlation data sets into a \textit{PyCorrFit} session. The supported file formats can be found in a drop-down list of supported file endings in the pop-up dialog \textit{Open data files}:
 
 
@@ -265,39 +272,39 @@ If a file format is not yet listed, the correlation data could be converted into
 \end{itemize}
 
 \subsubsection{File / Open session}
-
+\label{sec:fm.os}
 This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Sessions are bundles of files named *.fcsfit-session.zip. Sessions contain, comments, model assigned correlation data, and the current state of parameters for each data page (Section 3.1.6).
 
 \subsubsection{File / Comment session}
-
+\label{sec:fm.cs}
 This command opens a window to place text messages that can be used to annotate a fitting session.
 
 \subsubsection{File / Clear session}
-
+\label{sec:cls}
 This command closes all pages while the PyCorrFit.exe keeps running. The user is prompted to save the session under the same or a different name. At this stage both options \textit{No} or \textit{Cancel} lead to clearance and a potential loss of recent modifications.
 
 \subsubsection{File / Save session}
-
+\label{sec:fm.ss}
 In addition to display and fit individual curves, a strong feature of PyCorrFit is to save an entire fitting project as a single session. Sessions allow the user to revisit and explore different models, fitting strategies, and data sets. Importantly the work can be saved at any stage.
 
 The number of files bundled in a session varies depending on the number of data sets (pages), the number of used models, and what was done during the fitting. A detailed description can be found in the Readme.txt file attached to each session. For example, the numerical correlation and intensity data are saved separately as *.csv text files. However, in contrast to the \textit{Save data (*.csv)} command of the \textit{Current Page} menu, there are no metadata in the header, just tables containing the numerical values. In sessions, the fitting parameters are stored separately in the human-readable data serialization format, *.yaml.
 
 \subsubsection{File / Exit}
-
+\label{sec:fm.e}
 This command closes down \textit{PyCorrFit}. The user is prompted to save the session under the same or a different name. At this stage \textit{No} leads to the loss of recent changes, while \textit{Cancel} keeps \textit{PyCorrFit} running.
 
 \subsection{Tools menu}
-
+\label{sec:tm}
 The \textit{Tools} menu provides access to a series of accessory panels which extent the capability of the main window. These accessory panels can stay open during the entire analysis. Open panels appear checked in the menu. Most operations can be executed across the entire data set with a single mouse click. 
 
 \subsubsection{Tools / Data range}
-
+\label{sec:tm.dr}
 This panel limits the range of lag times which are displayed in the main window panel. At the same time it defines the range of points which are used for fitting. For example, this feature can be applied to remove dominant after-pulsing of the avalanche photo diodes (APDs) which may interfere with Triplet blinking at short lag times. The user has the options to \textit{Apply} the channel settings only to the current page or he can \textit{Apply to all pages}. In contrast to \textit{Batch control}, this operation ignores whether the data are assigned to different models. 
 
 Power user, who frequently load and remove data sets, may take advantage of a checkbox to fix the channel selection for all newly loaded data sets.
 
 \subsubsection{Tools / Overlay curves}
-
+\label{sec:tm.oc}
 This window displays the correlation data (not the fit curves) of all pages in a single plot. The curves can be discriminated by color. If only one curve is selected it appears in red. Curves with ambiguous shape can easily be identified, selected, and removed by clicking \textit{Apply}. A warning dialogue lists the pages which will be kept.
 
 Data representation is synchronized with the page display in the \textit{Main window}. For example, narrowing the range of lag times by \textit{Data range }is immediately updated in the \textit{Overlay curves }tool. Likewise, their normalization of the amplitudes to unity.
@@ -307,7 +314,7 @@ The other way round, some tools directly respond to the selections made in the \
 The tool is closed by the button \textit{Cancel}. All the listed data sets will be kept. However, the selections transferred to the \textit{Global fitting}, \textit{Average curves}, and \textit{Statistics view} tools are kept as well.
 
 \subsubsection{Tools / Batch control}
-
+\label{sec:tm.bc}
 By default the current page is taken as a reference to perform automated fitting. A batch is defined as the ensemble of correlation data sets (pages) assigned to the same model function within a session. A session can therefore have several batches, even for the same data. 
 
 For fitting it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
@@ -315,11 +322,11 @@ For fitting it is crucial to carefully define the starting parameters, whether p
 The button \textit{Fit applicable pages} then performs several cycles of fitting [how many cycles?] on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
 
 \subsubsection{Tools / Global fitting}
-
+\label{sec:tm.gf}
 Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and the cross-correlation curves should adopt the same values for the diffusion time \textit{taudiff} and the number of particles \textit{n}. A global fit can be applied such that \textit{n} and \textit{taudiff} are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} Chi-square is minimized for all data sets simultaneously [please check!]. To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay} tool. 
 
 \subsubsection{Tools / Average data}
-
+\label{sec:tm.ad}
 Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data, to export a cleaned, average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
 
 For averaging, there are constraints:
@@ -333,11 +340,11 @@ For averaging, there are constraints:
 The averaged curve is shown on a separate page. The new \textit{Filename/title} receives the entry \textit{Average [numbers of pages]}. The assigned model is by default the same as for the individual pages. However, while averaging, the user can choose a different model from a drop-down list. 
 
 \subsubsection{Tools / Trace view}
-
+\label{sec:tm.tv}
 FCS theory makes assumptions about the thermodynamic state of the system. Signal fluctuations can only be analyzed when the system is at equilibrium or at a sufficiently stable steady state. Global instabilities on the time scale of the measurement itself, e.g. photo-bleaching, have dramatic effect on the shape of the measured correlation curve. Therefore it is common practice to check the correlated intensity trace for each curve. Trace view simply displays the signal trace for each correlation function. The window stays open during the session and can be used to revisit and flag ambiguous data sets.
 
 \subsubsection{Tools / Statistics view}
-
+\label{sec:tm.sv}
 The goal of a correlation analysis is to determine experimental parameter values with sufficient statistical significance. However, especially for large data sets, it can get quite laborious to check all of the individual values on each page. We designed the \textit{Statistics view} panel to review the state of parameters across the experimental batch (pages assigned to the same model) in a single plot, thereby facilitating to the identification of outliers.
 
 The current page is taken as a reference for the type of model parameters which can be displayed. The user can choose different \textit{Plot parameters} from a drop-down list. A subset of pages within the batch can be explicitly defined by typing the page numbers into the input field or by highlighting in the \textit{Overlay curves} tool. Note that page numbers which refer to different models than the current page are ignored. 
@@ -345,7 +352,7 @@ The current page is taken as a reference for the type of model parameters which 
 The \textit{Statistics view} panel contains a separate \textit{Export} box, where parameters can be selected (checked) and saved as a comma separated text file (*.csv). Only selected page numbers are included.
 
 \subsubsection{Tools / Page info}
-
+\label{sec:tm.pi}
 Page info is a most verbose summary of a data set. The panel \textit{Page info} is synchronized with the current page. The following fields are listed:
 
 
@@ -360,7 +367,7 @@ Page info is a most verbose summary of a data set. The panel \textit{Page info} 
 The content of Page info is saved as a header when exporting correlation functions via the command \textit{Current page / Save data (*.csv)} (Section 3.3.2).
 
 \subsubsection{Tools / Slider simulation}
-
+\label{sec:tm.ss}
 This tool visualizes the impact of model parameters on the shape of the model function of a current page. Such insight may be useful to choose proper starting values for fitting or to develop new model functions. For example, in the case two of the parameters trade during the fitting one may explore to which extent a change in both values produces similar trends.
 
 Two variables (A and B) have to be assigned from a drop-down list of parameters associated with the current model function. For each of these, the \textit{Slider simulation} panel shows initially the starting value (x) as a middle position of a certain range (from 0.1*x to 1.9*x). The accessible range can be manually edited and the actual value of the slider position is displayed at the right hand side of the panel. Dragging the slider to lower (left) or higher (right) values changes the entry in the box \textit{Model parameters} of the \textit{Main window} and accordingly the shape opt the model function in the plot. By default the checkbox \textit{Vary A and B}\textit{ }is active meaning that both variables during \textit{Slider simulation} can be varied independently. 
@@ -368,31 +375,31 @@ Two variables (A and B) have to be assigned from a drop-down list of parameters 
 In addition, the variables A and B can be linked by a mathematical relation. For this a mathematical operator can be selected from a small list and the option \textit{Fix relation} must be checked. Then, the variable B appears inactivated (greyed out) and the new variable combining values for A and B can be explored by dragging.
 
 \subsection{ Current Page}
-
+\label{sec:cp}
 This menu compiles import and export operations referring exclusively to the active page in the main window. 
 
 \subsubsection{Current Page / Import Data}
-
+\label{sec:cp.id}
 This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (Section 3.1.2). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
 
 To avoid this loss, one could first generate a new page via the menu \textit{Models} (Section 3.4), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
 \subsubsection{Current Page / Save data (*.csv)}
-
+\label{sec:cp.sd}
 For the documentation with graphics software of choice, correlation curves can be exported as a comma-separated table. A saved \textit{PyCorrFit} text-file (*.csv) will contain a hashed header with metadata from the \textit{Page info} panel (Section 3.2.8), followed by the correlation and fitting values in tab-separated columns: \textit{Channel (tau [s])}, \textit{Experimental correlation}, \textit{Fitted correlation}, \textit{Residuals, }and \textit{Weights (fit)}. 
 
 Below the columns, there are again 5 rows of hashed comments followed by the intensity data in two columns: \textit{Time [s]} and \textit{Intensity trace [kHz]}. Note that there are no assemblies of “multiple runs”, since \textit{PyCorrFit} treats these as individual correlation functions. A *.csv file therefore contains only a single fitted correlation curve and one intensity trace for autocorrelation or two intensity traces for cross-correlation.
 
 \subsubsection{Current Page / Save correlation as image}
-
+\label{sec:cp.sc}
 For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable tau cannot be displayed using Unicode with Windows.
 
 \subsubsection{Current Page / Save trace view as image}
-
+\label{sec:cp.st}
 For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). 
 
 \subsubsection{Current Page / Close page}
-
+\label{sec:cp.cp}
 Closes the page; the data set is removed from the session. The page numbers of all other pages remain the same. The command is equivalent with the closer (x) in the tab. 
 
 \subsection{Models}
