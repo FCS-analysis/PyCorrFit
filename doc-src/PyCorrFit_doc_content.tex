@@ -99,38 +99,28 @@ Let's briefly discuss a typical example: To determine the diffusion coefficient 
 
 
 
-%\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
-% \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
-%\end{figure}
-
-
-	\begin{itemize}
-	\item unit of time        : \SI{1}{ms}
-	\item  unit of inverse time: \SI{1000}{s^{-1}}
-	\item  unit of distance    : \SI{100}{nm}
-	\item  unit of diffusion coefficient  : \SI{10}{µm^2s^{-1}}
-	\item  unit of inverse area: \SI{100}{µm^{-2}}
-	\item  unit of inverse volume : \SI{1000}{µm^{-3}}
-	\end{itemize}
-
-
-
-
-
 The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters can be visually compared during the fitting analysis within the same session. In this case batch fitting is still possible because it discriminates data sets assigned to different models. In the third case simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
 
 The fitting itself is usually explored with a representative data set. Here, the user has to decide on starting parameters, the range in which they should be varied, corrections like background, and other fitting options. Once the fit looks good, the chosen settings can be transferred at once to all other pages assigned to the same model using the \textit{Batch control} tool (Section 3.2.3). After flipping through the data for visual inspection one may check the parameters across all pages in the \textit{Statistics view} tool and re-visit outliers (Section 3.2.8). From there, the numerical fit values and example correlation functions can be exported.
 
 \subsection{The \textit{main window}}
 
+%\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
+
+
 Together with a system{\textquotesingle}s terminal of the platform on which PyCorrFit was installed (Windows, Linux, MacOS), the \textit{main window} opens when double-clicking the PyCorrFit.exe icon. The header contains a title specifying the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in Chapter 3. 
 
 There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File / Load data}, \textit{File / Open session}, and \textit{Current page / Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and an internal identifier […].When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
 
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
+ \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
+\end{figure}
+
 The page containing a correlation function is divided in two halves. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated to the current model and data set: 
+
+
 
 \begin{itemize}
 \item \textit{Filename/title}, a unique identifier for each correlation curve which is automatically assembled from different fields during the loading procedure (Section 3.1.2). This window can also be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis. 
