@@ -111,8 +111,11 @@ class Stat(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.OnDropDown, self.WXTextPages)
         self.WXDropdown.SetSelection(0)
         # Create space for parameters
-        self.box = wx.StaticBox(self.panel, label="variables:")
-        self.boxsizer = wx.StaticBoxSizer(self.box, wx.HORIZONTAL)
+        self.box = wx.StaticBox(self.panel, label="Export parameters")
+        self.masterboxsizer = wx.StaticBoxSizer(self.box, wx.VERTICAL)
+        self.masterboxsizer.Add(text)
+        self.boxsizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.masterboxsizer.Add(self.boxsizer)
         self.Checkboxes = list()
         self.Checklabels = list()
         if self.parent.notebook.GetPageCount() != 0:
@@ -121,7 +124,7 @@ class Stat(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnSaveTable, self.btnSave)
         # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        self.topSizer.Add(text)
+        #self.topSizer.Add(text)
         Psizer = wx.BoxSizer(wx.HORIZONTAL)
         Psizer.Add(Pagetext)
         Psizer.Add(self.WXTextPages)
@@ -130,7 +133,7 @@ class Stat(wx.Frame):
         DDsizer.Add(self.WXDropdown)
         self.topSizer.Add(Psizer)
         self.topSizer.Add(DDsizer)
-        self.topSizer.Add(self.boxsizer)
+        self.topSizer.Add(self.masterboxsizer)
         self.topSizer.Add(self.btnSave)
         # Set size of window
         self.panel.SetSizer(self.topSizer)
@@ -342,11 +345,7 @@ class Stat(wx.Frame):
 
 
     def OnChooseValues(self, event=None):
-
-                    
         Info, checked = self.GetListOfAllParameters(return_std_checked=True)
-
-        
         #headcounter = 0
         #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
@@ -426,7 +425,7 @@ class Stat(wx.Frame):
             self.Page = page
             pllabel, pldata = self.GetListOfPlottableParms(return_values=True)
             # Get the labels and make a plot of the parameters
-            if pllabel[DDselid] == label:
+            if len(pllabel)-1 >= DDselid and pllabel[DDselid] == label:
                 x = int(page.counter.strip("#: "))
                 y = pldata[DDselid]
                 plotcurve.append([x,y])
@@ -451,7 +450,8 @@ class Stat(wx.Frame):
             maxpage = 0
         else:
             plotavg = [[0, avg], [maxpage, avg]]
-            lineclear = plot.PolyLine(plotavg, colour="black")
+            lineclear = plot.PolyLine(plotavg, colour="black",
+            style= wx.SHORT_DASH)
             plotlist.append(lineclear)
         # Draw
         self.canvas.Draw(plot.PlotGraphics(plotlist, 
@@ -461,6 +461,15 @@ class Stat(wx.Frame):
         # Correctly set x-axis
         minticks = 2
         self.canvas.SetXSpec(max(maxpage, minticks))
+        # Zoom out such that we can see the end of all curves
+        try:
+            xcenter = np.average(np.array(plotcurve)[:,0])
+            ycenter = np.average(np.array(plotcurve)[:,1])
+            scale = 1.1
+            self.canvas.Zoom((xcenter,ycenter), (scale, scale))
+        except:
+            pass
+        # Redraw result
         self.canvas.Redraw()
                          
         
@@ -472,6 +481,7 @@ class Stat(wx.Frame):
         #
         # Prevent this function to be run twice at once:
         #
+        oldsize = self.GetSizeTuple()
         if self.WXTextPages.GetValue() == "":
             # Set number of pages
             pagenumlist = list()
@@ -495,11 +505,6 @@ class Stat(wx.Frame):
         Parmlist = self.PlotParms
         self.WXDropdown.SetItems(Parmlist)
         self.WXDropdown.SetSelection(DDselid)
-        # Disable if there are no pages left
-        if self.parent.notebook.GetPageCount() == 0:
-            self.panel.Disable()
-            self.canvas.Clear()
-            return
         self.panel.Enable()
         for i in np.arange(len(self.Checkboxes)):
             self.Checkboxes[i].Destroy()
@@ -511,13 +516,18 @@ class Stat(wx.Frame):
         self.boxsizerlist = list()
         self.Checkboxes = list()
         self.Checklabels = list()
+        # Disable if there are no pages left
+        if self.parent.notebook.GetPageCount() == 0:
+            self.panel.Disable()
+            self.canvas.Clear()
+            return
         self.OnChooseValues()
         self.boxsizer.Layout()
         self.topSizer.Fit(self)
         (ax, ay) = self.GetSizeTuple()
         (px, py) = self.topSizer.GetMinSizeTuple()
         self.sp.SetSashPosition(px+5)
-        self.SetSize((max(px+400,ax), max(py,ay)))
+        self.SetSize((np.max([px+400,ax,oldsize[0]]), np.max([py,ay,oldsize[1]])))
         self.SetMinSize((px+400, py))
         # Replot
         self.OnDropDown()
