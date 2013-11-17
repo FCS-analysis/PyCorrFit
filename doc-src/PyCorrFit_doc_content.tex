@@ -76,6 +76,391 @@ Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be
 PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
 
+
+
+
+\section{Working with PyCorrFit}
+
+
+\subsection{Workflow}
+\label{cha_graphint}
+\label{sec:PyCorrFitUserInterface}
+
+The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models. Each correlation function refers to a single contiguous signal trace or {\textquotesingle}run{\textquotesingle}. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless the fit of different models to the same data can be explored by loading the data twice or simply by to creating two different sessions.
+
+Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with to two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
+
+
+\begin{enumerate}
+\item Create separate sessions for each type of sample and assign different model functions.
+\item Assign a one-component model to the dye measurements and a two-component model to the protein measurements when loading consecutively into the same session.
+\item Assign a two-component model for all data and, when appropriate, manually inactivate one component by fixing its contribution to 0\%.
+\end{enumerate}
+
+
+
+%\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
+% \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
+%\end{figure}
+
+
+	\begin{itemize}
+	\item unit of time        : \SI{1}{ms}
+	\item  unit of inverse time: \SI{1000}{s^{-1}}
+	\item  unit of distance    : \SI{100}{nm}
+	\item  unit of diffusion coefficient  : \SI{10}{µm^2s^{-1}}
+	\item  unit of inverse area: \SI{100}{µm^{-2}}
+	\item  unit of inverse volume : \SI{1000}{µm^{-3}}
+	\end{itemize}
+
+
+
+
+
+The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters can be visually compared during the fitting analysis within the same session. In this case batch fitting is still possible because it discriminates data sets assigned to different models. In the third case simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
+
+The fitting itself is usually explored with a representative data set. Here, the user has to decide on starting parameters, the range in which they should be varied, corrections like background, and other fitting options. Once the fit looks good, the chosen settings can be transferred at once to all other pages assigned to the same model using the \textit{Batch control} tool (Section 3.2.3). After flipping through the data for visual inspection one may check the parameters across all pages in the \textit{Statistics view} tool and re-visit outliers (Section 3.2.8). From there, the numerical fit values and example correlation functions can be exported.
+
+\subsection{The \textit{main window}}
+
+Together with a system{\textquotesingle}s terminal of the platform on which PyCorrFit was installed (Windows, Linux, MacOS), the \textit{main window} opens when double-clicking the PyCorrFit.exe icon. The header contains a title specifying the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in Chapter 3. 
+
+There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File / Load data}, \textit{File / Open session}, and \textit{Current page / Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and an internal identifier […].When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
+
+The page containing a correlation function is divided in two halves. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated to the current model and data set: 
+
+\begin{itemize}
+\item \textit{Filename/title}, a unique identifier for each correlation curve which is automatically assembled from different fields during the loading procedure (Section 3.1.2). This window can also be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis. 
+\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function. Initially, starting values are loaded as they were defined in the model description (Section 3.1.1). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to {\textquotesingle}varied{\textquotesingle} (checked) or {\textquotesingle}fixed{\textquotesingle} (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (Section 3.1.6). 
+\item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles \textit{n} or fractions thereof associated with different correlation times (\textit{n}\textit{\textsubscript{1}}, \textit{n}\textit{\textsubscript{2}}, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition the correlation curves can be normalized, to facilitate a visual comparison of their time dependence.
+\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighborhood (Section xxx). The number of neighboring data points at each side (j {\textgreater} 0) can be set. For such a smooth representation a 5-knot spline function or the model function with the current parameter set can be used. The latter should improve when repeatedly fitting.
+\end{itemize}
+At the right hand side are two graphics windows. The dimensionless correlation functions G(tau) are plotted against the lag time (tau) in logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero (x-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the x-axis at any time scale.
+
+The main window can be rescaled as a whole to improve data representation. In addition, to zoom in, one can drag a rectangle within the plot area; a double click then restores the initial scale. Experimental data points are linked by grey lines, the state of the model function is shown in blue. When a weighted fit was applied, the variance of the fit is calculated for each data point and displayed in cyan.
+
+\section{The menu bar}
+
+PyCorrFit is organized in panels which group certain functions. The menu organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help). The documentation refers to the version 0.8.1.
+
+\subsection{File menu}
+
+The File menu organizes the import of theoretical models, experimental correlation data, and opening and saving of entire \textit{PyCorrFit} fitting sessions. However, the numerical fit results are exported from the \textit{Statistics view} panel which can be found under \textit{Tools} (Section 3.2).
+
+\subsubsection{File / Import model}
+
+Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume etc. While a number of standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS [REF] or a combination of diffusion and directed flow [REF].
+
+Model functions are imported as text files (*.txt) using certain syntax:
+
+\begin{itemize}
+\item \textbf{Encoding}: PyCorrFit can interpret the standard Unicode character set (UTF-8).
+\item \textbf{Comments}: Lines starting with a hash (\#), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data.
+\item \textbf{Units}: PyCorrFit works with internal units for:
+
+\begin{itemize}
+\item Time: 1 ms
+\item Distance: 100 nm
+\item Diffusion coefficient: 10 µm\textsuperscript{2}s\textsuperscript{{}-1} 
+\item Inverse time: 1000 s\textsuperscript{{}-1} 
+\item Inverse area: 100 µm\textsuperscript{{}-2} 
+\item Inverse volume: 1000 µm\textsuperscript{{}-3} 
+\end{itemize}
+\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: D [50 µm\textsuperscript{2}s\textsuperscript{{}-1}] = 50.00. It is important to note that when the dimensions differ from the internal units (10 µm\textsuperscript{2}s\textsuperscript{{}-1}), the expression must contain some adjusting factor; here a factor of 5. Thus, user defined dimensions are only for display and cannot be processed numerically. The parameter names contain only alphabetic (not numerical) characters. ‘G’ and ‘g’, as well as the numbers ‘e’ and ‘pi’ are already mapped and cannot be used freely.
+\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use placeholders. Placeholders start with a lowercase ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
+
+\begin{itemize}
+\item \texttt{gTrp = 1+ T/(1-T)*exp(-tau/tautrip)}
+\item \texttt{gTwoD = 1/(1+tau/taudiff)}
+\item \texttt{gThrD = 1/sqrt(1+tau/(taudiff*S**2))}
+\end{itemize}
+\end{itemize}
+The individual parts are then combined in the last line of the *.txt file, where the correlation function is defined starting with uppercase ’G’:
+
+\begin{equation}
+\texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
+\end{equation}
+For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{figure}{fig:extxt}. 
+
+
+\begin{figure}
+% for case sensitiver Verbatim, we need the package fancyvrb
+\begin{Verbatim}[frame = single]
+
+# CS-FCS 3D+S+T (Confocal)
+
+# Circular Scanning FCS model function. 3D diffusion + Triplet.
+
+## Definition of parameters:
+# First, the parameters and their starting values for the model function
+# need to be defined. If the parameter has a unit of measurement, then it 
+# may be added separated by a white space before the "=" sign. The starting
+# value should be a floating point number. Floating point abbreviations 
+# like "1e-3" instead of "0.001" may be used.
+
+# Diffusion coefficient
+D [10 µm²/s] = 200.0
+# Structural parameter
+w = 5.0
+# Waist of the lateral detection area
+a [100 nm] = 1.0
+# Particle number
+n = 5.0
+# Scan radius
+R [100 nm] = 5.0
+# Frequency
+f [kHz] = 20.0
+# Triplet fraction
+T = 0.1
+# Triplet time
+tautrip [ms] = 0.001
+
+# The user may wish to substitute certain parts of the correlation function
+# with other values to keep the formula simple. This can be done by using the
+# prefix "g". All common mathematical functions, such as "sqrt()" or "exp()"
+# may be used. For convenience, "pi" and "e" are available as well.
+
+gTrip = 1. + T/(1-T)*exp(-tau/tautrip)
+gScan = exp(-(R*sin(pi*f*tau))**2/(a**2+D*tau))
+gTwoD = 1./(1.+D*tau/a**2)
+gOneD = 1./sqrt(1.+D*tau/(w*a)**2)
+gThrD = gTwoD * gOneD
+
+# The final line with the correlation function should start with a "G"
+# before the "=" sign.
+
+G = 1./n * gThrD * gScan * gTrip
+
+\end{Verbatim}
+\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig:extxt}}
+\end{figure}
+
+
+\subsubsection{File / Load data}
+
+\textit{Load data }is the first way to import multiple correlation data sets into a \textit{PyCorrFit} session. The supported file formats can be found in a drop-down list of supported file endings in the pop-up dialog \textit{Open data files}:
+
+
+\begin{enumerate}
+\item All supported files \ \ \ \ \ \ [default]
+\item Confocor3 (*.fcs)\ \ \ \ \ \ [AIM 4.2, ZEN 2010, Zeiss, Germany]
+\item Correlator ALV6000 (*.ASC)\ \ [ALV Laser GmbH, Langen, Germany]
+\item Correlator.com (*.SIN)\ \ \ \ [www.correlator.com, USA]
+\item Matlab ‘Ries (*.mat)\ \ \ \ \ \ [EMBL Heidelberg, Germany]
+\item PyCorrFit (*.csv)\ \ \ \ \ \ [Paul Müller, TU Dresden, Germany]
+\item Zip files (*.zip)\ \ \ \ \ \ [Paul Müller, TU Dresden, Germany]
+\end{enumerate}
+While (1)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
+
+When loading data, the user is prompted to assign fit models in the \textit{Choose }\textit{Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see Section 3.4 and Appendix xxx):
+
+If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
+
+
+\begin{itemize}
+\item \textbf{Encoding}: \textit{PyCorrFit} uses the standard Unicode character set (UTF-8). However, since no special characters are needed to save experimental data, other encodings may also work. New line characters are {\textbackslash}r{\textbackslash}n (Windows).
+\item \textbf{Comments}: Lines starting with a hash (\#), empty lines, or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
+\item \textbf{Units}: PyCorrFit works with units/values for:
+
+\begin{itemize}
+\item Time: 1 ms
+\item Intensity: 1 kHz
+\item Amplitude offset: G(0) = 0 (not 1)
+\end{itemize}
+\item \textbf{Keywords: }\textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored, see Section 3.1.6). The table ends, when the keyword \# BEGIN TRACE appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \# BEGIN SECOND TRACE.
+\item \textbf{Tags:} Channel information can be entered using defined syntax in a header. The keyword \# Type AC/CC Autocorrelation [uppercase?] assigns the tag ‘AC’ and \# Type AC/CC Cross-correlation assigns the tag ‘CC’ to the correlation curve. These strings are consistently displayed in the user interface of the respective data page in \textit{PyCorrFit}. If no data type is specified, autocorrelation is assumed. Tags may be specified with additional information like channel numbers, e.g. \# Type AC/CC Autocorrelation \_01. In this case the tag ‘AC\_01’ is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
+\end{itemize}
+
+\subsubsection{File / Open session}
+
+This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Sessions are bundles of files named *.fcsfit-session.zip. Sessions contain, comments, model assigned correlation data, and the current state of parameters for each data page (Section 3.1.6).
+
+\subsubsection{File / Comment session}
+
+This command opens a window to place text messages that can be used to annotate a fitting session.
+
+\subsubsection{File / Clear session}
+
+This command closes all pages while the PyCorrFit.exe keeps running. The user is prompted to save the session under the same or a different name. At this stage both options \textit{No} or \textit{Cancel} lead to clearance and a potential loss of recent modifications.
+
+\subsubsection{File / Save session}
+
+In addition to display and fit individual curves, a strong feature of PyCorrFit is to save an entire fitting project as a single session. Sessions allow the user to revisit and explore different models, fitting strategies, and data sets. Importantly the work can be saved at any stage.
+
+The number of files bundled in a session varies depending on the number of data sets (pages), the number of used models, and what was done during the fitting. A detailed description can be found in the Readme.txt file attached to each session. For example, the numerical correlation and intensity data are saved separately as *.csv text files. However, in contrast to the \textit{Save data (*.csv)} command of the \textit{Current Page} menu, there are no metadata in the header, just tables containing the numerical values. In sessions, the fitting parameters are stored separately in the human-readable data serialization format, *.yaml.
+
+\subsubsection{File / Exit}
+
+This command closes down \textit{PyCorrFit}. The user is prompted to save the session under the same or a different name. At this stage \textit{No} leads to the loss of recent changes, while \textit{Cancel} keeps \textit{PyCorrFit} running.
+
+\subsection{Tools menu}
+
+The \textit{Tools} menu provides access to a series of accessory panels which extent the capability of the main window. These accessory panels can stay open during the entire analysis. Open panels appear checked in the menu. Most operations can be executed across the entire data set with a single mouse click. 
+
+\subsubsection{Tools / Data range}
+
+This panel limits the range of lag times which are displayed in the main window panel. At the same time it defines the range of points which are used for fitting. For example, this feature can be applied to remove dominant after-pulsing of the avalanche photo diodes (APDs) which may interfere with Triplet blinking at short lag times. The user has the options to \textit{Apply} the channel settings only to the current page or he can \textit{Apply to all pages}. In contrast to \textit{Batch control}, this operation ignores whether the data are assigned to different models. 
+
+Power user, who frequently load and remove data sets, may take advantage of a checkbox to fix the channel selection for all newly loaded data sets.
+
+\subsubsection{Tools / Overlay curves}
+
+This window displays the correlation data (not the fit curves) of all pages in a single plot. The curves can be discriminated by color. If only one curve is selected it appears in red. Curves with ambiguous shape can easily be identified, selected, and removed by clicking \textit{Apply}. A warning dialogue lists the pages which will be kept.
+
+Data representation is synchronized with the page display in the \textit{Main window}. For example, narrowing the range of lag times by \textit{Data range }is immediately updated in the \textit{Overlay curves }tool. Likewise, their normalization of the amplitudes to unity.
+
+The other way round, some tools directly respond to the selections made in the \textit{Overlay curves} tool: \textit{Global fitting}, \textit{Average curves}, and \textit{Statistics view} allow to perform operations on an arbitrary selection of pages which can be specified by page number. Instead of manually typing their numbers, the curves may be selected within the \textit{Overlay curves} tool. The respective input fields are immediately updated.
+
+The tool is closed by the button \textit{Cancel}. All the listed data sets will be kept. However, the selections transferred to the \textit{Global fitting}, \textit{Average curves}, and \textit{Statistics view} tools are kept as well.
+
+\subsubsection{Tools / Batch control}
+
+By default the current page is taken as a reference to perform automated fitting. A batch is defined as the ensemble of correlation data sets (pages) assigned to the same model function within a session. A session can therefore have several batches, even for the same data. 
+
+For fitting it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
+
+The button \textit{Fit applicable pages} then performs several cycles of fitting [how many cycles?] on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
+
+\subsubsection{Tools / Global fitting}
+
+Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and the cross-correlation curves should adopt the same values for the diffusion time \textit{taudiff} and the number of particles \textit{n}. A global fit can be applied such that \textit{n} and \textit{taudiff} are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} Chi-square is minimized for all data sets simultaneously [please check!]. To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay} tool. 
+
+\subsubsection{Tools / Average data}
+
+Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data, to export a cleaned, average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
+
+For averaging, there are constraints:
+
+
+\begin{enumerate}
+\item Since the correlation curves are averaged point by point this requires the same number of lag time channels. Runs of different length cannot be averaged.
+\item The tool can only average data sets which are exclusively autocorrelation or cross-correlation.
+\item The user can check a box to enforce the program to ask for data sets with the same model as the current page. This may help to avoid mistakes when selecting pages.
+\end{enumerate}
+The averaged curve is shown on a separate page. The new \textit{Filename/title} receives the entry \textit{Average [numbers of pages]}. The assigned model is by default the same as for the individual pages. However, while averaging, the user can choose a different model from a drop-down list. 
+
+\subsubsection{Tools / Trace view}
+
+FCS theory makes assumptions about the thermodynamic state of the system. Signal fluctuations can only be analyzed when the system is at equilibrium or at a sufficiently stable steady state. Global instabilities on the time scale of the measurement itself, e.g. photo-bleaching, have dramatic effect on the shape of the measured correlation curve. Therefore it is common practice to check the correlated intensity trace for each curve. Trace view simply displays the signal trace for each correlation function. The window stays open during the session and can be used to revisit and flag ambiguous data sets.
+
+\subsubsection{Tools / Statistics view}
+
+The goal of a correlation analysis is to determine experimental parameter values with sufficient statistical significance. However, especially for large data sets, it can get quite laborious to check all of the individual values on each page. We designed the \textit{Statistics view} panel to review the state of parameters across the experimental batch (pages assigned to the same model) in a single plot, thereby facilitating to the identification of outliers.
+
+The current page is taken as a reference for the type of model parameters which can be displayed. The user can choose different \textit{Plot parameters} from a drop-down list. A subset of pages within the batch can be explicitly defined by typing the page numbers into the input field or by highlighting in the \textit{Overlay curves} tool. Note that page numbers which refer to different models than the current page are ignored. 
+
+The \textit{Statistics view} panel contains a separate \textit{Export} box, where parameters can be selected (checked) and saved as a comma separated text file (*.csv). Only selected page numbers are included.
+
+\subsubsection{Tools / Page info}
+
+Page info is a most verbose summary of a data set. The panel \textit{Page info} is synchronized with the current page. The following fields are listed:
+
+
+\begin{enumerate}
+\item Version of PyCorrFit
+\item Field values from the main window (filename/title, model specifications, page number, type of correlation, normalizations)
+\item Actual parameter values (as contained in the model function)
+\item Supplementary parameters (intensity, counts per particle, duration, etc.)
+\item Fitting related information (Chi-square, channel selection, varied fit parameters) .
+\item Model doc string (Section 3.1)
+\end{enumerate}
+The content of Page info is saved as a header when exporting correlation functions via the command \textit{Current page / Save data (*.csv)} (Section 3.3.2).
+
+\subsubsection{Tools / Slider simulation}
+
+This tool visualizes the impact of model parameters on the shape of the model function of a current page. Such insight may be useful to choose proper starting values for fitting or to develop new model functions. For example, in the case two of the parameters trade during the fitting one may explore to which extent a change in both values produces similar trends.
+
+Two variables (A and B) have to be assigned from a drop-down list of parameters associated with the current model function. For each of these, the \textit{Slider simulation} panel shows initially the starting value (x) as a middle position of a certain range (from 0.1*x to 1.9*x). The accessible range can be manually edited and the actual value of the slider position is displayed at the right hand side of the panel. Dragging the slider to lower (left) or higher (right) values changes the entry in the box \textit{Model parameters} of the \textit{Main window} and accordingly the shape opt the model function in the plot. By default the checkbox \textit{Vary A and B}\textit{ }is active meaning that both variables during \textit{Slider simulation} can be varied independently. 
+
+In addition, the variables A and B can be linked by a mathematical relation. For this a mathematical operator can be selected from a small list and the option \textit{Fix relation} must be checked. Then, the variable B appears inactivated (greyed out) and the new variable combining values for A and B can be explored by dragging.
+
+\subsection{ Current Page}
+
+This menu compiles import and export operations referring exclusively to the active page in the main window. 
+
+\subsubsection{Current Page / Import Data}
+
+This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (Section 3.1.2). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
+
+To avoid this loss, one could first generate a new page via the menu \textit{Models} (Section 3.4), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
+
+\subsubsection{Current Page / Save data (*.csv)}
+
+For the documentation with graphics software of choice, correlation curves can be exported as a comma-separated table. A saved \textit{PyCorrFit} text-file (*.csv) will contain a hashed header with metadata from the \textit{Page info} panel (Section 3.2.8), followed by the correlation and fitting values in tab-separated columns: \textit{Channel (tau [s])}, \textit{Experimental correlation}, \textit{Fitted correlation}, \textit{Residuals, }and \textit{Weights (fit)}. 
+
+Below the columns, there are again 5 rows of hashed comments followed by the intensity data in two columns: \textit{Time [s]} and \textit{Intensity trace [kHz]}. Note that there are no assemblies of “multiple runs”, since \textit{PyCorrFit} treats these as individual correlation functions. A *.csv file therefore contains only a single fitted correlation curve and one intensity trace for autocorrelation or two intensity traces for cross-correlation.
+
+\subsubsection{Current Page / Save correlation as image}
+
+For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable tau cannot be displayed using Unicode with Windows.
+
+\subsubsection{Current Page / Save trace view as image}
+
+For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). 
+
+\subsubsection{Current Page / Close page}
+
+Closes the page; the data set is removed from the session. The page numbers of all other pages remain the same. The command is equivalent with the closer (x) in the tab. 
+
+\subsection{Models}
+
+When choosing a model from the \textit{Models} menu a new page opens and the model function is plotted according to the set of starting values for parameters as they were defined in the model description. The lists contains all of the implemented model functions, which can be selected during \textit{File / Load data}. The parameters can be manipulated to explore different shapes; the tool \textit{Slider simulation} can also be used. Via \textit{Current page / Import data}, the model may then be fitted to an experimental data set. 
+
+Standard model functions for a confocal setup are:
+
+Confocal (Gaussian): 3D \ \ \ \ \ \ [Free diffusion in three dimensions]
+
+Confocal (Gaussian): T-3D \ \ \ \ \ \ [Triplet blinking and 3D diffusion]
+
+Confocal (Gaussian): T-3D-3D \ \ \ \ [Triplet with two diffusive components]
+
+Confocal (Gaussian): T-3D-3D-3D \ \ \ \ [Triplet with three diffusive components]
+
+Confocal (Gaussian): 2D \ \ \ \ \ \ [2D diffusion, e.g. in membranes]
+
+Confocal (Gaussian): T-2D \ \ \ \ \ \ [Triplet blinking and 2D diffusion]
+
+Confocal (Gaussian): T-2D-2D\ \ \ \ [Triplet with two diffusive components]
+
+Confocal (Gaussian): T-3D-2D \ \ \ \ [Triplet with mixed 3D and 2D diffusion]
+
+There is also a collection of models for FCS setups with TIR excitation:
+
+TIR (Gaussian/Exp.): 3D\ \ \ \ \ \ [3D diffusion]
+
+TIR (Gaussian/Exp.): T-3D-3D\ \ \ \ [Triplet with two diffusive components]
+
+TIR (Gaussian/Exp.): T-3D-2D\ \ \ \ [Triplet with mixed 3D and 2D diffusion]
+
+… 
+
+In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (Section 3.1.1).
+
+\subsection{Preferences}
+
+The preference menu is still short. If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the `'Latex´' option will open a separate, Tex formatted panel (\textit{Figure1}) via the \textit{Current page / Save […] as image} commands. The \textit{Figure1} contains some interactive options for display. From there, in a second step, the image can be exported as *.png.
+
+\textit{Verbose} generates a plot showing the spline function used for calculating the weights for each data points when performing a weighted fit. If Latex is active this plot will also be in Tex format. For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.
+
+Checking the option \textit{Show weights} will produce two lines showing the weights for each data point of the correlation function in the plot, as well as in the exported image. Note that the weights are always exported when using the \textit{Save data (*.csv)} command from the \textit{Current page} menu.
+
+\subsection{Help}
+
+The help menu mainly provides additional information. \textit{Software used} lists the exact version of \textit{Python} used for programming the executable software. \textit{About} gives information of the participating developers, the license, and documentation writers. \textit{Update} establishes a link to the GitHub website to check for a new release; it also provides a few web links associated with PyCorrFit. Finally, \textit{Shell} specifies … ???.
+
+Documentation downloads this software guide from the GitHub website (PyCorrFit\_doc-1.pdf).
+
+\section{4 Hacker's corner}
+
+Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \_\_init\_\_.py and then add the script read\_FileFormat.py to the \textit{PyCorrFit} library.[to which library?, more info? Remove this paragraph?] 
+
+External models will be imported with internal model function IDs starting at 7000. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development. 
+
+
+
 \section{Theoretical background}
 
 
@@ -209,228 +594,6 @@ In certain cases, it is useful to implement weights (standard deviation) $\sigma
 \chi^2_\mathrm{weighted} = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2}{\sigma_i^2}
 \end{equation}
 PyCorrFit is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in PyCorrFit are explained in \hyref{section}{cha_graphint}.
-
-
-
-\section{Working with PyCorrFit}
-
-
-\subsection{Workflow}
-\label{cha_graphint}
-\label{sec:PyCorrFitUserInterface}
-\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
-\end{figure}
-
-
-\subsubsection{A First Look} PyCorrFit is operated through the menu bar. The \texttt{File} menu lets the user load and save files as discussed in section \ref{sec:fileformats}. The \texttt{Tools} menu contains several tools that are described below. The \texttt{Current Page} menu allows the user to perform tasks on the current page. This includes loading experimental data files or saving the currently viewable correlation curve as \mytilde .csv file or as an image. The \texttt{Model} menu lets the user select a model to create a new page. The \texttt{Preferences} menu allows the user to use Latex for plotting (\hyref{section}{cha:soft}) or tells the program to be more verbose (spline fits for calculation of weights will be displayed). The \texttt{Help} menu contains an update function that checks the current program version against the official release of PyCorrFit.
-\label{sec:tools}
-The graphical user interface comes with a bunch of tools located in the \texttt{Tools} menu. The \texttt{Tools} menu will become active, once a page is added to the notebook. Each tool opens in a new window. Tools are updated or closed upon change of the current page.
-
-
-\subsubsection{Loading Experimental Data}
-Via \texttt{File - Load data files} experimental data files are opened and displayed on tab page. Within the page, the user may choose starting parameters for the fitting, select which parameters should be variable during fitting (checked means variable) and select a weighting method. The page displays the experimental and fitted curve, as well as the residuals in the lower plot.
-
-
-\subsubsection{Data Range Selection}
-This selects the lag times $\tau$ from the experimental curve that will be displayed. By default, all data from a file will be displayed. 
-
-
-\subsubsection{Background Correction}
- Performs a background correction according to \cite{Thomps:bookFCS2002}. The result is a higher amplitude of the correlation fuction $G(0)$. Backgrounds may be manually set or imported from background measurements (see supported file formats).
-\begin{equation}
-G_\mathrm{corrected}(\tau) = G_\mathrm{measured}(\tau) \cdot \left[ \frac{S}{S-B} \right]^2
-\label{eq:BG_correction}
-\end{equation}
-where $S$ is the average signal of the correlation curve and $B$ is the average background signal.
-
-
-\subsubsection{Performing a (weighted) Fit}
-Weights can be calculated for each data point using the standard deviation from neighboring points. Since FCS curves naturally have regions where the standard deviation of the experimental data is large (falling inflection points), the standard deviation has to be calculated from curves that mimic the experimental data. If weighted fitting is used, the weighted residuals are shown instead of the plain residuals (difference of experimental and theoretical curve). The following methods for weighting have been implemented:
-\begin{itemize}
-\item[] \textbf{Spline}. A spline is fitted to the experimental curve. Weights are calculated from the deviation of the experimental data from the spline. If  the \texttt{Verbose mode} is enabled in  the \texttt{Preferences} menu, the spline fit will be displayed. The number of knots of the spline can be changed by adjusting the number in the dropdown menu. In case of multiple component data, a higher number of knots is required to obtain a fitting spline. For single component data, up to three knots are sufficient.
-\item[] \textbf{Model function}. Instead of calculating the weights from a spline, calculate the weights from the previously fitted model function. This method of weighting is iterative - the fit should converge!
-\item[] \textbf{Average}. If an average was created using the \texttt{Average data} tool, the standard deviation $\sigma_i$ at all data points $i$, calculated from all curves can be used as weights for fitting. 
-\end{itemize}
-
-
-\subsubsection{Overlay Tool: Selecting valid Runs} 
-Display all curves and easily remove outliers by deselecting them.
-
-\subsubsection{Batch Control: Fitting Several Curves at Once}
-Perform fitting operations on all pages. Parameters may be imported from other \mytilde .fcsfit-session.zip-files. Application of parameters and fitting of curves is only executed for pages with the same model as the current page.
-
-
-\subsubsection{Global Fitting: When Curves Share Parameters}
-If multiple correlation curves share some of their parameters, a global fit can be applied.  The \texttt{Overlay tool} may be used to select a subset of curves. Selected correlation curves are added to one array and a least-sqares fit is performed using the parameters the user chooses within the respective pages. For example, this is used in two-focus FCS, where two autocorrelation curves and two cross-correlation curves are obtained. These share the parameters particle number $n$ and diffusion time $\tau_{\text{diff}}$. A global fit can be applied such that $n$ and $\tau_{\text{diff}}$ are identical for all curves.
-
-
-\subsubsection{Average Data: Obtaining an Average of all Runs}
-Averaging of curves within the session. The \texttt{Overlay tool} may be used to select a subset of curves. The tool asks if only pages with the same model as the current page should be used. Pages that do not have the same correlation type (autocorrelation or cross-correlation) as the current page are not used. The averaging does not work for data where the length of the correlation curves are not identical. Averaging in this case is not well-defined. For averaging, please make sure all curves in a series have the same measurement time.
-A new page will be created containing the resulting average. The resulting trace is constructed by appending the traces of the averaged curves. After averaging, the standard deviaton from all curves can be used as weights for fitting.
-
-
-\subsubsection{Slider Simulation: Which Parameter does What?}
-This tool is useful to visualize the impact of certain parameters on the shape of the correlation function or to set proper starting parameters for a fit.
-
-
-\subsubsection{Page Info: a Summary for each Curve}
-\label{Tool:PageInfo} A most verbose information window that shows all there is to know about the current page. All information that is displayed here will also be saved when exporting a curve as a \mytilde .csv file with the \texttt{Current Page} menu.
-
-\subsubsection{Trace View: Verification and Troubleshooting}
-If available, view the trace corresponding to the data of the current page. In case of cross-correlation, two traces will be displayed.
-
-
-\subsubsection{Statistics: Excel-ready Export of Results} Used for large data sets. Save selected parameters (of all pages with the same model as the current page) as a table of tab separated values into one single file.
-
-
-\subsection{Data file formats}
-\subsubsection{Import: Support for common FCS file formats}
-\label{sec:fileformats}
-PyCorrFit supports numerous data file formats. If a file format is not listed here, there are two options to make them work with PyCorrFit:
-\begin{itemize}
-\item[-] Conversion to the native PyCorrFit \mytilde .csv file format.
-\item[-] Implementation of the file format within the \texttt{readfiles} module of PyCorrFit. \texttt{\_\_init\_\_.py} has to be edited and a script \texttt{read\_FileFormat.py} has to be added.
-\end{itemize}
-
-Supported file formats:
-\begin{itemize}
-\item[] \textbf{\mytilde .asc files} are created by e.g. the ALV-6000 hardware correlator.
-\item[] \textbf{\mytilde .csv files} are the native PyCorrFit data files. See \ref{text:csv} for more information.
-\item[] \textbf{\mytilde .fcs files} are created by Zeiss' ConfoCor3 software (e.g. AIM4.2 or ZEN2010b).
-\item[] \textbf{\mytilde .mat files} are files generated by a Matlab program written by Jonas Ries. This was implemented for convenience.
-\item[] \textbf{\mytilde .sin files} are created by the Flex correlators from correlator.com.
-\item[] \textbf{\mytilde .zip files} may contain any of the files listed here.
-\end{itemize}
-
-
-\subsubsection{Export and More: Interaction with the User}
-These are file formats that were designed for PyCorrFit.
-
-
-\subsubsection{.csv data files}
-\label{text:csv}
-The \mytilde .csv file format contains experimental correlation curves and optionally the fitted curve, the residuals, as well as weighting factors that have been used for fitting. The data are stored as tab-separated values.
-PyCorrFit uses this format to export single correlation curves. The \mytilde .csv files are directly readable by any editor on any platform, allow comments throughout the file and have a well-defined structure. There is a certain syntax that has to be followed for \mytilde .csv files to be successfully imported by PyCorrFit:
-\begin{itemize}
-\item The \textbf{encoding} is preferably UTF-8. However, since no special characters are needed to save experimental data, any encoding might work. New line characters are \texttt{\textbackslash r\textbackslash n} (Windows).
-
-\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}) as well as empty lines or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
-
-\item \textbf{Units}: A \mytilde .csv file may contain one correlation curve, as well as up to two intensity traces. The time unit is seconds and the count rate (intensity) is measured in \SI{}{kHz}. Correlation curves are assumed to be calculated from fluctuations around zero, thus the correlation curve has to decrease to zero at large lag times.
-
-\item The first table inside a \mytilde .csv file contains the \textbf{correlation curve}. The table consists of either two or four columns of tab-separated values. The first column contains the lag times in seconds and the second column contains the correlation curve. PyCorrFit also saves the fitted curve and the residuals in the third and fourth column, as well as optional weighting factors that were used for fitting. This additional information is ignored during file import.
-
-\item \textbf{First trace}: The table containing the correlation curve is considered to have ended as soon as the keyword \texttt{\# BEGIN TRACE} appears at the beginning of a line. Then, the trace will be read, again as tab-separated values: The first column contains the time in seconds and second column contains the corresponding signal in \SI{}{KHz}.
-
-\item The optional \textbf{second trace} is initiated with the keyword \texttt{\# BEGIN SECOND TRACE}.
-
-\item \textbf{AC/CC}: To distinguish the types of imported experimental curves (autocorrelation or cross-correlation), the keyword \texttt{Data type} can be used. If a line starts with either of the following:
-\begin{itemize}
-\item[] \texttt{\# Data type	Cross-correlation} 
-\item[] \texttt{\# Data type	Autocorrelation} 
-\end{itemize}
-then the corresponding string \texttt{AC} or \texttt{CC} will be used to identify the type of the curve in the user interface. If no data type is specified, an autocorrelation curve is assumed. Curves may be personalized by using:
-\begin{itemize}
-\item[] \texttt{\# Data type	Autocorrelation \_A1}
-\end{itemize}
-This will result in the identifier \texttt{AC\_A1} during import in the user interface. This feature is useful to e.g. distinguish many \mytilde .csv files of different type inside a \mytilde .zip file.
-
-\end{itemize}
-
-\subsubsection{.zip data files} 
-\mytilde .zip files are either used as session files or as containers for bundled correlation curves. 
-\textbf{\mytilde .fcsfit-session.zip files} are used to store entire PyCorrFit sessions including all parameters and modifications. They can be imported as sessions or as experimental curves. 
-\textbf{\mytilde .zip files} are containers for files containing correlation curves.
-
-\subsubsection{.txt model function files} 
-In addition to the built-in model functions, PyCorrFit supports the import of user defined model functions for fitting. To get started quickly, it is helpful to take a look at some examples online\footnote{``PyCorrFit external model functions'' in the download section at \url{http://pycorrfit.craban.de}}.
-File syntax:
-\begin{itemize}
-
-\item \textbf{Parameters}: PyCorrFit works with the following dimensional representation. Any other unit has to be derived from these:
-	\begin{itemize}
-	\item unit of time        : \SI{1}{ms}
-	\item  unit of inverse time: \SI{1000}{s^{-1}}
-	\item  unit of distance    : \SI{100}{nm}
-	\item  unit of diffusion coefficient  : \SI{10}{µm^2s^{-1}}
-	\item  unit of inverse area: \SI{100}{µm^{-2}}
-	\item  unit of inverse volume : \SI{1000}{µm^{-3}}
-	\end{itemize}
-
-
-\item The \textbf{encoding} is UTF-8. On Windows, \texttt{Notepad++} can be used. Under Linux, editors like \texttt{gedit} or \texttt{kate} can be used. 
-
-
-\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}) (except the first line) as well as empty lines or lines containing only white space characters are ignored.
-
-\item \textbf{Name}: The first line contians the name of the correlation function, preceded by a hash, e.g.\\ \texttt{ \# AC Gauss test}.
-
-\item \textbf{Definition of parameters} To define parameters used by the model function, they have to be named and given a starting value. Optionally a dimension of the parameter may be added before the equal sign and separated from the parameter name by a white space. The dimension is only displayed by PyCorrFit and not processed, e.g. 
-\\ \texttt{D [10 µm²/s] = 200.0}.\\
-This is done for all parameters of the model function. Parameters may not start with a \texttt{G} or \texttt{g}. Also, some variables like \texttt{e} or \texttt{pi} are already mapped and must not be used. The parameter \texttt{tau} is reserved for the corresponding lag times (\SI{}{ms}) and may be used freely.
-
-\item \textbf{Placeholders:} Placeholders must start with a lower \texttt{g}, for example \\  \texttt{gTwoD = 1./(1.+D*tau/a**2)}. 
-
-\item \textbf{Correlation function}: The correlation function is identified by the capital letter \texttt{G}: \\
-\texttt{G = 1./n * gThrD * gScan * gTrip}
-\end{itemize}
-\begin{figure}[tp]
-\small
-% for case sensitiver Verbatim, we need the package fancyvrb
-\begin{Verbatim}[frame = single]
-
-# CS-FCS 3D+S+T (Confocal)
-
-# Circular Scanning FCS model function. 3D diffusion + Triplet.
-
-## Definition of parameters:
-# First, the parameters and their starting values for the model function
-# need to be defined. If the parameter has a unit of measurement, then it 
-# may be added separated by a white space before the "=" sign. The starting
-# value should be a floating point number. Floating point abbreviations 
-# like "1e-3" instead of "0.001" may be used.
-
-# Diffusion coefficient
-D [10 µm²/s] = 200.0
-# Structural parameter
-w = 5.0
-# Waist of the lateral detection area
-a [100 nm] = 1.0
-# Particle number
-n = 5.0
-# Scan radius
-R [100 nm] = 5.0
-# Frequency
-f [kHz] = 20.0
-# Triplet fraction
-T = 0.1
-# Triplet time
-tautrip [ms] = 0.001
-
-# The user may wish to substitute certain parts of the correlation function
-# with other values to keep the formula simple. This can be done by using the
-# prefix "g". All common mathematical functions, such as "sqrt()" or "exp()"
-# may be used. For convenience, "pi" and "e" are available as well.
-
-gTrip = 1. + T/(1-T)*exp(-tau/tautrip)
-gScan = exp(-(R*sin(pi*f*tau))**2/(a**2+D*tau))
-gTwoD = 1./(1.+D*tau/a**2)
-gOneD = 1./sqrt(1.+D*tau/(w*a)**2)
-gThrD = gTwoD * gOneD
-
-# The final line with the correlation function should start with a "G"
-# before the "=" sign.
-
-G = 1./n * gThrD * gScan * gTrip
-
-\end{Verbatim}
-\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig:extxt}}
-\end{figure}
-\hyref{Figure}{fig:extxt} shows a working example. External models will be imported with internal model function IDs starting at $7000$. Model functions are checked upon import by PyCorrFit. If the model function does not work, it might be a syntax error, or just an error of \texttt{sympy}. Sympy is used to check the model and is still under development. Model functions will be saved upon session saving.
 
 
 \input{PyCorrFit_doc_models}
