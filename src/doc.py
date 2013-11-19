@@ -70,6 +70,18 @@ from fluorescence correlation spectroscopy
 measurements. PyCorrFit is written in Python."""
 
 
+def GetLocationOfDocumentation():
+    """ Returns the location of the documentation if there is any."""
+    # This also defines the order
+    locations = ["../PyCorrFit_doc.pdf", "data/PyCorrFit_doc.pdf"]
+    for loc in locations:
+        if os.path.exists(loc):
+            return loc
+            break
+    # if this does not work:
+    return None
+
+
 def info(version):
     """ Returns a little info about our program and what it can do.
     """

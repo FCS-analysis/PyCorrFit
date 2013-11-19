@@ -354,15 +354,17 @@ class MyFrame(wx.Frame):
                     menuentry = submenu.Append(model[0], model[1], model[2])
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
         # help menu
-        menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software used",
-                                    "Information about the software used")
-        menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About",
-                                    "Information about this program")
+        menuDocu = helpmenu.Append(wx.ID_ANY, "&Documentation",
+                                    "PyCorrFit documentation")
         menuUpdate = helpmenu.Append(wx.ID_ANY, "&Update",
                                     "Check for new version"+
                                      " (Web access required)")
         menuShell = helpmenu.Append(wx.ID_ANY, "S&hell",
                                     "A Python shell")
+        menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software used",
+                                    "Information about the software used")
+        menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About",
+                                    "Information about this program")
         # Create the menubar.
         self.menuBar = wx.MenuBar()
         # Adding all the menus to the MenuBar
@@ -394,6 +396,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSoftware, menuSoftw)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_MENU, self.OnUpdate, menuUpdate)
+        self.Bind(wx.EVT_MENU, self.OnDocumentation, menuDocu)
         self.Bind(wx.EVT_MENU, self.OnShell, menuShell)
 
 
@@ -553,6 +556,22 @@ class MyFrame(wx.Frame):
             if self.notebook.GetPageCount() == 0:
                 self.OnFNBPageChanged()
 
+
+    def OnDocumentation(self, e=None):
+        """ Get the documentation and view it with browser"""
+        filename = doc.GetLocationOfDocumentation()
+        if filename is None:
+            # Now we have to tell the user that there is not documentation
+            pass
+        else:
+            # Open the file
+            if platform.system().lower() == 'windows':
+                os.system("start "+filename)
+            elif platform.system().lower() == 'linux':
+                os.system("xdg-open "+filename)
+            elif platform.system().lower() == 'darwin':
+                os.system("open "+filename)
+        
 
     def OnExit(self,e=None):
         numtabs = self.notebook.GetPageCount()
