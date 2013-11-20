@@ -19,6 +19,7 @@
 import os
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
+import wx.lib.delayedresult as delayedresult
 import wx.py.shell
 import numpy as np                      # NumPy
 import platform
@@ -322,7 +323,7 @@ class MyFrame(wx.Frame):
                                      "Export current plot as image.")
 
         menuSavePlotTrace = self.curmenu.Append(wx.ID_ANY, 
-                                     "&Save trace view as image",
+                                     "&Save trace as image",
                                      "Export current trace as image.")
         self.curmenu.AppendSeparator()
         menuClPa = self.curmenu.Append(wx.ID_ANY, "&Close Page",
@@ -359,9 +360,11 @@ class MyFrame(wx.Frame):
         menuUpdate = helpmenu.Append(wx.ID_ANY, "&Update",
                                     "Check for new version"+
                                      " (Web access required)")
+        helpmenu.AppendSeparator()
         menuShell = helpmenu.Append(wx.ID_ANY, "S&hell",
                                     "A Python shell")
-        menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software used",
+        helpmenu.AppendSeparator()
+        menuSoftw = helpmenu.Append(wx.ID_ANY, "&Software",
                                     "Information about the software used")
         menuAbout = helpmenu.Append(wx.ID_ABOUT, "&About",
                                     "Information about this program")
@@ -561,16 +564,19 @@ class MyFrame(wx.Frame):
         """ Get the documentation and view it with browser"""
         filename = doc.GetLocationOfDocumentation()
         if filename is None:
-            # Now we have to tell the user that there is not documentation
-            pass
+            # Now we have to tell the user that there is no documentation
+            self.StatusBar.SetStatusText("...documentation not found.")
         else:
-            # Open the file
+            self.StatusBar.SetStatusText("...documentation: "+filename)
             if platform.system().lower() == 'windows':
-                os.system("start "+filename)
+                os.system("start /b "+filename)
             elif platform.system().lower() == 'linux':
-                os.system("xdg-open "+filename)
+                os.system("xdg-open "+filename+" &")
             elif platform.system().lower() == 'darwin':
-                os.system("open "+filename)
+                os.system("open "+filename+" &")
+            else:
+                # defaults to linux style:
+                os.system("xdg-open "+filename+" &")
         
 
     def OnExit(self,e=None):

@@ -3,7 +3,8 @@ a = Analysis(['C:\\Python27\\PyCorrFit\\src\\PyCorrFit.py'],
              pathex=['C:\\Python27\\pyinstaller'],
              hiddenimports=[],
              hookspath=None)
-a.datas += [('doc\\ChangeLog.txt', 'C:\\Python27\\PyCorrFit\\ChangeLog.txt', 'DATA')]
+a.datas += [('doc\\ChangeLog.txt', 'C:\\Python27\\PyCorrFit\\ChangeLog.txt', 'DATA'),
+            ('doc\\PyCorrFit_doc.pdf', 'C:\\Python27\\PyCorrFit\\PyCorrFit_doc.pdf', 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,

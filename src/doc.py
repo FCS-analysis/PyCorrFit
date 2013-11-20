@@ -73,10 +73,23 @@ measurements. PyCorrFit is written in Python."""
 def GetLocationOfDocumentation():
     """ Returns the location of the documentation if there is any."""
     # This also defines the order
-    locations = ["../PyCorrFit_doc.pdf", "data/PyCorrFit_doc.pdf"]
+    filename = "PyCorrFit_doc.pdf"
+    ## running from source
+    locations = list()
+    fname1 = os.path.realpath(__file__)
+    # Documentation is usually one directory up
+    dir1 = os.path.dirname(fname1)+"/../"
+    locations.append(os.path.realpath(dir1))
+    ## freezed binaries:
+    if hasattr(sys, 'frozen'):
+        try:
+            dir2 = sys._MEIPASS + "/doc/"
+        except:
+            dir2 = "./"
+        locations.append(os.path.realpath(dir2))
     for loc in locations:
         if os.path.exists(loc):
-            return loc
+            return os.path.join(loc,filename)
             break
     # if this does not work:
     return None
