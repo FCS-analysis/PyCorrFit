@@ -159,12 +159,12 @@ Model functions are imported as text files (*.txt) using certain syntax:
 \item \textbf{Units}: PyCorrFit works with internal units for:
 
 \begin{itemize}
-\item Time: 1 ms
-\item Distance: 100 nm
-\item Diffusion coefficient: 10 µm\textsuperscript{2}s\textsuperscript{{}-1} 
-\item Inverse time: 1000 s\textsuperscript{{}-1} 
-\item Inverse area: 100 µm\textsuperscript{{}-2} 
-\item Inverse volume: 1000 µm\textsuperscript{{}-3} 
+\item Time: \SI{1}{ms}
+\item Distance: \SI{100}{nm}
+\item Diffusion coefficient: \SI{10}{\mu m^2s^{-1}} 
+\item Inverse time: \SI{1000}{s^{-1}} 
+\item Inverse area: \SI{100}{\mu m^{-2}} 
+\item Inverse volume: \SI{1000}{\mu m^{-3}} 
 \end{itemize}
 \item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: D [50 µm\textsuperscript{2}s\textsuperscript{{}-1}] = 50.00. It is important to note that when the dimensions differ from the internal units (10 µm\textsuperscript{2}s\textsuperscript{{}-1}), the expression must contain some adjusting factor; here a factor of 5. Thus, user defined dimensions are only for display and cannot be processed numerically. The parameter names contain only alphabetic (not numerical) characters. ‘G’ and ‘g’, as well as the numbers ‘e’ and ‘pi’ are already mapped and cannot be used freely.
 \item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use placeholders. Placeholders start with a lowercase ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
