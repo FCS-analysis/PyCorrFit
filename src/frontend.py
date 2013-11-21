@@ -17,6 +17,7 @@
 
 
 import os
+import webbrowser
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
 import wx.lib.delayedresult as delayedresult
@@ -115,7 +116,7 @@ class MyFrame(wx.Frame):
         self.tau = tau 
 
         # Tab Counter
-        self.tabcounter = 0
+        self.tabcounter = 1
 
         # Background Correction List
         # Here, each item is a list containing three elements:
@@ -357,6 +358,8 @@ class MyFrame(wx.Frame):
         # help menu
         menuDocu = helpmenu.Append(wx.ID_ANY, "&Documentation",
                                     "PyCorrFit documentation")
+        menuWiki = helpmenu.Append(wx.ID_ANY, "&Wiki",
+                          "PyCorrFit wiki pages by users for users (online)")
         menuUpdate = helpmenu.Append(wx.ID_ANY, "&Update",
                                     "Check for new version"+
                                      " (Web access required)")
@@ -400,6 +403,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_MENU, self.OnUpdate, menuUpdate)
         self.Bind(wx.EVT_MENU, self.OnDocumentation, menuDocu)
+        self.Bind(wx.EVT_MENU, self.OnWiki, menuWiki)
         self.Bind(wx.EVT_MENU, self.OnShell, menuShell)
 
 
@@ -508,7 +512,7 @@ class MyFrame(wx.Frame):
         # Disable all the dialogs and menus
         self.EnableToolCurrent(False)
         self.OnFNBPageChanged()
-        self.tabcounter = 0
+        self.tabcounter = 1
         self.filename = None
         self.SetTitleFCS(None)
         self.SessionComment = "You may enter some information here."
@@ -1109,7 +1113,7 @@ class MyFrame(wx.Frame):
             # Internal functions:
             N = len(Infodict["Parameters"])
             # Reset tabcounter
-            self.tabcounter = 0
+            self.tabcounter = 1
             # Show a nice progress dialog:
             style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
                     wx.PD_CAN_ABORT
@@ -1352,6 +1356,11 @@ class MyFrame(wx.Frame):
     def OnUpdate(self, event):
         misc.Update(self)
 
+
+    def OnWiki(self, e=None):
+        """ Go to the GitHub Wiki page"""
+        webbrowser.open(doc.GitWiki)
+        
 
     def PackParameters(self, Page):
         """ Gets all parameters from a page and returns a list object,
