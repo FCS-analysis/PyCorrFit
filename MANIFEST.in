@@ -1,0 +1,5 @@
+include doc-src/*
+include external_model_functions/*
+include README.md
+include ChangeLog.txt
+include PyCorrFit_doc.pdf
