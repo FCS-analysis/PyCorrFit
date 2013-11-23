@@ -309,12 +309,19 @@ if hasattr(sys, 'frozen'):
 else:
     StaticChangeLog = os.path.join(os.path.dirname(sys.argv[0]), "../"+ChangeLog)
 
+if os.path.exists(StaticChangeLog) is False:
+    # Try to check in the directory above without the sysargv
+    StaticChangeLog = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                   "../"+ChangeLog)
+    
+# Check if we can extract the version
 try:
     clfile = open(StaticChangeLog, 'r')
     __version__ = clfile.readline().strip()
     clfile.close()     
 except:
     __version__ = "0.0.0-unknown"
+    
     
 # Github homepage
 GitChLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
