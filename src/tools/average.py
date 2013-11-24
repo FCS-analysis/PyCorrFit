@@ -127,8 +127,8 @@ class Average(wx.Frame):
             if int(j) in PageNumbers:
                 # Get all pages with the same model?
                 if self.WXCheckMono.GetValue() == True:
-                    if (Page.modelid == referencePage.modelid and 
-                        Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
+                    if (Page.modelid == referencePage.modelid and
+                       Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
                         ## Check if current page has experimental data:
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
@@ -141,8 +141,8 @@ class Average(wx.Frame):
                             pages.append(Page)
                             UsedPagenumbers.append(int(j))
         # If there are no pages in the list, exit gracefully
-        if len(pages) <= 1:
-            texterr_a = "At least two pages with experimental data are\n"+\
+        if len(pages) <= 0:
+            texterr_a = "At least one page with experimental data is\n"+\
                         "required for averaging. Please check the pages\n"+\
                         "that you selected for averaging."
             if self.WXCheckMono.GetValue() == True:
@@ -274,8 +274,13 @@ class Average(wx.Frame):
                 self.AvgPage.tracecc = None
         self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
-        self.AvgPage.tabtitle.SetValue("Average ["+
-                                misc.parsePagenum2String(UsedPagenumbers)+"]")
+        if len(pages) == 1:
+            # Use the same title as the current page
+            newtabti = referencePage.tabtitle.GetValue()
+        else:
+            # Create a new tab title
+            newtabti = "Average ["+misc.parsePagenum2String(UsedPagenumbers)+"]"
+        self.AvgPage.tabtitle.SetValue(newtabti)
         # Set the addition information about the variance from averaging
         Listname = "Average"
         standarddev = exparray.std(axis=0)[:,1]
@@ -303,7 +308,7 @@ class Average(wx.Frame):
                 WeightKinds += [key]
             self.AvgPage.Fitbox[1].SetItems(WeightKinds)
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
-        # Keep the average open.
+        # Keep the average tool open.
         # self.OnClose()
 
     def SetPageNumbers(self, pagestring):
