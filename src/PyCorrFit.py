@@ -120,7 +120,7 @@ CheckVersion(np.__version__, "1.5.1", "NumPy")
 CheckVersion(scipy.__version__, "0.8.0", "SciPy")
 CheckVersion(sympy.__version__, "0.7.2", "sympy")
 CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
-CheckVersion(yaml.__version__, "3.09", "yaml")
+CheckVersion(yaml.__version__, "3.09", "PyYAML")
 
 ## Command line ?
 
