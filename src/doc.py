@@ -70,16 +70,15 @@ from fluorescence correlation spectroscopy
 measurements. PyCorrFit is written in Python."""
 
 
-def GetLocationOfDocumentation():
-    """ Returns the location of the documentation if there is any."""
-    # This also defines the order
-    filename = "PyCorrFit_doc.pdf"
-    ## running from source
+def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
     locations = list()
     fname1 = os.path.realpath(__file__)
-    # Documentation is usually one directory up
+    # Try one directory up
     dir1 = os.path.dirname(fname1)+"/../"
     locations.append(os.path.realpath(dir1))
+    # In case of distribution with .egg files (pip, easy_install)
+    dir2 = os.path.dirname(fname1)+"/../pycorrfit_doc/"
+    locations.append(os.path.realpath(dir2))
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
         try:
@@ -88,8 +87,36 @@ def GetLocationOfDocumentation():
             dir2 = "./"
         locations.append(os.path.realpath(dir2))
     for loc in locations:
-        if os.path.exists(loc):
-            return os.path.join(loc,filename)
+        thechl = os.path.join(loc,filename)
+        if os.path.exists(thechl):
+            return thechl
+            break
+    # if this does not work:
+    return None
+
+
+def GetLocationOfDocumentation(filename = "PyCorrFit_doc.pdf"):
+    """ Returns the location of the documentation if there is any."""
+    ## running from source
+    locations = list()
+    fname1 = os.path.realpath(__file__)
+    # Documentation is usually one directory up
+    dir1 = os.path.dirname(fname1)+"/../"
+    locations.append(os.path.realpath(dir1))
+    # In case of distribution with .egg files (pip, easy_install)
+    dir2 = os.path.dirname(fname1)+"/../pycorrfit_doc/"
+    locations.append(os.path.realpath(dir2))
+    ## freezed binaries:
+    if hasattr(sys, 'frozen'):
+        try:
+            dir2 = sys._MEIPASS + "/doc/"
+        except:
+            dir2 = "./"
+        locations.append(os.path.realpath(dir2))
+    for loc in locations:
+        thedoc = os.path.join(loc,filename)
+        if os.path.exists(thedoc):
+            return thedoc
             break
     # if this does not work:
     return None
@@ -296,24 +323,12 @@ what type(s) you would like to
 import. """
 
 
-
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
 ChangeLog = "ChangeLog.txt"
-if hasattr(sys, 'frozen'):
-    try:
-        StaticChangeLog = os.path.join(sys._MEIPASS, "doc/"+ChangeLog)
-    except:
-        StaticChangeLog = os.path.join("./", ChangeLog)
-else:
-    StaticChangeLog = os.path.join(os.path.dirname(sys.argv[0]), "../"+ChangeLog)
+StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
 
-if os.path.exists(StaticChangeLog) is False:
-    # Try to check in the directory above without the sysargv
-    StaticChangeLog = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                   "../"+ChangeLog)
-    
 # Check if we can extract the version
 try:
     clfile = open(StaticChangeLog, 'r')

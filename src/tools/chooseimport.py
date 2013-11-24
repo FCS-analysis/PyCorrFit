@@ -21,7 +21,7 @@ import wx
 
 import models as mdls
 import doc
-import selectcurves
+import overlaycurves
 
 
 class ChooseImportTypes(wx.Dialog):
@@ -189,7 +189,7 @@ class ChooseImportTypesModel(wx.Dialog):
         prev_selected = list()
         for item in self.kept_curvedict.keys():
             prev_selected += self.kept_curvedict[item]
-        Selector = selectcurves.Wrapper_OnImport(self.parent, corrcurves,
+        Selector = overlaycurves.Wrapper_OnImport(self.parent, corrcurves,
                                                  self.OnSelected, prev_selected,
                                                  labels=labeldict)
 

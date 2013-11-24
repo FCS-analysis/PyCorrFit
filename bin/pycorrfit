@@ -1,3 +1,11 @@
 #!/bin/sh
 
-python /usr/share/pyshared/pycorrfit/PyCorrFit.py
+if [ -f "/usr/share/pyshared/pycorrfit/PyCorrFit.py" ]
+then
+    python /usr/share/pyshared/pycorrfit/PyCorrFit.py
+elif [ -f /usr/local/lib/python2.7/dist-packages/pycorrfit/PyCorrFit.py ]
+then
+    python /usr/local/lib/python2.7/dist-packages/pycorrfit/PyCorrFit.py
+else
+    echo "Could not find PyCorrFit.py. Please notify the author."
+fi
