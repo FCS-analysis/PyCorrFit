@@ -1,3 +1,22 @@
+0.8.0-2beta
+- Thanks to Alex Mestiashvili for providing initial setup.py files (@mestia)
+- Bugfixes
+   - Some ConfoCor files were not imported
+   - The cpp was not calculated correctly in case of background correction (#45)
+   - Enabled averaging of single pages (#58)
+- Improvements of the user interface
+   - The menus have been reordered (#47, #50)
+   - The fitting panel has been optimized (#49)
+   - the slider simulation got a reset button (#51)
+   - The Help menu contains documentation and wiki (#56)
+   - Model functions that are somehow redundant have been removed from the menu,
+     but are still supported
+   - The model doc strings were fully converted to unicode
+   - Several text messages were modified for better coherence
+   - The background correction tool is more intuitive
+   - Statistics panel improvements (#43)
+   - Run information is included in the Data set title
+   - The page counter starts at "1" instead of "0" (#44)
 0.8.0
 - Filename/title of each tab now shows up in the notebook (#39)
 - Statistics tool can plot parameters and page selection with the Overlay
