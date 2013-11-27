@@ -241,18 +241,18 @@ G = 1./n * gThrD * gScan * gTrip
 \textit{Load data }is the first way to import multiple correlation data sets into a \textit{PyCorrFit} session. The supported file formats can be found in a drop-down list of supported file endings in the pop-up dialog \textit{Open data files}:
 
 
-\begin{enumerate}
-\item All supported files \ \ \ \ \ \ [default]
-\item Confocor3 (*.fcs)\ \ \ \ \ \ [AIM 4.2, ZEN 2010, Zeiss, Germany]
-\item Correlator ALV6000 (*.ASC)\ \ [ALV Laser GmbH, Langen, Germany]
-\item Correlator.com (*.SIN)\ \ \ \ [www.correlator.com, USA]
-\item Matlab ‘Ries (*.mat)\ \ \ \ \ \ [EMBL Heidelberg, Germany]
-\item PyCorrFit (*.csv)\ \ \ \ \ \ [Paul Müller, TU Dresden, Germany]
-\item Zip files (*.zip)\ \ \ \ \ \ [Paul Müller, TU Dresden, Germany]
-\end{enumerate}
+\begin{tabular}{l l}
+ All supported files & default \\
+ Confocor3 (*.fcs) & AIM 4.2, ZEN 2010, Zeiss, Germany \\
+ Correlator ALV6000 (*.ASC) & ALV Laser GmbH, Langen, Germany \\
+ Correlator.com (*.SIN) & www.correlator.com, USA \\
+ Matlab ‘Ries (*.mat) & EMBL Heidelberg, Germany \\
+ PyCorrFit (*.csv) & Paul Müller, TU Dresden, Germany \\
+ Zip files (*.zip) & Paul Müller, TU Dresden, Germany \\
+\end{tabular}
 While (1)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
 
-When loading data, the user is prompted to assign fit models in the \textit{Choose }\textit{Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see Section 3.4 and Appendix xxx):
+When loading data, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see Section 3.4 and Appendix xxx):
 
 If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
 
