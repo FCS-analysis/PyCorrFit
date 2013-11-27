@@ -382,7 +382,7 @@ This menu compiles import and export operations referring exclusively to the act
 \label{sec:cp.id}
 This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (Section 3.1.2). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
 
-To avoid this loss, one could first generate a new page via the menu \textit{Models} (Section 3.4), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
+To avoid this loss, one could first generate a new page via the menu (\hyref{Section}{sec:tm.m}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
 \subsubsection{Current Page / Save data (*.csv)}
 \label{sec:cp.sd}
@@ -408,31 +408,25 @@ When choosing a model from the \textit{Models} menu a new page opens and the mod
 
 Standard model functions for a confocal setup are:
 
-Confocal (Gaussian): 3D \ \ \ \ \ \ [Free diffusion in three dimensions]
-
-Confocal (Gaussian): T-3D \ \ \ \ \ \ [Triplet blinking and 3D diffusion]
-
-Confocal (Gaussian): T-3D-3D \ \ \ \ [Triplet with two diffusive components]
-
-Confocal (Gaussian): T-3D-3D-3D \ \ \ \ [Triplet with three diffusive components]
-
-Confocal (Gaussian): 2D \ \ \ \ \ \ [2D diffusion, e.g. in membranes]
-
-Confocal (Gaussian): T-2D \ \ \ \ \ \ [Triplet blinking and 2D diffusion]
-
-Confocal (Gaussian): T-2D-2D\ \ \ \ [Triplet with two diffusive components]
-
-Confocal (Gaussian): T-3D-2D \ \ \ \ [Triplet with mixed 3D and 2D diffusion]
+\begin{tabular}{l l}
+%Confocal (Gaussian): 3D \ \ \ \ \ \ [Free diffusion in three dimensions]
+Confocal (Gaussian): T+3D & Triplet blinking and 3D diffusion \\
+Confocal (Gaussian): T+3D+3D & Triplet with two diffusive components \\
+%Confocal (Gaussian): T+3D+3D+3D & [Triplet with three diffusive components]
+%Confocal (Gaussian): 2D &  2D diffusion, e.g. in membranes \\
+Confocal (Gaussian): T-2D &  Triplet blinking and 2D diffusion \\
+Confocal (Gaussian): T-2D-2D & Triplet with two diffusive components \\
+Confocal (Gaussian): T-3D-2D &  Triplet with mixed 3D and 2D diffusion \\
+\end{tabular}
 
 There is also a collection of models for FCS setups with TIR excitation:
 
-TIR (Gaussian/Exp.): 3D\ \ \ \ \ \ [3D diffusion]
+\begin{tabular}{l l}
+TIR (Gaussian/Exp.): 3D & 3D diffusion \\
+TIR (Gaussian/Exp.): T+3D+3D & Triplet with two diffusive components \\
+TIR (Gaussian/Exp.): T+3D+2D & Triplet with mixed 3D and 2D diffusion \\
+\end{tabular}
 
-TIR (Gaussian/Exp.): T-3D-3D\ \ \ \ [Triplet with two diffusive components]
-
-TIR (Gaussian/Exp.): T-3D-2D\ \ \ \ [Triplet with mixed 3D and 2D diffusion]
-
-… 
 
 In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (Section 3.1.1).
 
