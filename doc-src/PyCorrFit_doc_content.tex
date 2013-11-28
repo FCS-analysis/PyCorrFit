@@ -141,7 +141,7 @@ The main window can be rescaled as a whole to improve data representation. In ad
 \section{The menu bar}
 \label{sec:mb}
 
-PyCorrFit is organized in panels which group certain functions. The menu organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help). The documentation refers to the version 0.8.1.
+PyCorrFit is organized in panels which group certain functions. The menu organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help).
 
 \subsection{File menu}
 \label{sec:fm}
@@ -149,7 +149,7 @@ The File menu organizes the import of theoretical models, experimental correlati
 
 \subsubsection{File / Import model}
 \label{sec:fm.im}
-Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume etc. While a number of standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS [REF] or a combination of diffusion and directed flow [REF].
+Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume etc. While a number of standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} or a combination of diffusion and directed flow \cite{Brinkmeier1999}.
 
 Model functions are imported as text files (*.txt) using certain syntax:
 
@@ -166,7 +166,10 @@ Model functions are imported as text files (*.txt) using certain syntax:
 \item Inverse area: \SI{100}{\mu m^{-2}} 
 \item Inverse volume: \SI{1000}{\mu m^{-3}} 
 \end{itemize}
-\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: D [50 µm\textsuperscript{2}s\textsuperscript{{}-1}] = 50.00. It is important to note that when the dimensions differ from the internal units (10 µm\textsuperscript{2}s\textsuperscript{{}-1}), the expression must contain some adjusting factor; here a factor of 5. Thus, user defined dimensions are only for display and cannot be processed numerically. The parameter names contain only alphabetic (not numerical) characters. ‘G’ and ‘g’, as well as the numbers ‘e’ and ‘pi’ are already mapped and cannot be used freely.
+\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}.
+%It is important to note that when the dimensions differ from the internal units (\SI{10}{\mu m^ 2 s^{-1}}), the expression must contain some adjusting factor; here a factor of 5. 
+%Thus, user defined dimensions are only for display and cannot be processed numerically.
+ The parameter names contain only alphabetic (not numerical) characters. \texttt{G} and \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
 \item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use placeholders. Placeholders start with a lowercase ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
 
 \begin{itemize}
@@ -242,15 +245,17 @@ G = 1./n * gThrD * gScan * gTrip
 
 
 \begin{tabular}{l l}
- All supported files & default \\
- Confocor3 (*.fcs) & AIM 4.2, ZEN 2010, Zeiss, Germany \\
- Correlator ALV6000 (*.ASC) & ALV Laser GmbH, Langen, Germany \\
- Correlator.com (*.SIN) & www.correlator.com, USA \\
- Matlab ‘Ries (*.mat) & EMBL Heidelberg, Germany \\
- PyCorrFit (*.csv) & Paul Müller, TU Dresden, Germany \\
- Zip files (*.zip) & Paul Müller, TU Dresden, Germany \\
+ \rule{0pt}{3ex}  (1) All supported files & default \\
+ \rule{0pt}{3ex} (2) Confocor3 (*.fcs) & AIM 4.2, ZEN 2010, Zeiss, Germany \\
+ \rule{0pt}{3ex} (3) Correlator ALV6000 (*.ASC) & ALV Laser GmbH, Langen, Germany \\
+ \rule{0pt}{3ex} (4) Correlator.com (*.SIN) & www.correlator.com, USA \\
+ \rule{0pt}{3ex} (5) Matlab ‘Ries (*.mat) & EMBL Heidelberg, Germany \\
+ \rule{0pt}{3ex} (6) PyCorrFit (*.csv) & Paul Müller, TU Dresden, Germany \\
+ \rule{0pt}{3ex} (7) Zip files (*.zip) & Paul Müller, TU Dresden, Germany \\
 \end{tabular}
-While (1)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
+\vspace{3ex}
+\newline
+While (2)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
 
 When loading data, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see Section 3.4 and Appendix xxx):
 
