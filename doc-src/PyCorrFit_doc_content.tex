@@ -13,7 +13,7 @@ or (at your option) any later version\footnote{\url{http://www.gnu.org/licenses/
 \subsubsection*{What PyCorrFit can do}
 \begin{itemize}
 \item Load correlation curves from numerous correlators
-\item Process these curves (e.g. background correction, s. Tools section \ref{sec:tools} )
+\item Process these curves (\hyref{Section}{sec:tm})
 \item Fit a model function (many included) to an experimental curve
 \item Import user defined models for fitting
 \item Many batch processing features
@@ -155,7 +155,7 @@ Model functions are imported as text files (*.txt) using certain syntax:
 
 \begin{itemize}
 \item \textbf{Encoding}: PyCorrFit can interpret the standard Unicode character set (UTF-8).
-\item \textbf{Comments}: Lines starting with a hash (\#), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data.
+\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data.
 \item \textbf{Units}: PyCorrFit works with internal units for:
 
 \begin{itemize}
@@ -257,14 +257,14 @@ G = 1./n * gThrD * gScan * gTrip
 \newline
 While (2)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
 
-When loading data, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see Section 3.4 and Appendix xxx):
+When loading data, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see \hyref{Section}{sec:models}):
 
 If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
 
 
 \begin{itemize}
-\item \textbf{Encoding}: \textit{PyCorrFit} uses the standard Unicode character set (UTF-8). However, since no special characters are needed to save experimental data, other encodings may also work. New line characters are {\textbackslash}r{\textbackslash}n (Windows).
-\item \textbf{Comments}: Lines starting with a hash (\#), empty lines, or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
+\item \textbf{Encoding}: \textit{PyCorrFit} uses the standard Unicode character set (UTF-8). However, since no special characters are needed to save experimental data, other encodings may also work. New line characters are \texttt{{\textbackslash}r{\textbackslash}n} (Windows).
+\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
 \item \textbf{Units}: PyCorrFit works with units/values for:
 
 \begin{itemize}
@@ -272,13 +272,31 @@ If a file format is not yet listed, the correlation data could be converted into
 \item Intensity: 1 kHz
 \item Amplitude offset: G(0) = 0 (not 1)
 \end{itemize}
-\item \textbf{Keywords: }\textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored, see Section 3.1.6). The table ends, when the keyword \# BEGIN TRACE appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \# BEGIN SECOND TRACE.
-\item \textbf{Tags:} Channel information can be entered using defined syntax in a header. The keyword \# Type AC/CC Autocorrelation [uppercase?] assigns the tag ‘AC’ and \# Type AC/CC Cross-correlation assigns the tag ‘CC’ to the correlation curve. These strings are consistently displayed in the user interface of the respective data page in \textit{PyCorrFit}. If no data type is specified, autocorrelation is assumed. Tags may be specified with additional information like channel numbers, e.g. \# Type AC/CC Autocorrelation \_01. In this case the tag ‘AC\_01’ is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
+\item \textbf{Keywords: }\textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored). The table ends, when the keyword \texttt{\# BEGIN TRACE} appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \texttt{\# BEGIN SECOND TRACE}.
+\item \textbf{Tags:} Channel information can be entered using defined syntax in a header. The keyword 
+\begin{center}
+\vspace{-1em}
+ \texttt{\# Type AC/CC Autocorrelation}
+\vspace{-1em}
+\end{center}
+  assigns the tag \texttt{AC} and the keyword
+\begin{center}
+\vspace{-1em}
+  {\texttt{\# Type AC/CC Crosscorrelation}}
+\vspace{-1em}
+\end{center}
+ assigns the tag \texttt{CC} to the correlation curve. These strings are consistently displayed in the user interface of the respective data page in \textit{PyCorrFit}. If no data type is specified, autocorrelation is assumed. Tags may be specified with additional information like channel numbers, e.g. 
+\begin{center}
+\vspace{-1em}
+ \texttt{\# Type AC/CC Autocorrelation \_01}.
+\vspace{-1em}
+\end{center}
+In this case the tag \texttt{AC\_01} is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
 \end{itemize}
 
 \subsubsection{File / Open session}
 \label{sec:fm.os}
-This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Sessions are bundles of files named *.fcsfit-session.zip. Sessions contain, comments, model assigned correlation data, and the current state of parameters for each data page (Section 3.1.6).
+This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Sessions are bundles of files named *.fcsfit-session.zip. Sessions contain, comments, model assigned correlation data, and the current state of parameters for each data page (\hyref{Section}{sec:fm.ss}).
 
 \subsubsection{File / Comment session}
 \label{sec:fm.cs}
@@ -367,9 +385,9 @@ Page info is a most verbose summary of a data set. The panel \textit{Page info} 
 \item Actual parameter values (as contained in the model function)
 \item Supplementary parameters (intensity, counts per particle, duration, etc.)
 \item Fitting related information (Chi-square, channel selection, varied fit parameters) .
-\item Model doc string (Section 3.1)
+\item Model doc string (\hyref{Section}{sec:models})
 \end{enumerate}
-The content of Page info is saved as a header when exporting correlation functions via the command \textit{Current page / Save data (*.csv)} (Section 3.3.2).
+The content of Page info is saved as a header when exporting correlation functions via the command \textit{Current page / Save data (*.csv)} (\hyref{Section}{sec:cp.sd}).
 
 \subsubsection{Tools / Slider simulation}
 \label{sec:tm.ss}
@@ -379,21 +397,21 @@ Two variables (A and B) have to be assigned from a drop-down list of parameters 
 
 In addition, the variables A and B can be linked by a mathematical relation. For this a mathematical operator can be selected from a small list and the option \textit{Fix relation} must be checked. Then, the variable B appears inactivated (greyed out) and the new variable combining values for A and B can be explored by dragging.
 
-\subsection{ Current Page}
+\subsection{Current Page}
 \label{sec:cp}
 This menu compiles import and export operations referring exclusively to the active page in the main window. 
 
 \subsubsection{Current Page / Import Data}
 \label{sec:cp.id}
-This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (Section 3.1.2). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
+This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (\hyref{Section}{sec:fm.ld}). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
 
 To avoid this loss, one could first generate a new page via the menu (\hyref{Section}{sec:tm.m}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
 \subsubsection{Current Page / Save data (*.csv)}
 \label{sec:cp.sd}
-For the documentation with graphics software of choice, correlation curves can be exported as a comma-separated table. A saved \textit{PyCorrFit} text-file (*.csv) will contain a hashed header with metadata from the \textit{Page info} panel (Section 3.2.8), followed by the correlation and fitting values in tab-separated columns: \textit{Channel (tau [s])}, \textit{Experimental correlation}, \textit{Fitted correlation}, \textit{Residuals, }and \textit{Weights (fit)}. 
+For the documentation with graphics software of choice, correlation curves can be exported as a comma-separated table. A saved \textit{PyCorrFit} text-file (*.csv) will contain a hashed header with metadata from the \textit{Page info} tool (\hyref{Section}{sec:tm.pi}), followed by the correlation and fitting values in tab-separated columns: \textit{Channel (tau [s])}, \textit{Experimental correlation}, \textit{Fitted correlation}, \textit{Residuals}, and \textit{Weights (fit)}. 
 
-Below the columns, there are again 5 rows of hashed comments followed by the intensity data in two columns: \textit{Time [s]} and \textit{Intensity trace [kHz]}. Note that there are no assemblies of “multiple runs”, since \textit{PyCorrFit} treats these as individual correlation functions. A *.csv file therefore contains only a single fitted correlation curve and one intensity trace for autocorrelation or two intensity traces for cross-correlation.
+Below the columns, there are again 5 rows of hashed comments followed by the intensity data in two columns: \textit{Time [s]} and \textit{Intensity trace [kHz]}. Note that there are no assemblies of ``multiple runs'', since \textit{PyCorrFit} treats these as individual correlation functions. A *.csv file therefore contains only a single fitted correlation curve and one intensity trace for autocorrelation or two intensity traces for cross-correlation.
 
 \subsubsection{Current Page / Save correlation as image}
 \label{sec:cp.sc}
@@ -408,58 +426,64 @@ For a quick documentation the intensity from the \textit{Trace view} panel can b
 Closes the page; the data set is removed from the session. The page numbers of all other pages remain the same. The command is equivalent with the closer (x) in the tab. 
 
 \subsection{Models}
-
+\label{sec:models}
 When choosing a model from the \textit{Models} menu a new page opens and the model function is plotted according to the set of starting values for parameters as they were defined in the model description. The lists contains all of the implemented model functions, which can be selected during \textit{File / Load data}. The parameters can be manipulated to explore different shapes; the tool \textit{Slider simulation} can also be used. Via \textit{Current page / Import data}, the model may then be fitted to an experimental data set. 
-
 Standard model functions for a confocal setup are:
 
 \begin{tabular}{l l}
 %Confocal (Gaussian): 3D \ \ \ \ \ \ [Free diffusion in three dimensions]
-Confocal (Gaussian): T+3D & Triplet blinking and 3D diffusion \\
-Confocal (Gaussian): T+3D+3D & Triplet with two diffusive components \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T+3D & Triplet blinking and 3D diffusion \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T+3D+3D & Triplet with two diffusive components \\
 %Confocal (Gaussian): T+3D+3D+3D & [Triplet with three diffusive components]
 %Confocal (Gaussian): 2D &  2D diffusion, e.g. in membranes \\
-Confocal (Gaussian): T-2D &  Triplet blinking and 2D diffusion \\
-Confocal (Gaussian): T-2D-2D & Triplet with two diffusive components \\
-Confocal (Gaussian): T-3D-2D &  Triplet with mixed 3D and 2D diffusion \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T-2D &  Triplet blinking and 2D diffusion \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T-2D-2D & Triplet with two diffusive components \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T-3D-2D &  Triplet with mixed 3D and 2D diffusion \\
+\rule{0pt}{3ex}
 \end{tabular}
 
 There is also a collection of models for FCS setups with TIR excitation:
 
 \begin{tabular}{l l}
-TIR (Gaussian/Exp.): 3D & 3D diffusion \\
-TIR (Gaussian/Exp.): T+3D+3D & Triplet with two diffusive components \\
-TIR (Gaussian/Exp.): T+3D+2D & Triplet with mixed 3D and 2D diffusion \\
+\rule{0pt}{3ex} - TIR (Gaussian/Exp.): 3D & 3D diffusion \\
+\rule{0pt}{3ex} - TIR (Gaussian/Exp.): T+3D+3D & Triplet with two diffusive components \\
+\rule{0pt}{3ex} - TIR (Gaussian/Exp.): T+3D+2D & Triplet with mixed 3D and 2D diffusion \\
+\rule{0pt}{3ex}
 \end{tabular}
 
 
-In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (Section 3.1.1).
+In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (\hyref{Section}{sec:fm.im}).
 
 \subsection{Preferences}
+\paragraph*{Latex} If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the ``Latex'' option will open a separate, TeX formatted panel (\textit{Figure1}) via the \textit{Current page / Save […] as image} commands. The \textit{Figure1} contains some interactive options for display. From there, in a second step, the image can be exported as *.png or *.svg.
 
-The preference menu is still short. If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the `'Latex´' option will open a separate, Tex formatted panel (\textit{Figure1}) via the \textit{Current page / Save […] as image} commands. The \textit{Figure1} contains some interactive options for display. From there, in a second step, the image can be exported as *.png.
+\paragraph*{Verbose} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:cp.sc}), the plot will be displayed instead of saved. If ``Latex'' is active these plots will also be TeX-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
 
-\textit{Verbose} generates a plot showing the spline function used for calculating the weights for each data points when performing a weighted fit. If Latex is active this plot will also be in Tex format. For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.
-
+\paragraph*{Show weights}
 Checking the option \textit{Show weights} will produce two lines showing the weights for each data point of the correlation function in the plot, as well as in the exported image. Note that the weights are always exported when using the \textit{Save data (*.csv)} command from the \textit{Current page} menu.
 
 \subsection{Help}
+\paragraph*{Documentation}
+This entry displays this documentation using the systems default PDF viewer.
+\paragraph*{Wiki}
+This entry displays the wiki of \textit{PyCorrFit} on \textit{GitHub}. Everyone who registers with \textit{GitHub} will be able to make additions and modifications. The wiki is intended for end-users of \textit{PyCorrFit} to share protocols or to add other useful information.
+\paragraph*{Update}
+establishes a link to the GitHub website to check for a new release; it also provides a few web links associated with PyCorrFit
+\paragraph*{Shell}
+This gives Shell-access to the functions of \textit{PyCorrFit}. It is particularly useful for trouble-shooting.
+\paragraph*{Software}
+This lists the exact version of \textit{Python} and the corresponding modules with which PyCorrFit is currently running.
+\paragraph*{About}
+Information of the participating developers, the license, and documentation writers.
 
-The help menu mainly provides additional information. \textit{Software used} lists the exact version of \textit{Python} used for programming the executable software. \textit{About} gives information of the participating developers, the license, and documentation writers. \textit{Update} establishes a link to the GitHub website to check for a new release; it also provides a few web links associated with PyCorrFit. Finally, \textit{Shell} specifies … ???.
-
-Documentation downloads this software guide from the GitHub website (PyCorrFit\_doc-1.pdf).
 
 \section{4 Hacker's corner}
+\paragraph*{New internal model functions}
+Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
 
-Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \_\_init\_\_.py and then add the script read\_FileFormat.py to the \textit{PyCorrFit} library.[to which library?, more info? Remove this paragraph?] 
-
-External models will be imported with internal model function IDs starting at 7000. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development. 
-
-
+External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development. 
 
 \section{Theoretical background}
-
-
 \subsection{Derivation of FCS model functions}
 This section introduces the calculation of FCS model functions. It supplies some background information and points out general properties of correlation functions.
 	
