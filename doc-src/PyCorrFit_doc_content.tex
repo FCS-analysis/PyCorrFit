@@ -268,12 +268,12 @@ If a file format is not yet listed, the correlation data could be converted into
 \item \textbf{Units}: PyCorrFit works with units/values for:
 
 \begin{itemize}
-\item Time: 1 ms
-\item Intensity: 1 kHz
-\item Amplitude offset: G(0) = 0 (not 1)
+\item Time: \SI{1}{ms}
+\item Intensity: \SI{1}{kHz}
+\item Amplitude offset: $G(0) = 0$ (not 1)
 \end{itemize}
-\item \textbf{Keywords: }\textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored). The table ends, when the keyword \texttt{\# BEGIN TRACE} appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \texttt{\# BEGIN SECOND TRACE}.
-\item \textbf{Tags:} Channel information can be entered using defined syntax in a header. The keyword 
+\item \textbf{Keywords:}\footnote{Keywords are case-insensitive.} \textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored). The table ends, when the keyword \texttt{\# BEGIN TRACE} appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \texttt{\# BEGIN SECOND TRACE}.
+\item \textbf{Tags:}\footnote{Tags are case-insensitive.} Channel information can be entered using defined syntax in a header. The keyword 
 \begin{center}
 \vspace{-1em}
  \texttt{\# Type AC/CC Autocorrelation}
