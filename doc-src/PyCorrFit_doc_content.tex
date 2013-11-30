@@ -1,26 +1,26 @@
 \section{Introduction}
 
 \subsection{Preface}
-\texttt{PyCorrFit} emerged from my work in the Schwille Lab\footnote{\url{http://www.biochem.mpg.de/en/rd/schwille/}} at the Biotechnology Center of the TU Dresden in 2011/2012. The program source code is available at GitHub\footnote{\url{https://github.com/paulmueller/PyCorrFit}}. Please do not hesitate to sign up and add a feature request. If you you found a bug, please let me know via GitHub.\\
+\textit{PyCorrFit} emerged from my work in the Schwille Lab\footnote{\url{http://www.biochem.mpg.de/en/rd/schwille/}} at the Biotechnology Center of the TU Dresden in 2011/2012. The program source code is available at GitHub\footnote{\url{https://github.com/paulmueller/PyCorrFit}}. Please do not hesitate to sign up and add a feature request. If you you found a bug, please let me know via GitHub.\\
 
-\noindent \texttt{PyCorrFit} was written to simplify the work with experimentally obtained correlation curves. These can be processed independently (operating system, location, time). PyCorrFit supports commonly used file formats and enables users to allocate and organize their data in a simple way.\\
+\noindent \textit{PyCorrFit} was written to simplify the work with experimentally obtained correlation curves. These can be processed independently (operating system, location, time). PyCorrFit supports commonly used file formats and enables users to allocate and organize their data in a simple way.\\
 
-\noindent PyCorrFit is free software: you can redistribute it and/or modify it
+\noindent \textit{PyCorrFit} is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published 
 by the Free Software Foundation, either version 2 of the License, 
 or (at your option) any later version\footnote{\url{http://www.gnu.org/licenses/gpl.html}}.
 
-\subsubsection*{What PyCorrFit can do}
+\subsubsection*{What \textit{PyCorrFit} can do}
 \begin{itemize}
 \item Load correlation curves from numerous correlators
 \item Process these curves (\hyref{Section}{sec:tm})
 \item Fit a model function (many included) to an experimental curve
 \item Import user defined models for fitting
 \item Many batch processing features
-\item Save/load entire PyCorrFit sessions
+\item Save/load entire \textit{PyCorrFit} sessions
 \end{itemize}
 
-\subsubsection*{What PyCorrFit is not}
+\subsubsection*{What \textit{PyCorrFit} is not}
 \begin{itemize}
 \item A multiple-$\tau$ correlator
 \item A software to operate hardware correlators
@@ -28,7 +28,7 @@ or (at your option) any later version\footnote{\url{http://www.gnu.org/licenses/
 
 \subsection{System prerequisites}
 \subsubsection{Hardware}
-This documentation addresses the processing of correlation curves with PyCorrFit. {PyCorrFit} was successfully used with the following setups:
+This documentation addresses the processing of correlation curves with \textit{PyCorrFit}. \textit{PyCorrFit} was successfully used with the following setups:
 \begin{itemize}
 \item[1.]
      APD: Photon Counting Device from PerkinElmer Optoelectronics, Model: 	 \texttt{SPCM-CD3017}\\
@@ -42,7 +42,7 @@ This documentation addresses the processing of correlation curves with PyCorrFit
 
 \subsubsection{Software}
 \label{cha:soft}
-The latest version of PyCorrFit can be obtained from the internet at \url{http://pycorrfit.craban.de}.
+The latest version of \textit{PyCorrFit} can be obtained from the internet at \url{http://pycorrfit.craban.de}.
 \begin{itemize}
 \item \textbf{MacOSx}.
 Binary files for MacOSx $>$10.6.8 are available from the download page but have not yet been fully tested for stability.
@@ -51,7 +51,7 @@ For Windows XP or Windows 7, stand-alone binary executables are available from t
 \item \textbf{Linux}.
 There are executable binaries for widely used distributions (e.g. Ubuntu).
 \item \textbf{Sources}
-The program was written in Python, keeping the concept of cross-platform programming in mind. To run PyCorrFit on any other operating system, the installation of Python v.2.7 is required. To obtain the latest source, visit PyCorrFit at GitHub (\url{https://github.com/paulmueller/PyCorrFit}). PyCorrFit depends on the following python modules:\\
+The program was written in Python, keeping the concept of cross-platform programming in mind. To run \textit{PyCorrFit} on any other operating system, the installation of Python v.2.7 is required. To obtain the latest source, visit \textit{PyCorrFit} at GitHub (\url{https://github.com/paulmueller/PyCorrFit}). \textit{PyCorrFit} depends on the following python modules:\\
 \texttt{\\
 python-matplotlib ($\geq$ 1.0.1) \\
 python-numpy ($\geq$ 1.5.1) \\
@@ -62,7 +62,7 @@ python-wxtools \\
 python-wxgtk2.8-dbg \\
 }
 \\
-For older versions of Ubuntu, some of the above package versions are not listed in the package repository. To enable the use of PyCorrFit on those systems, the following tasks have to be performed:
+For older versions of Ubuntu, some of the above package versions are not listed in the package repository. To enable the use of \textit{PyCorrFit} on those systems, the following tasks have to be performed:
 \begin{itemize}
 \item[ ] \textbf{matplotlib}. The tukss-ppa includes version 1.0.1. After adding the repository (\texttt{apt-add-repository ppa:tukss/ppa}), matplotlib can be installed as usual.
 \item[ ] \textbf{numpy}. The package from a later version of Ubuntu can be installed: \url{https://launchpad.net/ubuntu/+source/python-numpy/}
@@ -73,21 +73,21 @@ For older versions of Ubuntu, some of the above package versions are not listed 
 Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be used to install up-to-date python modules.
 
 \noindent \textbf{\LaTeX}.
-PyCorrFit can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
+\textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
-\subsection{Running PyCorrFit}
+\subsection{Running \textit{PyCorrFit}}
 \label{sec:run}
 \paragraph*{Windows}
 Download the executable file and double-click on the \texttt{PyCorrFit.exe} icon.
 \paragraph*{Linux/Ubuntu}
 Make sure the binary has the executable bit set, then simply double-click on the binary  \texttt{PyCorrFit}.
 \paragraph*{Mac OSx}
-When downloading the archive \texttt{PyCorrFit.zip}, the binary should be extracted automatically (if not, extract the archive) and you can double-click it to run PyCorrFit.
+When downloading the archive \texttt{PyCorrFit.zip}, the binary should be extracted automatically (if not, extract the archive) and you can double-click it to run \textit{PyCorrFit}.
 \paragraph*{from source}
 Invoke \texttt{python PyCorrFit.py} from the command line.
 
 
-\section{Working with PyCorrFit}
+\section{Working with \textit{PyCorrFit}}
 
 \subsection{Workflow}
 \label{cha_graphint}
