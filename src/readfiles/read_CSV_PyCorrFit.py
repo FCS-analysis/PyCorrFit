@@ -65,7 +65,7 @@ def openCSV(dirname, filename):
             # Beware that the len(row) statement has to be called first
             # (before the len(str(row[0]).strip()) ). Otherwise some
             # error would be raised.
-        elif str(row[0])[:12] == "# Type AC/CC":
+        elif str(row[0])[:12].lower() == "# Type AC/CC".lower():
             corrtype = str(row[0])[12:].strip().strip(":").strip()
             if corrtype[:17].lower() == "cross-correlation":
                 # We will later try to import a second trace
