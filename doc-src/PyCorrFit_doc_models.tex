@@ -25,68 +25,49 @@ The parameters in the equation above need to be calibrated to obtain the diffusi
 
 
 % 2D diffusion
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{2D (Gauß)} \\ 
-ID & \textbf{6001} \\ 
-Descr. &  Two-dimensional diffusion with a Gaussian laser profile\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area \\ 
-$\tau_\mathrm{diff}$ &   Characteristic residence time in confocal area \\
-\end{tabular} \\
-\end{center}
-\vspace{2em}
+%\noindent \begin{tabular}{lp{.7\textwidth}}
+%Name & \textbf{2D (Gauß)} \\ 
+%ID & \textbf{6001} \\ 
+%Descr. &  Two-dimensional diffusion with a Gaussian laser profile\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
+%\end{tabular}
+%\begin{align}
+%G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}
+%\end{align} 
+%\begin{center}
+%\begin{tabular}{ll}
+%$A_0$ & Offset \\ 
+%$N$ & Effective number of particles in confocal area \\ 
+%$\tau_\mathrm{diff}$ &   Characteristic residence time in confocal area \\
+%\end{tabular} \\
+%\end{center}
+%\vspace{2em}
 
 
-% 2D diffusion + triplett
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{2D+T (Gauß)} \\ 
-ID & \textbf{6002} \\ 
-Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Aragon1976, Qian1991, Rigler1993,Widengren1994, Widengren1995, Haupts1998}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area \\ 
-$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal area \\ 
-$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
-$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
-\end{tabular}
-\end{center}
-\vspace{2em}
 
 
 % 3D diffusion
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D (Gauß)} \\ 
-ID & \textbf{6012} \\ 
-Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical)\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}}
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume \\ 
-$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal volume \\ 
-$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
-\end{tabular}
-\end{center}
-\vspace{2em}
+%\noindent \begin{tabular}{lp{.7\textwidth}}
+%Name & \textbf{3D (Gauß)} \\ 
+%ID & \textbf{6012} \\ 
+%Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical)\cite{Aragon1976, Qian1991, Rigler1993}. \\ 
+%\end{tabular}
+%\begin{align}
+%G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}}
+%\end{align} 
+%\begin{center}
+%\begin{tabular}{ll}
+%$A_0$ & Offset \\ 
+%$N$ & Effective number of particles in confocal volume \\ 
+%$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal volume \\ 
+%$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
+%\end{tabular}
+%\end{center}
+%\vspace{2em}
 
 
 % 3D diffusion + triplet
 \noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+T (Gauß)} \\ 
+Name & \textbf{Confocal (Gaussian) T+3D} \\ 
 ID & \textbf{6011} \\ 
 Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical), including a triplet component\cite{Widengren1994, Widengren1995, Haupts1998}. \\ 
 \end{tabular}
@@ -106,58 +87,10 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet \\
 \vspace{2em}
 
 
-% 2D+2D diffusion + triplett
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{2D+2D+T (Gauß)} \\ 
-ID & \textbf{6031} \\ 
-Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
-$\tau_1$ &  Diffusion time of particle species 1 \\ 
-$\tau_2$ &  Diffusion time of particle species 2 \\ 
-$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
-$\alpha$ & Relative molecular brightness of particles 1 and 2 ($ \alpha = q_2/q_1$) \\
-$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
-$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
-\end{tabular}
-\end{center}
-\vspace{2em}
-
-
-% 3D+2D diffusion + triplett
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+2D+T (Gauß)} \\ 
-ID & \textbf{6032} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = A_0 + \frac{1}{N (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
-$\tau_\mathrm{2D}$ &  Diffusion time of surface bound particles \\ 
-$\tau_\mathrm{3D}$ &  Diffusion time of freely diffusing particles \\ 
-$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
-$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
-$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
-$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
-$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
-\end{tabular}
-\end{center}
-\vspace{2em}
-
 
 % 3D+3D diffusion + triplett
 \noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+3D+T (Gauß)} \\ 
+Name & \textbf{Confocal (Gaussian) T+3D+3D} \\ 
 ID & \textbf{6030} \\ 
 Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
@@ -182,6 +115,78 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 
 
 
+% 2D diffusion + triplett
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{Confocal (Gaussian) T+2D} \\ 
+ID & \textbf{6002} \\ 
+Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Aragon1976, Qian1991, Rigler1993,Widengren1994, Widengren1995, Haupts1998}. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal area \\ 
+$\tau_\mathrm{diff}$ &  Characteristic residence time in confocal area \\ 
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+
+% 2D+2D diffusion + triplett
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{Confocal (Gaussian) T+2D+2D} \\ 
+ID & \textbf{6031} \\ 
+Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
+$\tau_1$ &  Diffusion time of particle species 1 \\ 
+$\tau_2$ &  Diffusion time of particle species 2 \\ 
+$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$\alpha$ & Relative molecular brightness of particles 1 and 2 ($ \alpha = q_2/q_1$) \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
+
+% 3D+2D diffusion + triplett
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{Confocal (Gaussian) T+3D+2D} \\ 
+ID & \textbf{6032} \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = A_0 + \frac{1}{N (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$\tau_\mathrm{2D}$ &  Diffusion time of surface bound particles \\ 
+$\tau_\mathrm{3D}$ &  Diffusion time of freely diffusing particles \\ 
+$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
+$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
+$\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
+
 \subsubsection{Confocal TIR-FCS}
 The detection volume is axially confined by an evanescent field and has an effective size of
 \begin{align}
@@ -203,7 +208,7 @@ The lateral detection area has the same shape as in confocal FCS. Thus, correlat
 
 % 3D diffusion (Gauß/exp)
 \noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D (Gauß/exp)} \\ 
+Name & \textbf{TIR (Gaussian/Exp.) 3D} \\ 
 ID & \textbf{6013} \\ 
 Descr. &  Three-dimensional free diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction\cite{Starr2001, Hassler2005, Ohsugi2006}. \\ 
 \end{tabular}
@@ -222,39 +227,9 @@ $D$ & Diffusion coefficient  \\
 \vspace{2em}
 
 
-% 2D+3D+T diffusion (Gauß/exp)
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+2D+T (Gauß/exp)} \\ 
-ID & \textbf{6033} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
-& \notag \times  \left[
-\frac{1-F}{1+ 4 D_\mathrm{2D} \tau/R_0^2} + 
-\frac{\alpha^2 F \kappa}{1+ 4 D_\mathrm{3D} \tau/R_0^2} 
-\left( \sqrt{\frac{D_\mathrm{3D} \tau}{\pi}} + \frac{1 - 2 D_\mathrm{3D} \tau \kappa^2}{2 \kappa}  w\!\left(i \sqrt{D_\mathrm{3D} \tau} \kappa\right) \right) \right]
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
-$D_\mathrm{2D}$ &  Diffusion coefficient of surface bound particles \\ 
-$D_\mathrm{3D}$ &  Diffusion coefficient of freely diffusing particles \\ 
-$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
-$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
-$R_0$ & Lateral extent of the detection volume \\
-$\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
-$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
-$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
-\end{tabular}
-\end{center}
-\vspace{2em}
-
-
 % 3D+3D+T diffusion (Gauß/exp)
 \noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+3D+T (Gauß/exp)} \\ 
+Name & \textbf{TIR (Gaussian/Exp.) 3D+3D+T} \\ 
 ID & \textbf{6034} \\ 
 Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\
 \end{tabular}
@@ -282,6 +257,39 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \end{tabular}
 \end{center}
 \vspace{2em}
+
+
+
+
+% 2D+3D+T diffusion (Gauß/exp)
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{TIR (Gaussian/Exp.) 3D+2D+T} \\ 
+ID & \textbf{6033} \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
+& \notag \times  \left[
+\frac{1-F}{1+ 4 D_\mathrm{2D} \tau/R_0^2} + 
+\frac{\alpha^2 F \kappa}{1+ 4 D_\mathrm{3D} \tau/R_0^2} 
+\left( \sqrt{\frac{D_\mathrm{3D} \tau}{\pi}} + \frac{1 - 2 D_\mathrm{3D} \tau \kappa^2}{2 \kappa}  w\!\left(i \sqrt{D_\mathrm{3D} \tau} \kappa\right) \right) \right]
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$A_0$ & Offset \\ 
+$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$D_\mathrm{2D}$ &  Diffusion coefficient of surface bound particles \\ 
+$D_\mathrm{3D}$ &  Diffusion coefficient of freely diffusing particles \\ 
+$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
+$\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
+$R_0$ & Lateral extent of the detection volume \\
+$\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
+\end{tabular}
+\end{center}
+\vspace{2em}
+
 
 
 
