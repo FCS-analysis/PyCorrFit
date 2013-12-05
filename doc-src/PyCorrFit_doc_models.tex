@@ -308,29 +308,6 @@ w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
 \vspace{2em}
 
 
-% 2D TIRF diffusion (□xσ)
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{2D (□x$\upsigma$)} \\ 
-ID & \textbf{6000} \\ 
-Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function\cite{Ries2008390, Yordanov2011}\footnote{The reader is made aware, that reference \cite{Ries2008390} contains several unfortunate misprints.}. \\ 
-\end{tabular}
-\begin{align}
-G(\tau) = \frac{1}{C} \left[
-\frac{2 \sqrt{\sigma^2+D \tau}}{\sqrt{\pi} a^2}
-\left( \exp\left(-\frac{a^2}{4(\sigma^2+D \tau)}\right) - 1 \right) +
-\frac{1}{a} \, \mathrm{erf}\left(\frac{a}{2 \sqrt{\sigma^2+D \tau}}\right)
-\right]^2
-\end{align} 
-\begin{center}
-\begin{tabular}{ll}
-$C$ & Particle concentration in detection area \\ 
-$\sigma$ & Lateral size of the point spread function \\ 
-$a$ & Side size of the square-shaped detection area \\
-$D$ & Diffusion coefficient \\
-\end{tabular} \\
-\end{center}
-\vspace{2em}
-
 
 % 3D TIRF diffusion (□xσ)
 \noindent \begin{tabular}{lp{.7\textwidth}}
@@ -357,6 +334,40 @@ $D$ & Diffusion coefficient \\
 \vspace{2em}
 
 
+% 3D+3D TIRF diffusion (□xσ)
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{3D+3D (□x$\upsigma$/exp)} \\ 
+ID & \textbf{6023} \\ 
+Descr. &  Two-component three-dimensional free diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. \newline
+The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}. \\
+\end{tabular}
+\vspace{2em}
+
+
+% 2D TIRF diffusion (□xσ)
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{2D (□x$\upsigma$)} \\ 
+ID & \textbf{6000} \\ 
+Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function\cite{Ries2008390, Yordanov2011}\footnote{The reader is made aware, that reference \cite{Ries2008390} contains several unfortunate misprints.}. \\ 
+\end{tabular}
+\begin{align}
+G(\tau) = \frac{1}{C} \left[
+\frac{2 \sqrt{\sigma^2+D \tau}}{\sqrt{\pi} a^2}
+\left( \exp\left(-\frac{a^2}{4(\sigma^2+D \tau)}\right) - 1 \right) +
+\frac{1}{a} \, \mathrm{erf}\left(\frac{a}{2 \sqrt{\sigma^2+D \tau}}\right)
+\right]^2
+\end{align} 
+\begin{center}
+\begin{tabular}{ll}
+$C$ & Particle concentration in detection area \\ 
+$\sigma$ & Lateral size of the point spread function \\ 
+$a$ & Side size of the square-shaped detection area \\
+$D$ & Diffusion coefficient \\
+\end{tabular} \\
+\end{center}
+\vspace{2em}
+
+
 % 2D+2D TIRF diffusion (□xσ)
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{2D+2D (□x$\upsigma$/exp)} \\ 
@@ -373,16 +384,6 @@ Name & \textbf{3D+2D (□x$\upsigma$/exp)} \\
 ID & \textbf{6020} \\ 
 Descr. &  Two-component two- and three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction.  \newline
 The correlation function is a superposition of the two-dimensional model function \textbf{2D (□x$\upsigma$)} (6000) and the three-dimensional model function \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}.
-\end{tabular}
-\vspace{2em}
-
-
-% 3D+3D TIRF diffusion (□xσ)
-\noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{3D+3D (□x$\upsigma$/exp)} \\ 
-ID & \textbf{6023} \\ 
-Descr. &  Two-component three-dimensional free diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. \newline
-The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}. \\
 \end{tabular}
 \vspace{2em}
 
