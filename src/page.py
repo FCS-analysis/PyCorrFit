@@ -687,7 +687,7 @@ class FittingPanel(wx.Panel):
         else:
             # How many characters of the the page title should be displayed
             # in the tab? We choose 9: AC1-012 plus 2 whitespaces
-            text = self.counter + self.tabtitle.GetValue()[:9]
+            text = self.counter + self.tabtitle.GetValue()[9:]
         self.parent.notebook.SetPageText(pid,text)        
         #import IPython
         #IPython.embed()
