@@ -996,11 +996,11 @@ class MyFrame(wx.Frame):
         labels=list()
         for i in np.arange(len(Filename)):
             if Run[i] != "":
-                labels.append("{}-r{:03d} {}".format(Type[i], Run[i],
-                                                     Filename[i]))
+                labels.append("{} r{:03d}-{}".format(Filename[i],
+                                                     Run[i], Type[i]))
             else:
-                labels.append("{}-id{:03d} {}".format(Type[i], Curveid[i],
-                                                      Filename[i]))
+                labels.append("{} id{:03d}-{}".format(Filename[i],
+                                                      Curveid[i], Type[i]))
         Chosen = tools.ChooseImportTypesModel(self, curvetypes, Correlation,
                                               labels=labels)
         newCorrelation = list()
