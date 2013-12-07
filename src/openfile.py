@@ -29,6 +29,9 @@ import doc
 import edclasses
 from tools import info
 
+# These imports are required for loading data
+from readfiles import Filetypes
+from readfiles import BGFiletypes
 
 def ImportParametersYaml(parent, dirname):
     """ Import the parameters from a parameters.yaml file
