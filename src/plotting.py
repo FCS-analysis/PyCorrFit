@@ -33,8 +33,6 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 ## This hack enables us to remember directories.
 # import edclasses
 # NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
-import os
-import sys
 import unicodedata
 
 # For finding latex tools
@@ -235,7 +233,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text = r""
         text += r'\['            #every line is a separate raw string...
         text += r'\begin{split}' # ...but they are all concatenated
-                                 # by the interpreter :-)
+        #                          by the interpreter :-)
         for i in np.arange(len(parms)):
             text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
         if errparms is not None:

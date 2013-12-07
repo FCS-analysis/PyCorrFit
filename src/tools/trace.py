@@ -16,7 +16,6 @@
 
 
 import wx
-import numpy as np
 import wx.lib.plot as plot    
 
 # Menu entry name

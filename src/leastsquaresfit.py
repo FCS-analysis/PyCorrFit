@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate as spintp
 from scipy import optimize as spopt
-import warnings
 
 # If we use this module with PyCorrFit, we can plot things with latex using
 # our own special thing.
@@ -60,9 +59,10 @@ class Fit(object):
         self.dataexpfull = None
         self.function = None
         self.interval = None
-        self.uselatex = False # Eventually use latex. This is passed
-                              # to each plotting command. Only when plotting
-                              # module is available.
+        # Eventually use latex. This is passed
+        # to each plotting command. Only when plotting
+        # module is available.
+        self.uselatex = False 
         self.values = None
         self.valuestofit = None
 

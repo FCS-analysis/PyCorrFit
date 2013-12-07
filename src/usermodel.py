@@ -32,7 +32,6 @@ except ImportError:
     # Define Function, so PyCorrFit will start, even if sympy is not there.
     # wixi needs Function.
     Function = object
-import sys
 import wx
 
 import models as mdls

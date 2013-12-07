@@ -177,7 +177,7 @@ class Slide(wx.Frame):
             try:
                 C = func(A,B)
             except ZeroDivisionError:
-                a = 0
+                pass
             else:
                 return B, C
         else:
@@ -185,7 +185,7 @@ class Slide(wx.Frame):
             try:
                 B = func(A,C)
             except ZeroDivisionError:
-                a = 0
+                pass
             else:
                 return B, C
 

@@ -17,9 +17,6 @@
 
 
 import wx
-import numpy as np
-
-import models as mdls
 
 
 class Tool(wx.Frame):
@@ -41,9 +38,9 @@ class Tool(wx.Frame):
         self.panel = wx.Panel(self)
         btnexample = wx.Button(self.panel, wx.ID_ANY, 'Example button')
         # Binds the button to the function - close the tool
-        self.Bind(wx.EVT_BUTTON, self.OnClose, btncopy)
+        self.Bind(wx.EVT_BUTTON, self.OnClose, btnexample)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        self.topSizer.Add(btncopy)
+        self.topSizer.Add(btnexample)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSizeTuple())

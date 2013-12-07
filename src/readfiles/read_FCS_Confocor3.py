@@ -212,7 +212,6 @@ def openFCS_Multiple(dirname, filename):
     # Add traces to CC-correlation functions.
     # It seems reasonable, that if number of AC1,AC2 and CC are equal,
     # CC gets the traces accordingly.
-    cctracelist = list()
     n_ac1 = aclist.count("AC1")
     n_ac2 = aclist.count("AC2")
     n_cc12 = cclist.count("CC12")

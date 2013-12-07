@@ -177,10 +177,10 @@ class MyFrame(wx.Frame):
 
         # Set window icon
         try:
-          self.MainIcon = misc.getMainIcon()
-          wx.Frame.SetIcon(self, self.MainIcon)
+            self.MainIcon = misc.getMainIcon()
+            wx.Frame.SetIcon(self, self.MainIcon)
         except:
-          self.MainIcon = None
+            self.MainIcon = None
 
 
     def add_fitting_tab(self, event=None, modelid=None, counter=None):
@@ -452,9 +452,8 @@ class MyFrame(wx.Frame):
                 errstr += str(info[1])+"\n"
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
-                dlg3 = wx.MessageDialog(self, errstr, "Error", 
+                wx.MessageDialog(self, errstr, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg3.ShowModal() == wx.ID_OK
                 del NewModel
                 return
             # Test the code for sympy compatibility.
@@ -675,9 +674,8 @@ class MyFrame(wx.Frame):
                 errstr += str(info[1])+"\n"
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
-                dlg = wx.MessageDialog(self, errstr, "Error", 
+                wx.MessageDialog(self, errstr, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal() == wx.ID_OK
                 return
             else:
                 dataexp = Stuff["Correlation"]
@@ -976,7 +974,6 @@ class MyFrame(wx.Frame):
             coords = np.zeros(len(keys), dtype=np.int)
             Run = np.zeros(len(Curveid), dtype=np.int)
             WorkType = 1*Type
-            d = 0
             for fname in np.unique(Filename):
                 # unique returns sorted file names.
                 for i in range(Filename.count(fname)/len(keys)):
@@ -1313,8 +1310,8 @@ class MyFrame(wx.Frame):
         # If no file has been selected, self.filename will be set to 'None'.
         self.dirname, self.filename = opf.SaveSession(self, self.dirname,
           Infodict)
-          #Function_parms, Function_array, Function_trace, self.Background,
-          #Preferences, Comments, ExternalFunctions, Info)
+        #Function_parms, Function_array, Function_trace, self.Background,
+        #Preferences, Comments, ExternalFunctions, Info)
         # Set title of our window
         self.SetTitleFCS(self.filename)
 
@@ -1325,15 +1322,14 @@ class MyFrame(wx.Frame):
                  locals=locals())
         # Set window icon
         if self.MainIcon is not None:
-          wx.Frame.SetIcon(Shell, self.MainIcon)
+            wx.Frame.SetIcon(Shell, self.MainIcon)
         Shell.Show(True)
 
 
     def OnSoftware(self, event=None):
         # Show About Information
         text = doc.SoftwareUsed()
-        dlg = wx.MessageBox(text, 'Software', 
-            wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox(text, 'Software', wx.OK | wx.ICON_INFORMATION)
 
 
     def OnTool(self, event):
@@ -1461,10 +1457,10 @@ class MyFrame(wx.Frame):
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
             if knots is not None:
-         # This is done with apply_paramters_reverse:
-         #       text = Page.Fitbox[1].GetValue()
-         #       text = filter(lambda x: x.isalpha(), text)
-         #       Page.Fitbox[1].SetValue(text+str(knots))
+                # This is done with apply_paramters_reverse:
+                #       text = Page.Fitbox[1].GetValue()
+                #       text = filter(lambda x: x.isalpha(), text)
+                #       Page.Fitbox[1].SetValue(text+str(knots))
                 Page.FitKnots = int(knots)
             if weighted is False:
                 weighted = 0

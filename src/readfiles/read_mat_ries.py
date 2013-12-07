@@ -9,7 +9,6 @@ The structure has been derived from "corrSFCS.m" from the SFCS.m program
 from Jonas Ries.
 """
 
-import csv
 import numpy as np
 
 # On the windows machine the matlab binary import raised a warning.
@@ -78,7 +77,7 @@ def openMAT(dirname, filename):
                     curvelist.append("AC"+str(i+1))
                     try:
                         # only trace averages are saved
-                        traceavg = g["trace"][i][j]
+                        traceavg = g["trace"][i]
                     except:
                         # No trace
                         traces.append(None)
@@ -154,7 +153,7 @@ def openMAT(dirname, filename):
                         traces.append(None)
     # Get dc2f "dual color two focus" functions
     try:
-        dc2f = g["dc2f"]
+        g["dc2f"]
     except KeyError:
         pass
     else:

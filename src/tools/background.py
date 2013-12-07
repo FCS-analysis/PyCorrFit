@@ -271,9 +271,8 @@ class BackgroundCorrection(wx.Frame):
                 errstr += str(info[1])+"\n"
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
-                dlg = wx.MessageDialog(self, errstr, "Error", 
+                wx.MessageDialog(self, errstr, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal() == wx.ID_OK
                 return
             # Usually we will get a bunch of traces. Let the user select which
             # one to take.

@@ -20,7 +20,6 @@ import wx
 
 import misc
 import models as mdls
-import doc
 
 # Menu entry name
 MENUINFO = ["&Average data", "Create an average curve from whole session."]
@@ -148,9 +147,8 @@ class Average(wx.Frame):
             if self.WXCheckMono.GetValue() == True:
                 texterr_a += " Note: You selected\n"+\
                  "to only use pages with same model as the current page."
-            dlg = wx.MessageDialog(self, texterr_a, "Error", 
+            wx.MessageDialog(self, texterr_a, "Error", 
                               style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg.ShowModal() == wx.ID_OK
             return
         # Now get all the experimental data
         explist = list()
@@ -195,12 +193,11 @@ class Average(wx.Frame):
         for item in explist[1:]:
             if len(item) != len0:
                 # print an error  message
-                dlg = wx.MessageDialog(self,
+                wx.MessageDialog(self,
                 "Averaging over curves with different lengths is not"+\
                 "\nsupported. When measuring, please make sure that"+\
                 "\nthe measurement time for all curves is the same.",
                 "Error", style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal() == wx.ID_OK
                 return
         # Now shorten the trace, because we want as little memory usage as
         # possible. I used this algorithm in read_FCS_Confocor3.py as well.
