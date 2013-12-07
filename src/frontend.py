@@ -839,10 +839,9 @@ class MyFrame(wx.Frame):
         # Set new tabtitle value and strip leading or trailing
         # white spaces.
         if run != "":
-            title = "{}-r{:03d}   id{:03d} {}".format(curvetype,int(run),
-                                                   int(curveid), filename)
+            title = "{} r{:03d}-{}".format(filename, int(run), curvetype)
         else:
-            title = "{} id{:03d}   {}".format(curvetype, int(curveid), filename)
+            title = "{} id{:03d}-{}".format(filename, int(curveid), curvetype)
         CurPage.tabtitle.SetValue(title.strip())
         # Plot everything
         CurPage.PlotAll()
