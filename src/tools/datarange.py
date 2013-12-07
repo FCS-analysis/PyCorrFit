@@ -18,7 +18,6 @@
 import wx
 import numpy as np
 
-import doc
 
 # Menu entry name
 MENUINFO = ["&Data range",

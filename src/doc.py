@@ -40,7 +40,6 @@ try:
 except ImportError:
     print " Warning: module sympy not found!"
     sympy = Fake()
-import tempfile
 try:
     import urllib2
 except ImportError:
@@ -62,12 +61,6 @@ def description():
     return """PyCorrFit is a data displaying, fitting and evaluat
 tool, targeted at fluorescence correlation
 spectroscopy. PyCorrFit is written in Python."""
-
-
-def description():
-    return """PyCorrFit displays and processes data
-from fluorescence correlation spectroscopy
-measurements. PyCorrFit is written in Python."""
 
 
 def GetLocationOfChangeLog(filename = "ChangeLog.txt"):

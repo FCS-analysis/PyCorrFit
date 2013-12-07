@@ -16,9 +16,6 @@
 
 
 import numpy as np
-import platform
-import sys
-import traceback           # for Error handling
 import wx
 
 import openfile as opf     # How to treat an opened file

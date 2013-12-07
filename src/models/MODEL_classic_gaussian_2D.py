@@ -83,11 +83,8 @@ def Check_xy_T_gauss(parms):
     taudiff = parms[1] = np.abs(parms[1])
     tautrip = np.abs(parms[2])
     T=parms[3]
-    
-    # REMOVED (Issue #2)
-     ## Force triplet component to be smaller than diffusion times
-     #tautrip = min(tautrip,taudiff*0.9)
-     
+
+
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
 
@@ -158,9 +155,6 @@ def Check_6031(parms):
     T=parms[6]
     off=parms[7]
     
-    ## REMOVED (Issue #2)
-     ## Force triplet component to be smaller than diffusion times
-     #tautrip = min(tautrip,taud1*0.9, taud2*0.9)
      
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)

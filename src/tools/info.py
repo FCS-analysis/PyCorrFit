@@ -250,7 +250,7 @@ class ShowInfo(wx.Frame):
         initial_sizec = (initial_size[0]-6, initial_size[1]-30)
         self.SetMinSize(wx.Size(200,200))
         self.SetSize(initial_size)
-         ## Content
+        ## Content
         self.panel = wx.Panel(self)
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE, 
                         size=initial_sizec)

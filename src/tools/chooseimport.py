@@ -37,7 +37,7 @@ class ChooseImportTypes(wx.Dialog):
         #    title="Choose types", size=(250, 200))
         wx.Dialog.__init__(self, parent, -1, "Choose models")
         self.keys = list()
-         ## Content
+        ## Content
         self.panel = wx.Panel(self)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.boxes = dict()
@@ -174,7 +174,6 @@ class ChooseImportTypesModel(wx.Dialog):
         # Get the type of curves we want to look at
         index = buttonevent.GetId() - 8000
         self.buttonindex = index
-        curvedict = dict()
         key = self.curvekeys[index]
         # Get correlation curves for corresponding type
         corrcurves = dict()
@@ -189,7 +188,7 @@ class ChooseImportTypesModel(wx.Dialog):
         prev_selected = list()
         for item in self.kept_curvedict.keys():
             prev_selected += self.kept_curvedict[item]
-        Selector = overlaycurves.Wrapper_OnImport(self.parent, corrcurves,
+        overlaycurves.Wrapper_OnImport(self.parent, corrcurves,
                                                  self.OnSelected, prev_selected,
                                                  labels=labeldict)
 

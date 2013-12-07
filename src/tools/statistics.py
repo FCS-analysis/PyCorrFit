@@ -19,7 +19,6 @@
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np
-import os
 
 from info import InfoClass
 import misc
@@ -98,9 +97,6 @@ class Stat(wx.Frame):
         self.WXTextPages.SetValue(valstring)
         ## Plot parameter dropdown box
         self.PlotParms = self.GetListOfPlottableParms()
-        Parmlist = list()
-        #for item in self.PlotParms:
-        #    Parmlist.append(item[0])
         Parmlist = self.PlotParms
         DDtext = wx.StaticText(self.panel, 
                              label="Plot parameter ")
@@ -164,7 +160,6 @@ class Stat(wx.Frame):
         # in the statistics window afterwards.
         # new iteration
         keys = Infodict.keys()
-        head = list()
         body = list()
         tail = list()
 
@@ -419,8 +414,6 @@ class Stat(wx.Frame):
                     # Only pages selected in self.WXTextPages
                     pages.append(Page)
         plotcurve = list()
-        InfoCl = InfoClass()
-        oldpage = self.Page
         for page in pages:
             self.Page = page
             pllabel, pldata = self.GetListOfPlottableParms(return_values=True)
@@ -494,12 +487,9 @@ class Stat(wx.Frame):
         self.Page = page
         self.InfoClass = InfoClass(CurPage=self.Page)
         self.PlotParms = self.GetListOfPlottableParms()
-        #Parmlist = list()
         # Make sure the selection stays the same
         DDselid = 0
         for i in range(len(self.PlotParms)):
-            #Parmlist.append(self.PlotParms[i][0])
-            #if DDselection == self.PlotParms[i][0]:
             if DDselection == self.PlotParms[i]:
                 DDselid = i
         Parmlist = self.PlotParms
@@ -547,7 +537,6 @@ class Stat(wx.Frame):
             openedfile = open(filename, 'wb')
             # Get Parameterlist of all Pages with same model id as
             # Self.Page
-            modelid = self.Page.modelid
             # This creates self.SaveInfo:
             self.GetWantedParameters()
             # Write header

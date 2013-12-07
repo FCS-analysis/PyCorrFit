@@ -9,7 +9,6 @@ import codecs
 from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
-import platform
 import sys
 import tempfile
 import urllib2
@@ -69,7 +68,8 @@ class UpdateDlg(wx.Frame):
 
 class wxHTML(wx.html.HtmlWindow):
     def OnLinkClicked(parent, link):
-         webbrowser.open(link.GetHref())
+        webbrowser.open(link.GetHref())
+
 
 def parseString2Pagenum(parent, string, nodialog=False):
     """ Parse a string with a list of pagenumbers to an integer list with
@@ -96,9 +96,8 @@ def parseString2Pagenum(parent, string, nodialog=False):
                         ". Please use a comma separated list with"+\
                         " optional dashes, e.g. '1-3,6,8'." 
             try:
-                dlg = wx.MessageDialog(parent, errstring, "Error", 
+                wx.MessageDialog(parent, errstring, "Error", 
                                   style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal() == wx.ID_OK
             except:
                 raise ValueError(errstring)
         else:
@@ -130,13 +129,13 @@ def parsePagenum2String(pagenumlist):
                 dash = False
         else:
             if newlist[i]-1 == newlist[i-1]:
-                 if newlist[i]-2 == newlist[i-2]:
-                     dash = True
-                 elif len(newlist) != i+1 and newlist[i]+1 == newlist[i+1]:
-                     dash = True
-                 else:
-                     string += ", "+str(newlist[i])
-                     dash = False
+                if newlist[i]-2 == newlist[i-2]:
+                    dash = True
+                elif len(newlist) != i+1 and newlist[i]+1 == newlist[i+1]:
+                    dash = True
+                else:
+                    string += ", "+str(newlist[i])
+                    dash = False
             else:
                 dash = False
                 string += ", "+str(newlist[i])
@@ -153,12 +152,12 @@ def parsePagenum2String(pagenumlist):
 def removewrongUTF8(name):
     newname = u""
     for char in name:
-       try:
-           uchar = codecs.decode(char, "UTF-8")
-       except:
-           pass
-       else:
-           newname += char
+        try:
+            codecs.decode(char, "UTF-8")
+        except:
+            pass
+        else:
+            newname += char
     return newname
     
 

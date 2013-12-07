@@ -91,10 +91,6 @@ def Check_6011(parms):
     parms[4] = np.abs(parms[4])
     off = parms[5]
     
-    # REMOVED (issue #2)
-     ## Force triplet component to be smaller than diffusion
-     #tautrip = min(tautrip, 0.9*taudiff)
-     
     # Triplet fraction is between 0 and one.
     T = (0.<=T<1.)*T + .999999999*(T>=1)
 
@@ -168,9 +164,6 @@ def Check_3D3DT(parms):
     T=parms[7]
     off=parms[8]
     
-    # REMOVED (issue #2)
-     # Force triplet component to be smaller than diffusion times
-     #tautrip = min(tautrip,taud1*0.9, taud2*0.9)
     
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)

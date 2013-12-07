@@ -19,14 +19,12 @@
 DEMO = False
 
 
-import os
 import wx                               # GUI interface wxPython
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
 import sys                              # System stuff
 
-import doc
 import edclasses                    # Cool stuf like better floatspin
 import leastsquaresfit as fit       # For fitting
 import models as mdls
@@ -60,8 +58,8 @@ class FittingPanel(wx.Panel):
         self.bgselected = None   # integer, index for parent.Background
         self.bgcorrect = 1.      # Background correction factor for dataexp
         self.normparm = None     # Parameter number used for graph normalization
-                                 # if greater than number of fitting parms,
-                                 # then supplementary parm is used.
+        #                          if greater than number of fitting parms,
+        #                          then supplementary parm is used.
         self.normfactor = 1.     # Graph normalization factor (e.g. value of n)
         self.startcrop = None    # Where cropping of dataexp starts
         self.endcrop = None      # Where cropping of dataexp ends
@@ -391,23 +389,10 @@ class FittingPanel(wx.Panel):
         Fitting.uselatex = self.parent.MenuUseLatex.IsChecked()
         Fitting.check_parms = self.check_parms
         Fitting.dataexpfull = self.CorrectDataexp(self.dataexpfull)
-      ## This is now done in apply_parameters
-      #  if self.Fitbox[1].GetSelection() == -1:
-      #      # User edited knot number
-      #      Knots = self.Fitbox[1].GetValue()
-      #      Knots = filter(lambda x: x.isdigit(), Knots)
-      #      if Knots == "":
-      #          Knots = "5"
-      #      List = self.Fitbox[1].GetItems()
-      #      List[1] = "Spline ("+Knots+" knots)"
-      #      Fitting.fittype = "spline"+Knots
-      #      self.Fitbox[1].SetItems(List)
-      #      self.Fitbox[1].SetSelection(1)
-      #      self.FitKnots = Knots
         if self.Fitbox[1].GetSelection() == 1:
-      #      Knots = self.Fitbox[1].GetValue()
-      #      Knots = filter(lambda x: x.isdigit(), Knots)
-      #      self.FitKnots = Knots
+            # Knots = self.Fitbox[1].GetValue()
+            # Knots = filter(lambda x: x.isdigit(), Knots)
+            # self.FitKnots = Knots
             Fitting.fittype = "spline"+str(self.FitKnots)
             self.parent.StatusBar.SetStatusText("You can change the number"+
                " of knots. Check 'Preference>Verbose Mode' to view the spline.")

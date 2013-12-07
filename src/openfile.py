@@ -19,22 +19,15 @@ import csv
 from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
-import platform
 import shutil
-import sys
 import tempfile
-import traceback
 import wx
 import yaml
 import zipfile
 
 import doc
 import edclasses
-import models as mdls
 from tools import info
-# This contains all the information necessary to import data files:
-from readfiles import Filetypes
-from readfiles import BGFiletypes
 
 
 def ImportParametersYaml(parent, dirname):
@@ -297,7 +290,6 @@ def OpenSession(parent, dirname, sessionfile=None):
             i = i + 1
         bgfile.close()
     # Get external weights if they exist
-    Info = dict()
     WeightsFilename = "externalweights.txt"
     try:
         # Raises KeyError, if file is not present:
@@ -380,9 +372,8 @@ def saveCSV(parent, dirname, Page):
                        "area you want to export. Pressing 'Fit' "+\
                        "again should solve this issue. Data will "+\
                        "not be saved."
-                dlg = wx.MessageDialog(parent, text, "Error", 
+                wx.MessageDialog(parent, text, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal() == wx.ID_OK
                 return dirname, None
         else:
             tau = Page.datacorr[:,0]

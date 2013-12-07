@@ -20,7 +20,6 @@ with warnings.catch_warnings():
 # We will hack this toolbar here
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx 
 import numpy as np
-import os
 import sys
 import traceback
 from wx.lib.agw import floatspin        # Float numbers in spin fields
@@ -145,9 +144,8 @@ def save_figure(self, evt=None):
             errstr += str(info[1])+"\n"
             for tb_item in traceback.format_tb(info[2]):
                 errstr += tb_item
-            dlg3 = wx.MessageDialog(parent, errstr, "Error", 
+            wx.MessageDialog(parent, errstr, "Error", 
                 style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-            dlg3.ShowModal() == wx.ID_OK
     else:
         dirname = dlg.GetDirectory()
     try:

@@ -281,8 +281,9 @@ check parameters on each page and start 'Global fit'.
             # we don't use anyhow.
             # We are doing this for all elements, because in the future, other (?)
             # weighting methods might be implemented.
-            for i in np.arange(len(weightlist)):
-                weightlist[1] = weightlist[1].split("(")[0].strip()
+            #for i in np.arange(len(weightlist)):
+            #    weightlist[i] = weightlist[i].split("(")[0].strip()
+            weightlist[1] = weightlist[1].split("(")[0].strip()
             self.weightedfitdrop.SetItems(weightlist)
             try:
                 # if there is no data, this could go wrong

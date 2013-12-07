@@ -129,11 +129,11 @@ class RangeSelector(wx.Frame):
         """
         # Read out parameters from all controls
         for i in range(len(self.WXparmlist)):
-           self.parameter_range[i][0] = self.WXparmlist[i][0].GetValue()
-           self.parameter_range[i][1] = self.WXparmlist[i][2].GetValue()
-           if self.parameter_range[i][0] > self.parameter_range[i][1]:
-               self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
-               self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
+            self.parameter_range[i][0] = self.WXparmlist[i][0].GetValue()
+            self.parameter_range[i][1] = self.WXparmlist[i][2].GetValue()
+            if self.parameter_range[i][0] > self.parameter_range[i][1]:
+                self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
+                self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
         # Set parameters
         l, parm0 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
                                                      self.parameter_range[:,0])
