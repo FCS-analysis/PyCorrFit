@@ -49,6 +49,7 @@
 
 \newcommand{\mycaption}[2]{\caption[~#1]{\textbf{#1:} #2}}
 
+\usepackage{tabularx}
 \usepackage{textcomp} % Sonderzeichen
 \usepackage{wrapfig}
 
@@ -122,31 +123,15 @@
 
 \begin{document}
 
-
-
-\vspace{-5em}
-\begin{flushright}
-	\includegraphics[angle=0,width=40mm]{Images/PyCorrFit_logo_dark.pdf} 
-\end{flushright}
-%\vspace{-3em}
-\begin{center}\rule{\textwidth}{0.1ex}\par\end{center}
-%\vspace{-4em}
-%\begin{center}\rule{\textwidth}{0.1ex}\par\end{center}
-
-
-
-\vspace{1em}
-
-\noindent\begin{tabular}{ll}
-\textbf{PyCorrFit - Generic cross-platform FCS fitting tool}\\
-\textit{Software Guide} \\
-\\
-
- Paul Müller \\
- Biotechnology Center of the TU Dresden \\
- \today 
- 
-\end{tabular}
+\noindent
+\begin{tabularx}{\linewidth}{Xr}
+ \textbf{PyCorrFit \newline FCS data evaluation} \newline \textit{Software Guide}  & 
+     \raisebox{-2em}{\includegraphics[angle=0,width=40mm]{Images/PyCorrFit_logo_dark.pdf}} \\
+ \\
+ Paul Müller & \\
+ Biotechnology Center of the TU Dresden & \\
+ \today & \\
+\end{tabularx}
 
 \vspace{2em}
 
