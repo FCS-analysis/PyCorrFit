@@ -49,6 +49,14 @@ def openCSV(dirname, filename):
         3. A list with one element, indicating, that we are opening only
            one correlation curve.
     """
+    # Check if the file is correlation data
+    csvfile = open(os.path.join(dirname, filename), 'r')
+    firstline = csvfile.readline()
+    if firstline.lower().count("this is not correlation data") > 0:
+        csvfile.close()
+        return None
+    csvfile.close()
+    
     # Define what will happen to the file
     timefactor = 1000 # because we want ms instead of s
     csvfile = open(os.path.join(dirname, filename), 'r')
