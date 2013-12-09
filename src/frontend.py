@@ -421,7 +421,7 @@ class MyFrame(wx.Frame):
         info.SetLicence(licence)
         info.SetIcon(misc.getMainIcon(pxlength=64))
         info.AddDeveloper('Paul Müller')
-        info.AddDocWriter('Paul Müller')
+        info.AddDocWriter('Thomas Weidemann, Paul Müller')
         wx.AboutBox(info)
         
 
