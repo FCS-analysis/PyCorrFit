@@ -55,7 +55,7 @@ class Average(wx.Frame):
         self.topSizer.Add(self.WXTextPages)
         ## Chechbox asking for Mono-Model
         self.WXCheckMono = wx.CheckBox(self.panel,
-         label="Only use pages with the same model as the current page.")
+         label="Only use pages with the same model as the first page.")
         self.WXCheckMono.SetValue(True)
         self.topSizer.Add(self.WXCheckMono)
         ## Model selection Dropdown
@@ -119,7 +119,20 @@ class Average(wx.Frame):
             return
         pages = list()
         UsedPagenumbers = list()
-        referencePage = self.parent.notebook.GetCurrentPage()
+        # Reference page is the first page of the selection!
+        #referencePage = self.parent.notebook.GetCurrentPage()
+        referencePage = None
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            if Page.counter.strip(" :#") == str(PageNumbers[0]):
+                referencePage = Page
+                break
+		if referencePage is not None:
+			# If that did not work, we have to raise an error.
+			raise IndexError("PyCorrFit could not find the first"+
+							 " page for averaging.")
+			return
+        
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             j = filter(lambda x: x.isdigit(), Page.counter)
@@ -128,7 +141,7 @@ class Average(wx.Frame):
                 if self.WXCheckMono.GetValue() == True:
                     if (Page.modelid == referencePage.modelid and
                        Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
-                        ## Check if current page has experimental data:
+                        ## Check if the page has experimental data:
                         # If there is an empty page somewhere, don't bother
                         if Page.dataexpfull is not None:
                             pages.append(Page)
@@ -146,7 +159,7 @@ class Average(wx.Frame):
                         "that you selected for averaging."
             if self.WXCheckMono.GetValue() == True:
                 texterr_a += " Note: You selected\n"+\
-                 "to only use pages with same model as the current page."
+                 "to only use pages with same model as the first page."
             wx.MessageDialog(self, texterr_a, "Error", 
                               style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             return
@@ -272,7 +285,7 @@ class Average(wx.Frame):
         self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
         if len(pages) == 1:
-            # Use the same title as the current page
+            # Use the same title as the first page
             newtabti = referencePage.tabtitle.GetValue()
         else:
             # Create a new tab title
