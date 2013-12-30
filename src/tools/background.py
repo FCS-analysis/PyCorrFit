@@ -72,7 +72,11 @@ class BackgroundCorrection(wx.Frame):
         ## Controls
         panel = wx.Panel(self.sp)
         # text1
-        textinit = wx.StaticText(panel, label=doc.backgroundinit)
+        backgroundinit = (
+            "Correct the amplitude for non-correlated background.\n"+
+            "The background intensity <B> can be either imported\n"+
+            "from a blank measurement or set manually.")
+        textinit = wx.StaticText(panel, label=backgroundinit)
         # Radio buttons
         self.rbtnfile = wx.RadioButton (panel, -1, 'Blank measurement: ', 
                                         style = wx.RB_GROUP)
@@ -509,3 +513,64 @@ class BackgroundCorrection(wx.Frame):
     def UpdateDropdown(self):
         self.dropdown.SetItems(self.BGlist)
 
+
+def ApplyAutomaticBackground(page, bg, parent):
+    """
+        Creates an "automatic" background with countrate in kHz *bg* and
+        applies it to the given *page* object. If an automatic
+        background with the same countrate exists, uses it.
+        
+        Input:
+        *page*   - page to which the background should be applied
+        *bg*     - background that should be applied to that page
+        *parent* - parent containing *Background* list
+    """
+    bgid = None
+    # Check if exists:
+    for i in xrange(len(parent.Background)):
+        if parent.Background[i][0] == bg:
+            bgid = i
+    if bgid is None:
+        # Add new background
+        bgname = "AUTO: {:e} kHz \t".format(bg)
+        trace = np.array([[0,bg],[1,bg]])
+        parent.Background.append([bg, bgname, trace])
+        bgid = len(parent.Background) - 1
+    # Apply background to page
+    # Last item is id of background
+    page.bgselected = bgid
+    page.OnAmplitudeCheck("init")
+    page.PlotAll()
+
+
+def CleanupAutomaticBackground(parent):
+    """
+        Goes through the pagelist
+        and checks *parent.Background* for unnused automatic
+        backgrounds.
+        Deletes these and updates the references to all backgrounds
+        within the pages.
+    """
+    # Create a dictionary with keys: indices of old background list -
+    # and elements: list of pages having this background
+    BGdict = dict()
+    for i in xrange(len(parent.Background)):
+        BGdict[i] = list()
+    # Append pages to the lists inside the dictionary
+    for i in xrange(self.parent.notebook.GetPageCount()):
+        Page = self.parent.notebook.GetPage(i)
+        BGdict[Page.bgselected].append(Page)
+    # Sort the keys and create a new background list
+    NewBGlist = list()
+    keys = BGdict.keys()
+    keys.sort()
+    keyID = 0
+    for key in keys:
+        # Do not delete user-generated backgrounds
+        if len(BGdict[key]) == 0 and parent.Background[key][1][-1]=="\t":
+            pass
+        else:
+            for page in BGdict[key]:
+                page.bgselected = keyID
+            NewBGlist.append(parent.Background[key])
+            keyID += 1

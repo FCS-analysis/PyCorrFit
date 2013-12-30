@@ -423,7 +423,9 @@ class MyFrame(wx.Frame):
 
     def OnAbout(self, event=None):
         # Show About Information
-        description = doc.description()
+        description =  ("PyCorrFit is a data displaying, fitting "+
+            "and evaluation tool \nfor fluorescence correlation "+
+            "spectroscopy. \nPyCorrFit is written in Python.")
         licence = doc.licence()
         info = wx.AboutDialogInfo()
         #info.SetIcon(wx.Icon('hunter.png', wx.BITMAP_TYPE_PNG))
