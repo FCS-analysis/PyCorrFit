@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-Read mat files that Jonas Ries used in his programs.
-For opening .mat files, this helped a lot:
-http://stackoverflow.com/questions/7008608/
-scipy-io-loadmat-nested-structures-i-e-dictionaries
+    PyCorrFit
+    
+    functions in this file: *openMAT*
 
-The structure has been derived from "corrSFCS.m" from the SFCS.m program
-from Jonas Ries.
+    Copyright (C) 2011-2012  Paul Müller
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License 
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import numpy as np
@@ -33,6 +44,15 @@ import os
 
 
 def openMAT(dirname, filename):
+    """
+        Read mat files that Jonas Ries used in his programs.
+        For opening .mat files, this helped a lot:
+        http://stackoverflow.com/questions/7008608/
+        scipy-io-loadmat-nested-structures-i-e-dictionaries
+
+        The structure has been derived from "corrSFCS.m" from the SFCS.m
+        program from Jonas Ries.
+    """
     # initiate lists
     correlations = list()
     traces = list()

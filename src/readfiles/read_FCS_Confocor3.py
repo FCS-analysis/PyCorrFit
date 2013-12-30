@@ -1,7 +1,24 @@
 # -*- coding: utf-8 -*-
 """ 
-    This works with files from the Confocor2, Confocor3 (AIM) and files
-    created from the newer ZEN Software.
+    PyCorrFit
+    
+    functions in this file: *openFCS*, *openFCS_Single*,
+                            *openFCS_Multiple*
+
+    Copyright (C) 2011-2012  Paul Müller
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License 
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 import csv
@@ -10,8 +27,21 @@ import warnings
 
 
 def openFCS(dirname, filename):
-    """ The AIM software can save data as multiple or single data files.
-        The type is identified by the first line of the .fcs file. """
+    """ 
+        Load data from Zeiss Confocor3
+        Data is imported sequenially from the file.
+        PyCorrFit will give each curve an id which corresponds to the 
+        position of the curve in the .fcs file.
+        
+        The AIM software can save data as multiple or single data files.
+        The type is identified by the first line of the .fcs file.
+        
+        This works with files from the Confocor2, Confocor3 (AIM) and 
+        files created from the newer ZEN Software.
+        
+        This function is a wrapper combining *openFCS_Single* and
+        *openFCS_Multiple* 
+    """
     openfile = open(os.path.join(dirname, filename), 'r')
     identitystring = openfile.readline().strip()[:20]
     openfile.close()
@@ -24,8 +54,11 @@ def openFCS(dirname, filename):
 def openFCS_Multiple(dirname, filename):
     """ Load data from Zeiss Confocor3
         Data is imported sequenially from the file.
-        PyCorrFit will give each curve an id which corresponds to the position
-        of the curve in the .fcs file.
+        PyCorrFit will give each curve an id which corresponds to the 
+        position of the curve in the .fcs file.
+
+        This works with files from the Confocor2, Confocor3 (AIM) and 
+        files created from the newer ZEN Software.
     """
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
@@ -260,7 +293,11 @@ def openFCS_Multiple(dirname, filename):
 
 
 def openFCS_Single(dirname, filename):
-    """ Load data from Zeiss Confocor3
+    """ 
+        Load data from Zeiss Confocor3 files containing only one curve.
+    
+        This works with files from the Confocor2, Confocor3 (AIM) and 
+        files created from the newer ZEN Software.
     """
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
