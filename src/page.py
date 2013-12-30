@@ -70,6 +70,8 @@ class FittingPanel(wx.Panel):
         self.traceavg = None     # Average trace intensity
         self.tracecc = None      # List of traces (in CC mode only)
         self.bgselected = None   # integer, index for parent.Background
+        self.bg2selected = None  # integer, index for parent.Background
+        #                          -> for cross-correlation
         self.bgcorrect = 1.      # Background correction factor for dataexp
         self.normparm = None     # Parameter number used for graph normalization
         #                          if greater than number of fitting parms,
