@@ -70,13 +70,6 @@ import yaml
 import readfiles
 
 
-
-def description():
-    return """PyCorrFit is a data displaying, fitting and evaluat
-tool, targeted at fluorescence correlation
-spectroscopy. PyCorrFit is written in Python."""
-
-
 def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
     locations = list()
     fname1 = os.path.realpath(__file__)
@@ -311,17 +304,6 @@ def SoftwareUsed():
         pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
     return text
-
-
-    
-backgroundinit = """Correct the amplitude for non-correlated background.
-The background intensity <B> can be either imported
-from a blank measurement or set manually."""
-
-#backgroundinit = """Set background correction with the background signal <B>
-#to correct the amplitude of the correlation function by
-#a factor of [<S>/(<S>-<B>)]² where <S> is the average
-#trace signal of the measurement"""
 
 # For the selection of types to import when doing import Data
 chooseimport = """Several types of data were found in
