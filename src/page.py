@@ -356,32 +356,52 @@ class FittingPanel(wx.Panel):
         ## self.parent.OnFNBPageChanged(e=None, Page=self)
 
 
-
     def CorrectDataexp(self, dataexp):
-        """ Background correction
-            Background correction with *self.bgcorrect*.
+        """ 
+            Background correction
+            Changes *self.bgcorrect*.
             Overwrites *self.dataexp*.
             For details see:
-            Incollection (Thomps:bookFCS2002)
-            Thompson, N. Lakowicz, J.; Geddes, C. D. & Lakowicz, J. R. (ed.)
-            Fluorescence Correlation Spectroscopy
-            Topics in Fluorescence Spectroscopy, Springer US, 2002, 1, 337-378
+            
+                Thompson, N. Lakowicz, J.;
+                Geddes, C. D. & Lakowicz, J. R. (ed.)
+                Fluorescence Correlation Spectroscopy
+                Topics in Fluorescence Spectroscopy,
+                Springer US, 2002, 1, 337-378
+            
+            and (for cross-correlation)
+            
+            Weidemann et al. ...?
         """
         # Make a copy. Do not overwrite the original.
         if dataexp is not None:
             modified = 1 * dataexp
-            if self.bgselected is not None:
-                # self.bgselected - background, needs to be imported via Tools
-                if self.traceavg is not None:
-                    S = self.traceavg
-                    B = self.parent.Background[self.bgselected][0]
-                    # Calculate correction factor
-                    self.bgcorrect = (S/(S-B))**2
-                    # self.dataexp should be set, since we have self.trace
-                    modified[:,1] *= self.bgcorrect
+            if self.IsCrossCorrelation:
+                # Cross-Correlation
+                if (self.bgselected is not None and
+                    self.bg2selected is not None    ):
+                    if self.traceavg is not None:
+                        S = self.traceavg[0]
+                        S2 = self.traceavg[1]
+                        B = self.parent.Background[self.bgselected][0]
+                        B2 = self.parent.Background[self.bg2selected][0]
+                        self.bgcorrect = (S/(S-B)) * (S2/(S2-B2))
+                        modified[:,1] *= self.bgcorrect
+            else:
+                # Autocorrelation
+                if self.bgselected is not None:
+                    # self.bgselected 
+                    if self.traceavg is not None:
+                        S = self.traceavg
+                        B = self.parent.Background[self.bgselected][0]
+                        # Calculate correction factor
+                        self.bgcorrect = (S/(S-B))**2
+                        # self.dataexp should be set, since we have self.trace
+                        modified[:,1] *= self.bgcorrect
             return modified
         else:
             return None
+
 
     def Fit_enable_fitting(self):
         """ Enable the fitting button and the weighted fit control"""
@@ -621,9 +641,6 @@ class FittingPanel(wx.Panel):
                     self.normfactor =  supplement[supnum][1]
                 
                 #### supplement are somehow sorted !!!!
-                
-                #import IPython
-                #IPython.embed()
                 # For parameter export:
                 self.normparm = parameterid
                 # No internal parameters will be changed
@@ -642,44 +659,64 @@ class FittingPanel(wx.Panel):
         # Set dropdown values
         self.AmplitudeInfo[2].SetItems(normlist)
         self.AmplitudeInfo[2].SetSelection(normsel)
+        ######
+        ###### BEGIN DELETE FOR 0.8.1
+        ###### (we will insert spin controls)
+        ######
         ## Background correction
-        bgsel = self.AmplitudeInfo[0].GetSelection()
-        # Standard is the background of the page
-        # Read bg selection
-        if event == "init":
-            # Read everything from the page not from the panel
-            if self.bgselected is not None:
-                bgsel = self.bgselected + 1
-            else:
-                bgsel = 0
-        else:
-            if bgsel <= 0:
-                self.bgselected = None
-                bgsel = 0 #None
-            else:
-                self.bgselected = bgsel - 1
-        # Rebuild itemlist
-        # self.parent.Background[self.bgselected][i]
-        # [0] average signal [kHz]
-        # [1] signal name (edited by user)
-        # [2] signal trace (tuple) ([ms], [kHz])
-        bglist = list()
-        bglist.append("None")
-        for item in self.parent.Background:
-            if len(item[1]) > 10:
-                item[1] = item[1][:7]+"..."
-            bgname = item[1]+" (%.2f kHz)" %item[0]
-            bglist.append(bgname)
-        self.AmplitudeInfo[0].SetItems(bglist)
-        self.AmplitudeInfo[0].SetSelection(bgsel)
-        #self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
-        if len(bglist) <= 1:
-            self.AmplitudeInfo[0].Disable()
-            self.AmplitudeInfo[1].Disable()
-        else:
-            self.AmplitudeInfo[0].Enable()
-            self.AmplitudeInfo[1].Enable()
-
+        #bgsel = self.AmplitudeInfo[0].GetSelection()
+        #if self.IsCrossCorrelation:
+        #    bg2sel = self.AmplitudeInfo[0].GetSelection()
+        ## Standard is the background of the page
+        ## Read bg selection
+        #if event == "init":
+        #    # Read everything from the page not from the panel
+        #    if self.bgselected is not None:
+        #        bgsel = self.bgselected + 1
+        #    else:
+        #        bgsel = 0
+        #    # cross correlation
+        #    if self.IsCrossCorrelation:
+        #        if self.bg2selected is not None:
+        #            bg2sel = self.bgselected + 1
+        #        else:
+        #            bg2sel = 0
+        #else:
+        #    if bgsel <= 0:
+        #        self.bgselected is None
+        #        bgsel = 0 #None
+        #    else:
+        #        self.bgselected = bgsel - 1
+        #    # cross-correlation
+        #    if self.IsCrossCorrelation:
+        #        if self.bg2selected is None:
+        #            bg2sel = 0
+        #        else:
+        #            self.bg2selected = bg2sel - 1
+        ## Rebuild itemlist
+        ## self.parent.Background[self.bgselected][i]
+        ## [0] average signal [kHz]
+        ## [1] signal name (edited by user)
+        ## [2] signal trace (tuple) ([ms], [kHz])
+        #bglist = list()
+        #bglist.append("None")
+        #for item in self.parent.Background:
+        #    if len(item[1]) > 10:
+        #        item[1] = item[1][:7]+"..."
+        #    bgname = item[1]+" (%.2f kHz)" %item[0]
+        #    bglist.append(bgname)
+        #self.AmplitudeInfo[0].SetItems(bglist)
+        #self.AmplitudeInfo[0].SetSelection(bgsel)
+        ##self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
+        #if len(bglist) <= 1:
+        #    self.AmplitudeInfo[0].Disable()
+        #    self.AmplitudeInfo[1].Disable()
+        #else:
+        #    self.AmplitudeInfo[0].Enable()
+        #    self.AmplitudeInfo[1].Enable()
+        #######
+        ####### END DELETE FOR 0.8.1
+        #######
 
     def OnTitleChanged(self, e):
         pid = self.parent.notebook.GetPageIndex(self)
@@ -932,19 +969,41 @@ class FittingPanel(wx.Panel):
         normbox = wx.StaticBox(self.panelsettings, label="Amplitude corrections")
         miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
         miscsizer.SetMinSize((horizontalsize, -1))
-        # Type of normalization
-        bgtex = wx.StaticText(self.panelsettings, label="Background correction")
-        miscsizer.Add(bgtex)
-        bgnorm = wx.ComboBox(self.panelsettings)
-        self.Bind(wx.EVT_COMBOBOX, self.PlotAll, bgnorm)
-        miscsizer.Add(bgnorm)
+        # Intensities
+        intsizer = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
+        inttext1 =  wx.StaticText(self.panelsettings, label="Intensity S1=")
+        intlabel1 = wx.StaticText(self.panelsettings, label="--")
+        inttext2 = wx.StaticText(self.panelsettings, label=" S2=")
+        intlabel2 =  wx.StaticText(self.panelsettings, label="--")
+        intsizer.Add(inttext1)
+        intsizer.Add(intlabel1)
+        intsizer.Add(inttext2)
+        intsizer.Add(intlabel2)
+        miscsizer.Add(intsizer)
+        # Background correction
+        bgtext =  wx.StaticText(self.panelsettings, label="Background")
+        bgsizer1 = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
+        bgsizer2 = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
+        bgtext1 =  wx.StaticText(self.panelsettings, label="B1=")
+        bgtext2 = wx.StaticText(self.panelsettings, label=" B2=")
+        bgspin1 = wx.SpinCtrl(self.panelsettings, -1, initial=0, min=0)
+        bgspin2 = wx.SpinCtrl(self.panelsettings, -1, initial=0, min=0)
+        bgsizer1.Add(bgtext1)
+        bgsizer1.Add(bgspin1)
+        bgsizer2.Add(bgtext2)
+        bgsizer2.Add(bgspin2)
+        miscsizer.Add(bgtext)
+        miscsizer.Add(bgsizer1)
+        miscsizer.Add(bgsizer2)
         ## Normalize to n?
         textnor = wx.StaticText(self.panelsettings, label="Plot normalization")
         miscsizer.Add(textnor)
         normtoNDropdown = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
         miscsizer.Add(normtoNDropdown)
-        self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
+        self.AmplitudeInfo = [ [intlabel1, intlabel2],
+                               [bgspin1, bgspin2],
+                                normtoNDropdown, textnor]
         self.panelsettings.sizer.Add(miscsizer)
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Fitting options")
