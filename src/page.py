@@ -2,8 +2,8 @@
 """ PyCorrFit
 
     Module frontend
-    The frontend displays the GUI (Graphic User Interface). All necessary 
-    functions and modules are called from here.
+    The frontend displays the GUI (Graphic User Interface).
+    All functions and modules are called from here.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -34,6 +34,7 @@ DEMO = False
 
 
 import wx                               # GUI interface wxPython
+from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
@@ -62,8 +63,9 @@ class FittingPanel(wx.Panel):
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
         self.parent = parent
         self.filename = "None"
-        ## If this value is set to True, the trace and traceavg variables
-        ## will not be used. Instead tracecc a list, of traces will be used.
+        ## If IsCrossCorrelation is set to True, the trace and traceavg 
+        ## variables will not be used. Instead tracecc a list, of traces
+        ## will be used.
         self.IsCrossCorrelation = False
         ## Setting up variables for plotting
         self.trace = None        # The intensity trace, tuple
@@ -380,9 +382,9 @@ class FittingPanel(wx.Panel):
                 # Cross-Correlation
                 if (self.bgselected is not None and
                     self.bg2selected is not None    ):
-                    if self.traceavg is not None:
-                        S = self.traceavg[0]
-                        S2 = self.traceavg[1]
+                    if self.tracecc is not None:
+                        S = self.tracecc[0][:,1].mean()
+                        S2 = self.tracecc[1][:,1].mean()
                         B = self.parent.Background[self.bgselected][0]
                         B2 = self.parent.Background[self.bg2selected][0]
                         self.bgcorrect = (S/(S-B)) * (S2/(S2-B2))
@@ -581,7 +583,6 @@ class FittingPanel(wx.Panel):
         """ Enable/Disable BG rate text line.
             New feature introduced in 0.7.8
         """
-        #self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
         ## Normalization to a certain parameter in plots
         # Find all parameters that start with an "N"
         # ? and "C" ?
@@ -659,11 +660,41 @@ class FittingPanel(wx.Panel):
         # Set dropdown values
         self.AmplitudeInfo[2].SetItems(normlist)
         self.AmplitudeInfo[2].SetSelection(normsel)
+        ## Plot intensities
+        # Quick reminder:
+        #self.AmplitudeInfo = [ [intlabel1, intlabel2],
+        #                       [bgspin1, bgspin2],
+        #                       normtoNDropdown, textnor]
+        # Signal
+        if self.IsCrossCorrelation:
+            if self.tracecc is not None:
+                S1 = self.tracecc[0][:,1].mean()
+                S2 = self.tracecc[1][:,1].mean()
+                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(S1))
+                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(S2))
+        else:
+            if self.traceavg is not None:
+                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(
+                                                self.traceavg))
+        # Background
+        ## self.parent.Background[self.bgselected][i]
+        ## [0] average signal [kHz]
+        ## [1] signal name (edited by user)
+        ## [2] signal trace (tuple) ([ms], [kHz])
+        if self.bgselected is not None:
+            self.AmplitudeInfo[1][0].SetValue(
+                        self.parent.Background[self.bgselected][0])
+        else:
+            self.AmplitudeInfo[1][0].SetValue(0)
+        if self.bg2selected is not None and self.IsCrossCorrelation:
+            self.AmplitudeInfo[1][1].SetValue(
+                        self.parent.Background[self.bg2selected][0])
+        else:
+            self.AmplitudeInfo[1][1].SetValue(0)
         ######
         ###### BEGIN DELETE FOR 0.8.1
         ###### (we will insert spin controls)
         ######
-        ## Background correction
         #bgsel = self.AmplitudeInfo[0].GetSelection()
         #if self.IsCrossCorrelation:
         #    bg2sel = self.AmplitudeInfo[0].GetSelection()
@@ -718,6 +749,28 @@ class FittingPanel(wx.Panel):
         ####### END DELETE FOR 0.8.1
         #######
 
+
+    def OnBGSpinChanged(self, e):
+        """ Calls tools.background.ApplyAutomaticBackground
+            to update background information
+        """
+        # Quick reminder:
+        #self.AmplitudeInfo = [ [intlabel1, intlabel2],
+        #                       [bgspin1, bgspin2],
+        #                       normtoNDropdown, textnor]
+        if self.IsCrossCorrelation:
+            # update both self.bgselected and self.bg2selected
+            bg = [self.AmplitudeInfo[1][0].GetValue(),
+                  self.AmplitudeInfo[1][1].GetValue()]
+            tools.background.ApplyAutomaticBackground(self, bg,
+                                                      self.parent)
+        else:
+            # Only update self.bgselected 
+            bg = self.AmplitudeInfo[1][0].GetValue()
+            tools.background.ApplyAutomaticBackground(self, bg,
+                                                      self.parent)
+
+    
     def OnTitleChanged(self, e):
         pid = self.parent.notebook.GetPageIndex(self)
         if self.tabtitle.GetValue() == "":
@@ -916,7 +969,7 @@ class FittingPanel(wx.Panel):
 
     def settings(self):
         """ Here we define, what should be displayed at the left side
-            of the window.
+            of the fitting page/tab.
             Parameters:
         """
         horizontalsize = self.sizepanelx-10
@@ -969,32 +1022,32 @@ class FittingPanel(wx.Panel):
         normbox = wx.StaticBox(self.panelsettings, label="Amplitude corrections")
         miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
         miscsizer.SetMinSize((horizontalsize, -1))
-        # Intensities
-        intsizer = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
-        inttext1 =  wx.StaticText(self.panelsettings, label="Intensity S1=")
-        intlabel1 = wx.StaticText(self.panelsettings, label="--")
-        inttext2 = wx.StaticText(self.panelsettings, label=" S2=")
-        intlabel2 =  wx.StaticText(self.panelsettings, label="--")
-        intsizer.Add(inttext1)
-        intsizer.Add(intlabel1)
-        intsizer.Add(inttext2)
-        intsizer.Add(intlabel2)
-        miscsizer.Add(intsizer)
-        # Background correction
-        bgtext =  wx.StaticText(self.panelsettings, label="Background")
-        bgsizer1 = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
-        bgsizer2 = wx.StaticBoxSizer(normbox, wx.HORIZONTAL)
-        bgtext1 =  wx.StaticText(self.panelsettings, label="B1=")
-        bgtext2 = wx.StaticText(self.panelsettings, label=" B2=")
-        bgspin1 = wx.SpinCtrl(self.panelsettings, -1, initial=0, min=0)
-        bgspin2 = wx.SpinCtrl(self.panelsettings, -1, initial=0, min=0)
-        bgsizer1.Add(bgtext1)
-        bgsizer1.Add(bgspin1)
-        bgsizer2.Add(bgtext2)
-        bgsizer2.Add(bgspin2)
-        miscsizer.Add(bgtext)
-        miscsizer.Add(bgsizer1)
-        miscsizer.Add(bgsizer2)
+        # Intensities and Background
+        sizeint = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
+        sizeint.Add(wx.StaticText(self.panelsettings, label="[kHz]"))
+        sizeint.Add(wx.StaticText(self.panelsettings,
+                    label="Intensity"))
+        sizeint.Add(wx.StaticText(self.panelsettings,
+                    label="Background"))
+        sizeint.Add(wx.StaticText(self.panelsettings,
+                    label="Ch1"))
+        intlabel1 = wx.TextCtrl(self.panelsettings)
+        bgspin1 = floatspin.FloatSpin(self.panelsettings,
+                        increment=0.01, digits=4, min_val=0)
+        self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
+                  bgspin1)
+        sizeint.Add(intlabel1)
+        sizeint.Add(bgspin1)
+        sizeint.Add(wx.StaticText(self.panelsettings,
+                    label="Ch2"))
+        intlabel2 = wx.TextCtrl(self.panelsettings)
+        bgspin2 = floatspin.FloatSpin(self.panelsettings,
+                        increment=0.01, digits=4, min_val=0)
+        self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
+                  bgspin1)
+        sizeint.Add(intlabel2)
+        sizeint.Add(bgspin2)
+        miscsizer.Add(sizeint)
         ## Normalize to n?
         textnor = wx.StaticText(self.panelsettings, label="Plot normalization")
         miscsizer.Add(textnor)
