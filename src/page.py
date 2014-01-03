@@ -1044,7 +1044,7 @@ class FittingPanel(wx.Panel):
         bgspin2 = floatspin.FloatSpin(self.panelsettings,
                         increment=0.01, digits=4, min_val=0)
         self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
-                  bgspin1)
+                  bgspin2)
         sizeint.Add(intlabel2)
         sizeint.Add(bgspin2)
         miscsizer.Add(sizeint)
