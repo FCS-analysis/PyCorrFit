@@ -227,17 +227,37 @@ class InfoClass(object):
             normparmtext =  MoreInfo[supnum][0]
         Title.append(["Normalization", normparmtext ]) 
         ## Background
-        bgselected = Page.bgselected # Selected Background
         Background = list()
-        if bgselected is not None:
-            bgname = Page.parent.Background[bgselected][1]
-            if len(bgname) == 0:
-                # Prevent saving no name
-                bgname = "NoName"
-            bgrate = Page.parent.Background[bgselected][0]
-            Background.append([ "bg name", bgname ])
-            Background.append([ "bg rate [kHz]", bgrate ])
-            InfoDict["background"] = Background
+        if Page.IsCrossCorrelation:
+            if ( Page.bgselected is not None and
+                 Page.bg2selected is not None     ):
+                # Channel 1
+                bgname = Page.parent.Background[Page.bgselected][1]
+                if len(bgname) == 0:
+                    # Prevent saving no name
+                    bgname = "NoName"
+                Background.append([ "bg name Ch1", bgname])
+                Background.append([ "bg rate Ch1 [kHz]", 
+                           Page.parent.Background[Page.bgselected][0] ])
+                # Channel 2
+                bg2name = Page.parent.Background[Page.bg2selected][1]
+                if len(bg2name) == 0:
+                    # Prevent saving no name
+                    bg2name = "NoName"
+                Background.append([ "bg name Ch2", bg2name])
+                Background.append([ "bg rate Ch2 [kHz]", 
+                          Page.parent.Background[Page.bg2selected][0] ])
+                InfoDict["background"] = Background
+        else:
+            if Page.bgselected is not None:
+                bgname = Page.parent.Background[Page.bgselected][1]
+                if len(bgname) == 0:
+                    # Prevent saving no name
+                    bgname = "NoName"
+                bgrate = Page.parent.Background[Page.bgselected][0]
+                Background.append([ "bg name", bgname ])
+                Background.append([ "bg rate [kHz]", bgrate ])
+                InfoDict["background"] = Background
         ## Function doc string
         InfoDict["modeldoc"] = [Page.active_fct.func_doc]
         InfoDict["title"] = Title
