@@ -180,109 +180,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-def saveCSVinfo(parent):
-    a = "# This file was created using PyCorrFit version "+\
-        parent.version+".\n#\n"
-    b = """# Lines starting with a '#' are treated as comments.
-# The data is stored as CSV below this comment section.
-# Data usually consists of lag times (channels) and
-# the corresponding correlation function - experimental
-# and fitted values plus resulting residuals.
-# If this file is opened by PyCorrFit, only the first two
-# columns will be imported as experimental data.
-#
-"""
-    return a+b
-
-
-def SessionReadme(parent):
-    a = "This file was created using PyCorrFit version "+parent.version+"\n"
-    b = """The .zip archive you are looking at is a stored session of PyCorrFit.
-If you are interested in how the data is stored, you will find
-out here. Most important are the dimensionalities:
-Dimensionless representation:
- unit of time        : 1 ms
- unit of inverse time: 10³ /s
- unit of distance    : 100 nm
- unit of Diff.coeff  : 10 µm²/s
- unit of inverse area: 100 /µm²
- unit of inv. volume : 1000 /µm³
-From there, the dimension of any parameter may be
-calculated.
-
-There are a number of files within this archive, 
-depending on what was done during the session.
-
-backgrounds.csv
- - Contains the list of backgrounds used and
- - Averaged intensities in [kHz]
-
-bg_trace*.csv (where * is an integer)
- - The trace of the background corresponding
-   to the line number in backgrounds.csv
- - Time in [ms], Trace in [kHz]
-
-comments.txt
- - Contains page titles and session comment
- - First n lines are titles, rest is session
-   comment (where n is total number of pages)
-
-data*.csv (where * is {Number of page})
- - Contains lag times [ms]
- - Contains experimental data, if available
-
-externalweights.txt
- - Contains names (types) of external weights other than from
-   Model function or spline fit
- - Linewise: 1st element is page number, 2nd is name
- - According to this data, the following files are present in the archive
-
-externalweights_data_*PageID*_*Type*.csv
- - Contains weighting information of Page *PageID* of type *Type*
-
-model_*ModelID*.txt
- - An external (user-defined) model file with internal ID *ModelID*
-
-Parameters.yaml
- - Contains all Parameters for each page
-   Block format:
-    - - '#{Number of page}: '       
-      - {Internal model ID}
-      - {List of parameters}
-      - {List of checked parameters (for fitting)}
-      - [{Min channel selected}, {Max channel selected}]
-      - [{Weighted fit method (0=None, 1=Spline, 2=Model function)}, 
-          {No. of bins from left and right}, {No. of knots (of e.g. spline)}]
-      - [{Background to use (line in backgrounds.csv)}]
-      - Data type is Cross-correlation?
-      - Parameter id (int) used for normalization in plotting.
-        This number first enumerates the model parameters and then
-        the supplemental parameters (e.g. "n1").
-      - - [min, max] fitting parameter range of 1st parameter
-        - [min, max] fitting parameter range of 2nd parameter
-        - etc.
- - Order in Parameters.yaml defines order of pages in a session
- - Order in Parameters.yaml defines order in comments.txt
-
-Readme.txt (this file)
-
-Supplements.yaml
- - Contains errors of fitting
-   Format:
-   -- Page number
-    -- [parameter id, error value]
-     - [parameter id, error value]
-    - Chi squared
-    - [pages that share parameters] (from global fitting)
-     
-trace*.csv (where * is {Number of page} | appendix "A" or "B" point to
-            the respective channels (only in cross-correlation mode))
- - Contains times [ms]
- - Contains countrates [kHz]
-"""
-    return a+b
-
-
 def SoftwareUsed():
     """ Return some Information about the software used for this program """
     text = "Python "+sys.version+\
@@ -304,12 +201,6 @@ def SoftwareUsed():
         pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
     return text
-
-# For the selection of types to import when doing import Data
-chooseimport = """Several types of data were found in
-the chosen file. Please select
-what type(s) you would like to
-import. """
 
 
 # Standard homepage

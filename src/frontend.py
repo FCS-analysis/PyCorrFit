@@ -760,9 +760,6 @@ class MyFrame(wx.Frame):
                     self.ImportData(CurPage, dataexp[i], trace[i],
                                    curvetype=curvelist[i], filename=filename[i],
                                    curveid=i)
-
-
-
                     # Let the user abort, if he wants to:
                     # We want to do this here before an empty page is added
                     # to the notebok.
@@ -1408,7 +1405,7 @@ class MyFrame(wx.Frame):
         # Additional parameters as of v.0.2.9
         # Which Background signal is selected?
         # The Background information is in the list *self.Background*.
-        Parms.append([Page.bgselected])
+        Parms.append([Page.bgselected, Page.bg2selected])
         # Additional parameter as of v.0.5.8
         # Is the Experimental data (if it exists) AC or CC?
         Parms.append(Page.IsCrossCorrelation)
@@ -1426,6 +1423,9 @@ class MyFrame(wx.Frame):
 
     def UnpackParameters(self, Parms, Page):
         """ Apply the given parameters to the Page in question.
+            This function contains several *len(Parms) >= X* statements.
+            These are used for opening sessions that were saved using
+            earlier versions of PyCorrFit.
         """
         modelid = Parms[1]
         if Page.modelid != modelid:
@@ -1502,6 +1502,9 @@ class MyFrame(wx.Frame):
             # causality check:
             if len(self.Background) > Parms[6][0]:
                 Page.bgselected = Parms[6][0]
+                if len(Parms[6]) == 2:
+                    # New in 0.8.1: CC background correction
+                    Page.bg2selected = Parms[6][1]
                 # New feature since 0.7.8: BG selection on Page panel
                 Page.OnAmplitudeCheck("init")
         # Set if Newtab is of type cross-correlation:
