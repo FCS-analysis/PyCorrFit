@@ -78,7 +78,7 @@ class BackgroundCorrection(wx.Frame):
             "from a blank measurement or set manually.")
         textinit = wx.StaticText(panel, label=backgroundinit)
         # Radio buttons
-        self.rbtnfile = wx.RadioButton (panel, -1, 'Blank measurement: ', 
+        self.rbtnfile = wx.RadioButton(panel, -1, 'Blank measurement: ', 
                                         style = wx.RB_GROUP)
         self.rbtnfile.SetValue(True)
         self.btnbrowse = wx.Button(panel, wx.ID_ANY, 'Browse ...')
@@ -106,7 +106,11 @@ class BackgroundCorrection(wx.Frame):
         self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, -1),
                      wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
         self.UpdateDropdown()
-        #self.textafterdropdown = wx.StaticText(panel, label="")
+        # Radio buttons Channel1 and 2
+        self.rbtnCh1 = wx.RadioButton (panel, -1, 'Ch1 ', 
+                                        style = wx.RB_GROUP)
+        self.rbtnCh1.SetValue(True)
+        self.rbtnCh2 = wx.RadioButton (panel, -1, 'Ch2')
         # Apply buttons
         self.btnapply = wx.Button(panel, wx.ID_ANY, 'Apply')
         textor = wx.StaticText(panel, label=" or ")
@@ -120,16 +124,10 @@ class BackgroundCorrection(wx.Frame):
             pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
-        
-        textyma   = wx.StaticText(panel, label="You may also: ")
+        textyma   = wx.StaticText(panel, label="Shortcut - ")
         self.btnapplyall = wx.Button(panel, wx.ID_ANY, 'Apply to all pages')
-        self.btnapply.Enable(False)
-        self.btnapplyall.Enable(False)
         textor2 = wx.StaticText(panel, label=" or ")
         self.btnremyall = wx.Button(panel, wx.ID_ANY, 'Dismiss from all pages')
-        if len(self.BGlist) <= 1:
-            self.btnrem.Enable(False)
-            self.btnremyall.Enable(False)
         # Bindings
         self.Bind(wx.EVT_BUTTON, self.OnBrowse, self.btnbrowse)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioFile, self.rbtnfile)
@@ -164,7 +162,8 @@ class BackgroundCorrection(wx.Frame):
         applysizer.Add(self.btnrem)
         applysizer.Add(textpages)
         applysizer.Add(self.WXTextPages)
-        applysizer.Add(self.btnapplyall)
+        applysizer.Add(self.rbtnCh1)
+        applysizer.Add(self.rbtnCh2)
         allsizer = wx.BoxSizer(wx.HORIZONTAL)
         allsizer.Add(textyma)
         allsizer.Add(self.btnapplyall)
@@ -217,9 +216,17 @@ class BackgroundCorrection(wx.Frame):
             Page = self.parent.notebook.GetPage(i)
             j = filter(lambda x: x.isdigit(), Page.counter)
             if int(j) in PageNumbers:
-                Page.bgselected = item
+                if self.rbtnCh1.GetValue() == True:
+                    Page.bgselected = item
+                else:
+                    Page.bg2selected = item
+                if Page.IsCrossCorrelation is False:
+                    # Autocorrelation only has one background!
+                    Page.bg2selected = None
                 Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
+        # Clean up unused backgrounds
+        CleanupAutomaticBackground(self.parent)
 
 
     def OnApplyAll(self, event):
@@ -231,6 +238,10 @@ class BackgroundCorrection(wx.Frame):
             # Set Page 
             Page = self.parent.notebook.GetPage(i)
             Page.bgselected = item
+            if Page.IsCrossCorrelation:
+                Page.bg2selected = item
+            else:
+                Page.bg2selected = None
             try:
                 Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
@@ -241,6 +252,9 @@ class BackgroundCorrection(wx.Frame):
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal()
                 Page.bgselected = None
+                Page.bg2selected = None
+        # Clean up unused backgrounds
+        CleanupAutomaticBackground(self.parent)
 
 
     def OnClose(self, event=None):
@@ -403,7 +417,7 @@ class BackgroundCorrection(wx.Frame):
             self.parent.notebook.GetPage(i).OnAmplitudeCheck()
 
 
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page=None):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.
@@ -415,6 +429,16 @@ class BackgroundCorrection(wx.Frame):
             self.sp.Disable()
             return
         self.sp.Enable()
+        if len(self.BGlist) <= 0:
+            self.btnrem.Enable(False)
+            self.btnremyall.Enable(False)
+            self.btnapply.Enable(False)
+            self.btnapplyall.Enable(False)
+        else:
+            self.btnrem.Enable(True)
+            self.btnremyall.Enable(True)
+            self.btnapply.Enable(True)
+            self.btnapplyall.Enable(True)
         if (self.WXTextPages.GetValue() == ""
             and self.parent.notebook.GetPageCount() != 0):
             # Initial value for WXTextPages
@@ -478,21 +502,31 @@ class BackgroundCorrection(wx.Frame):
             Page = self.parent.notebook.GetPage(i)
             j = filter(lambda x: x.isdigit(), Page.counter)
             if int(j) in PageNumbers:
+                if self.rbtnCh1.GetValue() == True:
+                    Page.bgselected = None
+                else:
+                    Page.bg2selected = None
                 Page.bgselected = None
                 Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
-
+        # Clean up unused backgrounds
+        CleanupAutomaticBackground(self.parent)
+        
 
     def OnRemoveAll(self, event):
         N = self.parent.notebook.GetPageCount()
         for i in np.arange(N):
             Page = self.parent.notebook.GetPage(i)
             Page.bgselected = None
+            Page.bg2selected = None
             Page.OnAmplitudeCheck("init")
             Page.PlotAll()
+        # Clean up unused backgrounds
+        CleanupAutomaticBackground(self.parent)
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)
+    
     
     def SpinCtrlChange(self, event=None):
         # Let user see the continuous trace we will generate
@@ -556,9 +590,9 @@ def ApplyAutomaticBackground(page, bg, parent):
         page.bg2selected = bgid[1]
     else:
         page.bg2selected = None
+    CleanupAutomaticBackground(parent)
     page.OnAmplitudeCheck("init")
     page.PlotAll()
-    CleanupAutomaticBackground(parent)
 
 
 def CleanupAutomaticBackground(parent):
@@ -591,6 +625,8 @@ def CleanupAutomaticBackground(parent):
     for key in keys:
         # Do not delete user-generated backgrounds
         if len(BGdict[key]) == 0 and parent.Background[key][1][-1]=="\t":
+            # This discrads auto-generated backgrounds that have no
+            # pages assigned to them
             pass
         else:
             for page in BGdict[key]:
@@ -598,19 +634,23 @@ def CleanupAutomaticBackground(parent):
             NewBGlist.append(parent.Background[key])
             keyID += 1
     # Same thing for cross-correlation (two bg signals)
-    keyID = 0
+    #keyID = 0
     keys = BG2dict.keys()
     keys.sort()
     for key in keys:
         # Do not delete user-generated backgrounds
         if len(BG2dict[key]) == 0 and parent.Background[key][1][-1]=="\t":
+            # This discrads auto-generated backgrounds that have no
+            # pages assigned to them
             pass
-        else:
+        elif parent.Background[key][1][-1]=="\t":
+            # We already added the user-defined backgrounds
+            # Therefore, we only check for aut-generated backgrounds
+            # ("\t")
             for page in BG2dict[key]:
                 page.bg2selected = keyID
-            # already added old background
-            #NewBGlist.append(parent.Background[key])
-            #keyID += 1
+            NewBGlist.append(parent.Background[key])
+            keyID += 1
     # Finally, write back background list
     parent.Background = NewBGlist
     # If the background correction tool is open, update the list
@@ -625,5 +665,6 @@ def CleanupAutomaticBackground(parent):
             try:
                 if tool.MyName == "BACKGROUND":
                     tool.UpdateDropdown()
-            except AtributeError:
+                    tool.OnPageChanged()
+            except:
                 pass
