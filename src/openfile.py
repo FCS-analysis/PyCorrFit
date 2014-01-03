@@ -340,144 +340,6 @@ def OpenSession(parent, dirname, sessionfile=None):
     return Infodict, dirname, filename
 
 
-def saveCSV(parent, dirname, Page):
-    """ Write relevant data into a comma separated list.
-        
-        Parameters:
-        *parent*   the parent window
-        *dirname* directory to set on saving
-        *Page*     Page containing all necessary variables
-    """
-    filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]
-    dlg = wx.FileDialog(parent, "Save curve", dirname, filename, 
-          "Correlation with trace (*.csv)|*.csv;*.CSV"+\
-          "|Correlation only (*.csv)|*.csv;*.CSV",
-           wx.SAVE|wx.FD_OVERWRITE_PROMPT)
-    # user cannot do anything until he clicks "OK"
-    if dlg.ShowModal() == wx.ID_OK:
-        path = dlg.GetPath()            # Workaround since 0.7.5
-        (dirname, filename) = os.path.split(path)
-        #filename = dlg.GetFilename()
-        #dirname = dlg.GetDirectory()
-        if filename.lower().endswith(".csv") is not True:
-            filename = filename+".csv"
-        openedfile = open(os.path.join(dirname, filename), 'wb')
-        ## First, some doc text
-        openedfile.write(doc.saveCSVinfo(parent).replace('\n', '\r\n'))
-        # The infos
-        InfoMan = info.InfoClass(CurPage=Page)
-        PageInfo = InfoMan.GetCurFancyInfo()
-        for line in PageInfo.splitlines():
-            openedfile.write("# "+line+"\r\n")
-        openedfile.write("#\r\n#\r\n")
-        # Get all the data we need from the Page
-        # Modeled data
-        # Since 0.7.8 the user may normalize the curves. The normalization
-        # factor is set in *Page.normfactor*.
-        corr = Page.datacorr[:,1]*Page.normfactor
-        if Page.dataexp is not None:
-            # Experimental data
-            tau = Page.dataexp[:,0]
-            exp = Page.dataexp[:,1]*Page.normfactor
-            res = Page.resid[:,1]*Page.normfactor
-            # Plotting! Because we only export plotted area.
-            weight = Page.weights_used_for_plotting
-            if weight is None:
-                pass
-            elif len(weight) != len(exp):
-                text = "Weights have not been calculated for the "+\
-                       "area you want to export. Pressing 'Fit' "+\
-                       "again should solve this issue. Data will "+\
-                       "not be saved."
-                wx.MessageDialog(parent, text, "Error", 
-                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                return dirname, None
-        else:
-            tau = Page.datacorr[:,0]
-            exp = None
-            res = None
-        # Include weights in data saving:
-        # PyCorrFit thinks in [ms], but we will save as [s]
-        timefactor = 0.001
-        tau = timefactor * tau
-        ## Now we want to write all that data into the file
-        # This is for csv writing:
-        ## Correlation curve
-        dataWriter = csv.writer(openedfile, delimiter='\t')
-        if exp is not None:
-            header = '# Channel (tau [s])'+"\t"+ \
-                     'Experimental correlation'+"\t"+ \
-                     'Fitted correlation'+ "\t"+ \
-                     'Residuals'+"\r\n"
-            data = [tau, exp, corr, res]
-            if Page.weighted_fit_was_performed is True \
-            and weight is not None:
-                header = header.strip() + "\t"+'Weights (fit)'+"\r\n"
-                data.append(weight)
-        else:
-            header = '# Channel (tau [s])'+"\t"+ \
-                     'Correlation function'+"\r\n"
-            data = [tau, corr]
-        # Write header
-        openedfile.write(header)
-        # Write data
-        for i in np.arange(len(data[0])):
-            # row-wise, data may have more than two elements per row
-            datarow = list()
-            for j in np.arange(len(data)):
-                rowcoli = str("%.10e") % data[j][i]
-                datarow.append(rowcoli)
-            dataWriter.writerow(datarow)
-        ## Trace
-        # Only save the trace if user wants us to:
-        if dlg.GetFilterIndex() == 0:
-            # We will also save the trace in [s]
-            # Intensity trace in kHz may stay the same
-            if Page.trace is not None:
-                # Mark beginning of Trace
-                openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
-                # Columns
-                time = Page.trace[:,0]*timefactor
-                intensity = Page.trace[:,1]
-                # Write
-                openedfile.write('# Time [s]'+"\t" 
-                                     'Intensity trace [kHz]'+" \r\n")
-                for i in np.arange(len(time)):
-                    dataWriter.writerow([str("%.10e") % time[i],
-                                         str("%.10e") % intensity[i]])
-            elif Page.tracecc is not None:
-                # We have some cross-correlation here:
-                # Mark beginning of Trace A
-                openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
-                # Columns
-                time = Page.tracecc[0][:,0]*timefactor
-                intensity = Page.tracecc[0][:,1]
-                # Write
-                openedfile.write('# Time [s]'+"\t" 
-                                     'Intensity trace [kHz]'+" \r\n")
-                for i in np.arange(len(time)):
-                    dataWriter.writerow([str("%.10e") % time[i],
-                                         str("%.10e") % intensity[i]])
-                # Mark beginning of Trace B
-                openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
-                # Columns
-                time = Page.tracecc[1][:,0]*timefactor
-                intensity = Page.tracecc[1][:,1]
-                # Write
-                openedfile.write('# Time [s]'+"\t" 
-                                     'Intensity trace [kHz]'+" \r\n")
-                for i in np.arange(len(time)):
-                    dataWriter.writerow([str("%.10e") % time[i],
-                                         str("%.10e") % intensity[i]])
-        dlg.Destroy()
-        openedfile.close()
-        return dirname, filename
-    else:
-        dirname = dlg.GetDirectory()
-        dlg.Destroy()
-        return dirname, None
-
-
 def SaveSession(parent, dirname, Infodict):
     """ Write whole Session into a zip file.
         Infodict may contain the following keys:
@@ -710,7 +572,7 @@ def SaveSession(parent, dirname, Infodict):
         ## Readme
         rmfilename = "Readme.txt"
         rmfile = open(rmfilename, 'wb')
-        rmfile.write(doc.SessionReadme(parent))
+        rmfile.write(ReadmeSession)
         rmfile.close()
         Arc.write(rmfilename)
         os.remove(os.path.join(tempdir, rmfilename))
@@ -727,3 +589,243 @@ def SaveSession(parent, dirname, Infodict):
         dirname = dlg.GetDirectory()
         dlg.Destroy()
         return dirname, None
+
+
+
+
+def saveCSV(parent, dirname, Page):
+    """ Write relevant data into a comma separated list.
+        
+        Parameters:
+        *parent*   the parent window
+        *dirname* directory to set on saving
+        *Page*     Page containing all necessary variables
+    """
+    filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]
+    dlg = wx.FileDialog(parent, "Save curve", dirname, filename, 
+          "Correlation with trace (*.csv)|*.csv;*.CSV"+\
+          "|Correlation only (*.csv)|*.csv;*.CSV",
+           wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+    # user cannot do anything until he clicks "OK"
+    if dlg.ShowModal() == wx.ID_OK:
+        path = dlg.GetPath()            # Workaround since 0.7.5
+        (dirname, filename) = os.path.split(path)
+        #filename = dlg.GetFilename()
+        #dirname = dlg.GetDirectory()
+        if filename.lower().endswith(".csv") is not True:
+            filename = filename+".csv"
+        openedfile = open(os.path.join(dirname, filename), 'wb')
+        ## First, some doc text
+        openedfile.write(ReadmeCSV.replace('\n', '\r\n'))
+        # The infos
+        InfoMan = info.InfoClass(CurPage=Page)
+        PageInfo = InfoMan.GetCurFancyInfo()
+        for line in PageInfo.splitlines():
+            openedfile.write("# "+line+"\r\n")
+        openedfile.write("#\r\n#\r\n")
+        # Get all the data we need from the Page
+        # Modeled data
+        # Since 0.7.8 the user may normalize the curves. The normalization
+        # factor is set in *Page.normfactor*.
+        corr = Page.datacorr[:,1]*Page.normfactor
+        if Page.dataexp is not None:
+            # Experimental data
+            tau = Page.dataexp[:,0]
+            exp = Page.dataexp[:,1]*Page.normfactor
+            res = Page.resid[:,1]*Page.normfactor
+            # Plotting! Because we only export plotted area.
+            weight = Page.weights_used_for_plotting
+            if weight is None:
+                pass
+            elif len(weight) != len(exp):
+                text = "Weights have not been calculated for the "+\
+                       "area you want to export. Pressing 'Fit' "+\
+                       "again should solve this issue. Data will "+\
+                       "not be saved."
+                wx.MessageDialog(parent, text, "Error", 
+                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                return dirname, None
+        else:
+            tau = Page.datacorr[:,0]
+            exp = None
+            res = None
+        # Include weights in data saving:
+        # PyCorrFit thinks in [ms], but we will save as [s]
+        timefactor = 0.001
+        tau = timefactor * tau
+        ## Now we want to write all that data into the file
+        # This is for csv writing:
+        ## Correlation curve
+        dataWriter = csv.writer(openedfile, delimiter='\t')
+        if exp is not None:
+            header = '# Channel (tau [s])'+"\t"+ \
+                     'Experimental correlation'+"\t"+ \
+                     'Fitted correlation'+ "\t"+ \
+                     'Residuals'+"\r\n"
+            data = [tau, exp, corr, res]
+            if Page.weighted_fit_was_performed is True \
+            and weight is not None:
+                header = header.strip() + "\t"+'Weights (fit)'+"\r\n"
+                data.append(weight)
+        else:
+            header = '# Channel (tau [s])'+"\t"+ \
+                     'Correlation function'+"\r\n"
+            data = [tau, corr]
+        # Write header
+        openedfile.write(header)
+        # Write data
+        for i in np.arange(len(data[0])):
+            # row-wise, data may have more than two elements per row
+            datarow = list()
+            for j in np.arange(len(data)):
+                rowcoli = str("%.10e") % data[j][i]
+                datarow.append(rowcoli)
+            dataWriter.writerow(datarow)
+        ## Trace
+        # Only save the trace if user wants us to:
+        if dlg.GetFilterIndex() == 0:
+            # We will also save the trace in [s]
+            # Intensity trace in kHz may stay the same
+            if Page.trace is not None:
+                # Mark beginning of Trace
+                openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
+                # Columns
+                time = Page.trace[:,0]*timefactor
+                intensity = Page.trace[:,1]
+                # Write
+                openedfile.write('# Time [s]'+"\t" 
+                                     'Intensity trace [kHz]'+" \r\n")
+                for i in np.arange(len(time)):
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
+            elif Page.tracecc is not None:
+                # We have some cross-correlation here:
+                # Mark beginning of Trace A
+                openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
+                # Columns
+                time = Page.tracecc[0][:,0]*timefactor
+                intensity = Page.tracecc[0][:,1]
+                # Write
+                openedfile.write('# Time [s]'+"\t" 
+                                     'Intensity trace [kHz]'+" \r\n")
+                for i in np.arange(len(time)):
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
+                # Mark beginning of Trace B
+                openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
+                # Columns
+                time = Page.tracecc[1][:,0]*timefactor
+                intensity = Page.tracecc[1][:,1]
+                # Write
+                openedfile.write('# Time [s]'+"\t" 
+                                     'Intensity trace [kHz]'+" \r\n")
+                for i in np.arange(len(time)):
+                    dataWriter.writerow([str("%.10e") % time[i],
+                                         str("%.10e") % intensity[i]])
+        dlg.Destroy()
+        openedfile.close()
+        return dirname, filename
+    else:
+        dirname = dlg.GetDirectory()
+        dlg.Destroy()
+        return dirname, None
+
+
+ReadmeCSV = """# This file was created using PyCorrFit version {}.
+#
+# Lines starting with a '#' are treated as comments.
+# The data is stored as CSV below this comment section.
+# Data usually consists of lag times (channels) and
+# the corresponding correlation function - experimental
+# and fitted values plus resulting residuals.
+# If this file is opened by PyCorrFit, only the first two
+# columns will be imported as experimental data.
+#
+""".format(doc.__version__)
+    
+    
+ReadmeSession = """This file was created using PyCorrFit version {}.
+The .zip archive you are looking at is a stored session of PyCorrFit.
+If you are interested in how the data is stored, you will find
+out here. Most important are the dimensions of units:
+Dimensionless representation:
+ unit of time        : 1 ms
+ unit of inverse time: 10³ /s
+ unit of distance    : 100 nm
+ unit of Diff.coeff  : 10 µm²/s
+ unit of inverse area: 100 /µm²
+ unit of inv. volume : 1000 /µm³
+From there, the dimension of any parameter may be
+calculated.
+
+There are a number of files within this archive, 
+depending on what was done during the session.
+
+backgrounds.csv
+ - Contains the list of backgrounds used and
+ - Averaged intensities in [kHz]
+
+bg_trace*.csv (where * is an integer)
+ - The trace of the background corresponding
+   to the line number in backgrounds.csv
+ - Time in [ms], Trace in [kHz]
+
+comments.txt
+ - Contains page titles and session comment
+ - First n lines are titles, rest is session
+   comment (where n is total number of pages)
+
+data*.csv (where * is (Number of page))
+ - Contains lag times [ms]
+ - Contains experimental data, if available
+
+externalweights.txt
+ - Contains names (types) of external weights other than from
+   Model function or spline fit
+ - Linewise: 1st element is page number, 2nd is name
+ - According to this data, the following files are present in the archive
+
+externalweights_data_*PageID*_*Type*.csv
+ - Contains weighting information of Page *PageID* of type *Type*
+
+model_*ModelID*.txt
+ - An external (user-defined) model file with internal ID *ModelID*
+
+Parameters.yaml
+ - Contains all Parameters for each page
+   Block format:
+    - - '#(Number of page): '       
+      - (Internal model ID)
+      - (List of parameters)
+      - (List of checked parameters (for fitting))
+      - [(Min channel selected), (Max channel selected)]
+      - [(Weighted fit method (0=None, 1=Spline, 2=Model function)), 
+          (No. of bins from left and right(, (No. of knots (of e.g. spline))]
+      - [B1,B2] Background to use (line in backgrounds.csv)
+           B2 is always *null* for autocorrelation curves
+      - Data type is Cross-correlation?
+      - Parameter id (int) used for normalization in plotting.
+        This number first enumerates the model parameters and then
+        the supplemental parameters (e.g. "n1").
+      - - [min, max] fitting parameter range of 1st parameter
+        - [min, max] fitting parameter range of 2nd parameter
+        - etc.
+ - Order in Parameters.yaml defines order of pages in a session
+ - Order in Parameters.yaml defines order in comments.txt
+
+Readme.txt (this file)
+
+Supplements.yaml
+ - Contains errors of fitting
+   Format:
+   -- Page number
+    -- [parameter id, error value]
+     - [parameter id, error value]
+    - Chi squared
+    - [pages that share parameters] (from global fitting)
+     
+trace*.csv (where * is (Number of page) | appendix "A" or "B" point to
+            the respective channels (only in cross-correlation mode))
+ - Contains times [ms]
+ - Contains countrates [kHz]
+""".format(doc.__version__)

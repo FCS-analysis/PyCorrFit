@@ -55,7 +55,11 @@ class ChooseImportTypes(wx.Dialog):
         self.panel = wx.Panel(self)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.boxes = dict()
-        textinit = wx.StaticText(self.panel, label=doc.chooseimport)
+        # For the selection of types to import when doing import Data
+        chooseimport = ("Several types of data were found in\n"+
+                        "the chosen file. Please select what\n"+
+                        "type(s) you would like to import.")
+        textinit = wx.StaticText(self.panel, label=chooseimport)
         self.sizer.Add(textinit)
         thekeys = curvedict.keys()
         thekeys.sort()
