@@ -81,8 +81,8 @@ class Wrapper_OnImport(object):
 class Wrapper_Tools(object):
     def __init__(self, parent):
         """
-        Wrapper for tools menu. Gets curvedict from parent and starts curve
-        selection. See *UserSelectCurves* class.
+        Wrapper for tools menu. Gets curvedict from parent and starts
+        curve selection. See *UserSelectCurves* class.
         """
         # parent is the main frame of PyCorrFit
         self.parent = parent
@@ -206,6 +206,8 @@ class Wrapper_Tools(object):
             try:
                 tool.SetPageNumbers(string)
             except:
+                # tool does not have this function and hence does not
+                # need numbers.
                 pass
         
         

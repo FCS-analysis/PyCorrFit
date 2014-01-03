@@ -84,8 +84,8 @@ class BackgroundCorrection(wx.Frame):
         self.btnbrowse = wx.Button(panel, wx.ID_ANY, 'Browse ...')
         self.rbtnhand = wx.RadioButton (panel, -1, 'Manual, <B> [kHz]: ')
         # Spincontrol
-        self.spinctrl = floatspin.FloatSpin(panel, digits=7,
-                                            increment=.1)
+        self.spinctrl = floatspin.FloatSpin(panel, digits=4, min_val=0,
+                                            increment=.01)
         self.spinctrl.Enable(False)
         # Verbose text
         self.textfile = wx.StaticText(panel,
@@ -101,18 +101,11 @@ class BackgroundCorrection(wx.Frame):
         self.btnimport = wx.Button(panel, wx.ID_ANY, 'Import into session')
         self.btnimport.Enable(False)
         # Dropdown
+        self.BGlist = ["File/User"] # updated by self.UpdateDropdown()
         textdropdown = wx.StaticText(panel, label="Show background: ")
-        self.BGlist = list()
-        #self.BGlist.append("File/User")
-        for item in self.parent.Background:
-            bgname = "{} ({:.2f} kHz)".format(item[1],item[0])
-            self.BGlist.append(bgname)
-        if len(self.BGlist) == 0:
-            ddlist = ["File/User"]
-        else:
-            ddlist = 1*self.BGlist
         self.dropdown = wx.ComboBox(panel, -1, "File/User", (15, -1),
-                     wx.DefaultSize, ddlist, wx.CB_DROPDOWN|wx.CB_READONLY)
+                     wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
+        self.UpdateDropdown()
         #self.textafterdropdown = wx.StaticText(panel, label="")
         # Apply buttons
         self.btnapply = wx.Button(panel, wx.ID_ANY, 'Apply')
@@ -396,11 +389,10 @@ class BackgroundCorrection(wx.Frame):
     def OnImport(self, event):
         self.parent.Background.append([self.average, self.bgname.GetValue(), 
                                       self.trace])
-        name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
-        self.BGlist.append(name)
+        # Next two lines are taken care of by UpdateDropdown
+        #name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
+        #self.BGlist.append(name)
         self.UpdateDropdown()
-        # Let the user see the imported file
-        self.dropdown.SetSelection(len(self.BGlist)-1)
         self.btnremyall.Enable(True)
         self.btnrem.Enable(True)
         self.btnapplyall.Enable(True)
@@ -510,8 +502,19 @@ class BackgroundCorrection(wx.Frame):
         self.OnDraw()
 
 
-    def UpdateDropdown(self):
+    def UpdateDropdown(self, e=None):
+        self.BGlist = list()
+        #self.BGlist.append("File/User")
+        for item in self.parent.Background:
+            bgname = "{} ({:.2f} kHz)".format(item[1],item[0])
+            self.BGlist.append(bgname)
+        if len(self.BGlist) == 0:
+            ddlist = ["File/User"]
+        else:
+            ddlist = 1*self.BGlist
         self.dropdown.SetItems(self.BGlist)
+        # Show the last item
+        self.dropdown.SetSelection(len(self.BGlist)-1)
 
 
 def ApplyAutomaticBackground(page, bg, parent):
@@ -555,6 +558,7 @@ def ApplyAutomaticBackground(page, bg, parent):
         page.bg2selected = None
     page.OnAmplitudeCheck("init")
     page.PlotAll()
+    CleanupAutomaticBackground(parent)
 
 
 def CleanupAutomaticBackground(parent):
@@ -573,10 +577,12 @@ def CleanupAutomaticBackground(parent):
         BGdict[i] = list()
         BG2dict[i] = list()
     # Append pages to the lists inside the dictionary
-    for i in xrange(self.parent.notebook.GetPageCount()):
-        Page = self.parent.notebook.GetPage(i)
-        BGdict[Page.bgselected].append(Page)
-        BG2dict[Page.bg2selected].append(Page)
+    for i in xrange(parent.notebook.GetPageCount()):
+        Page = parent.notebook.GetPage(i)
+        if Page.bgselected is not None:
+            BGdict[Page.bgselected].append(Page)
+        if Page.bg2selected is not None:
+            BG2dict[Page.bg2selected].append(Page)
     # Sort the keys and create a new background list
     NewBGlist = list()
     keyID = 0
@@ -592,6 +598,7 @@ def CleanupAutomaticBackground(parent):
             NewBGlist.append(parent.Background[key])
             keyID += 1
     # Same thing for cross-correlation (two bg signals)
+    keyID = 0
     keys = BG2dict.keys()
     keys.sort()
     for key in keys:
@@ -601,7 +608,22 @@ def CleanupAutomaticBackground(parent):
         else:
             for page in BG2dict[key]:
                 page.bg2selected = keyID
-            NewBGlist.append(parent.Background[key])
-            keyID += 1
+            # already added old background
+            #NewBGlist.append(parent.Background[key])
+            #keyID += 1
     # Finally, write back background list
     parent.Background = NewBGlist
+    # If the background correction tool is open, update the list
+    # of backgrounds.
+    # (self.MyName="BACKGROUND")
+    toolkeys = parent.ToolsOpen.keys()
+    if len(toolkeys) == 0:
+        pass
+    else:
+        for key in toolkeys:
+            tool = parent.ToolsOpen[key]
+            try:
+                if tool.MyName == "BACKGROUND":
+                    tool.UpdateDropdown()
+            except AtributeError:
+                pass

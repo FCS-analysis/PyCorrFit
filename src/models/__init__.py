@@ -8,10 +8,9 @@
     Each model has a unique ID. This ID is very important:
         1. It is a wxWidgets ID.
         2. It is used in the saving of sessions to identify a model.
-    It is very important, that model IDs do NOT change in newer versions of
-    this program, because it would not be possible to restore older PyCorrFit
-    sessions (Unless you add a program that maps the model IDs to the correct
-    models).
+    It is very important, that model IDs do NOT change in newer versions
+    of PyCorrFit, because it would not be possible to restore older
+    PyCorrFit sessions.
 
     Dimensionless representation:
     unit of time        : 1 ms
@@ -39,7 +38,7 @@
 
 
 # This file is necessary for this folder to become a module that can be 
-# imported by PyCorrFit or other people.
+# imported from within Python/PyCorrFit.
 
 import numpy as np                  # NumPy
 import platform
