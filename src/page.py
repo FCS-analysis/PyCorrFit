@@ -672,10 +672,16 @@ class FittingPanel(wx.Panel):
                 S2 = self.tracecc[1][:,1].mean()
                 self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(S1))
                 self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(S2))
+            else:
+                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
+                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
         else:
             if self.traceavg is not None:
                 self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(
                                                 self.traceavg))
+            else:
+                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
+            self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
         # Background
         ## self.parent.Background[self.bgselected][i]
         ## [0] average signal [kHz]
@@ -691,63 +697,11 @@ class FittingPanel(wx.Panel):
                         self.parent.Background[self.bg2selected][0])
         else:
             self.AmplitudeInfo[1][1].SetValue(0)
-        ######
-        ###### BEGIN DELETE FOR 0.8.1
-        ###### (we will insert spin controls)
-        ######
-        #bgsel = self.AmplitudeInfo[0].GetSelection()
-        #if self.IsCrossCorrelation:
-        #    bg2sel = self.AmplitudeInfo[0].GetSelection()
-        ## Standard is the background of the page
-        ## Read bg selection
-        #if event == "init":
-        #    # Read everything from the page not from the panel
-        #    if self.bgselected is not None:
-        #        bgsel = self.bgselected + 1
-        #    else:
-        #        bgsel = 0
-        #    # cross correlation
-        #    if self.IsCrossCorrelation:
-        #        if self.bg2selected is not None:
-        #            bg2sel = self.bgselected + 1
-        #        else:
-        #            bg2sel = 0
-        #else:
-        #    if bgsel <= 0:
-        #        self.bgselected is None
-        #        bgsel = 0 #None
-        #    else:
-        #        self.bgselected = bgsel - 1
-        #    # cross-correlation
-        #    if self.IsCrossCorrelation:
-        #        if self.bg2selected is None:
-        #            bg2sel = 0
-        #        else:
-        #            self.bg2selected = bg2sel - 1
-        ## Rebuild itemlist
-        ## self.parent.Background[self.bgselected][i]
-        ## [0] average signal [kHz]
-        ## [1] signal name (edited by user)
-        ## [2] signal trace (tuple) ([ms], [kHz])
-        #bglist = list()
-        #bglist.append("None")
-        #for item in self.parent.Background:
-        #    if len(item[1]) > 10:
-        #        item[1] = item[1][:7]+"..."
-        #    bgname = item[1]+" (%.2f kHz)" %item[0]
-        #    bglist.append(bgname)
-        #self.AmplitudeInfo[0].SetItems(bglist)
-        #self.AmplitudeInfo[0].SetSelection(bgsel)
-        ##self.AmplitudeInfo = [ bgnorm, bgtex, normtoNDropdown, textnor]
-        #if len(bglist) <= 1:
-        #    self.AmplitudeInfo[0].Disable()
-        #    self.AmplitudeInfo[1].Disable()
-        #else:
-        #    self.AmplitudeInfo[0].Enable()
-        #    self.AmplitudeInfo[1].Enable()
-        #######
-        ####### END DELETE FOR 0.8.1
-        #######
+        # Disable the second line in amplitude correction, if we have
+        # autocorrelation only.
+        boolval = self.IsCrossCorrelation
+        for item in self.WXAmplitudeCCOnlyStuff:
+            item.Enable(boolval)
 
 
     def OnBGSpinChanged(self, e):
@@ -1029,18 +983,19 @@ class FittingPanel(wx.Panel):
                     label="Intensity"))
         sizeint.Add(wx.StaticText(self.panelsettings,
                     label="Background"))
-        sizeint.Add(wx.StaticText(self.panelsettings,
-                    label="Ch1"))
+        sizeint.Add(wx.StaticText(self.panelsettings, label="Ch1"))
         intlabel1 = wx.TextCtrl(self.panelsettings)
         bgspin1 = floatspin.FloatSpin(self.panelsettings,
                         increment=0.01, digits=4, min_val=0)
         self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
                   bgspin1)
         sizeint.Add(intlabel1)
+        intlabel1.SetEditable(False)
         sizeint.Add(bgspin1)
-        sizeint.Add(wx.StaticText(self.panelsettings,
-                    label="Ch2"))
+        chtext2 = wx.StaticText(self.panelsettings, label="Ch2")
+        sizeint.Add(chtext2)
         intlabel2 = wx.TextCtrl(self.panelsettings)
+        intlabel2.SetEditable(False)
         bgspin2 = floatspin.FloatSpin(self.panelsettings,
                         increment=0.01, digits=4, min_val=0)
         self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
@@ -1057,6 +1012,7 @@ class FittingPanel(wx.Panel):
         self.AmplitudeInfo = [ [intlabel1, intlabel2],
                                [bgspin1, bgspin2],
                                 normtoNDropdown, textnor]
+        self.WXAmplitudeCCOnlyStuff = [chtext2, intlabel2, bgspin2]
         self.panelsettings.sizer.Add(miscsizer)
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Fitting options")
