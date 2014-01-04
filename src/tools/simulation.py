@@ -375,13 +375,13 @@ class Slide(wx.Frame):
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
-        self.SavedParms = self.parent.PackParameters(self.Page)
         if self.parent.notebook.GetPageCount() == 0:
             self.modelid = 6000
             ParmLabels, ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,
                                               mdls.valuedict[6000][1])
         else:
+            self.SavedParms = self.parent.PackParameters(self.Page)
             self.modelid = self.Page.modelid
             ParmLabels, ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,

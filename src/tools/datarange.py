@@ -157,7 +157,7 @@ class SelectChannels(wx.Frame):
 
     def OnApply(self, event=None):
         self.SetValues()
-        self.Page.PlotAll(event="init")
+        self.Page.PlotAll()
 
 
     def OnApplyAll(self, event=None):
