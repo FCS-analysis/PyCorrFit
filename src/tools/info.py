@@ -288,6 +288,7 @@ class ShowInfo(wx.Frame):
         self.panel = wx.Panel(self)
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE, 
                         size=initial_sizec)
+        self.control.SetEditable(False)
         font1 = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
         self.control.SetFont(font1)
         btncopy = wx.Button(self.panel, wx.ID_CLOSE, 'Copy to clipboard')
