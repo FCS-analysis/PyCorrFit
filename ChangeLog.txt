@@ -1,9 +1,11 @@
-0.8.0-2beta
+0.8.1
 - Thanks to Alex Mestiashvili for providing initial setup.py files (@mestia)
+- Thanks to Thomas Weidemann for his contributions to the documentation (@weidemann)
 - Bugfixes
    - Some ConfoCor files were not imported
    - The cpp was not calculated correctly in case of background correction (#45)
    - Enabled averaging of single pages (#58)
+   - Background correction for cross-correlation data is now copmuted (#46)
 - Improvements of the user interface
    - The menus have been reordered (#47, #50)
    - The fitting panel has been optimized (#49)
@@ -17,6 +19,7 @@
    - Statistics panel improvements (#43)
    - Run information is included in the Data set title
    - The page counter starts at "1" instead of "0" (#44)
+   - New handling of background correction (#46, #53)
 0.8.0
 - Filename/title of each tab now shows up in the notebook (#39)
 - Statistics tool can plot parameters and page selection with the Overlay
