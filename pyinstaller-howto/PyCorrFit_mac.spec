@@ -5,7 +5,7 @@ a = Analysis(['src/PyCorrFit.py'],
              hiddenimports=[],
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
-            ('doc/PyCorrFit_doc.pdf', 'PyCorrFit/PyCorrFit_doc.pdf', 'DATA')]
+            ('doc/PyCorrFit_doc.pdf', 'PyCorrFit_doc.pdf', 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
