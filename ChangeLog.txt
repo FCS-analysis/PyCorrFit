@@ -1,5 +1,6 @@
 0.8.1
-- Thanks to Alex Mestiashvili for providing initial setup.py files (@mestia)
+- Thanks to Alex Mestiashvili for providing initial setup.py files
+  and for debianizing PyCorrFit (@mestia)
 - Thanks to Thomas Weidemann for his contributions to the documentation (@weidemann)
 - Bugfixes
    - Some ConfoCor files were not imported
