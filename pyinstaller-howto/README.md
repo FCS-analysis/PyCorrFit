@@ -45,3 +45,5 @@ Known problems
             C:\Python27\include\
     2. Use the revision [6ca4af80a2a621e0bd48a6d149aef7a023e10afc](https://github.com/pyinstaller/pyinstaller/tree/6ca4af80a2a621e0bd48a6d149aef7a023e10afc/) of the pyinstaller-pyinstaller *develop* branch.   
     3. Make sure your windows user name does not conatin any unicode characters such as ü,é,etc. or create a new user.
+
+- On Ubuntu 13.04 the following revision of Pyinstaller worked for me: [fdeef345233bc13836f2b4bf6fa15ac55b8563ac](https://github.com/pyinstaller/pyinstaller/tree/fdeef345233bc13836f2b4bf6fa15ac55b8563ac/)

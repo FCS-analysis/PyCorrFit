@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# To create a distribution package for pip or easy-install:
+# python setup.py sdist
 from setuptools import setup, find_packages
 from os.path import join, dirname, realpath
 from warnings import warn
