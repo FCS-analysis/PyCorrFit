@@ -1,6 +1,6 @@
 # -*- mode: python -*-
-a = Analysis(['PyCorrFit/src/PyCorrFit.py'],
-             pathex=['pyinstaller-2.0'],
+a = Analysis(['src/PyCorrFit.py'],
+             pathex=['pyinstaller-pyinstaller-fdeef34'],
              hiddenimports=[],
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'PyCorrFit/ChangeLog.txt', 'DATA'),
