@@ -1,4 +1,6 @@
-include doc-src/*
+include doc-src/*.tex
+include doc-src/*.bib
+include doc-src/Images/*
 include external_model_functions/*
 include README.md
 include ChangeLog.txt
