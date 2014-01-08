@@ -94,7 +94,7 @@ Invoke \texttt{python PyCorrFit.py} from the command line.
 \label{sec:intro.workf}
 %\label{sec:PyCorrFitUserInterface}
 
-The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models \hyref{Chapter}{sec:tb}. Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
+The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models \hyref{Chapter}{sec:theor}. Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
 
 Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
 
@@ -132,7 +132,7 @@ The active page displaying a correlation function is divided in two panels. At t
 
 \begin{itemize}
 \item \textit{Data set} specifies the assigned model abbreviation in parantheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
-\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function \hyref{Chapter}{sec:tb}. Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:menub.filem.impor}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:menub.filem.saves}). 
+\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function \hyref{Chapter}{sec:theor}. Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:menub.filem.impor}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:menub.filem.saves}). 
 \item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles $n$ or amplitude fractions associated with different correlation times ($n_1$, $n_2$, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition, the correlation curves can be normalized, to facilitate a visual comparison of the decay.
 \item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighborhood. The number of neighboring data points at each side ($j > 0$) can be set. For such a smooth representation a 5-knot spline function or the model function with the current parameter set can be used. The latter should improve when repeatedly fitting.
 \end{itemize}
@@ -478,13 +478,46 @@ Information of the participating developers, the license, and documentation writ
 
 
 \section{4 Hacker's corner}
+\label{sec:hacke}
 \paragraph*{New internal model functions}
 Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
 
 External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development. 
 
 \section{Theoretical background}
-\label{sec:tb}
+\label{sec:theor}
+In the first place, \textit{PyCorrFit} was designed to evaluate FCS data. Therefore we focus on the theoretical background on this method. However, the correlation theory could be applied to other molecular signals than fluorescence.
+
+\subsection{How FCS works}
+\label{sec:theor.howfc}
+
+FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \{Elson, 1974 #794;Magde, 1974 #793;Magde, 1978 #795\}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \{Widengren, 1998 #804;Korlach, 1999 #1424;Schwille, 1999 #1060\}. The diffusion may be free or anomalous due to barriers or obstacles \{Wachsmuth, 2000 #803;Weiss, 2003 #485\}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \{Bacia, 2006 #1459;Kim, 2007 #1024\}.
+
+The measurement principle is to illuminate a small open volume within these solutions (e.g. by a laser focus) and to detect the molecular transits with a sub-microsecond time resolution by sensitive optics. The molecular transits and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting).
+
+\subsection{Framework for a single type of fluorescent dye}
+\label{sec:theor.frame}
+The following equations are described in many papers in different ways. Here we follow the notation of one of us \{Weidemann, 2009 #2113\}. Fluorescence signals are a result of absorption and emission of photons by a fluorophore. Under experimental conditions, the signal depends on the time dependent distribution of fluorescent particles in the sample volume $c(\vec{r},t)$ and the normalized instrumental detection efficiency $W(\vec{r}$. The total intensity, signal $S(t)$, is the sum of all photons emitted from fluorophores at different positions within the detection volume:
+	\begin{equation}
+	\label{eq1}
+	S(t) = q \int W(\vec{r})  c(\vec{r},t) \,dV
+	\end{equation}
+$q$ combines all the photo-physical constant associated with fluorescence emission like absorption cross section, quantum yield, and the peak intensity of excitation (laser power). In the following, time averages of observables are indicated by angular brackets	
+	\begin{equation}
+	\label{eq2}
+	\langle S(t) \rangle = \lim_{t\to\inf} \int S(t) \,dt = q \int W(\vec{r})  c \,dV = qn
+	\end{equation}
+\hyref{Equation (2)}{eq2} reveals that q is the instrument dependent molecular brightness (kHz/particle), i.e. the average signal divided by the average number of particles n observed within the effective detection volume $V_{eff} = \int W(\vec{r})  \,dV$. During FCS measurements the detected signal is correlated by computing a normalized autocorrelation function: 
+	\begin{equation}
+	\label{eq3}
+	G(\tau) = \frac{\langle S(t) S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\langle \delta S(t) \delta S(t+\tau)\rangle}{\langle S(t) \rangle^2} = \frac{g(\tau)}{\langle S(t) \rangle^2}
+	\end{equation}
+Here, \tau denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation (3)}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions G(τ) are typically plotted against log(\tau). %Figure call
+
+
+
+
+UPTOHERE	
 \subsection{Derivation of FCS model functions}
 This section introduces the calculation of FCS model functions. It supplies some background information and points out general properties of correlation functions.
 	
