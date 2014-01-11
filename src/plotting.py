@@ -194,7 +194,9 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         rcParams['text.usetex']=True
         rcParams['text.latex.unicode']=True
         rcParams['font.family']='serif'
-        rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"] 
+        rcParams['text.latex.preamble']=[r"""\usepackage{amsmath}
+                                            \usepackage[utf8x]{inputenc}
+                                            \usepackage{amssymb}"""] 
         fitlabel = ur"{\normalsize "+escapechars(fitlabel)+r"}"
         tabtitle = ur"{\normalsize "+escapechars(tabtitle)+r"}"
         labelweights = ur"{\normalsize "+escapechars(labelweights)+r"}"
