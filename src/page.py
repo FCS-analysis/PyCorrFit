@@ -371,9 +371,8 @@ class FittingPanel(wx.Panel):
                 Topics in Fluorescence Spectroscopy,
                 Springer US, 2002, 1, 337-378
             
-            and (for cross-correlation)
-            
-            Weidemann et al. ...?
+            The cross-correlation background correction can be derived in the
+            same manner.
         """
         # Make a copy. Do not overwrite the original.
         if dataexp is not None:
