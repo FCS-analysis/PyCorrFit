@@ -39,7 +39,7 @@ setup(
     data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'PyCorrFit_doc.pdf'])],
     license="GPL v2",
     description='Scientific tool for fitting correlation curves on a logarithmic plot.',
-    long_description=open(join(dirname(__file__), 'README.md')).read(),
+    long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
     scripts=['bin/pycorrfit'],
     include_package_data=True,
     install_requires=[
