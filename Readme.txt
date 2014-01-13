@@ -1,5 +1,4 @@
-PyCorrFit - a scientific tool for fitting
-correlation curves on a logarithmic plot.
+Scientific tool for fitting correlation curves on a logarithmic plot.
 
 In current biomedical research, fluorescence correlation spectroscopy (FCS) is  applied
 to characterize molecular dynamic processes in vitro and in living cells.  Commercial
