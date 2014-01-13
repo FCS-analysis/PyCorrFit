@@ -437,13 +437,13 @@ In the first place, \textit{PyCorrFit} was designed to evaluate FCS data. Theref
 \subsection{How FCS works}
 \label{sec:theor.howfc}
 
-FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \{Elson, 1974 #794;Magde, 1974 #793;Magde, 1978 #795\}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \{Widengren, 1998 #804;Korlach, 1999 #1424;Schwille, 1999 #1060\}. The diffusion may be free or anomalous due to barriers or obstacles \{Wachsmuth, 2000 #803;Weiss, 2003 #485\}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \{Bacia, 2006 #1459;Kim, 2007 #1024\}.
+FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \{Elson, 1974 \# 794;Magde, 1974 \# 793;Magde, 1978 \# 795\}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \{Widengren, 1998 \# 804;Korlach, 1999 \# 1424;Schwille, 1999 \# 1060\}. The diffusion may be free or anomalous due to barriers or obstacles \{Wachsmuth, 2000 \# 803;Weiss, 2003 \# 485\}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \{Bacia, 2006 \# 1459;Kim, 2007 \# 1024\}.
 
 The measurement principle is to illuminate a small open volume within these solutions (e.g. by a laser focus) and to detect the molecular transits with a sub-microsecond time resolution by sensitive optics. The molecular transits and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting).
 
 \subsection{Framework for a single type of fluorescent dye}
 \label{sec:theor.frame}
-The following equations are described in many papers in different ways. Here we follow the notation of one of us \{Weidemann, 2009 #2113\}. Fluorescence signals are a result of absorption and emission of photons by a fluorophore. Under experimental conditions, the signal depends on the time dependent distribution of fluorescent particles in the sample volume $c(\vec{r},t)$ and the normalized instrumental detection efficiency $W(\vec{r}$. The total intensity, signal $S(t)$, is the sum of all photons emitted from fluorophores at different positions within the detection volume:
+The following equations are described in many papers in different ways. Here we follow the notation of one of us \{Weidemann, 2009 \# 2113\}. Fluorescence signals are a result of absorption and emission of photons by a fluorophore. Under experimental conditions, the signal depends on the time dependent distribution of fluorescent particles in the sample volume $c(\vec{r},t)$ and the normalized instrumental detection efficiency $W(\vec{r}$. The total intensity, signal $S(t)$, is the sum of all photons emitted from fluorophores at different positions within the detection volume:
 	\begin{equation}
 	\label{eq1}
 	S(t) = q \int W(\vec{r})  c(\vec{r},t) \,dV
@@ -491,6 +491,8 @@ Solving these integrals for the confocal detection scheme yields a relatively si
 	\begin{equation}
 	\label{eq10}
 	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{SP^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
+	\end{equation}
+
 For confocal FCS both the detection volume $W(\vec{r}$ and the propagator for free diffusion $P_d$ are described by exponentials (Gaussian functions), therefore spatial relationships can be factorized for each dimension $xyz$. As a result, Equation (10) can be written as a combination of transversal (2D) and longitudinal (3D) diffusion.
 \subsection{Autocorrelation of multiple species}
 \label{sec:theor.autoc}
@@ -515,7 +517,7 @@ Due to the sums in Equation (12), adding up individual contributions of sub-ense
 	\label{eq14}
 	G^{\rm D}(\tau) = \sum_{k=1}^m F_k G^{\rm D}(\tau) = \frac{1}{n} \sum_{k=1}^m F_k \left(1+\frac{\tau}{\tau_{{\rm diff},k}} \right) ^{-1} \left(1+\frac{\tau}{SP^2 \, \tau_{{\rm diff},k}} \right)
 	\end{equation}
-Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 #1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($α_k = q_k/q_1$). Brighter particles are overrepresented \{Thompson, 1991 #802\}
+Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are overrepresented \{Thompson, 1991 \# 802\}
 	\begin{equation}
 	\label{eq15}
 	G^{\rm D}(\tau) = \frac{1}{n \left( \sum_k F_k \alpha_k \right)^2} \sum_k F_k \alpha_k^2 G_k^D(\tau)
@@ -528,12 +530,12 @@ Inhomogeneity in molecular brightness affects both the total concentration of ob
 
 \subsection{Correcting non-correlated background signal}
 \label{sec:theor.correc}
-In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \{Koppel, 1974 #796;Thompson, 1991 #802\}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) \hyref{sec:intro.graph}. For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
+In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \{Koppel, 1974 \# 796;Thompson, 1991 \# 802\}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) \hyref{sec:intro.graph}. For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
 	\begin{equation}
 	\label{eq17}
 	n = \frac{1}{G^D(0)} \left( \frac{S-B}{S} \right)^2 = \frac{1}{(1-T)G(0)} \left( \frac{S-B}{S} \right)^2.
 	\end{equation}
-For dual-channel applications with cross-correlation (next section) the amplitudes must be corrected by contributions from each channel \{Weidemann, 2013 #2517\}
+For dual-channel applications with cross-correlation (next section) the amplitudes must be corrected by contributions from each channel \{Weidemann, 2013 \# 2517\}
 	\begin{equation}
 	\label{eq18}
 	G_{\times,\rm {cor}}(0) = G_{\times, \rm meas}(0) \left( \frac{S_1}{S_1-B_1} \right) \left( \frac{S_2}{S_2-B_2} \right) 
@@ -541,27 +543,28 @@ For dual-channel applications with cross-correlation (next section) the amplitud
 
 Subsection{Cross-correlation}
 \label{sec:theor.cross}
-Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \{Foo, 2012 #2356;Ries, 2010 #2329;Schwille, 1997 #807;Weidemann, 2002 #621\}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlating between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \{Rippe, 2000 #837;Weidemann, 2002 #621\}.
+Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \{Foo, 2012 \# 2356;Ries, 2010 \# 2329;Schwille, 1997 \# 807;Weidemann, 2002 \# 621\}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlating between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \{Rippe, 2000 \# 837;Weidemann, 2002 \# 621\}.
 	\begin{equation}
 	\label{eq19}
 	G_\times (\tau) \stackrel{\rm def}{=} G_{12} (\tau) = \frac{\langle \delta S_1(t) \delta S_2(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} \approx \frac{\langle \delta S_2(t) \delta S_1(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} =  G_{21} (\tau)
 	\end{equation}
-A finite cross-correlation amplitude $G_{12}(0)$ indicates co-diffusion of complexes containing both types of interaction partners. The increase of the cross-correlation amplitude is linear for heterotypic binding but non-linear for homotypic interactions or higher order oligomers. The absolute magnitude of the cross-correlation amplitude must be calibrated because the chromatic mismatch of the detection volumes (different wavelength, different size) and their spatial displacement (dx, dy, dz) constitute instrumental limits, even for 100\% double labelled particles \{Weidemann, 2002 #621\}. \hyref{Equation (9)}{eq9} can be extended
+A finite cross-correlation amplitude $G_{12}(0)$ indicates co-diffusion of complexes containing both types of interaction partners. The increase of the cross-correlation amplitude is linear for heterotypic binding but non-linear for homotypic interactions or higher order oligomers. The absolute magnitude of the cross-correlation amplitude must be calibrated because the chromatic mismatch of the detection volumes (different wavelength, different size) and their spatial displacement (dx, dy, dz) constitute instrumental limits, even for 100\% double labelled particles \{Weidemann, 2002 \# 621\}. \hyref{Equation (9)}{eq9} can be extended
 	\begin{equation}
 	\label{eq20}
 	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2} \exp \left(- \frac{d_x^2 + d_y^2}{4 D_t \tau + w_{0,\rm eff}} + \frac{d_z^2}{4 D_t \tau + z_{0,\rm eff}} \right)
 	\end{equation}
-The ratio between cross- and autocorrelation amplitude is used as a readout which can be linked to the degree of binding. Let's assume a heterodimerization, where channel $1$ is sensitive for green labelled particles ($g$) and channel $2$ is sensitive for red labelled particles ($r$), then the ratio of cross- and autocorrelation amplitudes is proportional to the fraction of ligand bound \{Weidemann, 2002 #621\}
+The ratio between cross- and autocorrelation amplitude is used as a readout which can be linked to the degree of binding. Let's assume a heterodimerization, where channel $1$ is sensitive for green labelled particles ($g$) and channel $2$ is sensitive for red labelled particles ($r$), then the ratio of cross- and autocorrelation amplitudes is proportional to the fraction of ligand bound \{Weidemann, 2002 \# 621\}
 	\begin{eqnarray}
 	\label{eq21}
 	CC_1 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_1(0)} & \propto & \frac{c_{gr}}{c_r} \nonumber \\ CC_2 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_2(0)} &\propto & \frac{c_{gr}}{c_g}
 	\end{eqnarray}
-Recently, a correction for bleed-through of the signals between the two channels has been worked out \{Bacia, 2012 #2355\}. The effect on binding curves measured with cross-correlation can be quite dramatic \{Weidemann, 2013 #2517\}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
+Recently, a correction for bleed-through of the signals between the two channels has been worked out \{Bacia, 2012 \# 2355\}. The effect on binding curves measured with cross-correlation can be quite dramatic \{Weidemann, 2013 \# 2517\}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
+	\begin{eqnarray}
 	\label{eq22}
 	\langle F_1 \rangle & = & \langle \hat{F}_1 \rangle + \langle \hat{F}_2 \rangle BT_{21} \cong  \langle \hat{F}_1 \rangle \nonumber \\ \langle F_2 \rangle & = & \langle \hat{F}_2 \rangle + \langle \hat{F}_1 \rangle BT_{12}
 	\end{eqnarray}
-Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of erroneous signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \{Bacia, 2012 #2355;Weidemann, 2013 #2517\}
-	begin{eqnarray}
+Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of erroneous signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \{Bacia, 2012 \# 2355;Weidemann, 2013 \# 2517\}
+	\begin{eqnarray}
 	\label{eq23}
 	\frac{c_{gr}}{c_r} & \propto & \frac{CC_1-X_2}{\left( 1-X_2 \right)} \nonumber \\ \frac{c_{gr}}{c_g} & \propto & \frac{CC_2-X_2 \left( 1-X_2 \right) \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)}}{1+ X_2 \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)} - 2 X_2 CC_2}
 	\end{eqnarray}
