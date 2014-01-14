@@ -119,7 +119,7 @@ There are three gateways for experimental data into a pre-existing or a new \tex
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($tau_{\rm diff} = 26.7$ \mus). \label{fig:PyCorrFitMain}}
+ \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}}). \label{fig:PyCorrFitMain}}
 \end{figure}
 
 The active page displaying a correlation function is divided in two panels. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated to the current model and data set: 
@@ -539,7 +539,7 @@ Solving these integrals for the confocal detection scheme yields a relatively si
 	\label{eq9}
 	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2}
 	\end{equation}
-	In the FCS field it is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated 3D Gaussian. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
+The inverse intercept $G^{-1}(0)$ is proportional to the total concentration of oberved particles $C = n/V_{\mathrm eff} = n/ (\pi^{3/2}w_0^2z_0)$. It is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated detection volume. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
 	\begin{equation}
 	\label{eq10}
 	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{SP^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
@@ -626,22 +626,25 @@ As apparent from \hyref{Equation}{eq23} it is much simpler to use the autocorrel
 
 \subsection{Extension of the method}
 \label{sec:theor.exten}
-By modifying the diffusion propagator $P_d$ and the shape of the detection volume W(\vec{r}), other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals are not straightforward and approximations have to be made. For example, the Gaussian shaped detection profile in confocal FCS is already an approximation. However, deviations from the true results are considered to be small \cite{Zhang2007}. \hyref{Section}{sec:mdls} introduces several model functions with various detection symmetries and particle dynamics.
+Using as confocal alignment for FCS measurements is very successful and widely applied. However, mainly in the context of membrane research, other excitation schemes have been explored. Once the excitation and detection geometry is changed one has to account for it in the model functions. This is usually done by modifying the expressions of the detection volume W(r) \hyref{Equation}{eq8}. However, in many cases analytical solutions to the above integrals are not straightforward and approximations have to be made. The following section introduces model functions for different detection symmetries and particle dynamics.
 
 \subsubsection{Perpendicular scanning FCS}
 \label{sec:theor.exten.perpe}
+Scanning FCS with a scan path perpendicular to the membrane plane was introduced to measure the lateral diffusion of fluorescent components of a fluid lipid membrane {Ries, 2006 #917}. Using the linear scan option of a confocal laser scanning microscope (CLSM), the focal spot is moved repeatedly on a straight line through a free standing membrane (typically the equatorial face of a giant vesicle). The fluorescence photons emitted from the detection volume are continuously recorded and stored. The signal originating from the transit through the membrane must be extracted post-measurement, correlated and evaluated by well-known FCS model functions. Scanning can also be performed with two parallel scan paths perpendicular through the membrane (continuous imaging with two lines). Once the distance between these scan paths has been calibrated, the diffusion coefficients can be determined without further calibrations via diffusion standards. We recently introduced a free, open source software tool (\textit{PyScanFCS}) to perform these steps \{Muller, 2014 #2603\}.
 
 \subsubsection{Circular scanning FCS}
 \label{sec:theor.exten.circu}
-
+The principle of circular scanning FCS is similar. Here, the laser focus is moved in small circles, several µm in diameter. While pSFCS requires relatively large free standing membranes, cSFCS can be performed in µm sized homogeneous fluorescent regions of supported bilayers, cell membranes, as well as the apical poles of giant vesicles. Once the radius of the circular scan path has been accurately determined (e.g. with a fluorescent grid), the diffusion coefficients can be determined from cross-correlation curves without the need to calibrate the detection volume by diffusion standards \{Petrasek, 2010 #2017\}.
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_CSFCS.png}
- \mycaption{user interface with external model function}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:cirSFCS}}
+ \mycaption{user interface with external model function}{A circular scanning FCS (cSFCS) curve of DiO in a reconstituted lipid bilayer on glass support is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:cirSFCS}}
 \end{figure}
 
 \subsubsection{Total internal reflection TIR-FCS}
 \label{sec:theor.exten.total}
+TIR-FCS was developed to measure transient ligand binding events to receptors in the membrane \{Thompson, 2007 #918\}. In contrast to scanning FCS, the detection volume is fixed. However the geometry is composed of an exponential decay of the evanescent field along z and the lateral boundaries imposed in xy by a pinhole in the detection path. The situation is notoriously difficult to model and different solutions have been proposed:
+
 \textbf{TIR-FCS with Gaussian-shaped lateral detection volume}
 The detection volume is axially confined by an evanescent field and has an effective size of
 \begin{align}
