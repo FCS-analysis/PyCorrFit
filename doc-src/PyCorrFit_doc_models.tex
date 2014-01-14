@@ -53,12 +53,12 @@ ID & \textbf{6011} \\
 Descr. &  Three-dimensional free diffusion with a Gaussian laser profile (eliptical), including a triplet component\cite{Widengren1994, Widengren1995, Haupts1998}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{diff})}} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
+G(\tau) = A_0 + \frac{1}{n} \frac{1}{(1+\tau/\tau_\mathrm{diff})} \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{ diff})}} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume \\ 
+$n$ & Effective number of particles in confocal volume \\ 
 $\tau_\mathrm{diff}$ &  Characteristic residence time in confocal volume \\ 
 $\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
@@ -76,13 +76,13 @@ ID & \textbf{6030} \\
 Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) &= A_0 + \frac{1}{N (F + \alpha (1-F))²}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
+G(\tau) &= A_0 + \frac{1}{n (F + \alpha (1-F))²}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
 \notag &\times  \left[ \frac{F}{(1+\tau/\tau_1)}  \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_1)}} + \alpha^2 \frac{1-F}{ (1+\tau/\tau_2) }  \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_2)}} \right]
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_1+N_2$) \\ 
+$n$ & Effective number of particles in confocal volume ($n = n_1+n_2$) \\ 
 $\tau_1$ &  Diffusion time of particle species 1 \\ 
 $\tau_2$ &  Diffusion time of particle species 2 \\ 
 $F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
@@ -103,12 +103,12 @@ ID & \textbf{6002} \\
 Descr. &  Two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Aragon1976, Qian1991, Rigler1993,Widengren1994, Widengren1995, Haupts1998}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = A_0 + \frac{1}{N} \frac{1}{(1+\tau/\tau_\mathrm{diff})}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
+G(\tau) = A_0 + \frac{1}{n} \frac{1}{(1+\tau/\tau_\mathrm{diff})}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area \\ 
+$n$ & Effective number of particles in confocal area \\ 
 $\tau_\mathrm{diff}$ &  Characteristic residence time in confocal area \\ 
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
 $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
@@ -125,12 +125,12 @@ ID & \textbf{6031} \\
 Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = A_0 + \frac{1}{N (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+G(\tau) = A_0 + \frac{1}{n (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
+$n$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
 $\tau_1$ &  Diffusion time of particle species 1 \\ 
 $\tau_2$ &  Diffusion time of particle species 2 \\ 
 $F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
@@ -150,12 +150,12 @@ ID & \textbf{6032} \\
 Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = A_0 + \frac{1}{N (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
+G(\tau) = A_0 + \frac{1}{n (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
 \end{align} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$n$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
 $\tau_\mathrm{2D}$ &  Diffusion time of surface bound particles \\ 
 $\tau_\mathrm{3D}$ &  Diffusion time of freely diffusing particles \\ 
 $F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
@@ -168,25 +168,8 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \vspace{2em}
 
 
-\subsection{TIR-FCS}
-\label{sec:imple.tirfc}
-The detection volume is axially confined by an evanescent field and has an effective size of
-\begin{align}
-V = \pi R_0^2 d_\mathrm{eva}
-\end{align} 
-where $R_0$ is the lateral extent of the detection volume and $d_\mathrm{eva}$ is the evanescent field depth\footnote{Where the field has decayed to $1/e$}. From the concentration $C$, the effective number of particles is $N=CV$.
-The decay constant $\kappa$ is the inverse of the depth $d_\mathrm{eva}$ :
-\begin{align}
-d_\mathrm{eva} = \frac{1}{\kappa}
-\end{align} 
-The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
-\begin{align}
-w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
-\notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
-\end{align} 
-The lateral detection area has the same shape as in confocal FCS. Thus, correlation functions for two-dimensional diffusion of the confocal case apply and are not mentioned here. \\
-\vspace{2em}
-
+\subsection{TIR-FCS with Gaussian-shaped lateral detection volume}
+\label{sec:imple.tirfcsg}
 
 % 3D diffusion (Gauß/exp)
 \noindent \begin{tabular}{lp{.7\textwidth}}
@@ -216,7 +199,7 @@ ID & \textbf{6034} \\
 Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\
 \end{tabular}
 \begin{align}
-G(\tau) = &A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
+G(\tau) = &A_0 + \frac{1}{n (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
 \notag \times  \Bigg[ \,\, & 
 \frac{F \kappa}{1+ 4 D_1 \tau/R_0^2} 
 \left( \sqrt{\frac{D_1 \tau}{\pi}} + \frac{1 - 2 D_1 \tau \kappa^2}{2 \kappa}  w\!\left(i \sqrt{D_1 \tau} \kappa\right) \right) + \\
@@ -227,7 +210,7 @@ G(\tau) = &A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_1+N_2$) \\ 
+$n$ & Effective number of particles in confocal volume ($n = n_1+n_2$) \\ 
 $D_1$ &  Diffusion coefficient of species 1 \\ 
 $D_2$ &  Diffusion coefficient of species 2 \\ 
 $F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
@@ -250,7 +233,7 @@ ID & \textbf{6033} \\
 Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
+G(\tau) &= A_0 + \frac{1}{n (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
 & \notag \times  \left[
 \frac{1-F}{1+ 4 D_\mathrm{2D} \tau/R_0^2} + 
 \frac{\alpha^2 F \kappa}{1+ 4 D_\mathrm{3D} \tau/R_0^2} 
@@ -259,7 +242,7 @@ G(\tau) &= A_0 + \frac{1}{N (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$N$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$n$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
 $D_\mathrm{2D}$ &  Diffusion coefficient of surface bound particles \\ 
 $D_\mathrm{3D}$ &  Diffusion coefficient of freely diffusing particles \\ 
 $F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
@@ -275,20 +258,8 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 
 
 
-\subsubsection{TIR-FCS with a square-shaped lateral detection volume}
-The detection volume is axially confined by an evanescent field of depth\footnote{Where the field has decayed to $1/e$} $d_\mathrm{eva} = 1 / \kappa$.
-The lateral detection area is a convolution of the point spread function of the microscope of size $\sigma$,
-\begin{align}
-\sigma = \sigma_0  \frac{\lambda}{\mathit{NA}},
-\end{align} 
-with a square of side length $a$.
-The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
-\begin{align}
-w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
-\notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
-\end{align} 
-\vspace{2em}
-
+\subsection{TIR-FCS with a square-shaped lateral detection volume}
+\label{sec:imple.tirfcss}
 
 
 % 3D TIRF diffusion (□xσ)
