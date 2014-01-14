@@ -32,7 +32,7 @@ or (at your option) any later version\footnote{\url{http://www.gnu.org/licenses/
 \label{sec:intro.prere}
 \subsubsection{Hardware}
 \label{sec:intro.prere.hardw}
-This documentation addresses the processing of correlation curves with \textit{PyCorrFit}. \textit{PyCorrFit} was successfully used with the following setups:
+This documentation addresses the processing of correlation curves with \textit{PyCorrFit} and was successfully used with the following setups:
 \begin{itemize}
 \item[1.]
      APD: Photon Counting Device from PerkinElmer Optoelectronics, Model: 	 \texttt{SPCM-CD3017}\\
@@ -76,8 +76,8 @@ For older versions of Ubuntu, some of the above package versions are not listed 
 \end{itemize}
 Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be used to install up-to-date python modules.
 
-\noindent \textbf{\LaTeX}.
-\textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages LaTeX, dvipng, Ghostscript and the scientific latex packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
+\vspace{1em}
+\noindent \textbf{\LaTeX}. \textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize \Latex to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages \LaTeX\, dvipng, Ghostscript and the scientific \LaTeX \,packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
 \subsection{Running \textit{PyCorrFit}}
 \label{sec:intro.runni}
@@ -253,9 +253,9 @@ This command closes all pages while the PyCorrFit.exe keeps running. The user is
 
 \subsubsection{File / Save session}
 \label{sec:menub.filem.saves}
-In addition to display and fit individual curves, a strong feature of PyCorrFit is to save an entire fitting project as a single session. Sessions allow the user to revisit and explore different models, fitting strategies, and data sets. Importantly the work can be saved at any stage.
+In addition to display and fit individual curves, a strong feature of \textit{PyCorrFit} is to save an entire fitting project as a single session. Sessions allow the user to revisit and explore different models, fitting strategies, and data sets. Importantly the work can be saved at any stage.
 
-The number of files bundled in a session varies depending on the number of data sets (pages), the number of used models, and what was done during the fitting. A detailed description can be found in the Readme.txt file attached to each session. For example, the numerical correlation and intensity data are saved separately as *.csv text files. However, in contrast to the \textit{Save data (*.csv)} command of the \textit{Current Page} menu, there are no metadata in the header, just tables containing the numerical values. In sessions, the fitting parameters are stored separately in the human-readable data serialization format, *.yaml.
+The number of files bundled in a session varies depending on the number of data sets (pages), the number of used models, and what was done during the fitting. A detailed description can be found in the Readme.txt file attached to each session. For example, the numerical correlation and intensity data are saved separately as *.csv text files. However, in contrast to the \textit{Save data (*.csv)} command of the \textit{Current Page} menu, there are no metadata in the header, just tables containing the numerical values. In sessions, the fitting parameters are stored separately in the human-readable data serialization format *.yaml.
 
 \subsubsection{File / Exit}
 \label{sec:menub.filem.exit}
@@ -350,7 +350,7 @@ This menu compiles import and export operations referring exclusively to the act
 \label{sec:menub.curre.impor}
 This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (\hyref{Section}{sec:menub.filem.loadd}). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
 
-To avoid this loss, one could first generate a new page via the menu (\hyref{Section}{sec:tm.m}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
+To avoid this loss, one could first generate a new page via the menu (\hyref{Section}{sec:model}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
 \subsubsection{Current Page / Save data (*.csv)}
 \label{sec:menub.curre.saved}
@@ -414,11 +414,11 @@ This entry displays this documentation using the systems default PDF viewer.
 \paragraph*{Wiki}
 This entry displays the wiki of \textit{PyCorrFit} on \textit{GitHub}. Everyone who registers with \textit{GitHub} will be able to make additions and modifications. The wiki is intended for end-users of \textit{PyCorrFit} to share protocols or to add other useful information.
 \paragraph*{Update}
-establishes a link to the GitHub website to check for a new release; it also provides a few web links associated with PyCorrFit
+establishes a link to the \textit{GitHub} website to check for a new release; it also provides a few web links associated with \textit{PyCorrFit}
 \paragraph*{Shell}
 This gives Shell-access to the functions of \textit{PyCorrFit}. It is particularly useful for trouble-shooting.
 \paragraph*{Software}
-This lists the exact version of \textit{Python} and the corresponding modules with which PyCorrFit is currently running.
+This lists the exact version of \textit{Python} and the corresponding modules with which \textit{PyCorrFit} is currently running.
 \paragraph*{About}
 Information of the participating developers, the license, and documentation writers.
 
@@ -428,164 +428,9 @@ Information of the participating developers, the license, and documentation writ
 \paragraph*{New internal model functions}
 Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
 
-External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development. 
+External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development.
 
-\section{Theoretical background}
-\label{sec:theor}
-In the first place, \textit{PyCorrFit} was designed to evaluate FCS data. Therefore we focus on the theoretical background on this method. However, the correlation theory could be applied to other molecular signals than fluorescence.
-
-\subsection{How FCS works}
-\label{sec:theor.howfc}
-
-FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \{Elson, 1974 \# 794;Magde, 1974 \# 793;Magde, 1978 \# 795\}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \{Widengren, 1998 \# 804;Korlach, 1999 \# 1424;Schwille, 1999 \# 1060\}. The diffusion may be free or anomalous due to barriers or obstacles \{Wachsmuth, 2000 \# 803;Weiss, 2003 \# 485\}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \{Bacia, 2006 \# 1459;Kim, 2007 \# 1024\}.
-
-The measurement principle is to illuminate a small open volume within these solutions (e.g. by a laser focus) and to detect the molecular transits with a sub-microsecond time resolution by sensitive optics. The molecular transits and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting).
-
-\subsection{Framework for a single type of fluorescent dye}
-\label{sec:theor.frame}
-The following equations are described in many papers in different ways. Here we follow the notation of one of us \{Weidemann, 2009 \# 2113\}. Fluorescence signals are a result of absorption and emission of photons by a fluorophore. Under experimental conditions, the signal depends on the time dependent distribution of fluorescent particles in the sample volume $c(\vec{r},t)$ and the normalized instrumental detection efficiency $W(\vec{r}$. The total intensity, signal $S(t)$, is the sum of all photons emitted from fluorophores at different positions within the detection volume:
-	\begin{equation}
-	\label{eq1}
-	S(t) = q \int W(\vec{r})  c(\vec{r},t) \,dV
-	\end{equation}
-$q$ combines all the photo-physical constant associated with fluorescence emission like absorption cross section, quantum yield, and the peak intensity of excitation (laser power). In the following, time averages of observables are indicated by angular brackets	
-	\begin{equation}
-	\label{eq2}
-	\langle S(t) \rangle = \lim_{t\to\ \infty} \int S(t) \,dt = q \int W(\vec{r})  c \,dV = qn
-	\end{equation}
-\hyref{Equation (2)}{eq2} reveals that q is the instrument dependent molecular brightness (kHz/particle), i.e. the average signal divided by the average number of particles n observed within the effective detection volume $V_{\rm eff} = \int W(\vec{r})  \,dV$. During FCS measurements the detected signal is correlated by computing a normalized autocorrelation function: 
-	\begin{equation}
-	\label{eq3}
-	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\langle \delta S(t) \cdot \delta S(t+\tau)\rangle}{\langle S(t) \rangle^2} = \frac{g(\tau)}{\langle S(t) \rangle^2}
-	\end{equation}
-Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation (3)}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$. %Figure call
-
-A general way to derive theoretical model functions is to evaluate hyref{Equation (3)}{eq3} with explicit expressions describing the instrumental detection efficiency $W(\vec{r}$ and the molecular dynamics governing the local fluorophore concentrations $c(\vec{r},t)$. For example, free diffusion of the molecules can be described by the so-called diffusion propagator.
-	\begin{equation}
-	\label{eq4}
-	P_d \left( \vec{r} \,' | \vec{r},\tau \right) = \frac{1}{\left( 4 \pi D_t \tau \right) ^{3/2}} \exp \left[ - \frac{\left| \vec{r} \,' -\vec{r} \, \right|]} {4D_t \tau} \right]
-	\end{equation}
-The product $P_d d^3 \vec{r} \,'$ is the conditional probability of a particle with diffusion coefficient $D_t$ to move from $\vec{r}$ to $\vec{r \,'}$ within a time period $\tau$. To find a particle at position $\vec{r}$ is simply the ratio of  volumes $d^3r/V$. Such a diffusion propagator leads to a Gaussian shaped probability distribution spreading in time when the molecules successively roam the sample volume $V$.
-Assuming that the time average and the ensemble average are equivalent (ergodic theorem), one can write the average signal of a single particle as
-	\begin{equation}
-	\label{eq5}
-	\langle s(t) \rangle = \frac{V_{\rm eff}}{V} = \frac{\int W(\vec{r}) \,dV}{V}
-	\end{equation}
-and accordingly express the average product of two signals separated by $\tau$
-	\begin{equation}
-	\label{eq6}
-	\langle s(t) \cdot s(t + \tau) \rangle = \frac{1}{V} \int \int W(\vec{r}) P_d \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'
-	\end{equation}
-To use this result one has to reduce $G(\tau)$ to the sum of individual molecular contributions
-Inserting Equations (5) and (6) yields
-	\begin{equation}
-	\label{eq8}
-	G(\tau) = \frac{1}{c} \frac{\int \int W(\vec{r}) P_d \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'}{\left( W(\vec{r}) \,dV \right)^2}
-	\end{equation}
-Solving these integrals for the confocal detection scheme yields a relatively simple equation containing the diffusion coefficient $D_t$ (molecular property) and the $1/e^2$ decay lengths $w_0$ and $z_0$ capturing the dimension of the Gaussian detection volume transversal and parallel to the optical axis, respectively (instrumental property).
-	\begin{equation}
-	\label{eq9}
-	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2}
-	\end{equation}
-	In the FCS field it is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated 3D Gaussian. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
-	\begin{equation}
-	\label{eq10}
-	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{SP^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
-	\end{equation}
-
-For confocal FCS both the detection volume $W(\vec{r}$ and the propagator for free diffusion $P_d$ are described by exponentials (Gaussian functions), therefore spatial relationships can be factorized for each dimension $xyz$. As a result, Equation (10) can be written as a combination of transversal (2D) and longitudinal (3D) diffusion.
-\subsection{Autocorrelation of multiple species}
-\label{sec:theor.autoc}
-	\begin{equation}
-	\label{eq11}
-	G(\tau) \stackrel{\rm def}{=} G^{\rm T}(\tau) G^{\rm D}(\tau) = \left( 1+ \frac{T}{1-T} \exp\left[-\frac{\tau}{\tau_{\rm trp}} \right] \right)G^{\rm D}(\tau)
-	\end{equation}
-Blinking increases the correlation amplitude $G(0)$ by the triplet fraction $1/(1-T)$. Accordingly the average number of observed particles is decreased $n = G^-1(0)(1-T)$. In case of GFP blinking two different blinking times have been described and the rate equations can get quite complicated.
-Besides photo-physics, the solution may contain mixtures of fluorescent particles with different dynamic properties, e.g. size or binding, leading to several correlation times in the measured curve. The way to derive \hyref{Equation (7)}{eq7} from \hyref{Equation (3)}{eq3} shows that the correlation function of an ensemble can be built up by the contribution of $n$ single molecules in the sample volume:
-	\begin{equation}
-	\label{eq12}
-	G(\tau) = \frac{g(\tau)}{\langle S(t) \rangle^2} = \frac{\sum_{i=1}^n \sum_{j=1}^n g_{ij}(\tau)}{\langle S(t) \rangle^2}
-	\end{equation}
-with $g_{ij}(\tau)$ as the pairwise correlation function of identical ($i = j$) or distinguishable particles ($i \not= j$)
-	\begin{equation}
-	\label{eq13}
-	g_{ij}(\tau) = \langle s(t) \cdot s(t + \tau) \rangle = \frac{q_iq_j}{V} \int \int W(\vec{r}) P_{d,ij} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r}\,') dVdV'
-	\end{equation}
-Note that the diffusion propagator $P_{d,ij}$ is now indexed, since the movement of some particle pairs may depend on each other and therefore show correlations. If particle $i$ and particle $j$ move independently, the mixed terms cancel $g_{ij}(\tau) = 0$.
-Due to the sums in Equation (12), adding up individual contributions of sub-ensembles is allowed. A frequently used expression to cover free diffusion of similarly labelled, differently sized particles of is simply the sum of correlation functions, weighted with their relative fractions $F_k = nk/n$ to the overall amplitude $G(0) = 1/n$:
-	\begin{equation}
-	\label{eq14}
-	G^{\rm D}(\tau) = \sum_{k=1}^m F_k G^{\rm D}(\tau) = \frac{1}{n} \sum_{k=1}^m F_k \left(1+\frac{\tau}{\tau_{{\rm diff},k}} \right) ^{-1} \left(1+\frac{\tau}{SP^2 \, \tau_{{\rm diff},k}} \right)
-	\end{equation}
-Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are overrepresented \{Thompson, 1991 \# 802\}
-	\begin{equation}
-	\label{eq15}
-	G^{\rm D}(\tau) = \frac{1}{n \left( \sum_k F_k \alpha_k \right)^2} \sum_k F_k \alpha_k^2 G_k^D(\tau)
-	\end{equation}
-Inhomogeneity in molecular brightness affects both the total concentration of observed particles as well as the real molar fractions $F_k^{\rm cor}$
-	\begin{equation}
-	\label{eq16}
-	n = \frac{1}{G^{\rm D}(0)} \frac{\sum_k F_k^{\rm {cor}} \alpha_k^2}{\left( \sum_k F_k^{\rm {cor}} \alpha_k \right)^2} \quad\mbox {with} \quad F_k^{\rm {cor}} = \frac{F_k/\alpha_k^2}{\sum_k F_k/\alpha_k}
-	\end{equation}
-
-\subsection{Correcting non-correlated background signal}
-\label{sec:theor.correc}
-In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \{Koppel, 1974 \# 796;Thompson, 1991 \# 802\}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) \hyref{sec:intro.graph}. For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
-	\begin{equation}
-	\label{eq17}
-	n = \frac{1}{G^D(0)} \left( \frac{S-B}{S} \right)^2 = \frac{1}{(1-T)G(0)} \left( \frac{S-B}{S} \right)^2.
-	\end{equation}
-For dual-channel applications with cross-correlation (next section) the amplitudes must be corrected by contributions from each channel \{Weidemann, 2013 \# 2517\}
-	\begin{equation}
-	\label{eq18}
-	G_{\times,\rm {cor}}(0) = G_{\times, \rm meas}(0) \left( \frac{S_1}{S_1-B_1} \right) \left( \frac{S_2}{S_2-B_2} \right) 
-	\end{equation}
-
-Subsection{Cross-correlation}
-\label{sec:theor.cross}
-Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \{Foo, 2012 \# 2356;Ries, 2010 \# 2329;Schwille, 1997 \# 807;Weidemann, 2002 \# 621\}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlating between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \{Rippe, 2000 \# 837;Weidemann, 2002 \# 621\}.
-	\begin{equation}
-	\label{eq19}
-	G_\times (\tau) \stackrel{\rm def}{=} G_{12} (\tau) = \frac{\langle \delta S_1(t) \delta S_2(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} \approx \frac{\langle \delta S_2(t) \delta S_1(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} =  G_{21} (\tau)
-	\end{equation}
-A finite cross-correlation amplitude $G_{12}(0)$ indicates co-diffusion of complexes containing both types of interaction partners. The increase of the cross-correlation amplitude is linear for heterotypic binding but non-linear for homotypic interactions or higher order oligomers. The absolute magnitude of the cross-correlation amplitude must be calibrated because the chromatic mismatch of the detection volumes (different wavelength, different size) and their spatial displacement (dx, dy, dz) constitute instrumental limits, even for 100\% double labelled particles \{Weidemann, 2002 \# 621\}. \hyref{Equation (9)}{eq9} can be extended
-	\begin{equation}
-	\label{eq20}
-	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2} \exp \left(- \frac{d_x^2 + d_y^2}{4 D_t \tau + w_{0,\rm eff}} + \frac{d_z^2}{4 D_t \tau + z_{0,\rm eff}} \right)
-	\end{equation}
-The ratio between cross- and autocorrelation amplitude is used as a readout which can be linked to the degree of binding. Let's assume a heterodimerization, where channel $1$ is sensitive for green labelled particles ($g$) and channel $2$ is sensitive for red labelled particles ($r$), then the ratio of cross- and autocorrelation amplitudes is proportional to the fraction of ligand bound \{Weidemann, 2002 \# 621\}
-	\begin{eqnarray}
-	\label{eq21}
-	CC_1 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_1(0)} & \propto & \frac{c_{gr}}{c_r} \nonumber \\ CC_2 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_2(0)} &\propto & \frac{c_{gr}}{c_g}
-	\end{eqnarray}
-Recently, a correction for bleed-through of the signals between the two channels has been worked out \{Bacia, 2012 \# 2355\}. The effect on binding curves measured with cross-correlation can be quite dramatic \{Weidemann, 2013 \# 2517\}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
-	\begin{eqnarray}
-	\label{eq22}
-	\langle F_1 \rangle & = & \langle \hat{F}_1 \rangle + \langle \hat{F}_2 \rangle BT_{21} \cong  \langle \hat{F}_1 \rangle \nonumber \\ \langle F_2 \rangle & = & \langle \hat{F}_2 \rangle + \langle \hat{F}_1 \rangle BT_{12}
-	\end{eqnarray}
-Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of erroneous signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \{Bacia, 2012 \# 2355;Weidemann, 2013 \# 2517\}
-	\begin{eqnarray}
-	\label{eq23}
-	\frac{c_{gr}}{c_r} & \propto & \frac{CC_1-X_2}{\left( 1-X_2 \right)} \nonumber \\ \frac{c_{gr}}{c_g} & \propto & \frac{CC_2-X_2 \left( 1-X_2 \right) \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)}}{1+ X_2 \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)} - 2 X_2 CC_2}
-	\end{eqnarray}
-As apparent from Equation (23) it is much simpler to use the autocorrelation amplitude measured in the green channel for normalization (first line) and not the cross-talk affected red red channel (lower line). Finally, the proportionality between the fraction ligand bound and the measured cross-correlation ratio depends solely on the effective detection volumes of all three channels (two auto- and the cross-correlation channel) and must be determined with appropriate positive controls (single labelled and double labelled calibration dyes).
-
-\subsection{Extension of the method}
-\label{sec:theor.exten}
-By modifying the propagator $\Phi$ and the detection volume $\Omega$, other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals are not straightforward and approximations have to be made. For example, the Gaussian shaped detection profile in confocal FCS is already an approximation. However, deviations from the true results are considered to be small \cite{Zhang2007}. \hyref{Section}{sec:mdls} introduces several model functions with various detection symmetries and particle dynamics.
-
-\subsubsection{Perpendicular scanning FCS}
-\label{sec:theor.exten.perps}
-
-\subsubsection{Circular scanning FCS}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_CSFCS.png}
- \mycaption{user interface with external model function}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
-\end{figure}
-
-\label{sec:theor.exten.circu}
+Example for defining a new external model function for circular scanning FCS
 \begin{figure}
 % for case sensitiver Verbatim, we need the package fancyvrb
 \begin{Verbatim}[frame = single]
@@ -639,9 +484,199 @@ G = 1./n * gThrD * gScan * gTrip
 \end{figure}
 
 
-\subsubsection{Total internal reflection FCS}
-\label{sec:theor.exten.total}
+\section{Theoretical background}
+\label{sec:theor}
+In the first place, \textit{PyCorrFit} was designed to evaluate FCS data. Therefore we focus on the theoretical background of this method. However, the correlation theory could be applied to other molecular signals than fluorescence.
 
+\subsection{How FCS works}
+\label{sec:theor.howfc}
+
+FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \{Elson, 1974 \# 794;Magde, 1974 \# 793;Magde, 1978 \# 795\}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \{Widengren, 1998 \# 804;Korlach, 1999 \# 1424;Schwille, 1999 \# 1060\}. The diffusion may be free or anomalous due to barriers or obstacles \{Wachsmuth, 2000 \# 803;Weiss, 2003 \# 485\}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \{Bacia, 2006 \# 1459;Kim, 2007 \# 1024\}.
+
+The measurement principle is to illuminate a small open volume within these solutions (e.g. by a laser focus) and to detect the molecular transits with a sub-microsecond time resolution by sensitive optics. The molecular transits and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting).
+
+\subsection{Framework for a single type of fluorescent dye}
+\label{sec:theor.frame}
+The following equations are described in many papers in different ways. Here we follow the notation of one of us \{Weidemann, 2009 \# 2113\}. Fluorescence signals are a result of absorption and emission of photons by a fluorophore. Under experimental conditions, the signal depends on the time dependent distribution of fluorescent particles in the sample volume $c(\vec{r},t)$ and the normalized instrumental detection efficiency $W(\vec{r})$. The total intensity, signal $S(t)$, is the sum of all photons emitted from fluorophores at different positions within the detection volume:
+	\begin{equation}
+	\label{eq1}
+	S(t) = q \int W(\vec{r})  c(\vec{r},t) \,dV
+	\end{equation}
+$q$ combines all the photo-physical constant associated with fluorescence emission like absorption cross section, quantum yield, and the peak intensity of excitation (laser power). In the following, time averages of observables are indicated by angular brackets	
+	\begin{equation}
+	\label{eq2}
+	\langle S(t) \rangle = \lim_{t\to\ \infty} \int S(t) \,dt = q \int W(\vec{r})  c \,dV = qn
+	\end{equation}
+\hyref{Equation}{eq2} reveals that q is the instrument dependent molecular brightness (kHz/particle), i.e. the average signal divided by the average number of particles n observed within the effective detection volume $V_{\rm eff} = \int W(\vec{r})  \,dV$. During FCS measurements the detected signal is correlated by computing a normalized autocorrelation function: 
+	\begin{equation}
+	\label{eq3}
+	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\langle \delta S(t) \cdot \delta S(t+\tau)\rangle}{\langle S(t) \rangle^2} = \frac{g(\tau)}{\langle S(t) \rangle^2}
+	\end{equation}
+Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$. %Figure call
+
+A general way to derive theoretical model functions is to evaluate \hyref{Equation}{eq3} with explicit expressions describing the instrumental detection efficiency $W(\vec{r})$ and the molecular dynamics governing the local fluorophore concentrations $c(\vec{r},t)$. For example, free diffusion of the molecules can be described by the so-called diffusion propagator.
+	\begin{equation}
+	\label{eq4}
+	P_d \left( \vec{r} \,' | \vec{r},\tau \right) = \frac{1}{\left( 4 \pi D_t \tau \right) ^{3/2}} \exp \left[ - \frac{\left| \vec{r} \,' -\vec{r} \, \right|]} {4D_t \tau} \right]
+	\end{equation}
+The product $P_d d^3 \vec{r} \,'$ is the conditional probability of a particle with diffusion coefficient $D_t$ to move from $\vec{r}$ to $\vec{r \,'}$ within a time period $\tau$. To find a particle at position $\vec{r}$ is simply the ratio of  volumes $d^3r/V$. Such a diffusion propagator leads to a Gaussian shaped probability distribution spreading in time when the molecules successively roam the sample volume $V$.
+Assuming that the time average and the ensemble average are equivalent (ergodic theorem), one can write the average signal of a single particle as
+	\begin{equation}
+	\label{eq5}
+	\langle s(t) \rangle = \frac{V_{\rm eff}}{V} = \frac{\int W(\vec{r}) \,dV}{V}
+	\end{equation}
+and accordingly express the average product of two signals separated by $\tau$
+	\begin{equation}
+	\label{eq6}
+	\langle s(t) \cdot s(t + \tau) \rangle = \frac{1}{V} \int \int W(\vec{r}) P_d \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'
+	\end{equation}
+To use this result one has to reduce $G(\tau)$ to the sum of individual molecular contributions
+	\begin{equation}
+	\label{eq7}
+	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\overbrace{N \langle s(t) \cdot s(t+\tau)\rangle}^{\mbox{\small same particles}} +\overbrace{N(N-1) \langle s(t) \rangle^2}^{\mbox{\small different particles}}}{N^2 \langle s(t) \rangle^2}-1 = \frac{\langle s(t) \cdot s(t+\tau)\rangle}{\langle s(t) \rangle^2}
+	\end{equation}
+Inserting \hyref{Equation}{eq5,eq6} yields
+	\begin{equation}
+	\label{eq8}
+	G(\tau) = \frac{1}{c} \frac{\int \int W(\vec{r}) P_d \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'}{\left( W(\vec{r}) \,dV \right)^2}
+	\end{equation}
+Solving these integrals for the confocal detection scheme yields a relatively simple equation containing the diffusion coefficient $D_t$ (molecular property) and the $1/e^2$ decay lengths $w_0$ and $z_0$ capturing the dimension of the Gaussian detection volume transversal and parallel to the optical axis, respectively (instrumental property).
+	\begin{equation}
+	\label{eq9}
+	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2}
+	\end{equation}
+	In the FCS field it is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated 3D Gaussian. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
+	\begin{equation}
+	\label{eq10}
+	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{SP^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
+	\end{equation}
+
+For confocal FCS both the detection volume $W(\vec{r})$ and the propagator for free diffusion $P_d$ are described by exponentials (Gaussian functions), therefore spatial relationships can be factorized for each dimension $xyz$. As a result, \hyref{Equation}{eq10} can be written as a combination of transversal (2D) and longitudinal (3D) diffusion.
+
+\subsection{Autocorrelation of multiple species}
+\label{sec:theor.autoc}
+Very often in FCS one observes observes more than one dynamic property. Besides diffusion driven number fluctuations, a fluorophore usually shows some kind of inherent blinking, due to triplet state transitions (organic dyes) or protonation dependent quenching (GFPs).
+	\begin{equation}
+	\label{eq11}
+	G(\tau) \stackrel{\rm def}{=} G^{\rm T}(\tau) G^{\rm D}(\tau) = \left( 1+ \frac{T}{1-T} \exp\left[-\frac{\tau}{\tau_{\rm trp}} \right] \right)G^{\rm D}(\tau)
+	\end{equation}
+Blinking increases the correlation amplitude $G(0)$ by the triplet fraction $1/(1-T)$. Accordingly the average number of observed particles is decreased $n = G^-1(0)(1-T)$. In case of GFP blinking two different blinking times have been described and the rate equations can get quite complicated.
+Besides photo-physics, the solution may contain mixtures of fluorescent particles with different dynamic properties, e.g. size or binding, leading to several correlation times in the measured curve. The way to derive \hyref{Equation}{eq7} shows that the correlation function of an ensemble can be built up by the contribution of $n$ single molecules in the sample volume:
+	\begin{equation}
+	\label{eq12}
+	G(\tau) = \frac{g(\tau)}{\langle S(t) \rangle^2} = \frac{\sum_{i=1}^n \sum_{j=1}^n g_{ij}(\tau)}{\langle S(t) \rangle^2}
+	\end{equation}
+with $g_{ij}(\tau)$ as the pairwise correlation function of identical ($i = j$) or distinguishable particles ($i \not= j$)
+	\begin{equation}
+	\label{eq13}
+	g_{ij}(\tau) = \langle s(t) \cdot s(t + \tau) \rangle = \frac{q_iq_j}{V} \int \int W(\vec{r}) P_{d,ij} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r}\,') dVdV'
+	\end{equation}
+Note that the diffusion propagator $P_{d,ij}$ is now indexed, since the movement of some particle pairs may depend on each other and therefore show correlations. If particle $i$ and particle $j$ move independently, the mixed terms cancel $g_{ij}(\tau) = 0$.
+Due to the sums in \hyref{Equation}{eq12}, adding up individual contributions of sub-ensembles is allowed. A frequently used expression to cover free diffusion of similarly labelled, differently sized particles of is simply the sum of correlation functions, weighted with their relative fractions $F_k = nk/n$ to the overall amplitude $G(0) = 1/n$:
+	\begin{equation}
+	\label{eq14}
+	G^{\rm D}(\tau) = \sum_{k=1}^m F_k G^{\rm D}(\tau) = \frac{1}{n} \sum_{k=1}^m F_k \left(1+\frac{\tau}{\tau_{{\rm diff},k}} \right) ^{-1} \left(1+\frac{\tau}{SP^2 \, \tau_{{\rm diff},k}} \right)
+	\end{equation}
+Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are overrepresented \{Thompson, 1991 \# 802\}
+	\begin{equation}
+	\label{eq15}
+	G^{\rm D}(\tau) = \frac{1}{n \left( \sum_k F_k \alpha_k \right)^2} \sum_k F_k \alpha_k^2 G_k^D(\tau)
+	\end{equation}
+Inhomogeneity in molecular brightness affects both the total concentration of observed particles as well as the real molar fractions $F_k^{\rm cor}$
+	\begin{equation}
+	\label{eq16}
+	n = \frac{1}{G^{\rm D}(0)} \frac{\sum_k F_k^{\rm {cor}} \alpha_k^2}{\left( \sum_k F_k^{\rm {cor}} \alpha_k \right)^2} \quad\mbox {with} \quad F_k^{\rm {cor}} = \frac{F_k/\alpha_k^2}{\sum_k F_k/\alpha_k}
+	\end{equation}
+
+\subsection{Correcting non-correlated background signal}
+\label{sec:theor.correc}
+In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \{Koppel, 1974 \# 796;Thompson, 1991 \# 802\}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) \hyref{sec:intro.graph}. For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
+	\begin{equation}
+	\label{eq17}
+	n = \frac{1}{G^{\rm D}(0)} \left( \frac{S-B}{S} \right)^2 = \frac{1}{(1-T)G(0)} \left( \frac{S-B}{S} \right)^2.
+	\end{equation}
+For dual-channel applications with cross-correlation (next section) the amplitudes must be corrected by contributions from each channel \{Weidemann, 2013 \# 2517\}
+	\begin{equation}
+	\label{eq18}
+	G_{\times,\rm {cor}}(0) = G_{\times, \rm meas}(0) \left( \frac{S_1}{S_1-B_1} \right) \left( \frac{S_2}{S_2-B_2} \right) 
+	\end{equation}
+
+\subsection{Cross-correlation}
+\label{sec:theor.cross}
+Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \{Foo, 2012 \# 2356;Ries, 2010 \# 2329;Schwille, 1997 \# 807;Weidemann, 2002 \# 621\}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlating between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \{Rippe, 2000 \# 837;Weidemann, 2002 \# 621\}.
+	\begin{equation}
+	\label{eq19}
+	G_\times (\tau) \stackrel{\rm def}{=} G_{12} (\tau) = \frac{\langle \delta S_1(t) \delta S_2(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} \approx \frac{\langle \delta S_2(t) \delta S_1(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} =  G_{21} (\tau)
+	\end{equation}
+A finite cross-correlation amplitude $G_{12}(0)$ indicates co-diffusion of complexes containing both types of interaction partners. The increase of the cross-correlation amplitude is linear for heterotypic binding but non-linear for homotypic interactions or higher order oligomers. The absolute magnitude of the cross-correlation amplitude must be calibrated because the chromatic mismatch of the detection volumes (different wavelength, different size) and their spatial displacement (dx, dy, dz) constitute instrumental limits, even for 100\% double labelled particles \{Weidemann, 2002 \# 621\}. \hyref{Equation}{eq9} can be extended
+	\begin{equation}
+	\label{eq20}
+	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2} \exp \left(- \frac{d_x^2 + d_y^2}{4 D_t \tau + w_{0,\rm eff}} + \frac{d_z^2}{4 D_t \tau + z_{0,\rm eff}} \right)
+	\end{equation}
+The ratio between cross- and autocorrelation amplitude is used as a readout which can be linked to the degree of binding. Let's assume a heterodimerization, where channel $1$ is sensitive for green labelled particles ($g$) and channel $2$ is sensitive for red labelled particles ($r$), then the ratio of cross- and autocorrelation amplitudes is proportional to the fraction of ligand bound \{Weidemann, 2002 \# 621\}
+	\begin{eqnarray}
+	\label{eq21}
+	CC_1 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_1(0)} & \propto & \frac{c_{gr}}{c_r} \nonumber \\ CC_2 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_2(0)} &\propto & \frac{c_{gr}}{c_g}
+	\end{eqnarray}
+Recently, a correction for bleed-through of the signals between the two channels has been worked out \{Bacia, 2012 \# 2355\}. The effect on binding curves measured with cross-correlation can be quite dramatic \{Weidemann, 2013 \# 2517\}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
+	\begin{eqnarray}
+	\label{eq22}
+	\langle F_1 \rangle & = & \langle \hat{F}_1 \rangle + \langle \hat{F}_2 \rangle BT_{21} \cong  \langle \hat{F}_1 \rangle \nonumber \\ \langle F_2 \rangle & = & \langle \hat{F}_2 \rangle + \langle \hat{F}_1 \rangle BT_{12}
+	\end{eqnarray}
+Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of erroneous signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle/\hat{F}_2 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \{Bacia, 2012 \# 2355;Weidemann, 2013 \# 2517\}
+	\begin{eqnarray}
+	\label{eq23}
+	\frac{c_{gr}}{c_r} & \propto & \frac{CC_1-X_2}{\left( 1-X_2 \right)} \nonumber \\ \frac{c_{gr}}{c_g} & \propto & \frac{CC_2-X_2 \left( 1-X_2 \right) \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)}}{1+ X_2 \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)} - 2 X_2 CC_2}
+	\end{eqnarray}
+As apparent from \hyref{Equation}{eq23} it is much simpler to use the autocorrelation amplitude measured in the green channel for normalization (first line) and not the cross-talk affected red red channel (lower line). Finally, the proportionality between the fraction ligand bound and the measured cross-correlation ratio depends solely on the effective detection volumes of all three channels (two auto- and the cross-correlation channel) and must be determined with appropriate positive controls (single labelled and double labelled calibration dyes).
+
+\subsection{Extension of the method}
+\label{sec:theor.exten}
+By modifying the diffusion propagator $P_d$ and the shape of the detection volume W(\vec{r}), other effects, like triplet blinking or binding reactions can be quantified. In many cases, analytical solutions to the above integrals are not straightforward and approximations have to be made. For example, the Gaussian shaped detection profile in confocal FCS is already an approximation. However, deviations from the true results are considered to be small \cite{Zhang2007}. \hyref{Section}{sec:mdls} introduces several model functions with various detection symmetries and particle dynamics.
+
+\subsubsection{Perpendicular scanning FCS}
+\label{sec:theor.exten.perpe}
+
+\subsubsection{Circular scanning FCS}
+\label{sec:theor.exten.circu}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{PyCorrFit_Screenshot_CSFCS.png}
+ \mycaption{user interface with external model function}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
+\end{figure}
+
+\subsubsection{Total internal reflection TIR-FCS}
+\label{sec:theor.exten.total}
+\textbf{TIR-FCS with Gaussian-shaped lateral detection volume}
+The detection volume is axially confined by an evanescent field and has an effective size of
+\begin{align}
+V = \pi R_0^2 d_\mathrm{eva}
+\end{align} 
+where $R_0$ is the lateral extent of the detection volume and $d_\mathrm{eva}$ is the evanescent field depth\footnote{Where the field has decayed to $1/e$}. From the concentration $C$, the effective number of particles is $N=CV$.
+The decay constant $\kappa$ is the inverse of the depth $d_\mathrm{eva}$ :
+\begin{align}
+d_\mathrm{eva} = \frac{1}{\kappa}
+\end{align} 
+The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
+\begin{align}
+w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
+\notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
+\end{align} 
+The lateral detection area has the same shape as in confocal FCS. Thus, correlation functions for two-dimensional diffusion of the confocal case apply and are not mentioned here.
+
+\txtbf{TIR-FCS with a square-shaped lateral detection volume}
+The detection volume is axially confined by an evanescent field of depth\footnote{Where the field has decayed to $1/e$} $d_\mathrm{eva} = 1 / \kappa$.
+The lateral detection area is a convolution of the point spread function of the microscope of size $\sigma$,
+\begin{align}
+\sigma = \sigma_0  \frac{\lambda}{\mathit{NA}},
+\end{align} 
+with a square of side length $a$.
+The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions, the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:
+\begin{align}
+w\!(i\xi) &= e^{\xi^2} \mathrm{erfc}(\xi) \\
+\notag &= e^{\xi^2} \cdot  \frac{2}{\sqrt{\pi}} \int_\xi^\infty \mathrm{e}^{-\alpha^2} \mathrm{d\alpha} \label{eq:faddeeva}
+\end{align} 
 
 \subsection{Non-linear least-squares fit}
 \label{sec:theor.nonle}
