@@ -1,6 +1,6 @@
 \section{Implemented model functions}
 \label{sec:imple}
-This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. To each model a unique model ID is assigned by PyCorrFit. Most of the following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
+This is an overview of all the model functions that are currently\footnote{\today} implemented in \textit{PyCorrFit}. To each model a unique model ID is assigned by PyCorrFit. Most of the following information is also accessible from within \textit{PyCorrFit} using the \textbf{Page info} tool.
 
 \subsection{Confocal FCS}
 \label{sec:imple.confoc}
@@ -73,7 +73,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{Confocal (Gaussian) T+3D+3D} \\ 
 ID & \textbf{6030} \\ 
-Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) &= A_0 + \frac{1}{n (F + \alpha (1-F))²}  \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -122,7 +122,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{Confocal (Gaussian) T+2D+2D} \\ 
 ID & \textbf{6031} \\ 
-Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+Descr. &  Two-component, two-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{n (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} + \alpha^2 \frac{1-F}{ 1+\tau/\tau_2 } \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
@@ -147,7 +147,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{Confocal (Gaussian) T+3D+2D} \\ 
 ID & \textbf{6032} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian laser profile, including a triplet component\cite{Elson1974, Aragon1976, Palmer1987}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = A_0 + \frac{1}{n (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\mathrm{2D}} + \frac{ \alpha^2 F}{ (1+\tau/\tau_\mathrm{3D}) } \frac{1}{\sqrt{1+\tau/(\mathit{SP}^2 \tau_\mathrm{3D})}} \right] \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right) 
@@ -196,7 +196,7 @@ $D$ & Diffusion coefficient  \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{TIR (Gaussian/Exp.) T+3D+3D} \\ 
 ID & \textbf{6034} \\ 
-Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\
+Descr. &  Two-component three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006}. \\
 \end{tabular}
 \begin{align}
 G(\tau) = &A_0 + \frac{1}{n (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -230,7 +230,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{TIR (Gaussian/Exp.) T+3D+2D} \\ 
 ID & \textbf{6033} \\ 
-Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006, Elson1974, Aragon1976, Palmer1987, Thomps:bookFCS2002}. \\ 
+Descr. &  Two-component, two- and three-dimensional diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) &= A_0 + \frac{1}{n (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)  \times \\
@@ -266,7 +266,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{TIR (□x$\upsigma$/Exp.) 3D} \\ 
 ID & \textbf{6010} \\ 
-Descr. &  Three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction\cite{Ries2008390, Yordanov2011}. \\ 
+Descr. &  Three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction\cite{Ries2008, Yordanov2011}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) =  \frac{\kappa^2}{C} &
@@ -292,7 +292,7 @@ $D$ & Diffusion coefficient \\
 Name & \textbf{TIR (□x$\upsigma$/Exp.) 3D+3D} \\ 
 ID & \textbf{6023} \\ 
 Descr. &  Two-component three-dimensional free diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. \newline
-The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}. \\
+The correlation function is a superposition of three-dimensional model functions of the type \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008, Yordanov2011}. \\
 \end{tabular}
 \vspace{2em}
 
@@ -301,7 +301,7 @@ The correlation function is a superposition of three-dimensional model functions
 \noindent \begin{tabular}{lp{.7\textwidth}}
 Name & \textbf{TIR (□x$\upsigma$) 2D} \\ 
 ID & \textbf{6000} \\ 
-Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function\cite{Ries2008390, Yordanov2011}\footnote{The reader is made aware, that reference \cite{Ries2008390} contains several unfortunate misprints.}. \\ 
+Descr. &  Two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function\cite{Ries2008, Yordanov2011}\footnote{The reader is made aware, that reference \cite{Ries2008} contains several unfortunate misprints.}. \\ 
 \end{tabular}
 \begin{align}
 G(\tau) = \frac{1}{C} \left[
@@ -326,7 +326,7 @@ $D$ & Diffusion coefficient \\
 Name & \textbf{TIR (□x$\upsigma$) 2D+2D} \\ 
 ID & \textbf{6022} \\ 
 Descr. &  Two-component two-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function. \newline
-The correlation function is a superposition of two-dimensional model functions of the type \textbf{2D (□x$\upsigma$)} (6000)\cite{Ries2008390, Yordanov2011}. \\
+The correlation function is a superposition of two-dimensional model functions of the type \textbf{2D (□x$\upsigma$)} (6000)\cite{Ries2008, Yordanov2011}. \\
 \end{tabular}
 \vspace{2em}
 
@@ -336,7 +336,7 @@ The correlation function is a superposition of two-dimensional model functions o
 Name & \textbf{TIR (□x$\upsigma$/Exp.) 3D+2D} \\ 
 ID & \textbf{6020} \\ 
 Descr. &  Two-component two- and three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction.  \newline
-The correlation function is a superposition of the two-dimensional model function \textbf{2D (□x$\upsigma$)} (6000) and the three-dimensional model function \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008390, Yordanov2011}.
+The correlation function is a superposition of the two-dimensional model function \textbf{2D (□x$\upsigma$)} (6000) and the three-dimensional model function \textbf{3D (□x$\upsigma$)} (6010)\cite{Ries2008, Yordanov2011}.
 \end{tabular}
 \vspace{2em}
 
@@ -346,7 +346,7 @@ The correlation function is a superposition of the two-dimensional model functio
 Name & \textbf{TIR (□x$\upsigma$/Exp.) 3D+2D+kin} \\ 
 ID & \textbf{6021} \\ 
 Descr. &  Two-component two- and three-dimensional diffusion with a square-shaped lateral detection area taking into account the size of the point spread function; and an exponential decaying profile in axial direction. This model covers binding and unbinding kintetics.  \newline 
-The correlation function for this model was introduced in \cite{Ries2008390}. Because approximations are made in the derivation, please verify if this model is applicable to your problem before using it.
+The correlation function for this model was introduced in \cite{Ries2008}. Because approximations are made in the derivation, please verify if this model is applicable to your problem before using it.
 \end{tabular}
 \vspace{2em}
 
