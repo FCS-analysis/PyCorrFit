@@ -1,28 +1,9 @@
-\subsection{Implemented model functions}
-\label{sec:mdls}
+\section{Implemented model functions}
+\label{sec:imple}
 This is an overview of all the model functions that are currently\footnote{\today} implemented in PyCorrFit. To each model a unique model ID is assigned by PyCorrFit. Most of the following information is also accessible from within PyCorrFit using the \textbf{Page info} tool.
 
-\subsubsection{Confocal FCS}
-The confocal detection volume with the structural parameter 
-\begin{align}
-\mathit{SP}= \frac{z_0}{r_0}
-\end{align}
-has an effective size of
-\begin{align}
-V = \pi^{3/2} r_0^2 z_0
-\end{align}
-where $r_0$ is its lateral and $z_0$ its axial (in case of 3D diffusion) extension. Thus, the effective number of particles is defined as
-\begin{align}
-N = C V
-\end{align}
-with the concentration $C$ given implicitly in the model functions.
-The diffusion coefficient is calculated from the diffusion time $\tau_\mathrm{diff}$ using
-\begin{align}
-D = \frac{1}{4 \tau_\mathrm{diff}} \left( \frac{z_0}{\mathit{SP}} \right)^2 = \frac{r_0^2}{4 \tau_\mathrm{diff}}.
-\end{align}
-The parameters in the equation above need to be calibrated to obtain the diffusion coefficient. Usually a reference dye with a known diffusion coefficient is used to determine the lateral extension of the detection volume $r_0$ with a fixed structural parameter of e.g. $\mathit{SP}=4$.\\
-\vspace{2em}
-
+\subsection{Confocal FCS}
+\label{sec:imple.confoc}
 
 % 2D diffusion
 %\noindent \begin{tabular}{lp{.7\textwidth}}
@@ -187,7 +168,8 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \vspace{2em}
 
 
-\subsubsection{Confocal TIR-FCS}
+\subsection{TIR-FCS}
+\label{sec:imple.tirfc}
 The detection volume is axially confined by an evanescent field and has an effective size of
 \begin{align}
 V = \pi R_0^2 d_\mathrm{eva}
