@@ -92,7 +92,6 @@ Invoke \texttt{python PyCorrFit.py} from the command line.
 
 \subsection{Workflow}
 \label{sec:intro.workf}
-%\label{sec:PyCorrFitUserInterface}
 
 The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models \hyref{Chapter}{sec:theor}. Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
 
@@ -113,9 +112,6 @@ The fitting itself is usually explored with a representative data set. Here, the
 \subsection{Graphical user interface (GUI)}
 \label{sec:intro.graph}
 
-%\hyref{Figure}{fig:PyCorrFitMain} shows the main window of PyCorrFit. It contains a menu bar to access all tools, a notebook with tabs, each tab representing a single curve, and a page - the content of the currently selected tab. 
-
-
 Together with a system's terminal of the platform on which PyCorrFit was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{Section}{sec:intro.runni}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
 
 There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
@@ -123,12 +119,10 @@ There are three gateways for experimental data into a pre-existing or a new \tex
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{Confocal measurement of Alexa488. Note the cross-correlation... \label{fig:PyCorrFitMain}}
+ \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($tau_{\rm diff} = 26.7$ \mus). \label{fig:PyCorrFitMain}}
 \end{figure}
 
 The active page displaying a correlation function is divided in two panels. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated to the current model and data set: 
-
-
 
 \begin{itemize}
 \item \textit{Data set} specifies the assigned model abbreviation in parantheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
@@ -401,7 +395,7 @@ In addition, there are may be user defined model functions which have been uploa
 
 \subsection{Preferences}
 \label{sec:model.prefe}
-\paragraph*{Latex} If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the ``Latex'' option will open a separate, TeX formatted panel (\textit{Figure1}) via the \textit{Current page / Save […] as image} commands. The \textit{Figure1} contains some interactive options for display. From there, in a second step, the image can be exported as *.png or *.svg.
+\paragraph*{Latex} If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the ``Latex'' option will open a separate, TeX formatted panel via the \textit{Current page / Save […] as image} commands. The contains some interactive options for display. From there, in a second step, the image can be exported as *.png or *.svg.
 
 \paragraph*{Verbose} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:menub.curre.savec}), the plot will be displayed instead of saved. If ``Latex'' is active these plots will also be TeX-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
 
@@ -643,7 +637,7 @@ By modifying the diffusion propagator $P_d$ and the shape of the detection volum
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_CSFCS.png}
- \mycaption{user interface with external model function}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:PyCorrFitMain}}
+ \mycaption{user interface with external model function}{A circular scanning FCS (CS-FCS) curve of DiO on a supported lipid bilayer (glass substrate) is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:cirSFCS}}
 \end{figure}
 
 \subsubsection{Total internal reflection TIR-FCS}
