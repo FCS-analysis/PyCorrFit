@@ -1,9 +1,9 @@
 \section{Implemented model functions}
 \label{sec:imple}
-This is an overview of all the model functions that are currently\footnote{\today} implemented in \textit{PyCorrFit}. To each model a unique model ID is assigned by PyCorrFit. Most of the following information is also accessible from within \textit{PyCorrFit} using the \textbf{Page info} tool.
+This is an overview of all the model functions that are currently\footnote{\today} implemented in \textit{PyCorrFit}. To each model a unique model ID is assigned. Most of the following information is also accessible from within \textit{PyCorrFit} using the \textit{Page info} tool.
 
 \subsection{Confocal FCS}
-\label{sec:imple.confoc}
+\label{sec:imple.confo}
 
 % 2D diffusion
 %\noindent \begin{tabular}{lp{.7\textwidth}}
@@ -85,7 +85,7 @@ $A_0$ & Offset \\
 $n$ & Effective number of particles in confocal volume ($n = n_1+n_2$) \\ 
 $\tau_1$ &  Diffusion time of particle species 1 \\ 
 $\tau_2$ &  Diffusion time of particle species 2 \\ 
-$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$F$ & Fraction of molecules of species 1 ($n_1 = F n$) \\
 $\alpha$ & Relative molecular brightness of particles 1 and 2 ($ \alpha = q_2/q_1$) \\
 $\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
@@ -130,10 +130,10 @@ G(\tau) = A_0 + \frac{1}{n (F + \alpha (1-F))²} \left[ \frac{F}{1+\tau/\tau_1} 
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$n$ & Effective number of particles in confocal area ($N = N_1+N_2$) \\ 
+$n$ & Effective number of particles in confocal area ($n = n_1+n_2$) \\ 
 $\tau_1$ &  Diffusion time of particle species 1 \\ 
 $\tau_2$ &  Diffusion time of particle species 2 \\ 
-$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$F$ & Fraction of molecules of species 1 ($n_1 = F n$) \\
 $\alpha$ & Relative molecular brightness of particles 1 and 2 ($ \alpha = q_2/q_1$) \\
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
 $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
@@ -155,10 +155,10 @@ G(\tau) = A_0 + \frac{1}{n (1 - F + \alpha F)²} \left[ \frac{1-F}{1+\tau/\tau_\
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$n$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$n$ & Effective number of particles in confocal volume ($n = n_\mathrm{2D}+n_\mathrm{3D}$) \\ 
 $\tau_\mathrm{2D}$ &  Diffusion time of surface bound particles \\ 
 $\tau_\mathrm{3D}$ &  Diffusion time of freely diffusing particles \\ 
-$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
+$F$ & Fraction of molecules of the freely diffusing species ($n_\mathrm{3D} = F n$) \\
 $\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
 $\mathit{SP}$ & Structural parameter, describes elongation of the confocal volume \\
 $T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
@@ -168,8 +168,10 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \vspace{2em}
 
 
-\subsection{TIR-FCS with Gaussian-shaped lateral detection volume}
-\label{sec:imple.tirfcsg}
+\subsection{TIR-FCS}
+\label{sec:imple.tirfc}
+
+\subsubsection{TIR-FCS with Gaussian-shaped lateral detection volume}
 
 % 3D diffusion (Gauß/exp)
 \noindent \begin{tabular}{lp{.7\textwidth}}
@@ -213,7 +215,7 @@ $A_0$ & Offset \\
 $n$ & Effective number of particles in confocal volume ($n = n_1+n_2$) \\ 
 $D_1$ &  Diffusion coefficient of species 1 \\ 
 $D_2$ &  Diffusion coefficient of species 2 \\ 
-$F$ & Fraction of molecules of species 1 ($N_1 = F N$) \\
+$F$ & Fraction of molecules of species 1 ($n_1 = F n$) \\
 $\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_2/q_1$) \\
 $R_0$ & Lateral extent of the detection volume \\
 $\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
@@ -242,10 +244,10 @@ G(\tau) &= A_0 + \frac{1}{n (1-F + \alpha F)^2} \left(1 + \frac{T e^{-\tau/\tau_
 \begin{center}
 \begin{tabular}{ll}
 $A_0$ & Offset \\ 
-$n$ & Effective number of particles in confocal volume ($N = N_\mathrm{2D}+N_\mathrm{3D}$) \\ 
+$n$ & Effective number of particles in confocal volume ($n = n_\mathrm{2D}+n_\mathrm{3D}$) \\ 
 $D_\mathrm{2D}$ &  Diffusion coefficient of surface bound particles \\ 
 $D_\mathrm{3D}$ &  Diffusion coefficient of freely diffusing particles \\ 
-$F$ & Fraction of molecules of the freely diffusing species ($N_\mathrm{3D} = F N$) \\
+$F$ & Fraction of molecules of the freely diffusing species ($n_\mathrm{3D} = F n$) \\
 $\alpha$ & Relative molecular brightness of particle species ($ \alpha = q_\mathrm{3D}/q_\mathrm{2D}$) \\
 $R_0$ & Lateral extent of the detection volume \\
 $\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
@@ -258,8 +260,7 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 
 
 
-\subsection{TIR-FCS with a square-shaped lateral detection volume}
-\label{sec:imple.tirfcss}
+\subsubsection{TIR-FCS with a square-shaped lateral detection volume}
 
 
 % 3D TIRF diffusion (□xσ)
