@@ -14,7 +14,7 @@ or (at your option) any later version\footnote{\url{http://www.gnu.org/licenses/
 \subsubsection*{What \textit{PyCorrFit} can do}
 \begin{itemize}
 \item Load correlation curves from numerous correlators
-\item Process these curves (\hyref{Chapter}{sec:theor})
+\item Process these curves
 \item Fit a model function (many included) to an experimental curve
 \item Import user defined models for fitting
 \item Many batch processing features
@@ -93,7 +93,7 @@ Invoke \texttt{python PyCorrFit.py} from the command line.
 \subsection{Workflow}
 \label{sec:intro.workf}
 
-The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models \hyref{Chapter}{sec:theor}. Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
+The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models (\hyref{Chapter}{sec:theor}). Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
 
 Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
 
@@ -105,7 +105,7 @@ Let's briefly discuss a typical example: To determine the diffusion coefficient 
 \end{enumerate}
 
 
-The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters can be visually compared during the fitting analysis within the same session. In this case, batch fitting is still possible because it discriminates data sets assigned to different models. In the third case, simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
+The first approach is straightforward, however, it requires homogeneous diffusion behavior for each data set. The second strategy has the advantage that the dye and the protein curves, as well as the obtained parameters, can be visually compared during the fitting analysis within the same session. In this case, batch fitting is still possible because it discriminates data sets assigned to different models. In the third case, simultaneous batch fitting is also possible. However, for each dye measurement one has to eliminate the second, slow diffusion species manually, which might be laborious. Inactivating components by fixing parameters is nevertheless a common way to evaluate heterogeneous data sets, for example, a protein sample for which only a subgroup of curves requires a second diffusion component due to occasional appearance of aggregates. Such situations are frequently encountered in intracellular measurements. In conclusion, all three strategies or combinations thereof may be suitable. In any case, the user must decide on model functions beforehand, therefore it is advisable to group the data accordingly.
 
 The fitting itself is usually explored with a representative data set. Here, the user has to decide on starting parameters, the range in which they should be varied, corrections like background, and other fitting options. Once the fit looks good, the chosen settings can be transferred at once to all other pages assigned to the same model using the \textit{Batch control} tool (\hyref{Section}{sec:menub.tools.batch}). After flipping through the data for visual inspection one may check the parameters across all pages in the \textit{Statistics view} tool and re-visit outliers (\hyref{Section}{sec:menub.tools.stati}). From there, the numerical fit values and example correlation functions can be exported.
 
@@ -117,13 +117,13 @@ Together with a system's terminal of the platform on which \textit{PyCorrFit} wa
 There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
 
 \begin{figure}[h]
-\label{fig:PyCorrFitMain}
+\label{fig:mainwin}
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}})$. }
+ \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}})$. }
 \end{figure}
 
-The active page displaying a correlation function is divided in two panels. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated to the current model and data set: 
+The active page displaying a correlation function is divided in two panels. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated with the current model and data set: 
 
 \begin{itemize}
 \item \textit{Data set} specifies the assigned model abbreviation in parantheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
@@ -146,9 +146,7 @@ The File menu organizes the import of theoretical models, experimental correlati
 
 \subsubsection{File / Import model}
 \label{sec:menub.filem.impor}
-Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While a number of standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} or a combination of diffusion and directed flow \cite{Brinkmeier1999}.
-
-Model functions are imported as text files (*.txt) using a certain syntax:
+Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While the most commonly used standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) using a certain syntax:
 
 \begin{itemize}
 \item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set (UTF-8).
@@ -177,7 +175,7 @@ The individual parts are then combined in the last line of the *.txt file, where
 \begin{equation}
 \texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
 \end{equation}
-For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{figure}{fig:extxt}. 
+For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{Figure}{fig:extxt}. 
 
 \subsubsection{File / Load data}
 \label{sec:menub.filem.loadd}
@@ -282,17 +280,15 @@ By default the current page is taken as a reference to perform automated fitting
 
 For fitting it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
 
-The button \textit{Fit applicable pages} then performs several cycles of fitting [how many cycles?] on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
+The button \textit{Fit applicable pages} then performs several cycles of fitting on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
 
 \subsubsection{Tools / Global fitting}
 \label{sec:menub.tools.globa}
-Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and the cross-correlation curves should adopt the same values for the diffusion time \textit{taudiff} and the number of particles \textit{n}. A global fit can be applied such that \textit{n} and \textit{taudiff} are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} Chi-square is minimized for all data sets simultaneously [please check!]. To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay} tool. 
+Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and the cross-correlation curves should adopt the same values for the diffusion time $\tau_{\mathrm diff} and the number of particles $n$. A global fit can be applied such that $n$ and $\tau_{\mathrm diff} are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} Chi-square is minimized for all data sets simultaneously. To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
 
 \subsubsection{Tools / Average data}
 \label{sec:menub.tools.avera}
-Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data, to export a cleaned, average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
-
-For averaging, there are constraints:
+Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data, to export a cleaned average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. For averaging, there are constraints:
 
 
 \begin{enumerate}
@@ -320,7 +316,7 @@ Page info is a most verbose summary of a data set. The panel \textit{Page info} 
 
 
 \begin{enumerate}
-\item Version of PyCorrFit
+\item Version of \textit{PyCorrFit}
 \item Field values from the main window (filename/title, model specifications, page number, type of correlation, normalizations)
 \item Actual parameter values (as contained in the model function)
 \item Supplementary parameters (intensity, counts per particle, duration, etc.)
@@ -331,9 +327,9 @@ The content of Page info is saved as a header when exporting correlation functio
 
 \subsubsection{Tools / Slider simulation}
 \label{sec:menub.tools.slide}
-This tool visualizes the impact of model parameters on the shape of the model function of a current page. Such insight may be useful to choose proper starting values for fitting or to develop new model functions. For example, in the case two of the parameters trade during the fitting one may explore to which extent a change in both values produces similar trends.
+This tool visualizes the impact of model parameters on the shape of the model function of a current page. Such insight may be useful to choose proper starting values for fitting or to develop new model functions. For example, in the case of two parameters that trade during the fitting one may explore to which extent a change in both values produces similar trends.
 
-Two variables (A and B) have to be assigned from a drop-down list of parameters associated with the current model function. For each of these, the \textit{Slider simulation} panel shows initially the starting value (x) as a middle position of a certain range (from 0.1*x to 1.9*x). The accessible range can be manually edited and the actual value of the slider position is displayed at the right hand side of the panel. Dragging the slider to lower (left) or higher (right) values changes the entry in the box \textit{Model parameters} of the \textit{Main window} and accordingly the shape opt the model function in the plot. By default the checkbox \textit{Vary A and B}\textit{ }is active meaning that both variables during \textit{Slider simulation} can be varied independently. 
+Two variables (A and B) have to be assigned from a drop-down list of parameters associated with the current model function. For each of these, the \textit{Slider simulation} panel shows initially the starting value (x) as a middle position of a certain range (from 0.1*x to 1.9*x). The accessible range can be manually edited and the actual value of the slider position is displayed at the right hand side of the panel. Dragging the slider to lower (left) or higher (right) values changes the entry in the box \textit{Model parameters} of the \textit{Main window} and accordingly the shape of the model function in the plot. By default the checkbox \textit{Vary A and B}\textit{ }is active meaning that both variables during \textit{Slider simulation} can be varied independently. 
 
 In addition, the variables A and B can be linked by a mathematical relation. For this a mathematical operator can be selected from a small list and the option \textit{Fix relation} must be checked. Then, the variable B appears inactivated (greyed out) and the new variable combining values for A and B can be explored by dragging.
 
@@ -345,7 +341,7 @@ This menu compiles import and export operations referring exclusively to the act
 \label{sec:menub.curre.impor}
 This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (\hyref{Section}{sec:menub.filem.loadd}). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
 
-To avoid this loss, one could first generate a new page via the menu (\hyref{Section}{sec:model}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
+To avoid this loss, one could first generate a new page via the menu \textit{Models} (\hyref{Section}{sec:menub.model}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
 \subsubsection{Current Page / Save data (*.csv)}
 \label{sec:menub.curre.saved}
@@ -355,18 +351,18 @@ Below the columns, there are again 5 rows of hashed comments followed by the int
 
 \subsubsection{Current Page / Save correlation as image}
 \label{sec:menub.curre.savec}
-For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable tau cannot be displayed using Unicode with Windows.
+For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable $\tau$ (= tau) cannot be displayed using Unicode with Windows. A \LaTeX fornatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
 
 \subsubsection{Current Page / Save trace view as image}
 \label{sec:menub.curre.savet}
-For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). 
+For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). A \LaTeX fornatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
 
 \subsubsection{Current Page / Close page}
 \label{sec:menub.curre.close}
 Closes the page; the data set is removed from the session. The page numbers of all other pages remain the same. The command is equivalent with the closer (x) in the tab. 
 
 \subsection{Models}
-\label{sec:model}
+\label{sec:menub.model}
 When choosing a model from the \textit{Models} menu a new page opens and the model function is plotted according to the set of starting values for parameters as they were defined in the model description. The lists contains all of the implemented model functions, which can be selected during \textit{File / Load data}. The parameters can be manipulated to explore different shapes; the tool \textit{Slider simulation} can also be used. Via \textit{Current page / Import data}, the model may then be fitted to an experimental data set. 
 Standard model functions for a confocal setup are:
 
@@ -395,15 +391,16 @@ There is also a collection of models for FCS setups with TIR excitation:
 In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (\hyref{Section}{sec:menub.filem.impor}).
 
 \subsection{Preferences}
-\label{sec:model.prefe}
+\label{sec:menub.prefe}
 \paragraph*{Latex} If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the ``Latex'' option will open a separate, TeX formatted panel via the \textit{Current page / Save […] as image} commands. The contains some interactive options for display. From there, in a second step, the image can be exported as *.png or *.svg.
 
-\paragraph*{Verbose} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:menub.curre.savec}), the plot will be displayed instead of saved. If ``Latex'' is active these plots will also be TeX-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
+\paragraph*{Verbose} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:menub.curre.savec}), the plot will be displayed instead of saved. If \LaTeX is active these plots will also be TeX-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
 
 \paragraph*{Show weights}
 Checking the option \textit{Show weights} will produce two lines showing the weights for each data point of the correlation function in the plot, as well as in the exported image. Note that the weights are always exported when using the \textit{Save data (*.csv)} command from the \textit{Current page} menu.
 
 \subsection{Help}
+\label{sec:menub.help}
 \paragraph*{Documentation}
 This entry displays this documentation using the systems default PDF viewer.
 \paragraph*{Wiki}
@@ -418,7 +415,7 @@ This lists the exact version of \textit{Python} and the corresponding modules wi
 Information of the participating developers, the license, and documentation writers.
 
 
-\section{4 Hacker's corner}
+\section{Hacker's corner}
 \label{sec:hacke}
 \paragraph*{New internal model functions}
 Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
@@ -481,14 +478,14 @@ G = 1./n * gThrD * gScan * gTrip
 
 \section{Theoretical background}
 \label{sec:theor}
-In the first place, \textit{PyCorrFit} was designed to evaluate FCS data. Therefore we focus on the theoretical background of this method. However, the correlation theory could be applied to other molecular signals than fluorescence.
+In the first place, \textit{PyCorrFit} was designed to evaluate FCS data, therefore we focus on fluorescence. However, the correlation theory could be applied to any other stochastic signal.
 
 \subsection{How FCS works}
 \label{sec:theor.howfc}
 
 FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \cite{Elson1974,Magde1974,Magde1978}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \cite{Widengren1998,Korlach1999,Schwille1999}. The diffusion may be free or anomalous due to barriers or obstacles \cite{Wachsmuth2000,Weiss2003}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \cite{Bacia2006,Kim2007}.
 
-The measurement principle is to illuminate a small open volume within these solutions (e.g. by a laser focus) and to detect the molecular transits with a sub-microsecond time resolution by sensitive optics. The molecular transits and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting).
+The measurement principle is to illuminate a small open volume within solutions of fluorescent molecules and to detect their molecular transits with a sub-microsecond time resolution by sensitive optics. The stochastic movements and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting, \hyref{Figure}{fig.mainwin}).
 
 \subsection{Framework for a single type of fluorescent dye}
 \label{sec:theor.frame}
@@ -502,12 +499,12 @@ $q$ combines all the photo-physical constant associated with fluorescence emissi
 	\label{eq2}
 	\langle S(t) \rangle = \lim_{t\to\ \infty} \int S(t) \,dt = q \int W(\vec{r})  c \,dV = qn
 	\end{equation}
-\hyref{Equation}{eq2} reveals that q is the instrument dependent molecular brightness (kHz/particle), i.e. the average signal divided by the average number of particles n observed within the effective detection volume $V_{\rm eff} = \int W(\vec{r})  \,dV$. During FCS measurements the detected signal is correlated by computing a normalized autocorrelation function: 
+\hyref{Equation}{eq2} reveals that $q$ is the instrument dependent molecular brightness (kHz/particle), i.e. the average signal divided by the average number of particles $n$ observed within the effective detection volume $V_{\rm eff} = \int W(\vec{r})  \,dV$. During FCS measurements the detected signal is correlated by computing a normalized autocorrelation function: 
 	\begin{equation}
 	\label{eq3}
 	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\langle \delta S(t) \cdot \delta S(t+\tau)\rangle}{\langle S(t) \rangle^2} = \frac{g(\tau)}{\langle S(t) \rangle^2}
 	\end{equation}
-Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$ (\hyref{fig.PyCorrFitMain}.
+Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$ (\hyref{Figure}{fig.mainwin}).
 
 A general way to derive theoretical model functions is to evaluate \hyref{Equation}{eq3} with explicit expressions describing the instrumental detection efficiency $W(\vec{r})$ and the molecular dynamics governing the local fluorophore concentrations $c(\vec{r},t)$. For example, free diffusion of the molecules can be described by the so-called diffusion propagator.
 	\begin{equation}
@@ -530,17 +527,17 @@ To use this result one has to reduce $G(\tau)$ to the sum of individual molecula
 	\label{eq7}
 	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\overbrace{N \langle s(t) \cdot s(t+\tau)\rangle}^{\mbox{\small same particles}} +\overbrace{N(N-1) \langle s(t) \rangle^2}^{\mbox{\small different particles}}}{N^2 \langle s(t) \rangle^2}-1 = \frac{\langle s(t) \cdot s(t+\tau)\rangle}{\langle s(t) \rangle^2}
 	\end{equation}
-Inserting \hyref{Equation}{eq5,eq6} yields
+Inserting \hyref{Equation}{eq5} and \hyref{Equation}{eq6} yields
 	\begin{equation}
 	\label{eq8}
 	G(\tau) = \frac{1}{c} \frac{\int \int W(\vec{r}) P_d \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'}{\left( W(\vec{r}) \,dV \right)^2}
 	\end{equation}
-Solving these integrals for the confocal detection scheme yields a relatively simple equation containing the diffusion coefficient $D_t$ (molecular property) and the $1/e^2$ decay lengths $w_0$ and $z_0$ capturing the dimension of the Gaussian detection volume transversal and parallel to the optical axis, respectively (instrumental property).
+Solving these integrals for the confocal detection scheme yields a relatively simple equation containing the diffusion coefficient $D_t$ (molecular property) and the $1/e^2$ decay lengths $w_0$ and $z_0$ capturing the dimension of the Gaussian detection volume transversal and parallel to the optical axis, respectively (instrumental properties).
 	\begin{equation}
 	\label{eq9}
 	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2}
 	\end{equation}
-The inverse intercept $G^{-1}(0)$ is proportional to the total concentration of oberved particles $C = n/V_{\mathrm eff} = n/ (\pi^{3/2}w_0^2z_0)$. It is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated detection volume. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
+The inverse intercept $G^{-1}(0)$ is proportional to the total concentration of oberved particles $C = n/V_{\rm eff} = n/ (\pi^{3/2}w_0^2z_0)$. It is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $SP=z_0^2/w_0^2$ as a measure of the elongated detection volume. Replacement finally yields the well known 3D diffusion in a confocal setup function (Model ID 6012)
 	\begin{equation}
 	\label{eq10}
 	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{SP^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
@@ -556,7 +553,7 @@ Very often in FCS one observes observes more than one dynamic property. Besides 
 	G(\tau) \stackrel{\rm def}{=} G^{\rm T}(\tau) G^{\rm D}(\tau) = \left( 1+ \frac{T}{1-T} \exp\left[-\frac{\tau}{\tau_{\rm trp}} \right] \right)G^{\rm D}(\tau)
 	\end{equation}
 Blinking increases the correlation amplitude $G(0)$ by the triplet fraction $1/(1-T)$. Accordingly the average number of observed particles is decreased $n = G^-1(0)(1-T)$. In case of GFP blinking two different blinking times have been described and the rate equations can get quite complicated.
-Besides photo-physics, the solution may contain mixtures of fluorescent particles with different dynamic properties, e.g. size or binding, leading to several correlation times in the measured curve. The way to derive \hyref{Equation}{eq7} shows that the correlation function of an ensemble can be built up by the contribution of $n$ single molecules in the sample volume:
+Besides photo-physics, the solution may contain mixtures of fluorescent particles with different dynamic properties, e.g. different mobility states or potential for transient binding. Such mixtures show several correlation times in the correlation curve. The way to derive \hyref{Equation}{eq7} shows that the correlation function of an ensemble can be built up by the contribution of $n$ single molecules in the sample volume:
 	\begin{equation}
 	\label{eq12}
 	G(\tau) = \frac{g(\tau)}{\langle S(t) \rangle^2} = \frac{\sum_{i=1}^n \sum_{j=1}^n g_{ij}(\tau)}{\langle S(t) \rangle^2}
@@ -585,7 +582,7 @@ Inhomogeneity in molecular brightness affects both the total concentration of ob
 
 \subsection{Correcting non-correlated background signal}
 \label{sec:theor.correc}
-In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \cite{Koppel1974,Thompson1991}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) \hyref{sec:intro.graph}. For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
+In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \cite{Koppel1974,Thompson1991}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) (\hyref{Figure}{fig.mainwin}). For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
 	\begin{equation}
 	\label{eq17}
 	n = \frac{1}{G^{\rm D}(0)} \left( \frac{S-B}{S} \right)^2 = \frac{1}{(1-T)G(0)} \left( \frac{S-B}{S} \right)^2.
@@ -598,7 +595,7 @@ For dual-channel applications with cross-correlation (next section) the amplitud
 
 \subsection{Cross-correlation}
 \label{sec:theor.cross}
-Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \cite{Foo2012,Ries2010,Schwille1997,Weidemann2002,Foo2012}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlating between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \cite{Rippe2000,Weidemann2002,Schwille1997}.
+Cross-correlation is an elegant way to measure molecular interactions. The principle is to implement a dual-channel setup (e.g. channels 1 and 2), where two, interacting populations of molecules can be discriminated \cite{Foo2012,Ries2010,Schwille1997,Weidemann2002,Foo2012}. In a dual-channel setup, complexes containing particles with both properties will evoke simultaneous signals in both channels. Such coincidence events can be extracted by cross-correlation between the two channels. A prominent implementation is dual-colour fluorescence cross-correlation spectroscopy (dcFCCS), where the binding partners are discriminated by spectrally distinct (differently coloured) labels. The formalism is similar to autocorrelation, just the origin of the signals must now be traced \cite{Rippe2000,Weidemann2002,Schwille1997}.
 	\begin{equation}
 	\label{eq19}
 	G_\times (\tau) \stackrel{\rm def}{=} G_{12} (\tau) = \frac{\langle \delta S_1(t) \delta S_2(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} \approx \frac{\langle \delta S_2(t) \delta S_1(t+\tau)\rangle}{\langle S_1(t) \rangle \langle S_2(t) \rangle} =  G_{21} (\tau)
@@ -613,45 +610,49 @@ The ratio between cross- and autocorrelation amplitude is used as a readout whic
 	\label{eq21}
 	CC_1 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_1(0)} & \propto & \frac{c_{gr}}{c_r} \nonumber \\ CC_2 \stackrel{\rm def}{=} \frac{G_\times(0)}{G_2(0)} &\propto & \frac{c_{gr}}{c_g}
 	\end{eqnarray}
-Recently, a correction for bleed-through of the signals between the two channels has been worked out \cite{Bacia2012}. The effect on binding curves measured with cross-correlation can be quite dramatic \cite{Weidemann2013}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
+Recently, a correction for bleed-through of the signals between the two channels has been worked out \cite{Bacia2012}. The effect on binding curves measured with cross-correlation can be quite dramatic \cite{Weidemann2013}. To treat spectral cross-talk, the experimenter has to determine with single coloured probes how much of the signal (ratio in \%) is detected by the orthogonal, 'wrong' channel ($BT_{12}, BT_{12}$). Usually the bleed-through from the red into the green channel can be neglected ($BT_{21} = 0$)leaving only a contribution of bleed through from the green into the red channel ($BT_{12}$)
 	\begin{eqnarray}
 	\label{eq22}
 	\langle F_1 \rangle & = & \langle \hat{F}_1 \rangle + \langle \hat{F}_2 \rangle BT_{21} \cong  \langle \hat{F}_1 \rangle \nonumber \\ \langle F_2 \rangle & = & \langle \hat{F}_2 \rangle + \langle \hat{F}_1 \rangle BT_{12}
 	\end{eqnarray}
-Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of erroneous signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle/\hat{F}_2 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \cite{Bacia2012,Weidemann2013}
+Here, the dashed fluorescence signals are the true contributions from single labelled species. Thus, each set of simultaneously recorded auto and cross-correlation curves suffers from a specific fraction of wrong signal in the vulnerable red channel, $X_2 = BT_{12} \langle \hat{F}_1 \rangle/\hat{F}_2 \rangle$, which can be used to back-correct the cross-correlation amplitudes  \cite{Bacia2012,Weidemann2013}
 	\begin{eqnarray}
 	\label{eq23}
 	\frac{c_{gr}}{c_r} & \propto & \frac{CC_1-X_2}{\left( 1-X_2 \right)} \nonumber \\ \frac{c_{gr}}{c_g} & \propto & \frac{CC_2-X_2 \left( 1-X_2 \right) \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)}}{1+ X_2 \frac{G_1^{\rm D}(0)}{G_2^{\rm D}(0)} - 2 X_2 CC_2}
 	\end{eqnarray}
 As apparent from \hyref{Equation}{eq23} it is much simpler to use the autocorrelation amplitude measured in the green channel for normalization (first line) and not the cross-talk affected red red channel (lower line). Finally, the proportionality between the fraction ligand bound and the measured cross-correlation ratio depends solely on the effective detection volumes of all three channels (two auto- and the cross-correlation channel) and must be determined with appropriate positive controls (single labelled and double labelled calibration dyes).
 
-\subsection{Extension of the method}
+\subsection{Extensions of the method}
 \label{sec:theor.exten}
-Using as confocal alignment for FCS measurements is very successful and widely applied. However, mainly in the context of membrane research, other excitation schemes have been explored. Once the excitation and detection geometry is changed one has to account for it in the model functions. This is usually done by modifying the expressions of the detection volume W(r) \hyref{Equation}{eq8}. However, in many cases analytical solutions to the above integrals are not straightforward and approximations have to be made. The following section introduces model functions for different detection symmetries and particle dynamics.
+Using as confocal alignment for FCS measurements is very successful and widely applied. However, mainly in the context of membrane research, other excitation schemes have been explored. Once the excitation and detection geometry is changed one has to account for it in the model functions. This is usually done by modifying the expressions of the instrumental detection efficiency $W(\vec{r})$ in \hyref{Equation}{eq8}. However, in many cases analytical solutions to the above integrals are not straightforward and approximations have to be made. The following section introduces model functions for different detection symmetries and particle dynamics.
 
-\subsubsection{Perpendicular scanning FCS}
+\subsubsection{Perpendicular scanning FCS (pSFCS)}
 \label{sec:theor.exten.perpe}
-Scanning FCS with a scan path perpendicular to the membrane plane was introduced to measure the lateral diffusion of fluorescent components of a fluid lipid membrane \cite{Ries2006}. Using the linear scan option of a confocal laser scanning microscope (CLSM), the focal spot is moved repeatedly on a straight line through a free standing membrane (typically the equatorial face of a giant vesicle). The fluorescence photons emitted from the detection volume are continuously recorded and stored. The signal originating from the transit through the membrane must be extracted post-measurement, correlated and evaluated by well-known FCS model functions. Scanning can also be performed with two parallel scan paths perpendicular through the membrane (continuous imaging with two lines). Like in two-focus FCS \cite{Dertinger2007}, once the distance between these scan paths has been calibrated, the diffusion coefficients can be determined without further use of diffusion standards. We recently introduced a free, open source software tool (\textit{PyScanFCS}) to perform these steps \cite{Muller2014}.
+Scanning FCS with a scan path perpendicular to the membrane plane was introduced to measure the lateral diffusion of fluorescent components of a fluid lipid membrane \cite{Ries2006}. Using the linear scan option of a confocal laser scanning microscope (CLSM), the focal spot is moved repeatedly on a straight line through a free standing membrane (typically the equatorial face of a giant vesicle). The fluorescence photons emitted from the detection volume are continuously recorded and stored. The signal originating from the transit through the membrane must be extracted post-measurement, correlated, and evaluated by well-known FCS model functions. Scanning can also be performed with two parallel scan paths perpendicular through the membrane (continuous imaging with two lines). Like in two-focus FCS \cite{Dertinger2007}, the distance between these scan paths can been used to calibrate the diffusion coefficients without further use of diffusion standards. We recently introduced a free, open source software tool (\textit{PyScanFCS}) to perform these steps \cite{Muller2014}.
 
-\subsubsection{Circular scanning FCS}
+\subsubsection{Circular scanning FCS (cSFCS}
 \label{sec:theor.exten.circu}
 The principle of circular scanning FCS is similar. Here, the laser focus is moved in small circles, several µm in diameter. While pSFCS requires relatively large free standing membranes, cSFCS can be performed in µm sized homogeneous fluorescent regions of supported bilayers, cell membranes, as well as the apical poles of giant vesicles. Once the radius of the circular scan path has been accurately determined (e.g. with a fluorescent grid), the diffusion coefficients can be determined from cross-correlation curves without the need to calibrate the detection volume by diffusion standards \cite{Petrasek2010,Petrasek2008}.
+
 \begin{figure}[h]
+\label{fig:csfcs}
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_CSFCS.png}
- \mycaption{user interface with external model function}{A circular scanning FCS (cSFCS) curve of DiO in a reconstituted lipid bilayer on glass support is shown. The measurement yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}). \label{fig:cirSFCS}}
+ \mycaption{user interface with external model function}{cSFCS curve of DiO diffusing in a reconstituted lipid bilayer on glass support. Fitting yields a diffusion coefficient of \SI{0.28}{\mu m^2s^{-1}} ($F1=1$, so only one component is fitted). Note that a 2D diffusion model is used and not a 3D model (as shown in \hyref{figure}{fig:extxt}).}
 \end{figure}
-
-\subsubsection{Total internal reflection TIR-FCS}
+\\
+\vspace{1em}
+\subsubsection{Total internal reflection FCS (TIR-FCS)}
 \label{sec:theor.exten.total}
 TIR-FCS was developed to measure transient ligand binding events to receptors in the membrane \cite{Thompson2007}. In contrast to scanning FCS, the detection volume is fixed. However, the geometry is confined to the surface showing an exponential decay of the evanescent field along $z$, whereas the lateral boundaries imposed in $xy$ by a pinhole in the detection path. The situation is notoriously difficult to model and different solutions have been proposed:
-
+\\
+\vspace{1em}
 \textbf{TIR-FCS with Gaussian-shaped lateral detection volume}
 The detection volume is axially confined by an evanescent field and has an effective size of
 \begin{align}
 V = \pi R_0^2 d_\mathrm{eva}
 \end{align} 
-where $R_0$ is the lateral extent of the detection volume and $d_\mathrm{eva}$ is the evanescent field depth\footnote{Where the field has decayed to $1/e$}. From the concentration $C$, the effective number of particles is $N=CV$.
+where $R_0$ is the lateral extent of the detection volume and $d_\mathrm{eva}$ is the evanescent field depth\footnote{Where the field has decayed to $1/e$}. From the concentration $C$, the effective number of particles is $n = CV$.
 The decay constant $\kappa$ is the inverse of the depth $d_\mathrm{eva}$ :
 \begin{align}
 d_\mathrm{eva} = \frac{1}{\kappa}
@@ -696,7 +697,7 @@ In certain cases, it is useful to implement weights (standard deviation) $\sigma
 \begin{equation}
 \chi^2_\mathrm{weighted} = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2}{\sigma_i^2}
 \end{equation}
-\textit{PyCorrFit} is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in \textit{PyCorrFit} are explained in \hyref{Section}{sec:intro.workf}.
+\textit{PyCorrFit} is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in \textit{PyCorrFit} are explained in \hyref{Section}{sec:intro.graph}.
 
 
 \input{PyCorrFit_doc_models}
