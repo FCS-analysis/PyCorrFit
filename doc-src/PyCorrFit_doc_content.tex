@@ -138,35 +138,9 @@ The File menu organizes the import of theoretical models, experimental correlati
 
 \subsubsection{File / Import model}
 \label{sec:menub.filem.impor}
-Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While the most commonly used standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) that must follow a certain format and syntax:
+Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While the most commonly used standard functions are built-in, the user can define new expressions.
+Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. External model functions are discussed in detail in \hyref{Section}{sec:hacke.extmod}.
 
-\begin{itemize}
-\item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set. The model files have to be encoded in \textit{UTF-8}.
-\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data. Imported models are available from the menu \textit{Models/User}.
-\item \textbf{Units}: \textit{PyCorrFit} works with internal units for:
-\begin{itemize}
-\item Time: \SI{1}{ms}
-\item Distance: \SI{100}{nm}
-\item Diffusion coefficient: \SI{10}{\mu m^2s^{-1}} 
-\item Inverse time: \SI{1000}{s^{-1}} 
-\item Inverse area: \SI{100}{\mu m^{-2}} 
-\item Inverse volume: \SI{1000}{\mu m^{-3}} 
-\end{itemize}
-\item \textbf{Parameters:} To define a new model function, new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expressions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetical (not numerical) characters. \texttt{G}, variables starting with \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
-\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions, one can use place-holders. Place-holders start with a lower-case ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
-
-\begin{itemize}
-\item \texttt{gTrp = 1+ T/(1-T)*exp(-tau/tautrip)}
-\item \texttt{gTwoD = 1/(1+tau/taudiff)}
-\item \texttt{gThrD = 1/sqrt(1+tau/(taudiff*S**2))}
-\end{itemize}
-\end{itemize}
-The individual parts are then combined in the last line of the *.txt file, where the correlation function is defined starting with upper-case ’G’:
-
-\begin{equation}
-\texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
-\end{equation}
-For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{Figure}{fig.csfcs}. 
 
 \subsubsection{File / Load data}
 \label{sec:menub.filem.loadd}
@@ -374,12 +348,38 @@ Information of the participating developers, the license, and documentation writ
 
 \section{Hacker's corner}
 \label{sec:hacke}
-\subsection{New internal model functions}
-Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
+\subsection{External model functions}
+\label{sec:hacke.extmod}
+\textit{PyCorrFit} supports the import of your own model functions. If your model function is not implemented, i.e. not available in the \textit{Models} menu, then this is the easiest way to make \textit{PyCorrFit} work with your model.
+Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) that must follow a certain format and syntax:
+\begin{itemize}
+\item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set. The model files have to be encoded in \textit{UTF-8}.
+\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data. Imported models are available from the menu \textit{Models/User}.
+\item \textbf{Units}: \textit{PyCorrFit} works with internal units for:
+\begin{itemize}
+\item Time: \SI{1}{ms}
+\item Distance: \SI{100}{nm}
+\item Diffusion coefficient: \SI{10}{\mu m^2s^{-1}} 
+\item Inverse time: \SI{1000}{s^{-1}} 
+\item Inverse area: \SI{100}{\mu m^{-2}} 
+\item Inverse volume: \SI{1000}{\mu m^{-3}} 
+\end{itemize}
+\item \textbf{Parameters:} To define a new model function, new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expressions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetical (not numerical) characters. \texttt{G}, variables starting with \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
+\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions, one can use place-holders. Place-holders start with a lower-case ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
 
-External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development.
+\begin{itemize}
+\item \texttt{gTrp = 1+ T/(1-T)*exp(-tau/tautrip)}
+\item \texttt{gTwoD = 1/(1+tau/taudiff)}
+\item \texttt{gThrD = 1/sqrt(1+tau/(taudiff*S**2))}
+\end{itemize}
+\end{itemize}
+The individual parts are then combined in the last line of the *.txt file, where the correlation function is defined starting with upper-case ’G’:
 
-Example for defining a new external model function for circular scanning FCS
+\begin{equation}
+\texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
+\end{equation}
+For reference of mathematical operators, check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example, a model function for circular scanning FCS is shown in \hyref{Figure}{fig.csfcs}. 
+External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails, there is most likely syntax error in the model file. 
 \begin{figure}
 % for case sensitiver Verbatim, we need the package fancyvrb
 \begin{Verbatim}[frame = single]
@@ -434,9 +434,12 @@ G = offset +  1./n * (gTwoD1 * gScan1 + gTwoD2 * gScan2) * gTriplet
 \mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig.csfcs}}
 \end{figure}
 
+\subsection{Internal model functions}
+Alternatively, new models can be implemented by programming of the models module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script containing the model function. There is no Tutorial yet, but the implemented model files are self-explanatory. If you need help creating a new internal model function and/or want to publish it with \textit{PyCorrFit}, do not hesitate to contact an active developer by creating a new issue on GitHub.
 
 \subsection{Correlation curve file format}
 \label{sec:hacke.csv}
+PyCorrFit can read correlation data from many file formats.
 If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
 
 \begin{itemize}
@@ -471,6 +474,9 @@ If a file format is not yet listed, the correlation data could be converted into
 In this case the tag \texttt{AC\_01} is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
 \end{itemize}
 
+\subsection{New file format}
+Alternatively, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
+There is no Tutorial yet, but the implemented scripts are self-explanatory. If you need help implementing a new file format and/or want to publish it with \textit{PyCorrFit}, do not hesitate to contact an active developer by creating a new issue on GitHub.
 
 \section{Theoretical background}
 \label{sec:theor}
