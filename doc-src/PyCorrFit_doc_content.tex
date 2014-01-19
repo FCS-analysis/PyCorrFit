@@ -224,7 +224,7 @@ Power user, who frequently load and remove data sets, may take advantage of a ch
 
 \subsubsection{Tools / Overlay curves}
 \label{sec:menub.tools.overl}
-This window displays the correlation data (not the fit curves) of all pages in a single plot. The curves can be discriminated by color. If only one curve is selected it appears in red. Curves with ambiguous shape can easily be identified, selected, and removed by clicking \textit{Apply}. A warning dialogue lists the pages which will be kept.
+This window displays the correlation data (not the fit curves) of all pages in a single plot. The curves can be discriminated by color. If only one curve is selected, it appears in red. Curves with ambiguous shape can easily be identified, selected, and removed by clicking \textit{Apply}. A warning dialogue lists the pages which will be kept.
 
 Data representation is synchronized with the page display in the \textit{Main window}. For example, narrowing the range of lag times by \textit{Data range }is immediately updated in the \textit{Overlay curves }tool. Likewise, their normalization of the amplitudes to unity.
 
@@ -234,19 +234,19 @@ The tool is closed by the button \textit{Cancel}. All the listed data sets will 
 
 \subsubsection{Tools / Batch control}
 \label{sec:menub.tools.batch}
-By default the current page is taken as a reference to perform automated fitting. A batch is defined as the ensemble of correlation data sets (pages) assigned to the same model function within a session. A session can therefore have several batches, even for the same data. 
+By default, the current page is taken as a reference to perform automated fitting. A batch is defined as the ensemble of correlation data sets (pages) assigned to the same model function within a session. A session can therefore have several batches, even for the same data. 
 
-For fitting it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
+For fitting, it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
 
-The button \textit{Fit applicable pages} then performs several cycles of fitting on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
+The button \textit{Fit applicable pages} then performs fitting on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.fcsfit-session.zip). However, this assumes a consistent assignment of model functions.
 
 \subsubsection{Tools / Global fitting}
 \label{sec:menub.tools.globa}
-Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and the cross-correlation curves should adopt the same values for the diffusion time $\tau_{\mathrm diff}$ and the number of particles $n$. A global fit can be applied such that $n$ and $\tau_{\mathrm diff}$ are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} Chi-square is minimized for all data sets simultaneously. To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
+Global fitting is useful when experimental curves share the same values for certain physical parameters. For example, due to physical constraints in two-focus FCS both autocorrelation curves and  cross-correlation curves should adopt the same values for the diffusion time $\tau_\mathrm{diff}$ and the number of particles $n$. A global fit can be applied such that $n$ and $\tau_\mathrm{diff}$ are identical for all data sets. All curves are added to a single array. In contrast to fixing the shared parameters across a batch, in \textit{Global fitting} $\chi^2$  is minimized for all data sets simultaneously (see \hyref{Section}{sec:theor.nonle}). To perform \textit{Global fitting}, a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. 
 
 \subsubsection{Tools / Average data}
 \label{sec:menub.tools.avera}
-Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data, to export a cleaned average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. For averaging, there are constraints:
+Often in FCS, the measurement time at a particular spot is divided in several runs. This approach is taken when occasional, global intensity changes are superimposed on the molecular fluctuations of interest. Then the user has to sort out the bad runs. After fitting, one may want to re-combine the data to export a cleaned average correlation function. This can be done with the tool \textit{Average data}, for which a subset of curves has to be selected by typing the numbers into the input field or by highlighting the pages via the \textit{Overlay curves} tool. For averaging, there are constraints:
 
 
 \begin{enumerate}
@@ -258,7 +258,7 @@ The averaged curve is shown on a separate page. The new \textit{Filename/title} 
 
 \subsubsection{Tools / Trace view}
 \label{sec:menub.tools.trace}
-FCS theory makes assumptions about the thermodynamic state of the system. Signal fluctuations can only be analyzed when the system is at equilibrium or at a sufficiently stable steady state. Global instabilities on the time scale of the measurement itself, e.g. photo-bleaching, have dramatic effect on the shape of the measured correlation curve. Therefore it is common practice to check the correlated intensity trace for each curve. Trace view simply displays the signal trace for each correlation function. The window stays open during the session and can be used to revisit and flag ambiguous data sets.
+FCS theory makes assumptions about the thermodynamic state of the system. Signal fluctuations can only be analyzed when the system is at equilibrium or at a sufficiently stable steady state. Global instabilities on the time scale of the measurement itself, e.g. photo-bleaching, have dramatic effect on the shape of the measured correlation curve. Therefore, it is common practice to check the correlated intensity trace for each curve. Trace view simply displays the signal trace for each correlation function. The window stays open during the session and can be used to revisit and flag ambiguous data sets.
 
 \subsubsection{Tools / Statistics view}
 \label{sec:menub.tools.stati}
@@ -277,9 +277,9 @@ Page info is a most verbose summary of a data set. The panel \textit{Page info} 
 \item Version of \textit{PyCorrFit}
 \item Field values from the main window (filename/title, model specifications, page number, type of correlation, normalizations)
 \item Actual parameter values (as contained in the model function)
-\item Supplementary parameters (intensity, counts per particle, duration, etc.)
+\item Supplementary parameters (intensity, counts per particle, duration, background correction, etc.)
 \item Fitting related information (Chi-square, channel selection, varied fit parameters) .
-\item Model doc string (\hyref{Section}{sec:model})
+\item Model doc string (\hyref{Section}{sec:menub.model})
 \end{enumerate}
 The content of Page info is saved as a header when exporting correlation functions via the command \textit{Current page / Save data (*.csv)} (\hyref{Section}{sec:menub.curre.saved}).
 
@@ -297,7 +297,7 @@ This menu compiles import and export operations referring exclusively to the act
 
 \subsubsection{Current Page / Import Data}
 \label{sec:menub.curre.impor}
-This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (\hyref{Section}{sec:menub.filem.loadd}). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given parameter values. After successful import, the previous correlation data of this page are lost.
+This command is the third way to import data into a pre-existing session. Single files containing correlation data can be imported as long as they have the right format (\hyref{Section}{sec:menub.filem.loadd}). In contrast to \textit{Load data} from the \textit{File} menu, the model assignment and the state of the parameters remains. The purpose of this command is to compare different data sets to the very same model function for a given set of parameters. After successful import, the previous correlation data of this page are lost.
 
 To avoid this loss, one could first generate a new page via the menu \textit{Models} (\hyref{Section}{sec:menub.model}), select a model function and import data there. This is also a possibility to assign the very same data to different models within the same session.
 
@@ -309,11 +309,11 @@ Below the columns, there are again 5 rows of hashed comments followed by the int
 
 \subsubsection{Current Page / Save correlation as image}
 \label{sec:menub.curre.savec}
-For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable $\tau$ (= tau) cannot be displayed using Unicode with Windows. A \LaTeX formatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
+The correlation curve can be exported as bitmap (e.g. *.png for quick documentation) or as a scalable vector graphic (e.g. *.pdf for post-processing in \textit{Adobe Illustrator} or \textit{Inkscape}). The plot contains a legend and fitting parameters. Note that the variable $\tau$ (= tau) cannot be displayed using Unicode with Windows. A \LaTeX formatted image can be exported when the option \textit{Use Latex} is checked in the \textit{Preferences} menu (\hyref{Section}{sec:menub.prefe}). Furthermore, if \textit{Preferences/Verbose mode} is checked, the plot can be edited before saving\footnote{The plots are generated with matplotlib, \url{http://matplotlib.org/}}. 
 
 \subsubsection{Current Page / Save trace view as image}
 \label{sec:menub.curre.savet}
-For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). A \LaTeX formatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
+An image of the trace can be exported in the same way as for the correlation curve (see above). 
 
 \subsubsection{Current Page / Close page}
 \label{sec:menub.curre.close}
@@ -321,7 +321,7 @@ Closes the page; the data set is removed from the session. The page numbers of a
 
 \subsection{Models}
 \label{sec:menub.model}
-When choosing a model from the \textit{Models} menu a new page opens and the model function is plotted according to the set of starting values for parameters as they were defined in the model description. The lists contains all of the implemented model functions, which can be selected during \textit{File / Load data}. The parameters can be manipulated to explore different shapes; the tool \textit{Slider simulation} can also be used. Via \textit{Current page / Import data}, the model may then be fitted to an experimental data set. Standard model functions for a confocal setup are (\hyref{Section}{sec:imple.confo}):
+When choosing a model from the \textit{Models} menu, a new page opens and the model function is plotted according to the set of starting values for parameters as they were defined in the model description. The lists contains all of the implemented model functions, which can be selected during \textit{File / Load data}. The parameters can be manipulated to explore different shapes; the tool \textit{Slider simulation} can also be used. Via \textit{Current page / Import data}, the model may then be fitted to an experimental data set. Standard model functions for a confocal setup are (\hyref{Section}{sec:imple.confo}):
 
 \begin{tabular}{l l}
 %Confocal (Gaussian): 3D \ \ \ \ \ \ [Free diffusion in three dimensions]
@@ -481,7 +481,7 @@ In the first place, \textit{PyCorrFit} was designed to evaluate FCS data, theref
 
 FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \cite{Elson1974,Magde1974,Magde1978}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \cite{Widengren1998,Korlach1999,Schwille1999}. The diffusion may be free or anomalous due to barriers or obstacles \cite{Wachsmuth2000,Weiss2003}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \cite{Bacia2006,Kim2007}.
 
-The measurement principle is to illuminate a small open volume within solutions of fluorescent molecules and to detect their molecular transits with a sub-microsecond time resolution by sensitive optics. The stochastic movements and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parametrized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting, \hyref{Figure}{fig.mainwin}).
+The measurement principle is to illuminate a small open volume within solutions of fluorescent molecules and to detect their molecular transits with a sub-microsecond time resolution by sensitive optics. The stochastic movements and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parametrized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting, \hyref{Figure}{fig:mainwin}).
 
 \subsection{Framework for a single type of fluorescent dye}
 \label{sec:theor.frame}
@@ -500,7 +500,7 @@ $q$ combines all the photo-physical constant associated with fluorescence emissi
 	\label{eq3}
 	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\langle \delta S(t) \cdot \delta S(t+\tau)\rangle}{\langle S(t) \rangle^2} = \frac{g(\tau)}{\langle S(t) \rangle^2}
 	\end{equation}
-Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$ (\hyref{Figure}{fig.mainwin}).
+Here, $\tau$ denotes the lag time used for correlation and $\delta S(t) = S(t)-\langle S \rangle$ the amplitude of the signal fluctuation for a given time point. \hyref{Equation}{eq3} defines a function with a finite intercept decaying to zero, whereas $g(\tau)$, the non-normalized correlation function, decays to a finite value $\langle S \rangle^{-2}$. To visualize correlation times, the functions $G(\tau)$ are typically plotted against $log(\tau)$ (\hyref{Figure}{fig:mainwin}).
 
 A general way to derive theoretical model functions is to evaluate \hyref{Equation}{eq3} with explicit expressions describing the instrumental detection efficiency $W(\vec{r})$ and the molecular dynamics governing the local fluorophore concentrations $c(\vec{r},t)$. For example, free diffusion of the molecules can be described by the so-called diffusion propagator.
 	\begin{equation}
@@ -578,7 +578,7 @@ Inhomogeneity in molecular brightness affects both the total concentration of ob
 
 \subsection{Correcting non-correlated background signal}
 \label{sec:theor.correc}
-In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \cite{Koppel1974,Thompson1991}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) (\hyref{Figure}{fig.mainwin}). For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
+In FCS, the total signal is composed of the fluorescence and the non-correlated background: $S = F + B$. Non-correlated background signal like shot noise of the detectors or stray light decreases the relative fluctuation amplitude and must be corrected to derive true particle concentrations \cite{Koppel1974,Thompson1991}. In \textit{PyCorrFit} the background value [kHz] can be manually set for each channel (B1, B2) (\hyref{Figure}{fig:mainwin}). For autocorrelation measurements ($B1 = B2 = B$) the average number of observed particles is then
 	\begin{equation}
 	\label{eq17}
 	n = \frac{1}{G^{\rm D}(0)} \left( \frac{S-B}{S} \right)^2 = \frac{1}{(1-T)G(0)} \left( \frac{S-B}{S} \right)^2.
