@@ -130,8 +130,7 @@ The main window can be rescaled as a whole to improve data representation. In ad
 
 \section{The menu bar}
 \label{sec:menub}
-
-\textit{PyCorrFit} is organized in panels which group certain functions. The menu organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help).
+The menu bar organizes data management (File), data analysis (Tools), display of correlation functions (Current Page), numerical examples (Model), software settings (Preferences), and software metadata (Help).
 
 \subsection{File menu}
 \label{sec:menub.filem}
@@ -139,13 +138,12 @@ The File menu organizes the import of theoretical models, experimental correlati
 
 \subsubsection{File / Import model}
 \label{sec:menub.filem.impor}
-Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While the most commonly used standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) using a certain syntax:
+Correlation data must be fitted to models describing the underlying physical processes which give rise to a particular time dependence and magnitude of the recorded signal fluctuations. Models are mathematical expressions containing parameters with physical meaning, like the molecular brightness or the dwell time through an illuminated volume. While the most commonly used standard functions are built-in, the user can define new expressions. Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig.csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) that must follow a certain format and syntax:
 
 \begin{itemize}
-\item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set (UTF-8).
-\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data.
+\item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set. The model files have to be encoded in \textit{UTF-8}.
+\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. The only exception is the first line starting with a hash followed by a white space and a short name of the model. This line is evaluated to complement the list of models in the dialogue\textit{ Choose }\textit{model}, when loading the data. Imported models are available from the menu \textit{Models/User}.
 \item \textbf{Units}: \textit{PyCorrFit} works with internal units for:
-
 \begin{itemize}
 \item Time: \SI{1}{ms}
 \item Distance: \SI{100}{nm}
@@ -154,8 +152,8 @@ Correlation data must be fitted to models describing the underlying physical pro
 \item Inverse area: \SI{100}{\mu m^{-2}} 
 \item Inverse volume: \SI{1000}{\mu m^{-3}} 
 \end{itemize}
-\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expressions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetic (not numerical) characters. \texttt{G} and \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
-\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use place-holders. Place-holders start with a lower-case ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
+\item \textbf{Parameters:} To define a new model function, new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expressions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetical (not numerical) characters. \texttt{G}, variables starting with \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
+\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions, one can use place-holders. Place-holders start with a lower-case ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
 
 \begin{itemize}
 \item \texttt{gTrp = 1+ T/(1-T)*exp(-tau/tautrip)}
@@ -168,7 +166,7 @@ The individual parts are then combined in the last line of the *.txt file, where
 \begin{equation}
 \texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
 \end{equation}
-For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{Figure}{fig:extxt}. 
+For reference of mathematical operators check for example \href{http://www.tutorialspoint.com/python/python_basic_operators.htm}{www.tutorialspoint.com / python / python\_basic\_operators.htm}. To illustrate a more complex example see the model function for circular scanning FCS in \hyref{Figure}{fig.csfcs}. 
 
 \subsubsection{File / Load data}
 \label{sec:menub.filem.loadd}
@@ -186,48 +184,15 @@ For reference of mathematical operators check for example \href{http://www.tutor
 \end{tabular}
 \vspace{3ex}
 \newline
-While (2)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is the txt-file containing comma-separated values (csv) generated with PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
+While (2)-(4) are file formats associated with commercial hardware, (5) refers to a MATLAB based FCS evaluation software developed by Jonas Ries in the Schwille lab at TU Dresden, (6) is a text file containing comma-separated values (csv) generated by PyCorrFit via the command \textit{Current Page / Save data}. Zip-files are automatically decompressed and can be imported when matching one of the above mentioned formats. In particular loading of zip files is a possibility to re-import correlation data from entire \textit{PyCorrFit} sessions. However, these data are treated as raw, which means that all fitting parameters and model assignments are lost.
 
-During loading, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see \hyref{Section}{sec:model}):
+During loading, the user is prompted to assign fit models in the \textit{Choose Models} dialogue window. There, curves are sorted according to channel (for example AC1, AC2, CC12, and CC21, as a typical outcome of a dual-color cross-correlation experiment). For each channel a fit model must be selected from the list (see \hyref{Section}{sec:menub.model}):
 
-If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
-
-
-\begin{itemize}
-\item \textbf{Encoding}: \textit{PyCorrFit} uses the standard Unicode character set (UTF-8). However, since no special characters are needed to save experimental data, other encodings may also work. New line characters are \texttt{{\textbackslash}r{\textbackslash}n} (Windows).
-\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
-\item \textbf{Units}: PyCorrFit works with units/values for:
-
-\begin{itemize}
-\item Time: \SI{1}{ms}
-\item Intensity: \SI{1}{kHz}
-\item Amplitude offset: $G(0) = 0$ (not 1)
-\end{itemize}
-\item \textbf{Keywords:}\footnote{Keywords are case-insensitive.} \textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored). The table ends, when the keyword \texttt{\# BEGIN TRACE} appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \texttt{\# BEGIN SECOND TRACE}.
-\item \textbf{Tags:}\footnote{Tags are case-insensitive.} Channel information can be entered using defined syntax in a header. The keyword 
-\begin{center}
-\vspace{-1em}
- \texttt{\# Type AC/CC Autocorrelation}
-\vspace{-1em}
-\end{center}
-  assigns the tag \texttt{AC} and the keyword
-\begin{center}
-\vspace{-1em}
-  {\texttt{\# Type AC/CC Crosscorrelation}}
-\vspace{-1em}
-\end{center}
- assigns the tag \texttt{CC} to the correlation curve. These strings are consistently displayed in the user interface of the respective data page in \textit{PyCorrFit}. If no data type is specified, autocorrelation is assumed. Tags may be specified with additional information like channel numbers, e.g. 
-\begin{center}
-\vspace{-1em}
- \texttt{\# Type AC/CC Autocorrelation \_01}.
-\vspace{-1em}
-\end{center}
-In this case the tag \texttt{AC\_01} is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
-\end{itemize}
+If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting correlation data, have a look at \hyref{Section}{sec:hacke.csv}.
 
 \subsubsection{File / Open session}
 \label{sec:menub.filem.opens}
-This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Sessions are bundles of files named *.fcsfit-session.zip. Sessions contain, comments, model assigned correlation data, and the current state of parameters for each data page (\hyref{Section}{sec:menub.filem.saves}).
+This command is the second way to import data into PyCorrFit. In contrast to \textit{Load data}, it opens an entire fitting project, which was previously saved with \textit{PyCorrFit}. Session files are *.zip files named *.fcsfit-session.zip. These files contain all information to restore a session, including comments, model assigned correlation data, and the current state of parameters for each data set (\hyref{Section}{sec:menub.filem.saves}).
 
 \subsubsection{File / Comment session}
 \label{sec:menub.filem.comme}
@@ -235,7 +200,7 @@ This command opens a window to place text messages that can be used to annotate 
 
 \subsubsection{File / Clear session}
 \label{sec:menub.filem.clear}
-This command closes all pages while the PyCorrFit.exe keeps running. The user is prompted to save the session under the same or a different name. At this stage both options \textit{No} or \textit{Cancel} lead to clearance and a potential loss of recent modifications.
+This command closes all pages. The user is prompted to save the current session.
 
 \subsubsection{File / Save session}
 \label{sec:menub.filem.saves}
@@ -245,7 +210,7 @@ The number of files bundled in a session varies depending on the number of data 
 
 \subsubsection{File / Exit}
 \label{sec:menub.filem.exit}
-This command closes down \textit{PyCorrFit}. The user is prompted to save the session under the same or a different name. At this stage \textit{No} leads to the loss of recent changes, while \textit{Cancel} keeps \textit{PyCorrFit} running.
+This command closes down \textit{PyCorrFit}. The user is prompted to save the session under the same or a different name.
 
 \subsection{Tools menu}
 \label{sec:menub.tools}
@@ -409,7 +374,7 @@ Information of the participating developers, the license, and documentation writ
 
 \section{Hacker's corner}
 \label{sec:hacke}
-\paragraph*{New internal model functions}
+\subsection{New internal model functions}
 Additionally, new file formats can be implemented by programming of the readfiles module of \textit{PyCorrFit}. First, edit the code for \texttt{\_\_init\_\_.py} and then add the script \texttt{read\_FileFormat.py}.
 
 External models will be imported with internal model function IDs starting at $7000$. Models are checked upon import by the Python module sympy. If the import fails it might be a syntax error or just an error of sympy, since this module is still under development.
@@ -418,10 +383,10 @@ Example for defining a new external model function for circular scanning FCS
 \begin{figure}
 % for case sensitiver Verbatim, we need the package fancyvrb
 \begin{Verbatim}[frame = single]
+# CS-FCS T+2D+2D+S (Confocal)
 
-# CS-FCS 3D+S+T (Confocal)
-
-# Circular Scanning FCS model function. 3D diffusion + Triplet.
+# Circular Scanning FCS model function for two 2D-diffusing species
+# including triplet component.
 
 ## Definition of parameters:
 # First, the parameters and their starting values for the model function
@@ -430,42 +395,81 @@ Example for defining a new external model function for circular scanning FCS
 # value should be a floating point number. Floating point abbreviations 
 # like "1e-3" instead of "0.001" may be used.
 
-# Diffusion coefficient
-D [10 µm²/s] = 200.0
-# Structural parameter
-w = 5.0
-# Waist of the lateral detection area
-a [100 nm] = 1.0
+# Diffusion coefficient of first component
+D1 [10µm²/s] = 200.0
+# Diffusion coefficient of second component
+D2 [10µm²/s] = 20.0
+# Fraction of species one
+F1 = 1.0
+# Half waist of the lateral detection area (w0 = 2*a)
+a [100nm] = 1.0
 # Particle number
 n = 5.0
 # Scan radius
-R [100 nm] = 5.0
+R [100nm] = 3.850
 # Frequency
-f [kHz] = 20.0
+f [kHz] = .2
 # Triplet fraction
 T = 0.1
 # Triplet time
 tautrip [ms] = 0.001
+offset = 0.00001
 
 # The user may wish to substitute certain parts of the correlation function
-# with other values to keep the formula simple. This can be done by using the
-# prefix "g". All common mathematical functions, such as "sqrt()" or "exp()"
-# may be used. For convenience, "pi" and "e" are available as well.
+# with other values to keep the formula simple. This can be done by using 
+# the prefix "g". All common mathematical functions, such as "sqrt()" or 
+# "exp()" may be used. For convenience, "pi" and "e" are available as well.
 
-gTrip = 1. + T/(1-T)*exp(-tau/tautrip)
-gScan = exp(-(R*sin(pi*f*tau))**2/(a**2+D*tau))
-gTwoD = 1./(1.+D*tau/a**2)
-gOneD = 1./sqrt(1.+D*tau/(w*a)**2)
-gThrD = gTwoD * gOneD
+gTriplet = 1. + T/(1-T)*exp(-tau/tautrip)
+gScan1 = exp(-(R*sin(pi*f*tau))**2/(a**2+D1*tau))
+gScan2 = exp(-(R*sin(pi*f*tau))**2/(a**2+D2*tau))
+gTwoD1 = F1/(1.+D1*tau/a**2)
+gTwoD2 = (1-F1)/(1.+D2*tau/a**2)
 
 # The final line with the correlation function should start with a "G"
 # before the "=" sign.
 
-G = 1./n * gThrD * gScan * gTrip
-
+G = offset +  1./n * (gTwoD1 * gScan1 + gTwoD2 * gScan2) * gTriplet
 \end{Verbatim}
-\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig:extxt}}
+\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig.csfcs}}
 \end{figure}
+
+
+\subsection{Correlation curve file format}
+\label{sec:hacke.csv}
+If a file format is not yet listed, the correlation data could be converted into a compatible text-file (*.csv) or bundles of *.csv files within a compressed archive *.zip. For reformatting the following points should be considered:
+
+\begin{itemize}
+\item \textbf{Encoding}: \textit{PyCorrFit} uses the standard Unicode character set (UTF-8). However, since no special characters are needed to save experimental data, other encodings may also work. New line characters are \texttt{{\textbackslash}r{\textbackslash}n} (Windows).
+\item \textbf{Comments}: Lines starting with a hash (\texttt{\#}), empty lines, or lines containing only white space characters are ignored. Exceptions are the keywords listed below.
+\item \textbf{Units}: PyCorrFit works with units/values for:
+
+\begin{itemize}
+\item Time: \SI{1}{ms}
+\item Intensity: \SI{1}{kHz}
+\item Amplitude offset: $G(0) = 0$ (not 1)
+\end{itemize}
+\item \textbf{Keywords:}\footnote{Keywords are case-insensitive.} \textit{PyCorrFit} reads the first two columns containing numerical values. The first table (non-hashed) is recognized as the correlation data containing the lag times in the first and the correlation data in the second column. (In case the *.csv file has been generated with \textit{PyCorrFit} up to three additional columns containing the fit function are ignored). The table ends, when the keyword \texttt{\# BEGIN TRACE} appears. Below this line the time and the signal values should be contained in the first two columns. If cross-correlation data have to be imported a second trace can be entered after the keyword \texttt{\# BEGIN SECOND TRACE}.
+\item \textbf{Tags:}\footnote{Tags are case-insensitive.} Channel information can be entered using defined syntax in a header. The keyword 
+\begin{center}
+\vspace{-1em}
+ \texttt{\# Type AC/CC Autocorrelation}
+\vspace{-1em}
+\end{center}
+  assigns the tag \texttt{AC} and the keyword
+\begin{center}
+\vspace{-1em}
+  {\texttt{\# Type AC/CC Crosscorrelation}}
+\vspace{-1em}
+\end{center}
+ assigns the tag \texttt{CC} to the correlation curve. These strings are consistently displayed in the user interface of the respective data page in \textit{PyCorrFit}. If no data type is specified, autocorrelation is assumed. Tags may be specified with additional information like channel numbers, e.g. 
+\begin{center}
+\vspace{-1em}
+ \texttt{\# Type AC/CC Autocorrelation \_01}.
+\vspace{-1em}
+\end{center}
+In this case the tag \texttt{AC\_01} is generated. This feature is useful to keep track of the type of curve during the fitting and when post-processing the numerical fit results.
+\end{itemize}
 
 
 \section{Theoretical background}
