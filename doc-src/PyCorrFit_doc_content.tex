@@ -335,7 +335,7 @@ When choosing a model from the \textit{Models} menu, a new page opens and the mo
 \rule{0pt}{3ex}
 \end{tabular}
 
-\noindent There is also a collection of models for FCS setups with TIR excitation (\hyref{Section}{sec:imle.tirfc}):
+\noindent There is also a collection of models for FCS setups with TIR excitation (\hyref{Section}{sec:imple.tirfc}):
 
 \begin{tabular}{l l}
 \rule{0pt}{3ex} - TIR (Gaussian/Exp.): 3D & 3D diffusion \\
@@ -344,31 +344,31 @@ When choosing a model from the \textit{Models} menu, a new page opens and the mo
 \rule{0pt}{3ex}
 \end{tabular}
 
-
-In addition, there are may be user defined model functions which have been uploaded previously via File / Import model (\hyref{Section}{sec:menub.filem.impor}).
+\noindent
+In addition, there are may be user defined model functions which have been imported previously via \textit{File / Import model} (\hyref{Section}{sec:menub.filem.impor}).
 
 \subsection{Preferences}
 \label{sec:menub.prefe}
-\paragraph*{Latex} If the user has a Tex distribution (e.g. MikTex for Windows) installed, checking the ``Latex'' option will open a separate, TeX formatted panel via the \textit{Current page / Save […] as image} commands. The contains some interactive options for display. From there, in a second step, the image can be exported as *.png or *.svg.
+\paragraph*{Use Latex} If the user has a Tex distribution installed (e.g. MikTex for Windows), checking this option will generate \LaTeX formatted plots via the \textit{Current page / Save […] as image} commands.
 
-\paragraph*{Verbose} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:menub.curre.savec}), the plot will be displayed instead of saved. If \LaTeX is active these plots will also be TeX-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
+\paragraph*{Verbose mode} If checked, this will cause the \textit{PyCorrFit} to display graphs that would be hidden otherwise. In weighted fitting with a spline, the spline function used for calculating the weights for each data points is displayed\footnote{For obvious reasons, such a plot is not generated when using the iteratively improved \textit{Model function} or the actual \textit{Average} correlation curve for weighted fitting.}. When saving the correlation curve as an image (\hyref{Section}{sec:menub.curre.savec}), the plot will be displayed instead of saved. If  ``Use Latex'' is checked, these plots will also be Latex-formatted. The advantage in displaying plots is the ability to zoom or rescale the plot from within \textit{PyCorrFit}.
 
 \paragraph*{Show weights}
-Checking the option \textit{Show weights} will produce two lines showing the weights for each data point of the correlation function in the plot, as well as in the exported image. Note that the weights are always exported when using the \textit{Save data (*.csv)} command from the \textit{Current page} menu.
+Checking this option will visualize the weights for each data point of the correlation function in the plot, as well as in the exported image. Note that the weights are always exported when using the \textit{Save data (*.csv)} command from the \textit{Current page} menu.
 
 \subsection{Help}
 \label{sec:menub.help}
-\paragraph*{Documentation}
+\paragraph*{Documentation.}
 This entry displays this documentation using the systems default PDF viewer.
-\paragraph*{Wiki}
+\paragraph*{Wiki.}
 This entry displays the wiki of \textit{PyCorrFit} on \textit{GitHub}. Everyone who registers with \textit{GitHub} will be able to make additions and modifications. The wiki is intended for end-users of \textit{PyCorrFit} to share protocols or to add other useful information.
 \paragraph*{Update}
 establishes a link to the \textit{GitHub} website to check for a new release; it also provides a few web links associated with \textit{PyCorrFit}
-\paragraph*{Shell}
+\paragraph*{Shell.}
 This gives Shell-access to the functions of \textit{PyCorrFit}. It is particularly useful for trouble-shooting.
-\paragraph*{Software}
+\paragraph*{Software.}
 This lists the exact version of \textit{Python} and the corresponding modules with which \textit{PyCorrFit} is currently running.
-\paragraph*{About}
+\paragraph*{About.}
 Information of the participating developers, the license, and documentation writers.
 
 
