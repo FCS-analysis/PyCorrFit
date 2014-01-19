@@ -48,14 +48,16 @@ This documentation addresses the processing of correlation curves with \textit{P
 \label{sec:intro.prere.softw}
 The latest version of \textit{PyCorrFit} can be obtained from the internet at \url{http://pycorrfit.craban.de}.
 \begin{itemize}
-\item \textbf{MacOSx}.
-Binary files for MacOSx $>$10.6.8 are available from the download page but have not yet been fully tested for stability.
-\item \textbf{Windows}.
-For Windows XP or Windows 7, stand-alone binary executables are available from the download page. 
-\item \textbf{Linux}.
-There are executable binaries for widely used distributions (e.g. Ubuntu).
-\item \textbf{Sources}
-The program was written in Python, keeping the concept of cross-platform programming in mind. To run \textit{PyCorrFit} on any other operating system, the installation of Python v.2.7 is required. To obtain the latest source, visit \textit{PyCorrFit} at GitHub (\url{https://github.com/paulmueller/PyCorrFit}). \textit{PyCorrFit} depends on the following python modules:\\
+\item \textbf{MacOSx.}
+Binary files for Mac OSx 10.6.8 and later are available from the download page.
+\item \textbf{Windows.}
+For Windows XP and later, stand-alone binary executables are available from the download page. 
+\item \textbf{Ubuntu/Debian.}
+PyCorrFit is available from the Debian repositories and can be installed via the operating systems packaging tool (e.g. \texttt{apt-get install pycorrfit}). There are also binaries for Ubuntu at the PyCorrFit download page.
+\item\textbf{Pypi.} The program was written in Python, keeping the concept of cross-platform programming in mind. To run \textit{PyCorrFit} on any other operating system, the installation of Python v.2.7 is required. \textit{PyCorrFit} is included in the package index of \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) and can be installed via
+\texttt{pip~install~pycorrfit}\footnote{See also the wiki article at \url{https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip}}.
+\item \textbf{Sources.}
+You can also directly download the source code at any developmental stage. Visit \textit{PyCorrFit} at GitHub (\url{https://github.com/paulmueller/PyCorrFit}). \textit{PyCorrFit} depends on the following python modules:\\
 \texttt{\\
 python-matplotlib ($\geq$ 1.0.1) \\
 python-numpy ($\geq$ 1.5.1) \\
@@ -65,29 +67,21 @@ python-yaml \\
 python-wxtools \\
 python-wxgtk2.8-dbg \\
 }
-\\
-For older versions of Ubuntu, some of the above package versions are not listed in the package repository. To enable the use of \textit{PyCorrFit} on those systems, the following tasks have to be performed:
-\begin{itemize}
-\item[ ] \textbf{matplotlib}. The tukss-ppa includes version 1.0.1. After adding the repository (\texttt{apt-add-repository ppa:tukss/ppa}), matplotlib can be installed as usual.
-\item[ ] \textbf{numpy}. The package from a later version of Ubuntu can be installed: \url{https://launchpad.net/ubuntu/+source/python-numpy/}
-\item[ ] \textbf{scipy}. The package from a later version of Ubuntu can be installed: \url{https://launchpad.net/ubuntu/+source/python-scipy/}
-\item[ ] \textbf{sympy}. To enable importing external model functions, sympy is required. It is available from \url{http://code.google.com/p/sympy/downloads/list}. Unpacking the archive and executing \texttt{python setup.py install} within the unpacked directory will install sympy.
 \end{itemize}
-\end{itemize}
-Alternatively \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) can be used to install up-to-date python modules.
+
 
 \vspace{1em}
-\noindent \textbf{\LaTeX}. \textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize \LaTeX to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages \LaTeX \, dvipng, Ghostscript and the scientific \LaTeX \,packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
+\noindent \textbf{\LaTeX .} \textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize \LaTeX to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, the packages \LaTeX \, dvipng, Ghostscript and the scientific \LaTeX \,packages \texttt{texlive-science} and \texttt{texlive-math-extra} need to be installed.
 
-\subsection{Running \textit{PyCorrFit}}
+\subsubsection{Running \textit{PyCorrFit}}
 \label{sec:intro.runni}
-\paragraph*{Windows}
+\paragraph*{Windows.}
 Download the executable file and double-click on the \texttt{PyCorrFit.exe} icon.
-\paragraph*{Linux/Ubuntu}
-Make sure the binary has the executable bit set, then simply double-click on the binary  \texttt{PyCorrFit}.
-\paragraph*{Mac OSx}
+\paragraph*{Ubuntu/Debian.}
+\texttt{PyCorrFit} is integrated into Debian and thus behaves like any other application.
+\paragraph*{Mac OSx.}
 When downloading the archive \texttt{PyCorrFit.zip}, the binary should be extracted automatically (if not, extract the archive) and you can double-click it to run \textit{PyCorrFit}.
-\paragraph*{from source}
+\paragraph*{from source.}
 Invoke \texttt{python PyCorrFit.py} from the command line.
 
 \subsection{Workflow}
@@ -114,24 +108,23 @@ The fitting itself is usually explored with a representative data set. Here, the
 
 Together with a system's terminal of the platform on which \textit{PyCorrFit} was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{Section}{sec:intro.runni}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
 
-There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the curser keys (left/right). There can be only one activated page for which the tab appears highlighted.
+There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the arrow keys (left/right). There can be only one activated page for which the tab appears highlighted.
 
 \begin{figure}[h]
-\label{fig:mainwin}
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}})$. }
+ \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}})$. \label{fig:mainwin} }
 \end{figure}
 
-The active page displaying a correlation function is divided in two panels. At the left hand side the page\textit{ }shows a pile of boxes containing values or fitting options associated with the current model and data set: 
+The active page displaying a correlation function is divided in two panels (\hyref{Figure}{fig:mainwin}). At the left hand side the page shows a pile of boxes containing values or fitting options associated with the current model and data set: 
 
 \begin{itemize}
-\item \textit{Data set} specifies the assigned model abbreviation in parantheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
-\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function \hyref{Chapter}{sec:theor}. Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:menub.filem.impor}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:menub.filem.saves}). 
+\item \textit{Data set} specifies the assigned model abbreviation in parentheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
+\item \textit{Model parameters} displays the values which determine the current shape of the assigned model function (\hyref{Chapter}{sec:theor}). Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:menub.filem.impor}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:menub.filem.saves}). 
 \item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles $n$ or amplitude fractions associated with different correlation times ($n_1$, $n_2$, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition, the correlation curves can be normalized, to facilitate a visual comparison of the decay.
-\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighborhood. The number of neighboring data points at each side ($j > 0$) can be set. For such a smooth representation a 5-knot spline function or the model function with the current parameter set can be used. The latter should improve when repeatedly fitting.
+\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighbourhood. The number of neighbouring data points at each side ($j > 0$) can be set. For such a smooth representation a  spline function or the model function with the current parameter set can be used. The default number of knots for the spline function is 5. This number can be manually edited in the dropdown-selector. To view the spline function after each fit, \textit{Preferences/Verbose mode} has to be checked.
 \end{itemize}
-At the right hand side are two graphics windows. The dimensionless correlation functions $G(\tau)$ are plotted against the lag time ($\tau$) in logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero ($x$-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the $x$-axis at any time scale.
+At the right hand side are two graphics windows. The dimensionless correlation functions $G(\tau)$ are plotted against the lag time ($\tau$) on a logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero ($x$-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the $x$-axis at any time scale.
 
 The main window can be rescaled as a whole to improve data representation. In addition, to zoom in, one can drag a rectangle within the plot area; a double click then restores the initial scale. Experimental data points are linked by grey lines, the state of the model function is shown in blue. When a weighted fit was applied, the variance of the fit is calculated for each data point and displayed in cyan.
 
@@ -161,8 +154,8 @@ Correlation data must be fitted to models describing the underlying physical pro
 \item Inverse area: \SI{100}{\mu m^{-2}} 
 \item Inverse volume: \SI{1000}{\mu m^{-3}} 
 \end{itemize}
-\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expresions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetic (not numerical) characters. \texttt{G} and \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
-\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use placeholders. Placeholders start with a lowercase ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
+\item \textbf{Parameters:} To define a new model function new parameters can be introduced. Parameters are defined by a sequence of strings separated by white spaces containing name, the dimension in angular brackets, the equal sign, and a starting value which appears in the main window for fitting. For example: \texttt{D [\SI{10}{\mu m^ 2 s^{-1}}] = 5.0}. User defined dimensions are only for display; thus mathematical expressions must correctly account for their conversion from internal units of \textit{PyCorrFit}. The parameter names contain only alphabetic (not numerical) characters. \texttt{G} and \texttt{g}, as well as the numbers \texttt{e} and \texttt{pi} are already mapped and cannot be used freely.
+\item \textbf{Placeholder:} When defining composite mathematical expressions for correlation functions one can use place-holders. Place-holders start with a lower-case ‘g’. For example, the standard, Gaussian 3D diffusion in free solution may be written as
 
 \begin{itemize}
 \item \texttt{gTrp = 1+ T/(1-T)*exp(-tau/tautrip)}
@@ -170,7 +163,7 @@ Correlation data must be fitted to models describing the underlying physical pro
 \item \texttt{gThrD = 1/sqrt(1+tau/(taudiff*S**2))}
 \end{itemize}
 \end{itemize}
-The individual parts are then combined in the last line of the *.txt file, where the correlation function is defined starting with uppercase ’G’:
+The individual parts are then combined in the last line of the *.txt file, where the correlation function is defined starting with upper-case ’G’:
 
 \begin{equation}
 \texttt{G = 1/n * gTrp * gTwoD * gThrD} \notag
@@ -351,11 +344,11 @@ Below the columns, there are again 5 rows of hashed comments followed by the int
 
 \subsubsection{Current Page / Save correlation as image}
 \label{sec:menub.curre.savec}
-For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable $\tau$ (= tau) cannot be displayed using Unicode with Windows. A \LaTeX fornatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
+For a quick documentation, the correlation curve can be exported as a compressed bitmap (*.png). The plot contains a legend and the actual values and errors of the varied parameters, however, not the fixed parameters. Note that the variable $\tau$ (= tau) cannot be displayed using Unicode with Windows. A \LaTeX formatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
 
 \subsubsection{Current Page / Save trace view as image}
 \label{sec:menub.curre.savet}
-For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). A \LaTeX fornatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
+For a quick documentation the intensity from the \textit{Trace view} panel can be exported as a compressed bitmap (*.png). A \LaTeX formatted image can be exported when the option \textit{verbose} was checked under preferences (\hyref{Section}{sec:menub.prefe}.
 
 \subsubsection{Current Page / Close page}
 \label{sec:menub.curre.close}
@@ -484,7 +477,7 @@ In the first place, \textit{PyCorrFit} was designed to evaluate FCS data, theref
 
 FCS is a method to determine molecular properties of stochastically moving fluorescent molecules in solutions \cite{Elson1974,Magde1974,Magde1978}. The solution may be a liquid volume (3D) or a lipid membrane (2D) \cite{Widengren1998,Korlach1999,Schwille1999}. The diffusion may be free or anomalous due to barriers or obstacles \cite{Wachsmuth2000,Weiss2003}. The size of the diffusing particles range from synthetic dyes (800 Da) to large complexes or aggregates of labelled macromolecules (several MDa). Particles which differ in size or emission behaviour can be discriminated. Therefore FCS is a powerful tool to study molecular recognition \cite{Bacia2006,Kim2007}.
 
-The measurement principle is to illuminate a small open volume within solutions of fluorescent molecules and to detect their molecular transits with a sub-microsecond time resolution by sensitive optics. The stochastic movements and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parameterized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting, \hyref{Figure}{fig.mainwin}).
+The measurement principle is to illuminate a small open volume within solutions of fluorescent molecules and to detect their molecular transits with a sub-microsecond time resolution by sensitive optics. The stochastic movements and other processes affecting fluorescence emission generate a fluctuating signal. The typical time pattern of these fluctuations can be revealed by a correlation analysis. The shape and time range of the decaying correlation function is defined by the exact geometry of the FCS detection volume in conjunction with the properties of the molecular system at hand. To derive hard numbers, the system must be parametrized as a theoretical model. Once the geometry of the detection volume is characterized, parameters can be determined by comparing the model function with experimental data (mathematical fitting, \hyref{Figure}{fig.mainwin}).
 
 \subsection{Framework for a single type of fluorescent dye}
 \label{sec:theor.frame}
@@ -568,7 +561,7 @@ Due to the sums in \hyref{Equation}{eq12}, adding up individual contributions of
 	\label{eq14}
 	G^{\rm D}(\tau) = \sum_{k=1}^m F_k G^{\rm D}(\tau) = \frac{1}{n} \sum_{k=1}^m F_k \left(1+\frac{\tau}{\tau_{{\rm diff},k}} \right) ^{-1} \left(1+\frac{\tau}{SP^2 \, \tau_{{\rm diff},k}} \right)
 	\end{equation}
-Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are overrepresented \cite{Thompson1991}
+Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are over-represented \cite{Thompson1991}
 	\begin{equation}
 	\label{eq15}
 	G^{\rm D}(\tau) = \frac{1}{n \left( \sum_k F_k \alpha_k \right)^2} \sum_k F_k \alpha_k^2 G_k^D(\tau)
