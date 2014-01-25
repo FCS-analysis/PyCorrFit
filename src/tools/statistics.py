@@ -99,7 +99,7 @@ class Stat(wx.Frame):
         ## Page selection as in average tool
         Pagetext = wx.StaticText(self.panel, 
                              label="Curves ")
-        Psize = text.GetSize()[0] - Pagetext.GetSize()[0]
+        Psize = text.GetSize()[0]/2
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
                                        size=(Psize,-1))
         # Set number of pages
@@ -112,14 +112,19 @@ class Stat(wx.Frame):
         ## Plot parameter dropdown box
         self.PlotParms = self.GetListOfPlottableParms()
         Parmlist = self.PlotParms
-        DDtext = wx.StaticText(self.panel, 
-                             label="Plot parameter ")
-        DDsize = text.GetSize()[0] - DDtext.GetSize()[0]
-        self.WXDropdown = wx.ComboBox(self.panel, -1, "", size=(DDsize,-1),
+        DDtext = wx.StaticText(self.panel, label="Plot parameter ")
+        self.WXDropdown = wx.ComboBox(self.panel, -1, "", size=(Psize,-1),
                         choices=Parmlist, style=wx.CB_DROPDOWN|wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnDropDown, self.WXDropdown)
         self.Bind(wx.EVT_TEXT, self.OnDropDown, self.WXTextPages)
         self.WXDropdown.SetSelection(0)
+        ## Show Average and SD
+        textavg = wx.StaticText(self.panel, label="Average ")
+        textsd = wx.StaticText(self.panel, label="Standard deviation ")
+        self.WXavg = wx.TextCtrl(self.panel, size=(Psize,-1))
+        self.WXsd = wx.TextCtrl(self.panel, size=(Psize,-1))
+        self.WXavg.SetEditable(False)
+        self.WXsd.SetEditable(False)
         # Create space for parameters
         self.box = wx.StaticBox(self.panel, label="Export parameters")
         self.masterboxsizer = wx.StaticBoxSizer(self.box, wx.VERTICAL)
@@ -134,15 +139,24 @@ class Stat(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnSaveTable, self.btnSave)
         # Add elements to sizer
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        #self.topSizer.Add(text)
-        Psizer = wx.BoxSizer(wx.HORIZONTAL)
-        Psizer.Add(Pagetext)
-        Psizer.Add(self.WXTextPages)
-        DDsizer = wx.BoxSizer(wx.HORIZONTAL)
-        DDsizer.Add(DDtext)
-        DDsizer.Add(self.WXDropdown)
-        self.topSizer.Add(Psizer)
-        self.topSizer.Add(DDsizer)
+        GridAll = wx.FlexGridSizer(rows=4, cols=2, vgap=5, hgap=5)
+        GridAll.Add(Pagetext)
+        GridAll.Add(self.WXTextPages)
+        GridAll.Add(DDtext)
+        GridAll.Add(self.WXDropdown)
+        GridAll.Add(textavg)
+        GridAll.Add(self.WXavg)
+        GridAll.Add(textsd)
+        GridAll.Add(self.WXsd)
+        #Psizer = wx.BoxSizer(wx.HORIZONTAL)
+        #Psizer.Add(Pagetext)
+        #Psizer.Add(self.WXTextPages)
+        #DDsizer = wx.BoxSizer(wx.HORIZONTAL)
+        #DDsizer.Add(DDtext)
+        #DDsizer.Add(self.WXDropdown)
+        #self.topSizer.Add(Psizer)
+        #self.topSizer.Add(DDsizer)
+        self.topSizer.Add(GridAll)
         self.topSizer.Add(self.masterboxsizer)
         self.topSizer.Add(self.btnSave)
         # Set size of window
@@ -455,11 +469,18 @@ class Stat(wx.Frame):
             maxpage =  np.max(np.array(plotcurve)[:,0])
         except:
             maxpage = 0
+            self.WXavg.SetValue("-")
+            self.WXsd.SetValue("-")
         else:
+            # Plot data
             plotavg = [[0, avg], [maxpage, avg]]
             lineclear = plot.PolyLine(plotavg, colour="black",
             style= wx.SHORT_DASH)
             plotlist.append(lineclear)
+            # Update Text control
+            self.WXavg.SetValue(str(avg))
+            self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:,1])))
+            
         # Draw
         self.canvas.Draw(plot.PlotGraphics(plotlist, 
                              xLabel='page number', 
