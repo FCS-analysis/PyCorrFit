@@ -181,7 +181,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     if Page.normparm is not None:
         fitlabel += ur", normalized to "+Page.active_parms[0][Page.normparm]
 
-    ## Check if we can use latex or plotting:
+    ## Check if we can use latex for plotting:
     (r1, path) = findprogram("latex")
     (r2, path) = findprogram("dvipng")
     # Ghostscript
@@ -355,7 +355,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         labels = [tabtitle+" A", tabtitle+" B"]
     else:
         return
-    ## Check if we can use latex or plotting:
+    ## Check if we can use latex for plotting:
     (r1, path) = findprogram("latex")
     (r2, path) = findprogram("dvipng")
     # Ghostscript
@@ -429,7 +429,7 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
         plt.close()
     except:
         pass
-    ## Check if we can use latex or plotting:
+    ## Check if we can use latex for plotting:
     (r1, path) = findprogram("latex")
     (r2, path) = findprogram("dvipng")
     # Ghostscript
