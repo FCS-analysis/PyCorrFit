@@ -205,20 +205,20 @@ class Stat(wx.Frame):
                 headparm = list()
                 bodyparm = list()
                 for parm in Infodict[key]:
-                    parminlist = False
+                    #parminlist = False
                     try:
                         for fitp in Infodict["fitting"]:
                             parmname = parm[0]
                             errname = "Err "+parmname
                             if fitp[0] == errname:
                                 headparm.append(parm)
-                                parminlist = True
+                                #parminlist = True
                                 headparm.append(fitp)
                     except:
                         # Maybe there was not fit...
                         pass
-                    if parminlist == False:
-                        bodyparm.append(parm)
+                    #if parminlist == False:
+                    headparm.append(parm)
             elif key == "fitting":
                 for fitp in Infodict[key]:
                     # We added the error data before in the parameter section
@@ -244,12 +244,19 @@ class Stat(wx.Frame):
         checked[:len(head)] = True
         # A list with additional strings that should be default checked if found
         # somewhere in the data.
-        checklist = ["cpp", "duration", "bg rate"]
+        checklist = ["cpp", "duration", "bg rate", "avg.", "Model name"]
         for i in range(len(Info)):
             item = Info[i]
             for checkitem in checklist:
                 if item[0].count(checkitem):
                     checked[i] = True
+        # Alist with strings that should not be checked:
+        checklist = ["Err "]
+        for i in range(len(Info)):
+            item = Info[i]
+            for checkitem in checklist:
+                if item[0].count(checkitem):
+                    checked[i] = False
 
         if return_std_checked:
             return Info, checked
