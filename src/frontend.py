@@ -412,6 +412,8 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSavePlotCorr, menuSavePlotCorr)
         self.Bind(wx.EVT_MENU, self.OnSavePlotTrace, menuSavePlotTrace)
         self.Bind(wx.EVT_MENU, self.OnDeletePage, menuClPa)
+        # Preferences
+        self.Bind(wx.EVT_MENU, self.OnLatexCheck, self.MenuUseLatex)
         # Help
         self.Bind(wx.EVT_MENU, self.OnSoftware, menuSoftw)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
@@ -863,6 +865,44 @@ class MyFrame(wx.Frame):
         # We are aware of the fact, that we just did that
         self.OnFNBPageChanged()
 
+
+    def OnLatexCheck(self,e):
+        """ Checks if we can use latex. If not, create a pop-up window
+            stating so.
+        """
+        uselatex = self.MenuUseLatex.IsChecked()
+        if uselatex == False:
+            # do nothing
+            return
+        ## Check if we can use latex for plotting:
+        (r1, path) = misc.findprogram("latex")
+        (r2, path) = misc.findprogram("dvipng")
+        # Ghostscript
+        (r31, path) = misc.findprogram("gs")
+        (r32, path) = misc.findprogram("mgs") # from miktex
+        r3 = max(r31,r32)
+        if r1+r2+r3 < 3:
+            # Warn the user
+            if platform.system().lower() == 'windows':
+                text = ("Latex plotting features will not work.\n"+
+                        "Please install MiKTeX.\n"+
+                        "http://miktex.org/")
+            elif platform.system().lower() == 'darwin':
+                text = ("Latex plotting features will not work.\n"+
+                        "Please install MacTeX.\n"+
+                        "http://tug.org/mactex/")
+            else:
+                text = ("Latex plotting features will not work.\n"+
+                        "Make sure you have these packages installed:\n"+
+                        "  - latex\n"+
+                        "  - dvipng\n"+
+                        "  - ghostscript\n"+
+                        "  - texlive-science\n"+
+                        "  - texlive-math-extra\n")
+            dlg = wx.MessageDialog(None, text, 'Latex not found', 
+                            wx.OK | wx.ICON_EXCLAMATION)
+            dlg.ShowModal()
+            
 
     def OnLoadBatch(self, e):
         """ Open multiple data files and apply a single model to them
