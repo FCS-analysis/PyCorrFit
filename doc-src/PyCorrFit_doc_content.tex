@@ -514,34 +514,41 @@ A general way to derive theoretical model functions is to evaluate \hyref{Equati
 	P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right) = \frac{1}{\left( 4 \pi D_t \tau \right) ^{3/2}} \exp \left[ - \frac{\left| \vec{r} \,' -\vec{r} \, \right|} {4D_t \tau} \right]
 	\end{equation}
 The propagator $P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right)$ is the conditional probability of a particle with diffusion coefficient $D_t$ to move from $\vec{r}$ to $\vec{r \,'}$ within a time period $\tau$. 
-%To find a particle at position $\vec{r}$ is simply the ratio of  volumes $d^3r/V$.
+The probability to find a particle inside the volume $d^3r$ is simply the ratio of  volumes $d^3r/V$.
  Such a diffusion propagator leads to a Gaussian shaped probability distribution spreading in time when the molecules successively roam the sample volume $V$.
-Assuming that the time average and the ensemble average are equivalent (ergodic theorem), one can write the average signal of a single particle as
+Assuming that the time average and the ensemble average are equivalent (ergodic theorem), the average signal of a single particle is its molecular brightness $q$ normalized to its contribution to the entire volume, because the integral over the detection efficiency function is exactly the effective measurement volume $V_\mathrm{eff}$.
 	\begin{equation}
 	\label{eq5}
-	\langle s(t) \rangle = \frac{V_{\rm eff}}{V} = \frac{\int W(\vec{r}) \,dV}{V}
+	\langle s(t) \rangle = q \frac{\int W(\vec{r}) \,dV}{V} = \frac{V_\mathrm{eff}}{V} q
 	\end{equation}
-and accordingly express the average product of two signals separated by $\tau$
+Accordingly, we can express the average product of two signals separated by $\tau$ as
 	\begin{equation}
 	\label{eq6}
-	\langle s(t) \cdot s(t + \tau) \rangle = \frac{1}{V} \int \int W(\vec{r}) P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'
+	\langle s(t) \cdot s(t + \tau) \rangle = \frac{q^2}{V}\iint W(\vec{r}) P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'
 	\end{equation}
-To use this result one has to reduce $G(\tau)$ to the sum of individual molecular contributions
-	\begin{equation}
-	\label{eq7}
-	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 = \frac{\overbrace{N \langle s(t) \cdot s(t+\tau)\rangle}^{\mbox{\small same particles}} +\overbrace{N(N-1) \langle s(t) \rangle^2}^{\mbox{\small different particles}}}{N^2 \langle s(t) \rangle^2}-1 = \frac{\langle s(t) \cdot s(t+\tau)\rangle}{\langle s(t) \rangle^2}
-	\end{equation}
+With the definition of the signal $S(t)$ and its average $\langle S(t) \rangle$
+\begin{align}
+S(t) &= \Sigma_{k=1}^n s_k(t) \\
+\langle S(t) \rangle &= \Sigma_{k=1}^n \langle s_k(t) \rangle := N \langle s(t) \rangle
+\end{align}
+- where $N$ is the total number of particles in the sample volume $V$ - we can reduce $G(\tau)$ to the sum of individual molecular contributions
+	\begin{align}
+	G(\tau) = \frac{\langle S(t) \cdot S(t+\tau)\rangle}{\langle S(t) \rangle^2}-1 
+	 =& \frac{\overbrace{N \langle s(t) \cdot s(t+\tau)\rangle}^{\mbox{\small same particles}} +\overbrace{N(N-1) \langle s(t) \rangle^2}^{\mbox{\small different particles}}}{N^2 \langle s(t) \rangle^2}-1  \notag \\
+	\approx & \frac{\langle s(t) \cdot s(t+\tau)\rangle}{N \langle s(t) \rangle^2} \label{eq7} 
+	\end{align}
 Inserting \hyref{Equation}{eq5} and \hyref{Equation}{eq6} yields
 	\begin{equation}
 	\label{eq8}
-	G(\tau) = \frac{1}{c} \frac{\int \int W(\vec{r}) P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'}{\left( W(\vec{r}) \,dV \right)^2}
+	G(\tau) = \frac{V}{N} \frac{\iint W(\vec{r}) P_\mathrm{d} \left( \vec{r} \,' | \vec{r},\tau \right) W(\vec{r} \,') dVdV'}{\left( \int W(\vec{r}) \,dV \right)^2}
 	\end{equation}
+Note that the molecular brightness $q$ cancels; when considering multiple species with different $q$, this is no longer the case.
 Solving these integrals for the confocal detection scheme yields a relatively simple equation containing the diffusion coefficient $D_t$ (molecular property) and the $1/e^2$ decay lengths $w_0$ and $z_0$ capturing the dimension of the Gaussian detection volume transversal and parallel to the optical axis, respectively (instrumental properties).
 	\begin{equation}
 	\label{eq9}
 	G(\tau) = \frac{1}{n} \left(1+\frac{4 D_t \tau}{w_0^2} \right) ^{-1} \left(1+\frac{4D_t \tau}{z_0^2} \right)^{-1/2}
 	\end{equation}
-The inverse intercept $(G(0))^{-1}$ is proportional to the total concentration of oberved particles $C = n/V_{\rm eff} = n/ (\pi^{3/2}w_0^2z_0)$. It is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $\textit{SP}=z_0^2/w_0^2$ as a measure of the elongated detection volume. Replacement finally yields the well known autocorrelation function for 3D diffusion in a confocal setup (Model ID 6012)
+The inverse intercept $(G(0))^{-1}$ is proportional to the total concentration of oberved particles $C = N/V =  n/V_{\rm eff} = n/ (\pi^{3/2}w_0^2z_0)$. It is common to define the diffusion time $\tau_{\rm diff} = {w_0}^2/4D_t$ and the structural parameter $\textit{SP}=z_0^2/w_0^2$ as a measure of the elongated detection volume. Replacement finally yields the well known autocorrelation function for 3D diffusion in a confocal setup (Model ID 6012)
 	\begin{equation}
 	\label{eq10}
 	G(\tau) \stackrel{\rm def}{=} G^{\rm D}(\tau) = \frac{1}{n} \overbrace{ \left(1+\frac{\tau}{\tau_{\rm {diff}}} \right) ^{-1}}^{\rm 2D} \overbrace{ \left(1+\frac{\tau}{\textit{SP}^2 \, \tau_{\rm {diff}}} \right)^{-1/2}}^{\rm 3D}
