@@ -113,7 +113,7 @@ There are three gateways for experimental data into a pre-existing or a new \tex
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
- \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{0.28}{\mu m^2s^{-1}})$. \label{fig:mainwin} }
+ \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{28}{\mu s})$. \label{fig:mainwin} }
 \end{figure}
 
 The active page displaying a correlation function is divided in two panels (\hyref{Figure}{fig:mainwin}). At the left hand side the page shows a pile of boxes containing values or fitting options associated with the current model and data set: 
@@ -350,7 +350,7 @@ Information of the participating developers, the license, and documentation writ
 \label{sec:hacke}
 \subsection{External model functions}
 \label{sec:hacke.extmod}
-\textit{PyCorrFit} supports the import of your own model functions. If your model function is not implemented, i.e. not available in the \textit{Models} menu, then this is the easiest way to make \textit{PyCorrFit} work with your model.
+\textit{PyCorrFit} supports the import of your own model functions. If your model function is not implemented, i.e. not available in the \textit{Models} menu, writing a short text file containing a model description is the easiest way to make \textit{PyCorrFit} work.
 Some examples can be found at GitHub in the \textit{PyCorrFit} repository, e.g. circular scanning FCS \cite{Petrasek2008} (\hyref{Figure}{fig:csfcs}) or a combination of diffusion and directed flow \cite{Brinkmeier1999}. Model functions are imported as text files (*.txt) that must follow a certain format and syntax:
 \begin{itemize}
 \item \textbf{Encoding}: \textit{PyCorrFit} can interpret the standard Unicode character set. The model files have to be encoded in \textit{UTF-8}.
@@ -431,7 +431,7 @@ gTwoD2 = (1-F1)/(1.+D2*tau/a**2)
 
 G = offset +  1./n * (gTwoD1 * gScan1 + gTwoD2 * gScan2) * gTriplet
 \end{Verbatim}
-\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS.\label{fig:csfcs}}
+\mycaption{user defined model function for PyCorrFit}{The working example shows a model function for circular scanning FCS (see also its appearance in the \textit{Main window} \hyref{Figure}{fig:csfcsplot} \label{fig:csfcs}}
 \end{figure}
 
 \subsection{Internal model functions}
@@ -557,7 +557,7 @@ For confocal FCS, both the detection volume $W(\vec{r})$ and the propagator for 
 
 \subsection{Autocorrelation of multiple species}
 \label{sec:theor.autoc}
-Very often in FCS, one observes more than one dynamic property. Besides diffusion driven number fluctuations, a fluorophore usually shows some kind of inherent blinking, due to triplet state transitions (organic dyes) or protonation dependent quenching (GFPs).
+Very often in FCS, one observes more than one dynamic property. Besides diffusion driven number fluctuations, a fluorophore usually shows some kind of inherent blinking, due to triplet state transitions (organic dyes) or protonation dependent quenching (GFPs) \cite{Widengren1995}}.
 	\begin{equation}
 	\label{eq11}
 	G(\tau) \stackrel{\rm def}{=} G^{\rm T}(\tau) G^{\rm D}(\tau) = \left( 1+ \frac{T}{1-T} \exp\left[-\frac{\tau}{\tau_{\rm trp}} \right] \right)G^{\rm D}(\tau)
@@ -579,12 +579,12 @@ Due to the sums in \hyref{Equation}{eq12}, adding up individual contributions of
 	\label{eq14}
 	G^{\rm D}(\tau) = \sum_{k=1}^m F_k G^{\rm D}(\tau) = \frac{1}{n} \sum_{k=1}^m F_k \left(1+\frac{\tau}{\tau_{{\rm diff},k}} \right) ^{-1} \left(1+\frac{\tau}{\textit{SP}^2 \, \tau_{{\rm diff},k}} \right)
 	\end{equation}
-Up to three diffusion times can usually be discriminated ($m = 3$) \{Meseth, 1999 \# 1131\}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are over-represented \cite{Thompson1991}
+Up to three diffusion times can usually be discriminated ($m = 3$) \cite{Meseth1999}. Note that this assumes homogenous molecular brightness of the different diffusion species. One of the molecular brightness values $q_k$ is usually taken as a reference ($\alpha_k = q_k/q_1$). Brighter particles are over-represented \cite{Thompson1991}
 	\begin{equation}
 	\label{eq15}
 	G^{\rm D}(\tau) = \frac{1}{n \left( \sum_k F_k \alpha_k \right)^2} \sum_k F_k \alpha_k^2 G_k^D(\tau)
 	\end{equation}
-Inhomogeneity in molecular brightness affects both the total concentration of observed particles as well as the real molar fractions $F_k^{\rm cor}$
+Inhomogeneity in molecular brightness affects both the total concentration of observed particles as well as the real molar fractions $F_k^{\rm cor}$ \cite{Thompson1991}
 	\begin{equation}
 	\label{eq16}
 	n = \frac{1}{G^{\rm D}(0)} \frac{\sum_k F_k^{\rm {cor}} \alpha_k^2}{\left( \sum_k F_k^{\rm {cor}} \alpha_k \right)^2} \quad\mbox {with} \quad F_k^{\rm {cor}} = \frac{F_k/\alpha_k^2}{\sum_k F_k/\alpha_k}
