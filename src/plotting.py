@@ -87,6 +87,11 @@ def escapechars(string):
 
 def latexmath(string):
     """ Format given parameters to nice latex. """
+    if string == "offset":
+        # prohibit the very often "offset" to be displayed as variables
+        return r"\mathrm{offset}"
+    elif string == "SP":
+        return r"\mathrm{SP}"
     string = codecs.decode(string, "UTF-8")
     unicodechars = dict()
     #unicodechars[codecs.decode("τ", "UTF-8")] = r"\tau"
