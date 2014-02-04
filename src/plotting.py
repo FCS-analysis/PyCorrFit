@@ -157,19 +157,20 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     labelweights = ur"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                Page.active_parms[1])
-    # Error parameters with nice look
-    errparmsblank = Page.parmoptim_error
-    if errparmsblank is None:
-        errparms = None
-    else:
-        errparms = dict()
-        for key in errparmsblank.keys():
-            newkey, newparm = mdls.GetHumanReadableParameterDict(Page.modelid,
-                                                        key, errparmsblank[key])
-            errparms[newkey] = newparm
-    parmids = np.where(Page.active_parms[2])[0]
-    labels = np.array(labels)[parmids]
-    parms = np.array(parms)[parmids]
+    ## According to issue #54, we remove fitting errors from plots
+    ## Error parameters with nice look
+    #errparmsblank = Page.parmoptim_error
+    #if errparmsblank is None:
+    #    errparms = None
+    #else:
+    #    errparms = dict()
+    #    for key in errparmsblank.keys():
+    #        newkey, newparm = mdls.GetHumanReadableParameterDict(Page.modelid,
+    #                                                    key, errparmsblank[key])
+    #        errparms[newkey] = newparm
+    #parmids = np.where(Page.active_parms[2])[0]
+    #labels = np.array(labels)[parmids]
+    #parms = np.array(parms)[parmids]
     if dataexp is None:
         if tabtitle.strip() == "":
             fitlabel = Page.modelname
@@ -252,22 +253,24 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         #                          by the interpreter :-)
         for i in np.arange(len(parms)):
             text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
-        if errparms is not None:
-            keys = errparms.keys()
-            keys.sort()
-            for key in keys:
-                text += r' \Delta '+latexmath(key)+r" &= " + str(errparms[key]) +r' \\ '
+        ## According to issue #54, we remove fitting errors from plots
+        #if errparms is not None:
+        #    keys = errparms.keys()
+        #    keys.sort()
+        #    for key in keys:
+        #        text += r' \Delta '+latexmath(key)+r" &= " + str(errparms[key]) +r' \\ '
         text += r' \end{split} '
         text += r' \] '
     else:
         text = ur""
         for i in np.arange(len(parms)):
             text += labels[i]+" = "+str(parms[i])+"\n"
-        if errparms is not None:
-            keys = errparms.keys()
-            keys.sort()
-            for key in keys:
-                text += "Err "+key+" = " + str(errparms[key]) +"\n"
+        ## According to issue #54, we remove fitting errors from plots
+        #if errparms is not None:
+        #    keys = errparms.keys()
+        #    keys.sort()
+        #    for key in keys:
+        #        text += "Err "+key+" = " + str(errparms[key]) +"\n"
     # Add some more stuff to the text and append data to a .txt file
     #text = Auswert(parmname, parmoptim, text, savename)
     plt.legend()
