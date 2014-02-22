@@ -34,4 +34,4 @@ import readfiles
 __version__ = doc.__version__
 __author__ = "Paul Mueller"
 __email__ = "paul.mueller@biotec.tu-dresden.de"
-
+__license__ = "GPL v2"
