@@ -257,7 +257,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r'\begin{split}' # ...but they are all concatenated
         #                          by the interpreter :-)
         for i in np.arange(len(parms)):
-            text += r' '+latexmath(labels[i])+r" &= " + str(parms[i]) +r' \\ '
+            text += r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
@@ -269,16 +269,16 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     else:
         text = ur""
         for i in np.arange(len(parms)):
-            text += labels[i]+" = "+str(parms[i])+"\n"
+            text += "{} = {:.3g}\n".format(labels[i], parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
         #    keys.sort()
         #    for key in keys:
         #        text += "Err "+key+" = " + str(errparms[key]) +"\n"
-    # Add some more stuff to the text and append data to a .txt file
-    #text = Auswert(parmname, parmoptim, text, savename)
-    plt.legend()
+
+
+
     logmax = np.log10(xmax)
     logmin = np.log10(xmin)
     logtext = 0.6*(logmax-logmin)+logmin
@@ -315,6 +315,21 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = ""
+    
+
+    # Legend outside of plot
+    # Decrease size of plot to fit legend
+    box = ax.get_position()
+    box2 = ax2.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                     box.width, box.height * 0.9])
+    ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
+                     box2.width, box2.height])
+    
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.55),
+              prop={'size':9})
+    
+    
     if verbose == True:
         plt.show()
     else:
@@ -356,11 +371,14 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     if Page.trace is not None:
         # Set trace
         traces = [Page.trace]
-        labels = [tabtitle]
+        averages = [np.average(Page.trace)]
+        labels = ["{} ({:.2f} kHz)".format(tabtitle, np.average(traces[0][:,1]))]
     elif Page.tracecc is not None:
         # We have some cross-correlation here. Two traces.
         traces = Page.tracecc
-        labels = [tabtitle+" A", tabtitle+" B"]
+        averages = [np.average(traces[0]), np.average(traces[1])]
+        labels = ["{} A ({:.4g} kHz)".format(tabtitle, np.average(traces[0][:,1])),
+                  "{} B ({:.4g} kHz)".format(tabtitle, np.average(traces[1][:,1]))]
     else:
         return
     ## Check if we can use latex for plotting:
@@ -392,16 +410,26 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         plt.plot(time, intensity, '-', 
                  label = labels[i],
                  lw=1)
+                 
     plt.ylabel('count rate [kHz]')
     plt.xlabel('time [s]')
-    # Add some more stuff to the text and append data to a .txt file
-    plt.legend()
+    
+    # Legend outside of plot
+    # Decrease size of plot to fit legend
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                     box.width, box.height * 0.9])
+    plt.legend(loc='upper center', 
+               bbox_to_anchor=(0.5, -0.15),
+               prop={'size':9})
+    
     ## Hack
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = "_trace"
+
     if verbose == True:
         plt.show()
     else:
