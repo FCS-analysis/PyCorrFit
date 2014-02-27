@@ -522,6 +522,7 @@ class MyFrame(wx.Frame):
                 return "abort"      # stop this function - do nothing.
             elif result == wx.ID_YES:
                 self.OnSaveSession()
+                return
             elif result == wx.ID_NO:
                 pass
         # Delete all the pages
