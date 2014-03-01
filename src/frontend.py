@@ -521,8 +521,9 @@ class MyFrame(wx.Frame):
             if result == wx.ID_CANCEL:
                 return "abort"      # stop this function - do nothing.
             elif result == wx.ID_YES:
-                self.OnSaveSession()
-                return
+                filename = self.OnSaveSession()
+                if filename is None:
+                    return
             elif result == wx.ID_NO:
                 pass
         # Delete all the pages
@@ -614,7 +615,11 @@ class MyFrame(wx.Frame):
             if result == wx.ID_CANCEL:
                 return # stop this function - do nothing.
             elif result == wx.ID_YES:
-                self.OnSaveSession()
+                filename = self.OnSaveSession()
+                if filename is None:
+                    # Do not exit. The user pressed abort in the session
+                    # saving dialog.
+                    return
         # Exit the Program
         self.Destroy()
 
@@ -1363,10 +1368,9 @@ class MyFrame(wx.Frame):
         # If no file has been selected, self.filename will be set to 'None'.
         self.dirname, self.filename = opf.SaveSession(self, self.dirname,
           Infodict)
-        #Function_parms, Function_array, Function_trace, self.Background,
-        #Preferences, Comments, ExternalFunctions, Info)
         # Set title of our window
         self.SetTitleFCS(self.filename)
+        return self.filename
 
 
     def OnShell(self, e=None):
