@@ -390,6 +390,11 @@ def openFCS_Single(dirname, filename):
                         corr.append( (np.float(row[0]), np.float(row[1])-1) )
                     corr = np.array(corr)
                 fcscurve = False
+                
+    # Check for correlation at lag-time zero, which lead to a bug (#64)
+    # on mac OSx an potentially affects fitting.
+    if corr[0][0] == 0:
+        corr = corr[1:]
     openfile.close()
     dictionary = dict()
     dictionary["Correlation"] = [corr]
