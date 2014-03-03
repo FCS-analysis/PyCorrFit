@@ -505,7 +505,14 @@ class MyFrame(wx.Frame):
             
 
     def OnClearSession(self,e=None,clearmodels=False):
-        """Open a previously saved session. """
+        """
+            Clear the entire session
+        
+            Returns:
+            "abort" if the user did not want to clear the session
+            "clear" if the session has been cleared and the user did
+                    or did not save the session
+        """
         numtabs = self.notebook.GetPageCount()
         # Ask, if user wants to save current session.
         if numtabs > 0:
@@ -523,7 +530,7 @@ class MyFrame(wx.Frame):
             elif result == wx.ID_YES:
                 filename = self.OnSaveSession()
                 if filename is None:
-                    return
+                    return "abort"
             elif result == wx.ID_NO:
                 pass
         # Delete all the pages
@@ -549,6 +556,7 @@ class MyFrame(wx.Frame):
             menu=self.modelmenudict["User"]
             for item in  menu.GetMenuItems():
                 menu.RemoveItem(item)
+        return "clear"
 
 
     def OnCommSession(self,e=None):
@@ -603,6 +611,10 @@ class MyFrame(wx.Frame):
         
 
     def OnExit(self,e=None):
+        """
+            Kindly asks the user if he wants to save the session and
+            then exit the program.
+        """
         numtabs = self.notebook.GetPageCount()
         # Ask, if user wants to save current session.
         if numtabs > 0:
@@ -1136,16 +1148,13 @@ class MyFrame(wx.Frame):
         # This will also ask, if user wants to save the current session.
         clear = self.OnClearSession(clearmodels=True)
         if clear == "abort":
-            # User pressed abort when he was asked if he wants to save the
-            # session.
+            # User pressed abort when he was asked if he wants to save
+            # the session. Therefore, we cannot open a new session.
             return "abort"
         Infodict, self.dirname, filename = \
          opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
         # Check, if a file has been opened
         if filename is not None:
-            # Reset all Pages. We already gave the user the possibility to
-            # save his session.
-            # self.OnClearSession()
             self.filename = filename
             self.SetTitleFCS(self.filename)
             ## Background traces
@@ -1301,7 +1310,13 @@ class MyFrame(wx.Frame):
 
 
     def OnSaveSession(self,e=None):
-        """Save a session for later continuation."""
+        """ 
+            Save a session to a session file
+        
+            Returns:
+            - the filename of the session if it was saved
+            - None, if the user canceled the action
+        """
         # Parameters are all in one dictionary:
         Infodict = dict()
         Infodict["Backgrounds"] = self.Background # Background list
