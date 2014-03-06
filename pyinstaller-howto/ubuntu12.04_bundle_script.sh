@@ -84,15 +84,13 @@ cd ${Progdir}
 name=${Progname}"_"
 name+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 name+="_Ubuntu12-04_"
-name+=$(uname -r)
-name+=".bin"
+#name+=$(uname -r)
 
-mv ${BASEDIR}"/dist/"${Progname} ${BASEDIR}${name}
+
+mv ${Progdir}"dist/"${Progname} ${Progdir}"dist/"${name}".bin"
 # Cleanup
-rm -R ${BASEDIR}"/build"
-rm -R ${BASEDIR}"/dist"
+#rm -R ${Progdir}"/build"
 
 # Zip the release
-zip ${BASEDIR}${name}".zip" ${BASEDIR}${name}
-
+zip -j ${Progdir}"dist/"${name}".zip" ${Progdir}"dist/"${name}".bin"
 
