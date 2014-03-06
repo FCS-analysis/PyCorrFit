@@ -83,7 +83,7 @@ fi
 cd ${Progdir}
 bname=${Progname}"_"
 bname+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
-bname+="_Ubuntu12-04.bin"
+bname+="_Ubuntu12-04"
 
 zname="Ubuntu12-04_"
 zname+=${Progname}"_"
@@ -94,10 +94,9 @@ zname+=".zip"
 #name+=$(uname -r)
 
 
-mv ${Progdir}"dist/"${Progname} ${Progdir}"dist/"${name}".bin"
+mv ${Progdir}"dist/"${Progname} ${Progdir}"dist/"${bname}
 # Cleanup
 #rm -R ${Progdir}"/build"
 
 # Zip the release
-zip -j ${Progdir}"dist/"${name}".zip" ${Progdir}"dist/"${name}".bin"
-
+zip -j ${Progdir}"dist/"${zname} ${Progdir}"dist/"${bname}
