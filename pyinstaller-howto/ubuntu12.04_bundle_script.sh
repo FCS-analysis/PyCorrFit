@@ -81,9 +81,16 @@ fi
 # Move the resulting file and rename it
 
 cd ${Progdir}
-name=${Progname}"_"
-name+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
-name+="_Ubuntu12-04_"
+bname=${Progname}"_"
+bname+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
+bname+="_Ubuntu12-04.bin"
+
+zname="Ubuntu12-04_"
+zname+=${Progname}"_"
+zname+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
+zname+=".zip"
+
+
 #name+=$(uname -r)
 
 
