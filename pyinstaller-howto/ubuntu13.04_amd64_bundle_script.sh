@@ -4,9 +4,7 @@
 # **************** Change Variables Here ************
 # Directory structure:
 # ./PyCorrFit                     # git repository
-# ./PyCorrFit/pyinstaller-2.0/    # Pyinstaller files
-#PyInstaller="pyinstaller-2.0/"
-PyInstaller="pyinstaller-pyinstaller-fdeef34/"
+PyInstaller="pyinstaller-fdeef345233bc13836f2b4bf6fa15ac55b8563ac/"
 # Progname.py should be in the Progdir
 Progname="PyCorrFit"
 # We require a ChangeLog.txt and a source directory in the Progdir
@@ -78,18 +76,24 @@ then
 else
     python ${PyInstallerDir}pyinstaller.py -F ${Progdir}"src/"${Progname}".py"
 fi
-# Move the resulting file and rename it
+cd ${Progdir}
+bname=${Progname}"_"
+bname+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
+bname+="_Ubuntu13-04"
 
-#cd ${Progdir}
-#name=${Progname}"_"
-#name+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
-#name+="_Ubuntu13.04_"
+zname="Ubuntu13-04_"
+zname+=${Progname}"_"
+zname+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
+zname+=".zip"
+
+
 #name+=$(uname -r)
-#name+="_amd64.bin"
-
-#mv ${BASEDIR}"/dist/"${Progname} ${BinDir}${name}
-#rm -R ${BASEDIR}"/build"
-#rm -R ${BASEDIR}"/dist"
 
 
+mv ${Progdir}"dist/"${Progname} ${Progdir}"dist/"${bname}
+# Cleanup
+#rm -R ${Progdir}"/build"
+
+# Zip the release
+zip -j ${Progdir}"dist/"${zname} ${Progdir}"dist/"${bname}
 
