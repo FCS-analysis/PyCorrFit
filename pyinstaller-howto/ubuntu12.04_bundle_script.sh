@@ -80,16 +80,19 @@ else
 fi
 # Move the resulting file and rename it
 
-#cd ${Progdir}
-#name=${Progname}"_"
-#name+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
-#name+="_Ubuntu13.04_"
-#name+=$(uname -r)
-#name+="_amd64.bin"
+cd ${Progdir}
+name=${Progname}"_"
+name+=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
+name+="_Ubuntu12-04_"
+name+=$(uname -r)
+name+=".bin"
 
-#mv ${BASEDIR}"/dist/"${Progname} ${BinDir}${name}
-#rm -R ${BASEDIR}"/build"
-#rm -R ${BASEDIR}"/dist"
+mv ${BASEDIR}"/dist/"${Progname} ${BASEDIR}${name}
+# Cleanup
+rm -R ${BASEDIR}"/build"
+rm -R ${BASEDIR}"/dist"
 
+# Zip the release
+zip ${BASEDIR}${name}".zip" ${BASEDIR}${name}
 
 
