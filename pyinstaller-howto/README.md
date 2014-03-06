@@ -47,3 +47,4 @@ Known problems
     3. Make sure your windows user name does not conatin any unicode characters such as ü,é,etc. or create a new user.
 
 - On Ubuntu 13.04 the following revision of Pyinstaller worked for me: [fdeef345233bc13836f2b4bf6fa15ac55b8563ac](https://github.com/pyinstaller/pyinstaller/tree/fdeef345233bc13836f2b4bf6fa15ac55b8563ac/)
+- On Ubuntu 13.10 this one also worked: [1c35a62b65624623babc898ff0acd3080682cc20](https://github.com/matysek/pyinstaller/tree/1c35a62b65624623babc898ff0acd3080682cc20)
