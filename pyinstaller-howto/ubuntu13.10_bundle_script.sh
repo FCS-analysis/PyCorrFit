@@ -1,10 +1,11 @@
 #!/bin/bash
 # Works with 
-# pyinstaller-develop fdeef345233bc13836f2b4bf6fa15ac55b8563ac
+# pyinstaller-develop 1c35a62b65624623babc898ff0acd3080682cc20
+# https://github.com/matysek/pyinstaller/tree/1c35a62b65624623babc898ff0acd3080682cc20
 # **************** Change Variables Here ************
 # Directory structure:
 # ./PyCorrFit                     # git repository
-PyInstaller="pyinstaller-fdeef345233bc13836f2b4bf6fa15ac55b8563ac/"
+PyInstaller="pyinstaller-1c35a62b65624623babc898ff0acd3080682cc20/"
 # Progname.py should be in the Progdir
 Progname="PyCorrFit"
 # We require a ChangeLog.txt and a source directory in the Progdir
@@ -96,4 +97,3 @@ mv ${Progdir}"dist/"${Progname} ${Progdir}"dist/"${bname}
 
 # Zip the release
 zip -j ${Progdir}"dist/"${zname} ${Progdir}"dist/"${bname}
-
