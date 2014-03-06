@@ -1,12 +1,10 @@
 #!/bin/bash
 # Works with 
-# pyinstaller-develop fdeef345233bc13836f2b4bf6fa15ac55b8563ac
+# PyInstaller 2.1
 # **************** Change Variables Here ************
 # Directory structure:
 # ./PyCorrFit                     # git repository
-# ./PyCorrFit/pyinstaller-2.0/    # Pyinstaller files
-#PyInstaller="pyinstaller-2.0/"
-PyInstaller="pyinstaller-pyinstaller-fdeef34/"
+PyInstaller="PyInstaller-2.1/"
 # Progname.py should be in the Progdir
 Progname="PyCorrFit"
 # We require a ChangeLog.txt and a source directory in the Progdir
