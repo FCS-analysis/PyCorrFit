@@ -1,15 +1,26 @@
-In current biomedical research, fluorescence correlation spectroscopy (FCS) is  applied
-to characterize molecular dynamic processes in vitro and in living cells.  Commercial
-FCS setups only permit data analysis that is limited to  a specific instrument by
-the use of in-house file formats or a  finite number of implemented correlation
-model functions. PyCorrFit is a general-purpose FCS evaluation software that,
-amongst other formats, supports the established Zeiss ConfoCor3 ~.fcs  file format.
-PyCorrFit comes with several built-in model functions, covering a wide range of
-applications in standard confocal FCS. In addition, it contains equations dealing
-with different excitation geometries like total internal reflection (TIR). For more
-information, visit the official homepage at http://pycorrfit.craban.de.
+PyCorrFit can be used for fitting any data on a semi-log plot. The program focusses on 
+Fluorescence Correlation Spectroscopy (FCS) and comes with a couple of features that are 
+crucial for FCS data analysis:
 
+- Averaging of curves
+- Background correction
+- Batch processing
+- Overlay tool to identify outliers
+- Fast simulation of model parameter behavior
+- Session management
+- User-defined model functions
+- High quality plot export using LaTeX (bitmap or vector graphics)
 
+For a full list of features and supported file formats visit
+http://pycorrfit.craban.de. There are also precompiled binaries for various systems.
+
+This package provides the Python module `pycorrfit` and its graphical user interface. The 
+graphical user interface is written with wxPython. A HowTo for the installation of the 
+latest version using pip can be found there:
+
+https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip
+
+Further reading:
 - Latest downloads: https://github.com/paulmueller/PyCorrFit/releases   
 - Documentation: https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf   
 - Write model functions: https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions   
