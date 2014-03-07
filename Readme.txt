@@ -11,8 +11,8 @@ crucial for FCS data analysis:
 - User-defined model functions
 - High quality plot export using LaTeX (bitmap or vector graphics)
 
-For a full list of features and supported file formats visit
-http://pycorrfit.craban.de. There are also precompiled binaries for various systems.
+For a full list of features and supported file formats visit http://pycorrfit.craban.de.
+There are also precompiled binaries for various systems.
 
 This package provides the Python module `pycorrfit` and its graphical user interface. The 
 graphical user interface is written with wxPython. A HowTo for the installation of the 
