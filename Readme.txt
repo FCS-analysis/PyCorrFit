@@ -16,7 +16,7 @@ http://pycorrfit.craban.de. There are also precompiled binaries for various syst
 
 This package provides the Python module `pycorrfit` and its graphical user interface. The 
 graphical user interface is written with wxPython. A HowTo for the installation of the 
-latest version using pip can be found there:
+latest version of PyCorrFit using pip can be found there:
 
 https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip
 
