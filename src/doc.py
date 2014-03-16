@@ -30,7 +30,6 @@
 
 
 import sys
-import csv
 import matplotlib
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
@@ -54,16 +53,7 @@ try:
 except ImportError:
     print " Warning: module sympy not found!"
     sympy = Fake()
-try:
-    import urllib2
-except ImportError:
-    print " Warning: module urllib not found!"
-    urllib = Fake()
-try:
-    import webbrowser
-except ImportError:
-    print " Warning: module webbrowser not found!"
-    webbrowser = Fake()
+
 import wx
 import yaml
 
@@ -184,17 +174,10 @@ def SoftwareUsed():
     """ Return some Information about the software used for this program """
     text = "Python "+sys.version+\
            "\n\nModules:"+\
-           "\n - csv "+csv.__version__+\
            "\n - matplotlib "+matplotlib.__version__+\
            "\n - NumPy "+numpy.__version__+\
-           "\n - os "+\
-           "\n - platform "+platform.__version__+\
            "\n - SciPy "+scipy.__version__+\
            "\n - sympy "+sympy.__version__ +\
-           "\n - sys "+\
-           "\n - tempfile" +\
-           "\n - urllib2 "+ urllib2.__version__ +\
-           "\n - webbrowser"+\
            "\n - wxPython "+wx.__version__+\
            "\n - yaml "+yaml.__version__
     if hasattr(sys, 'frozen'):

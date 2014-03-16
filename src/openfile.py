@@ -51,8 +51,10 @@ def ImportParametersYaml(parent, dirname):
     """ Import the parameters from a parameters.yaml file
         from an PyCorrFit session.
     """
+    wc = [".pcfs", ".fcsfit-session.zip"]
+    wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(wc[0], wc[1])
     dlg = wx.FileDialog(parent, "Open session file", dirname, "", 
-                                "*.fcsfit-session.zip", wx.OPEN)
+                                 wcstring, wx.OPEN)
     # user cannot do anything until he clicks "OK"
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()            # Workaround since 0.7.5
@@ -88,10 +90,11 @@ def OpenSession(parent, dirname, sessionfile=None):
         "Traces", dict: page numbers, all traces of the pages
     """
     Infodict = dict()
-    fcsfitwildcard = ".fcsfit-session.zip"
+    wc = [".pcfs", ".fcsfit-session.zip"]
+    wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(wc[0], wc[1])
     if sessionfile is None:
         dlg = wx.FileDialog(parent, "Open session file", dirname, "", 
-                        "*"+fcsfitwildcard, wx.OPEN)
+                        wcstring, wx.OPEN)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()            # Workaround since 0.7.5
@@ -108,7 +111,8 @@ def OpenSession(parent, dirname, sessionfile=None):
     else:
         (dirname, filename) = os.path.split(sessionfile)
         path = sessionfile                  # Workaround since 0.7.5
-        if filename[-19:] != fcsfitwildcard:
+        if (filename[-len(wc[0]):] != wx[0] and
+            filename[-len(wc[1]):] != wx[1]):
             # User specified wrong file
             print "Unknown file extension: "+filename
             # stop this function
@@ -354,15 +358,16 @@ def SaveSession(parent, dirname, Infodict):
         We will also write a Readme.txt
     """
     dlg = wx.FileDialog(parent, "Save session file", dirname, "",
-                     "*.fcsfit-session.zip", wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+                        "PyCorrFit session (*.pcfs)|*.pcfs",
+                        wx.SAVE|wx.FD_OVERWRITE_PROMPT)
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()            # Workaround since 0.7.5
         (dirname, filename) = os.path.split(path)
         #filename = dlg.GetFilename()
         #dirname = dlg.GetDirectory()
         # Sometimes you have multiple endings...
-        if filename.endswith(".fcsfit-session.zip") is not True:
-            filename = filename+".fcsfit-session.zip"
+        if filename.endswith(".pcfs") is not True:
+            filename = filename+".pcfs"
         dlg.Destroy()
         # Change working directory
         returnWD = os.getcwd()
@@ -800,7 +805,9 @@ Parameters.yaml
       - (List of checked parameters (for fitting))
       - [(Min channel selected), (Max channel selected)]
       - [(Weighted fit method (0=None, 1=Spline, 2=Model function)), 
-          (No. of bins from left and right(, (No. of knots (of e.g. spline))]
+         (No. of bins from left and right),
+         (No. of knots (of e.g. spline)),
+         (Type of fitting algorithm (e.g. "leastsq", "simplex")]
       - [B1,B2] Background to use (line in backgrounds.csv)
            B2 is always *null* for autocorrelation curves
       - Data type is Cross-correlation?

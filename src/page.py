@@ -99,6 +99,7 @@ class FittingPanel(wx.Panel):
         self.weighted_fittype_id = None # integer (drop down item)
         self.weighted_fittype = "Unknown" # type of fit used
         self.weighted_nuvar = None # bins for std-dev. (left and rigth)
+        self.fit_algorithm ="leastsq" # Least squares min. is standard
         # dictionary for alternative variances from e.g. averaging
         self.external_std_weights = dict()
         # Errors of fit dictionary

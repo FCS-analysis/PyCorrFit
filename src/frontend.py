@@ -1447,8 +1447,8 @@ class MyFrame(wx.Frame):
         # Additional parameters as of v.0.2.0
         # Splines and model function:
         # Additional parameters as of v.6.4.0
-        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
-        #                fitspin, buttonfit ]
+        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, 
+        #              fittextvar, fitspin, buttonfit ]
         # Some fits like Spline have a number of knots of the spline
         # that is important for fitting. If there is a number in the
         # Dropdown, save it.
@@ -1461,7 +1461,8 @@ class MyFrame(wx.Frame):
             knots = int(knots)
         weighted = Page.weighted_fittype_id
         weights = Page.weighted_nuvar
-        Parms.append([weighted, weights, knots])
+        algorithm = Page.fit_algorithm
+        Parms.append([weighted, weights, knots, algorithm])
         # Additional parameters as of v.0.2.9
         # Which Background signal is selected?
         # The Background information is in the list *self.Background*.
@@ -1528,9 +1529,15 @@ class MyFrame(wx.Frame):
             if len(Parms[5]) == 2:
                 [weighted, weights] = Parms[5]
                 knots = None
-            else:
+                algorithm = "leastsq"
+            elif len(Parms[5]) == 3:
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
+                algorithm = "leastsq"
+            else:
+                # We have different fitting algorithms as of v. 0.8.3
+                [weighted, weights, knots, algorithm] = Parms[5]
+            Page.fit_algorithm = algorithm
             if knots is not None:
                 # This is done with apply_paramters_reverse:
                 #       text = Page.Fitbox[1].GetValue()
