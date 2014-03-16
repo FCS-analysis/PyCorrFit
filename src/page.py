@@ -41,7 +41,7 @@ import numpy as np                      # NumPy
 import sys                              # System stuff
 
 import edclasses                    # Cool stuf like better floatspin
-import leastsquaresfit as fit       # For fitting
+import fitting as fit       # For fitting
 import models as mdls
 import tools
 
@@ -470,6 +470,8 @@ class FittingPanel(wx.Panel):
             self.weights_used_for_fitting = Fitting.dataweights
         self.weighted_fittype_id = idf = self.Fitbox[1].GetSelection()
         self.weighted_fittype = self.Fitbox[1].GetItems()[idf]
+        # Set fitting algorithm
+        Fitting.fit_algorithm = self.fit_algorithm
         return Fitting
 
         
@@ -484,8 +486,9 @@ class FittingPanel(wx.Panel):
         Fitting = self.Fit_create_instance(noplots)
         # Reset page counter
         self.GlobalParameterShare = list()
+        Fitting.minimize()
         try:
-            Fitting.least_square()
+            Fitting.minimize()
         except ValueError:
             # I sometimes had this on Windows. It is caused by fitting to
             # a .SIN file without selection proper channels first.

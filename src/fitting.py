@@ -66,6 +66,13 @@ class Fit(object):
                               self.external_deviations has to be set before
                               self.ApplyParameters is called. Cropping with
                               *interval* is performed here.
+        fit_algorithm - The fitting algorithm to be used for minimization
+                        See `scipy.optimize.minimize` for more information
+                        - "leastsq" Least squares minimization
+                        - "Nelder-Mead" Simplex
+                        - "BFGS" quasi-Newton method of Broyden,
+                                 Fletcher, Goldfarb and Shanno
+                        - 
     """
     def __init__(self):
         """ Initial setting of needed variables via the given *fitset* """   
@@ -107,6 +114,8 @@ class Fit(object):
         # Standard is yes. If there are no weights
         # (self.fittype not set) then this value becomes False
         self.weightedfit=True
+        # Set the method for minimization
+        self.fit_algorithm = "leastsq"
         
 
 
@@ -294,12 +303,13 @@ class Fit(object):
 
 
     def fit_function(self, parms, x):
-        """ Create the function to be minimized via least squares.
-            The old function *function* has more parameters than we need for
-            the fitting. So we use this function to set only the necessary 
-            parameters. Returns what *function* would have done.
+        """ Create the function to be minimized. The old function
+            `function` has more parameters than we need for the fitting.
+            So we use this function to set only the necessary 
+            parameters. Returns what `function` would have done.
         """
-        # Reorder the needed variables from *spopt.leastsq* for *function*.
+        # We reorder the needed variables to only use these that are
+        # not fixed for minimization
         index = 0
         for i in np.arange(len(self.values)):
             if self.valuestofit[i]:
@@ -322,12 +332,16 @@ class Fit(object):
 
     def get_chi_squared(self):
         # Calculate Chi**2
-        degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
-        return np.sum( (self.fit_function(self.parmoptim, self.x))**2) / \
-                   degrees_of_freedom
+        if self.fit_algorithm == "leastsq":
+            degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
+            chi2 = np.sum( (self.fit_function(self.parmoptim, self.x)
+                           )**2) / degrees_of_freedom
+        else:
+            chi2 = None
+        return chi2
 
 
-    def least_square(self):
+    def minimize(self):
         """ This will minimize *self.fit_function()* using least squares.
             *self.values*: The values with which the function is called.
             *valuestofit*: A list with bool values that indicate which values
@@ -340,12 +354,14 @@ class Fit(object):
             self.valuesoptim = 1*self.values
             return
         # Begin fitting
-        res = spopt.leastsq(self.fit_function, self.fitparms[:],
-                            args=(self.x), full_output=1)
-        (popt, pcov, infodict, errmsg, ier) = res
-        self.parmoptim = popt
-        if ier not in [1,2,3,4]:
-            print "Optimal parameters not found: " + errmsg
+        algorithm = Algorithms[self.fit_algorithm]
+        #algorithm = Algorithms["Nelder-Mead"]
+        res = algorithm(self.fit_function, self.fitparms[:],
+                                args=(self.x), full_output=1)
+
+        # The optimal parameters
+        self.parmoptim = res[0]
+
         # Now write the optimal parameters to our values:
         index = 0
         for i in np.arange(len(self.values)):
@@ -357,14 +373,45 @@ class Fit(object):
         # Write optimal parameters back to this class.
         self.valuesoptim = 1*self.values # This is actually a redundance array
         self.chi = self.get_chi_squared()
-        try:
-            self.covar = pcov * self.chi # The covariance matrix
-        except:
-            print "PyCorrFit Warning: Error estimate not possible, because we"
-            print "          could not calculate covariance matrix. Please try"
-            print "          reducing the number of fitting parameters."
-            self.parmoptim_error = None
+        
+        if self.fit_algorithm == "leastsq":
+            # This is the standard way to minimize the data. Therefore,
+            # we are a little bit more verbose.
+            if res[4] not in [1,2,3,4]:
+                print "Optimal parameters not found: " + res[3]
+            try:
+                self.covar = res[1] * self.chi # The covariance matrix
+            except:
+                print "PyCorrFit Warning: Error estimate not possible, because we"
+                print "          could not calculate covariance matrix. Please try"
+                print "          reducing the number of fitting parameters."
+                self.parmoptim_error = None
+            else:
+                # Error estimation of fitted parameters
+                if self.covar is not None:
+                    self.parmoptim_error = np.diag(self.covar)
         else:
-            # Error estimation of fitted parameters
-            if self.covar is not None:
-                self.parmoptim_error = np.diag(self.covar)
+            self.parmoptim_error = None
+
+
+# As of version 0.8.3, we support several minimization methods for
+# fitting data to experimental curves.
+# These functions must be callable like leastsq. e.g.
+# res = spopt.leastsq(self.fit_function, self.fitparms[:],
+#                     args=(self.x), full_output=1)
+Algorithms = dict()
+
+# the original one is the least squares fit "leastsq"
+Algorithms["leastsq"] = spopt.leastsq
+
+# simplex 
+Algorithms["Nelder-Mead"] = spopt.fmin
+
+# quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
+Algorithms["BFGS"] = spopt.fmin_bfgs
+
+# modified Powell-method
+Algorithms["Powell"] = spopt.fmin_powell
+
+
+
