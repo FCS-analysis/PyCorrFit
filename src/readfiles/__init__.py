@@ -230,7 +230,8 @@ Filetypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
               "PyCorrFit (*.csv)|*.csv" : openCSV,
               "Matlab 'Ries (*.mat)|*.mat" : openMAT,
               "Confocor3 (*.fcs)|*.fcs" : openFCS,
-              "zip files (*.zip)|*.zip" : openZIP
+              "zip file (*.zip)|*.zip" : openZIP,
+              "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
             }
 # For user comfort, add "All supported files" wildcard:
 Filetypes = AddAllWildcard(Filetypes)
@@ -241,6 +242,7 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "Correlator ALV-6000 (*.ASC)|*.ASC" : openASC,
                 "PyCorrFit (*.csv)|*.csv" : openCSV,
                 "Confocor3 (*.fcs)|*.fcs" : openFCS,
-                "zip files (*.zip)|*.zip" : openZIP
+                "zip file (*.zip)|*.zip" : openZIP,
+                "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
 BGFiletypes = AddAllWildcard(BGFiletypes)
