@@ -102,7 +102,8 @@ class CorrFunc(object):
 
 
     def TestFunction(self):
-        """ Test the function for parsibility with the given parameters. """
+        """ Test the function for parsibility with the given parameters.
+        """
         vardict = dict()
         for i in np.arange(len(self.variables)):
             vardict[self.variables[i]] = sympify(float(self.values[i]))

@@ -30,9 +30,14 @@
 
 from distutils.version import LooseVersion
 import sys
-# Import matplotlib a little earlier. This way some problems with saving
-# dialogs that are not made by "WXAgg" are solved.
 
+class Fake(object):
+    """ Fake module.
+    """
+    def __init__(self):
+        self.__version__ = "0.0 unknown"
+        self.version = "0.0 unknown"
+        self.use = lambda x: None
 
 ## On Windows XP I had problems with the unicode Characters.
 # I found this at 
@@ -42,8 +47,13 @@ import platform
 if platform.system() == 'Windows':
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    
-import matplotlib
+
+# Import matplotlib a little earlier. This way some problems with saving
+# dialogs that are not made by "WXAgg" are solved.
+try:
+    import matplotlib
+except ImportError:
+    matplotlib = Fake()
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import warnings
@@ -70,10 +80,6 @@ except ImportError:
     print "will not work!"
     # We create a fake module sympy with a __version__ property.
     # This way users can run PyCorrFit without having installed sympy.
-    class Fake(object):
-        def __init__(self):
-            self.__version__ = "0.0 unknown"
-            self.version = "0.0 unknown"
     sympy = Fake()
 # We must not import wx here. frontend/gui does that. If we do import wx here,
 # somehow unicode characters will not be displayed correctly on windows.
@@ -113,11 +119,12 @@ print gui.doc.info(version)
 
 ## Check important module versions
 print "\n\nChecking module versions..."
+CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
 CheckVersion(np.__version__, "1.5.1", "NumPy")
+CheckVersion(yaml.__version__, "3.09", "PyYAML")
 CheckVersion(scipy.__version__, "0.8.0", "SciPy")
 CheckVersion(sympy.__version__, "0.7.2", "sympy")
 CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
-CheckVersion(yaml.__version__, "3.09", "PyYAML")
 
 
 ## Start gui
@@ -127,10 +134,16 @@ frame = gui.MyFrame(None, -1, version)
 # in the arguments.
 sysarg = sys.argv
 for arg in sysarg:
-    if len(arg) >= 18:
+    if len(arg) > 4:
+        if arg[-4:] == "pcfs":
+            print "\nLoading Session "+arg
+            frame.OnOpenSession(sessionfile=arg)
+            break
+    elif len(arg) > 18:
         if arg[-18:] == "fcsfit-session.zip":
             print "\nLoading Session "+arg
             frame.OnOpenSession(sessionfile=arg)
+            break
     elif arg[:6] == "python":
         pass
     elif arg[-12:] == "PyCorrFit.py":

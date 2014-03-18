@@ -188,9 +188,14 @@ class Fit(object):
                     plotting.savePlotSingle(name, 1*x, 1*y, 1*ys, dirname = ".",
                                             uselatex=self.uselatex)
                 except:
-                    plt.xscale("log")
-                    plt.plot(x,ys, x,y)
-                    plt.show()
+                    try:
+                        plt.xscale("log")
+                        plt.plot(x,ys, x,y)
+                        plt.show()
+                    except ImportError:
+                        # Tell the user to install matplotlib
+                        print "Matplotlib not found!"
+                        
             ## Calculation of variance
             # In some cases, the actual cropping interval from self.startcrop to
             # self.endcrop is chosen, such that the dataweights must be

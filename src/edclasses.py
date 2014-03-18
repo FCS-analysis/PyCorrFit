@@ -23,15 +23,25 @@
 
 
 # Matplotlib plotting capabilities
-import matplotlib
+try:
+    import matplotlib
+except ImportError:
+    pass
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+    try:
+        matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+    except:
+        pass
 # We will hack this toolbar here
-from matplotlib.backends.backend_wx import NavigationToolbar2Wx 
+try:
+    from matplotlib.backends.backend_wx import NavigationToolbar2Wx 
+except ImportError:
+    pass
+    
 import numpy as np
 import sys
 import traceback
@@ -227,6 +237,8 @@ class MyYesNoAbortDialog(wx.Dialog):
         self.EndModal(wx.ID_YES)
 
 
-
-# Add the save_figure function to the standard class for wx widgets.
-matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure
+try:
+    # Add the save_figure function to the standard class for wx widgets.
+    matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure
+except NameError:
+    pass
