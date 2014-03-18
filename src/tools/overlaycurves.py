@@ -387,7 +387,7 @@ class UserSelectCurves(wx.Frame):
         self.canvas.SetEnableLegend(True)
         if len(curves) != 0:
             self.canvas.Draw(plot.PlotGraphics(lines, 
-                         xLabel=u'lag time τ [s]', 
+                         xLabel=u'lag time τ [ms]', 
                          yLabel=u'G(τ)'))
         ## This is an addon for 0.7.8
         keyskeep = list()

@@ -461,6 +461,20 @@ class MyFrame(wx.Frame):
             # Try to import a selected .txt file
             try:
                 NewModel.GetCode( os.path.join(dirname, filename) )
+            except NameError:
+                # sympy is probably not installed
+                # Warn the user
+                text = ("SymPy not found.\n"+
+                        "In order to import user defined model\n"+
+                        "functions, please install Sympy\n"+
+                        "version 0.7.2 or higher.\nhttp://sympy.org/")
+                if platform.system().lower() == 'linux':
+                    text += ("\nSymPy is included in the package:\n"+
+                             "   'python-sympy'")
+                dlg = wx.MessageDialog(None, text, 'SymPy not found', 
+                                wx.OK | wx.ICON_EXCLAMATION)
+                dlg.ShowModal()
+                return
             except:
                 # The file does not seem to be what it seems to be.
                 info = sys.exc_info()
@@ -470,14 +484,16 @@ class MyFrame(wx.Frame):
                 errstr += str(info[1])+"\n"
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
-                wx.MessageDialog(self, errstr, "Error", 
+                dlg = wx.MessageDialog(self, errstr, "Error", 
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                dlg.ShowModal()
                 del NewModel
                 return
             # Test the code for sympy compatibility.
             # If you write your own parser, this might be easier.
             try:
                 NewModel.TestFunction()
+
             except:
                 # This means that the imported model file could be
                 # contaminated. Ask the user how to proceed.

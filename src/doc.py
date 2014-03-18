@@ -30,7 +30,19 @@
 
 
 import sys
-import matplotlib
+
+# This is a fake class for modules not available.
+class Fake(object):
+    def __init__(self):
+        self.__version__ = "N/A"
+        self.version = "N/A"
+        self.use = lambda x: None        
+try:
+    import matplotlib
+except:
+    # Create fake opbject for matplotlib
+    matplotlib = Fake()
+    
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import warnings
@@ -42,11 +54,7 @@ import os
 import platform
 import scipy
 
-# This is a fake class for modules not available.
-class Fake(object):
-    def __init__(self):
-        self.__version__ = "N/A"
-        self.version = "N/A"
+
 
 try:
     import sympy
@@ -176,10 +184,10 @@ def SoftwareUsed():
            "\n\nModules:"+\
            "\n - matplotlib "+matplotlib.__version__+\
            "\n - NumPy "+numpy.__version__+\
+           "\n - PyYAML "+yaml.__version__ +\
            "\n - SciPy "+scipy.__version__+\
            "\n - sympy "+sympy.__version__ +\
-           "\n - wxPython "+wx.__version__+\
-           "\n - yaml "+yaml.__version__
+           "\n - wxPython "+wx.__version__
     if hasattr(sys, 'frozen'):
         pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
