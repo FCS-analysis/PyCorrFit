@@ -19,5 +19,5 @@ information, visit the official homepage at http://pycorrfit.craban.de.
 - [Download the latest version](https://github.com/paulmueller/PyCorrFit/releases)  
 - [Documentation](https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf)
 - [Run PyCorrFit from source](https://github.com/paulmueller/PyCorrFit/wiki/Running-PyCorrFit-from-source)
-- [Write model functions](https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions)
+- [Write your own model functions](https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions)
 - [Need help?](https://github.com/paulmueller/PyCorrFit/wiki/Creating-a-new-issue)
