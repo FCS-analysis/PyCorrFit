@@ -12,7 +12,9 @@ are installed:
     texlive-base  
     texlive-bibtex-extra  
     texlive-latex-extra  
+    texlive-math-extra  
     texlive-science  
+    
     
 Apply these commands repeatedly (3 times to be on the safe side) to
 build the documentation:
