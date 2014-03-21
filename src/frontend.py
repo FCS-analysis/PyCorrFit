@@ -931,7 +931,7 @@ class MyFrame(wx.Frame):
                         "  - latex\n"+
                         "  - dvipng\n"+
                         "  - ghostscript\n"+
-                        "  - texlive-science\n"+
+                        "  - texlive-latex-base\n"+
                         "  - texlive-math-extra\n")
             dlg = wx.MessageDialog(None, text, 'Latex not found', 
                             wx.OK | wx.ICON_EXCLAMATION)
