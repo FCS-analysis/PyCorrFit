@@ -392,7 +392,7 @@ def openFCS_Single(dirname, filename):
                 fcscurve = False
                 
     # Check for correlation at lag-time zero, which lead to a bug (#64)
-    # on mac OSx an potentially affects fitting.
+    # on mac OSx and potentially affects fitting.
     if corr[0][0] == 0:
         corr = corr[1:]
     openfile.close()
