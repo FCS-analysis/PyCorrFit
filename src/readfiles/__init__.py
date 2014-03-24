@@ -67,7 +67,7 @@ def openAny(dirname, filename):
         if wildcardstring[0] != Allsupfilesstring:
             otherwcs = wildcardstring[1].split(";")
             for string in otherwcs:
-                if string[-3:] == wildcard:
+                if string.strip(" .*") == wildcard:
                     return Filetypes[key](dirname, filename)
     # If we could not find the correct function in Filetypes, try again
     # in BGFiletypes:
@@ -85,7 +85,7 @@ def openAnyBG(dirname, filename):
         if wildcardstring[0] != Allsupfilesstring:
             otherwcs = wildcardstring[1].split(";")
             for string in otherwcs:
-                if string[-3:] == wildcard:
+                if string.strip(" .*") == wildcard:
                     return BGFiletypes[key](dirname, filename)
     # For convenience in openZIP
     return None
@@ -107,8 +107,9 @@ def openZIP(dirname, filename):
     Filelist = list()     # List of filenames corresponding to *Curvelist*
     Trace = list()        # Corresponding traces
     ## First test, if we are opening a session file
-    fcsfitwildcard = ".fcsfit-session.zip"
-    if len(filename)>19 and filename[-19:] == fcsfitwildcard:
+    sessionwc = [".fcsfit-session.zip", ".pcfs"]
+    if ( (len(filename)>19 and filename[-19:] == sessionwc[0]) or
+         (len(filename)> 5 and filename[-5:] == sessionwc[1])     ):
         # Get the yaml parms dump:
         yamlfile = Arc.open("Parameters.yaml")
         # Parms: Fitting and drawing parameters of the correlation curve
