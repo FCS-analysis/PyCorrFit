@@ -335,15 +335,25 @@ class Fit(object):
         return tominimize
 
 
+    def fit_function_scalar(self, parms, x):
+        """
+            Wrapper of `fit_function` for scalar minimization methods.
+            Returns the sum of squares of the input data.
+            (Methods that are not `leastsq`)
+        """
+        e = self.fit_function(parms,x)
+        return np.sum(e*e)
+        
+
     def get_chi_squared(self):
-        # Calculate Chi**2
-        if self.fit_algorithm == "leastsq":
-            degrees_of_freedom = len(self.x) - len(self.parmoptim) - 1
-            chi2 = np.sum( (self.fit_function(self.parmoptim, self.x)
-                           )**2) / degrees_of_freedom
-        else:
-            chi2 = None
-        return chi2
+        """
+            Calculate Chi² for the current class.
+        """
+        # Calculate degrees of freedom
+        dof = len(self.x) - len(self.parmoptim) - 1
+        # This is exactly what is minimized by the scalar minimizers
+        chi2 = self.fit_function_scalar(self.parmoptim, self.x)
+        return chi2 / dof
 
 
     def minimize(self):
