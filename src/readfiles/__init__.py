@@ -32,7 +32,7 @@ import zipfile
 
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.
-from read_ASC_ALV_6000 import openASC
+from read_ASC_ALV import openASC
 from read_CSV_PyCorrFit import openCSV
 from read_SIN_correlator_com import openSIN
 from read_FCS_Confocor3 import openFCS
@@ -239,7 +239,7 @@ Filetypes = AddAllWildcard(Filetypes)
 
 # Dictionary with filetypes we can open that have intensity traces in them.
 BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-                "Correlator ALV-6000 (*.ASC)|*.ASC" : openASC,
+                "ALV (*.ASC)|*.ASC" : openASC,
                 "PyCorrFit (*.csv)|*.csv" : openCSV,
                 "Confocor3 (*.fcs)|*.fcs" : openFCS,
                 "zip file (*.zip)|*.zip" : openZIP,

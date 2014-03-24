@@ -206,7 +206,7 @@ class Average(wx.Frame):
                     if len(tracetime[j]) != 0:
                         # append to the trace
                         oldend = tracetime[j][-1]
-                        newtracetime = 1.*trace[j][:,0]
+                        newtracetime = 1.*trace[j][:,0]-trace[j][:,0][0]
                         newtracetime = newtracetime + oldend
                         tracetime[j] = np.append(tracetime[j], newtracetime)
                         del newtracetime
