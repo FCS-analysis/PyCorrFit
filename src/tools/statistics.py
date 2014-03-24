@@ -380,13 +380,16 @@ class Stat(wx.Frame):
 
 
     def OnChooseValues(self, event=None):
+        """
+            Plot the values for the parameter selected by the user.
+        """
         Info, checked = self.GetListOfAllParameters(
                                                 return_std_checked=True)
         #headcounter = 0
         #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
         # are more than *maxitemsincolumn*
-        maxitemsincolumn = np.float(25)
+        maxitemsincolumn = np.float(19)
         Sizernumber = int(np.ceil(len(Info)/maxitemsincolumn))
         self.boxsizerlist = list()
         for i in np.arange(Sizernumber):
