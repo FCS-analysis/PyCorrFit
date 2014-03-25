@@ -982,6 +982,7 @@ class MyFrame(wx.Frame):
         #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
         for afile in Datafiles:
+            Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
             except:

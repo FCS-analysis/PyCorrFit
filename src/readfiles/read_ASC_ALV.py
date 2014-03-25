@@ -19,6 +19,8 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
+
 import os
 import csv
 import numpy as np
@@ -125,7 +127,7 @@ def openASC(dirname, filename):
             # This tells us if there is only one curve or if there are
             # multiple curves with an average.
             if (Alldata[i].strip().lower() == 
-                '"Correlation (Multi, Averaged)"' ):
+                '"correlation (multi, averaged)"' ):
                 multidata = True
             else:
                 multidata = False
@@ -246,7 +248,7 @@ def openASC(dirname, filename):
         channel = "CH0"
         splittrace = mysplit(trace[0], len(curvelist)/2-nav)
         i = 0
-        for t in range(len(curvelist)/2):
+        for t in range(int(len(curvelist)/2)):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
@@ -261,7 +263,7 @@ def openASC(dirname, filename):
         channel = "CH1"
         splittrace2 = mysplit(trace2[0], len(curvelist)/2-nav)
         i = 0
-        for t in range(len(curvelist)/2,len(curvelist)):
+        for t in range(int(len(curvelist)/2),int(len(curvelist))):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
@@ -282,7 +284,7 @@ def openASC(dirname, filename):
         splittrace = mysplit(trace[0], len(curvelist)/2-nav)
         splittrace2 = mysplit(trace2[0], len(curvelist)/2-nav)
         i = 0
-        for t in range(len(curvelist)/2):
+        for t in range(int(len(curvelist)/2)):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
@@ -297,7 +299,7 @@ def openASC(dirname, filename):
         # CHANNEL 1
         channel = "CC10"
         i = 0
-        for t in range(len(curvelist)/2,len(curvelist)):
+        for t in range(int(len(curvelist)/2),int(len(curvelist))):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
@@ -328,28 +330,37 @@ def openASC(dirname, filename):
 
 def mysplit(a, n):
     """
-       split a trace into n equal parts.
+       Split a trace into n equal parts by interpolation.
+       The signal average is preserved, but the signal variance will
+       decrease.
     """
     if n == 1:
         return [np.array(a)]
     a = np.array(a)
     N = len(a)
     lensplit = np.int(np.ceil(N/n))
+
+    # xp is actually rounded -> recalculate
+    xp, step = np.linspace(a[:,0][0], a[:,0][-1], N,
+                           endpoint=True, retstep=True)
     
-    xp = a[:,0]
+    # let xp start at zero
+    xp -= a[:,0][0]
     yp = a[:,1]
     
-    splita = list()
-    
+    # time frame for each new curve
     dx = xp[-1]/n
+
+    # perform interpolation of new trace
+    x, newstep = np.linspace(0, xp[-1], lensplit*n,
+                        endpoint=True, retstep=True)
+    # interpolating reduces the variance and possibly changes the avg
+    y = np.interp(x,xp,yp)
     
-    for i in range(n):
-        x = np.linspace(dx*i, dx*(i+1),lensplit)
-        y = np.interp(x,xp,yp)
-        data = np.zeros((lensplit,2))
-        data[:,0] = x
-        data[:,1] = y
-        splita.append(data)
-        
-    return splita
+    data = np.zeros((lensplit*n,2))
+    data[:,0] = x + newstep
+    # make sure that the average stays the same:
+    data[:,1] = y - np.average(y) + np.average(yp)
+    
+    return np.split(data,n)
     
