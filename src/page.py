@@ -87,8 +87,9 @@ class FittingPanel(wx.Panel):
         self.resid = None        # Residuals
         self.data4weight = None  # Data used for weight calculation 
         # Fitting:
-        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
-        #                fitspin, buttonfit ]
+        #self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
+        #                fittextvar, fitspin, buttonfit, textalg,
+        #                self.AlgorithmDropdown]
         # chi squared - is also an indicator, if something had been fitted
         self.FitKnots = 5 # number of knots for spline fit or similiars
         self.chi2 = None
@@ -96,10 +97,10 @@ class FittingPanel(wx.Panel):
         self.weights_used_for_fitting = None # weights used for fitting
         self.weights_used_for_plotting = None # weights used for plotting
         self.weights_plot_fill_area = None # weight area in plot
-        self.weighted_fittype_id = None # integer (drop down item)
+        self.weighted_fittype_id = 0 # integer (drop down item)
         self.weighted_fittype = "Unknown" # type of fit used
-        self.weighted_nuvar = None # bins for std-dev. (left and rigth)
-        self.fit_algorithm ="leastsq" # Least squares min. is standard
+        self.weighted_nuvar = 3 # bins for std-dev. (left and rigth)
+        self.fit_algorithm ="Lev-Mar" # Least squares min. is standard
         # dictionary for alternative variances from e.g. averaging
         self.external_std_weights = dict()
         # Errors of fit dictionary
@@ -171,6 +172,8 @@ class FittingPanel(wx.Panel):
         self.calculate_corr()
         # Draw the settings section
         self.settings()
+        # Load default values
+        self.apply_parameters_reverse()
         # Upper Plot for plotting of Correlation Function
         self.canvascorr = plot.PlotCanvas(self.spcanvas)
         self.canvascorr.setLogScale((True, False))  
@@ -231,6 +234,10 @@ class FittingPanel(wx.Panel):
             Knots = self.Fitbox[1].GetValue()
             Knots = filter(lambda x: x.isdigit(), Knots)
             self.FitKnots = int(Knots)
+        # Fitting algorithm
+        keys, items = fit.GetAlgorithmStringList()
+        idalg = self.AlgorithmDropdown.GetSelection()
+        self.fit_algorithm = keys[idalg]
         # If parameters have been changed because of the check_parms
         # function, write them back.
         self.apply_parameters_reverse()
@@ -263,6 +270,10 @@ class FittingPanel(wx.Panel):
         List[1] = "Spline ("+str(self.FitKnots)+" knots)"
         self.Fitbox[1].SetItems(List)
         self.Fitbox[1].SetSelection(idf)
+        # Fitting algorithm
+        keys, items = fit.GetAlgorithmStringList()
+        idalg = keys.index(self.fit_algorithm)
+        self.AlgorithmDropdown.SetSelection(idalg)
 
 
     def calculate_corr(self):
@@ -407,11 +418,14 @@ class FittingPanel(wx.Panel):
 
     def Fit_enable_fitting(self):
         """ Enable the fitting button and the weighted fit control"""
-        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
-        #                fitspin, buttonfit ]
+        #self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
+        #                fittextvar, fitspin, buttonfit, textalg,
+        #                self.AlgorithmDropdown]
         self.Fitbox[0].Enable()
         self.Fitbox[1].Enable()
-        self.Fitbox[-1].Enable()
+        self.Fitbox[6].Enable()
+        self.Fitbox[7].Enable()
+        self.Fitbox[8].Enable()
 
 
     def Fit_create_instance(self, noplots=False):
@@ -1047,11 +1061,20 @@ class FittingPanel(wx.Panel):
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
+        # Add algorithm selection
+        textalg = wx.StaticText(self.panelsettings, label="Algorithm")
+        fitsizer.Add(textalg)
+        self.AlgorithmDropdown = wx.ComboBox(self.panelsettings)
+        keys, items = fit.GetAlgorithmStringList()
+        self.AlgorithmDropdown.SetItems(items)
+        self.Bind(wx.EVT_COMBOBOX, self.apply_parameters,
+                  self.AlgorithmDropdown)
+        fitsizer.Add(self.AlgorithmDropdown)
+        self.AlgorithmDropdown.SetMaxSize(weightedfitdrop.GetSize())
         # Add button "Fit"
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
         fitsizer.Add(buttonfit)
-        
         self.panelsettings.sizer.Add(fitsizer)
         # Squeeze everything into the sizer
         self.panelsettings.SetSizer(self.panelsettings.sizer)
@@ -1059,8 +1082,9 @@ class FittingPanel(wx.Panel):
         self.panelsettings.Layout()
         self.panelsettings.Show()
         # Make all the stuff available for everyone
-        self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
-                        fitspin, buttonfit ]
+        self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
+                        fittextvar, fitspin, buttonfit, textalg,
+                        self.AlgorithmDropdown]
         # Disable Fitting since no data has been loaded yet
         for element in self.Fitbox:
             element.Disable()

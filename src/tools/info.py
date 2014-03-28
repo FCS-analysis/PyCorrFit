@@ -32,6 +32,7 @@
 import wx
 import numpy as np
 
+import fitting
 import models as mdls
 
 # Menu entry name
@@ -164,6 +165,7 @@ class InfoClass(object):
             else:
                 InfoDict["modelsupdoc"] = [func_info.func_doc]
         ## Fitting
+        alg = fitting.Algorithms[Page.fit_algorithm][1]
         weightedfit = Page.weighted_fit_was_performed
         weightedfit_type = Page.weighted_fittype
         fittingbins = Page.weighted_nuvar  # from left and right
@@ -174,13 +176,14 @@ class InfoClass(object):
                 Title.append(["Type AC/CC", "Cross-correlation" ]) 
             else:
                 Title.append(["Type AC/CC", "Autocorrelation" ]) 
-            Fitting.append([ u"\u03c7"+"²", Page.chi2 ])
+            Fitting.append([ u"χ²", Page.chi2 ])
             if Page.weighted_fit_was_performed:
-                Chi2type = "reduced "+u"\u03c7"+"²"
+                Chi2type = u"Weighted sum of squares"
             else:
-                Chi2type = "reduced sum of squares"
-            Fitting.append([ u"\u03c7"+"²-type", Chi2type ])
+                Chi2type = u"Sum of squares"
+            Fitting.append([ u"χ²-type", Chi2type ])
             Fitting.append([ "Weighted fit", weightedfit_type ])
+            Fitting.append([ "Algorithm", alg ])
             if len(Page.GlobalParameterShare) != 0:
                 shared = str(Page.GlobalParameterShare[0])
                 for item in Page.GlobalParameterShare[1:]:

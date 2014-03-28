@@ -5,17 +5,6 @@
     Here are the necessary functions for computing a fit with given parameters.
     See included class "Fit" for more information.
 
-    scipy.optimize.leastsq
-    "leastsq" is a wrapper around MINPACK's lmdif and lmder algorithms.
-    Those use the Levenberg-Marquardt algorithm.
-      subroutine lmdif
- 
-      the purpose of lmdif is to minimize the sum of the squares of
-      m nonlinear functions in n variables by a modification of
-      the levenberg-marquardt algorithm. the user must provide a
-      subroutine which calculates the functions. the jacobian is
-      then calculated by a forward-difference approximation.
-
     Copyright (C) 2011-2012  Paul Müller
 
     This program is free software; you can redistribute it and/or modify
@@ -68,7 +57,7 @@ class Fit(object):
                               *interval* is performed here.
         fit_algorithm - The fitting algorithm to be used for minimization
                         See `scipy.optimize.minimize` for more information
-                        - "leastsq" Least squares minimization
+                        - "lmdif" Least squares minimization
                         - "Nelder-Mead" Simplex
                         - "BFGS" quasi-Newton method of Broyden,
                                  Fletcher, Goldfarb and Shanno
@@ -97,9 +86,9 @@ class Fit(object):
         self.fittype = "None"
         # Chi**2 Value
         self.chi = None
-        # Messages from leastsq
+        # Messages from fit algorithm
         self.mesg = None
-        # Optimal parameters found by leastsq
+        # Optimal parameters found by fit algorithm
         self.parmoptim = None
         self.covar = None # covariance matrix 
         self.parmoptim_error = None # Errors of fit
@@ -114,8 +103,8 @@ class Fit(object):
         # Standard is yes. If there are no weights
         # (self.fittype not set) then this value becomes False
         self.weightedfit=True
-        # Set the method for minimization
-        self.fit_algorithm = "leastsq"
+        # Set the standard method for minimization
+        self.fit_algorithm = "Lev-Mar"
         
 
 
@@ -339,7 +328,7 @@ class Fit(object):
         """
             Wrapper of `fit_function` for scalar minimization methods.
             Returns the sum of squares of the input data.
-            (Methods that are not `leastsq`)
+            (Methods that are not "Lev-Mar")
         """
         e = self.fit_function(parms,x)
         return np.sum(e*e)
@@ -368,18 +357,23 @@ class Fit(object):
             print "No fitting parameters selected."
             self.valuesoptim = 1*self.values
             return
+        # Get algorithm
+        algorithm = Algorithms[self.fit_algorithm][0]
+
         # Begin fitting
-        algorithm = Algorithms[self.fit_algorithm]
-        #algorithm = Algorithms["Nelder-Mead"]
-        res = algorithm(self.fit_function, self.fitparms[:],
-                                args=(self.x), full_output=1)
+        if self.fit_algorithm == "Lev-Mar":
+            res = algorithm(self.fit_function, self.fitparms[:],
+                            args=(self.x), full_output=1)
+        else:
+            res = algorithm(self.fit_function_scalar, self.fitparms[:],
+                            args=([self.x]), full_output=1)
 
         # The optimal parameters
         self.parmoptim = res[0]
 
         # Now write the optimal parameters to our values:
         index = 0
-        for i in np.arange(len(self.values)):
+        for i in range(len(self.values)):
             if self.valuestofit[i]:
                 self.values[i] = self.parmoptim[index]
                 index = index + 1
@@ -389,7 +383,8 @@ class Fit(object):
         self.valuesoptim = 1*self.values # This is actually a redundance array
         self.chi = self.get_chi_squared()
         
-        if self.fit_algorithm == "leastsq":
+        # Compute error estimates for fit (Only "Lev-Mar")
+        if self.fit_algorithm == "Lev-Mar":
             # This is the standard way to minimize the data. Therefore,
             # we are a little bit more verbose.
             if res[4] not in [1,2,3,4]:
@@ -409,24 +404,46 @@ class Fit(object):
             self.parmoptim_error = None
 
 
+def GetAlgorithmStringList():
+    """
+        Get supported fitting algorithms as strings.
+        Returns two lists (that are key-sorted) for key and string.
+    """
+    A = Algorithms
+    out1 = list()
+    out2 = list()
+    a = list(A.keys())
+    a.sort()
+    for key in a:
+        out1.append(key)
+        out2.append(A[key][1])
+    return out1, out2
+    
+
 # As of version 0.8.3, we support several minimization methods for
 # fitting data to experimental curves.
-# These functions must be callable like leastsq. e.g.
+# These functions must be callable like scipy.optimize.leastsq. e.g.
 # res = spopt.leastsq(self.fit_function, self.fitparms[:],
 #                     args=(self.x), full_output=1)
 Algorithms = dict()
 
 # the original one is the least squares fit "leastsq"
-Algorithms["leastsq"] = spopt.leastsq
+Algorithms["Lev-Mar"] = [spopt.leastsq, 
+           "Levenberg-Marquardt"]
 
 # simplex 
-Algorithms["Nelder-Mead"] = spopt.fmin
+Algorithms["Nelder-Mead"] = [spopt.fmin,
+           "Nelder-Mead (downhill simplex)"]
 
 # quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
-Algorithms["BFGS"] = spopt.fmin_bfgs
+Algorithms["BFGS"] = [spopt.fmin_bfgs,
+           "BFGS (quasi-Newton)"]
 
 # modified Powell-method
-Algorithms["Powell"] = spopt.fmin_powell
+Algorithms["Powell"] = [spopt.fmin_powell,
+           "modified Powell (conjugate direction)"]
 
-
+# nonliner conjugate gradient method by Polak and Ribiere
+Algorithms["Polak-Ribiere"] = [spopt.fmin_cg,
+           "Polak-Ribiere (nonlinear conjugate gradient)"]
 
