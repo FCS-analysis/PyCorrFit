@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ PyCorrFit
 
-    Module leastsquaresfit
+    Module fitting
     Here are the necessary functions for computing a fit with given parameters.
     See included class "Fit" for more information.
 
@@ -56,12 +56,14 @@ class Fit(object):
                               self.ApplyParameters is called. Cropping with
                               *interval* is performed here.
         fit_algorithm - The fitting algorithm to be used for minimization
-                        See `scipy.optimize.minimize` for more information
-                        - "lmdif" Least squares minimization
+                        Have a look at the PyCorrFit documentation for more
+                        information.
+                        - "Lev-Mar" Least squares minimization
                         - "Nelder-Mead" Simplex
                         - "BFGS" quasi-Newton method of Broyden,
                                  Fletcher, Goldfarb and Shanno
-                        - 
+                        - "Powell"
+                        - "Polak-Ribiere"
     """
     def __init__(self):
         """ Initial setting of needed variables via the given *fitset* """   
