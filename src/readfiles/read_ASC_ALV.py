@@ -304,12 +304,14 @@ def openASC(dirname, filename):
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
                 corrlist.append(np.array(data[t]))
-                tracelist.append([np.array(trace2[0]),
-                                  np.array(trace[0])  ])
+                # order must be the same as above
+                tracelist.append([np.array(trace[0]),
+                                  np.array(trace2[0])  ])
             else:
                 typelist.append("{} {}".format(accc, channel))
                 corrlist.append(np.array(data[t]))
-                tracelist.append([splittrace2[i], splittrace[i]])
+                # order must be the same as above
+                tracelist.append([splittrace[i], splittrace2[i]])
                 i += 1
     else:
         print "Could not detect data file format for: {}".format(filename)
