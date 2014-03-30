@@ -253,10 +253,10 @@ values_6031 = [
                 25,      # n
                 5,       # taud1
                 1000,    # taud2
-                0.75,     # F
+                0.5,     # F
                 1.0,     # alpha
-                0.001,       # tautrip
-                0.01,       # T
+                0.001,   # tautrip
+                0.01,    # T
                 0.0      # offset
                 ]        
 # For user comfort we add values that are human readable.
