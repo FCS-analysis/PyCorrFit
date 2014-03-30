@@ -261,7 +261,7 @@ values_6030 = [
                 25,      # n
                 5,       # taud1
                 1000,    # taud2
-                0.75,    # F
+                0.5,     # F
                 5,       # SP
                 1.0,     # alpha
                 0.001,   # tautrip

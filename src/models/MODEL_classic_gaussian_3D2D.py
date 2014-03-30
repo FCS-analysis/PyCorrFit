@@ -131,13 +131,13 @@ labels  = ["n",
                 ]
 values = [ 
                 25,      # n
-                100,       # taud2D
-                0.1,    # taud3D
-                0.45,     # F3D
+                100,     # taud2D
+                0.1,     # taud3D
+                0.5,     # F3D
                 7,       # SP
                 1.0,     # alpha
-                0.001,       # tautrip
-                0.01,       # T
+                0.001,   # tautrip
+                0.01,    # T
                 0.0      # offset
                 ]
 # For user comfort we add values that are human readable.
