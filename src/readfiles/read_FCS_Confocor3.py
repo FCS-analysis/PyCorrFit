@@ -234,6 +234,7 @@ def openFCS_Multiple(dirname, filename):
     tracelist = list()
     corrlist = list()
     for i in np.arange(len(ac_correlations)):
+        # Filter curves without correlation (ignore them)
         if ac_correlations[i] is not None:
             curvelist.append(aclist[i])
             tracelist.append(1*traces[i])
@@ -241,12 +242,18 @@ def openFCS_Multiple(dirname, filename):
         else:
             if traces[i] is not None:
                 warnings.warn("File {} curve {} does not contain AC data.".format(filename, i))
+    # Overwrite traces. This way we have equal number of ac correlations
+    # and traces.
+    traces = tracelist
     ## The CC traces are more tricky:
     # Add traces to CC-correlation functions.
     # It seems reasonable, that if number of AC1,AC2 and CC are equal,
     # CC gets the traces accordingly.
-    n_ac1 = aclist.count("AC1")
-    n_ac2 = aclist.count("AC2")
+    # We take the number of ac curves from curvelist instead of aclist,
+    # because aclist may contain curves without ac data (see above).
+    # In that case, the cc traces do most-likely belong to the acs.
+    n_ac1 = curvelist.count("AC1")
+    n_ac2 = curvelist.count("AC2")
     n_cc12 = cclist.count("CC12")
     n_cc21 = cclist.count("CC21")
     if n_ac1==n_ac2==n_cc12==n_cc21>0:
