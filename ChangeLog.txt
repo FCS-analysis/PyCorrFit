@@ -1,3 +1,17 @@
+0.8.2-alpha2
+- New .pcfs (PyCorrFit Session) file format (#60)
+- Additional fitting algorithms: Nelder-Mead, BFGS, Powell, Polak-Ribiere (#71)
+- Improvements
+   - Plot export: legend position and displayed parameters (#54)
+   - Average tool: traces may now start at timepoints != 0
+   - Statistics tool: display on smaller screens
+   - ALV data files: updated parser to identify curve types and segment traces
+   - Zeiss ConfoCor3 data files: some files could not be opened due to dummy AC curves
+   - Models: default parameters were changed to prevent unstable fits
+   - Software: notification dialogs for missing modules or other software
+- Bugfixes
+   - The user could accidently clear a session (#65)
+   - wxPython plotting problen on MacOSx (#64)
 0.8.2
 - The documentation has been thoroughly reworked
 - The user is now warned if he does not have a TeX distribution installed
