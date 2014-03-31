@@ -105,16 +105,14 @@ The fitting itself is usually explored with a representative data set. Here, the
 
 \subsection{Graphical user interface (GUI)}
 \label{sec:intro.graph}
-
-Together with a system's terminal of the platform on which \textit{PyCorrFit} was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{Section}{sec:intro.runni}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
-
-There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the arrow keys (left/right). There can be only one activated page for which the tab appears highlighted.
-
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
  \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{28}{\mu s})$. \label{fig:mainwin} }
 \end{figure}
+Together with a system's terminal of the platform on which \textit{PyCorrFit} was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{Section}{sec:intro.runni}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
+
+There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the arrow keys (left/right). There can be only one activated page for which the tab appears highlighted.
 
 The active page displaying a correlation function is divided in two panels (\hyref{Figure}{fig:mainwin}). At the left hand side the page shows a pile of boxes containing values or fitting options associated with the current model and data set: 
 
@@ -122,7 +120,11 @@ The active page displaying a correlation function is divided in two panels (\hyr
 \item \textit{Data set} specifies the assigned model abbreviation in parentheses and shows a unique identifier for the correlation curve containing the file name, the number of the ``run'', and the data channel. This string is automatically assembled during the loading procedure (\hyref{Section}{sec:menub.filem.loadd}). However, during the session it can be manually edited, thereby allowing to re-name or flag certain data during the fitting analysis.
 \item \textit{Model parameters} displays the values which determine the current shape of the assigned model function (\hyref{Chapter}{sec:theor}). Initially, starting values are loaded as they were defined in the model description (\hyref{Section}{sec:menub.filem.impor}). Little buttons allow a stepwise increase or decrease in units of 1/10\textsuperscript{th}. It is also possible to directly enter some numbers. A checkbox is used to set the parameter status to ``varied'' (checked) or ``fixed'' (unchecked) during the fitting. At the end, when saving the session, the current set of values together with their indicated names are stored in the *.yaml file (\hyref{Section}{sec:menub.filem.saves}). 
 \item \textit{Amplitude corrections} applies additional rescaling to amplitude related parameters like the number of particles $n$ or amplitude fractions associated with different correlation times ($n_1$, $n_2$, etc.). Experimental values of non-correlated background intensity can be manually entered for each channel. In addition, the correlation curves can be normalized, to facilitate a visual comparison of the decay.
-\item \textit{Fitting options} offers weighted fitting. The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighbourhood. The number of neighbouring data points at each side ($j > 0$) can be set. For such a smooth representation a  spline function or the model function with the current parameter set can be used. The default number of knots for the spline function is 5. This number can be manually edited in the dropdown-selector. To view the spline function after each fit, \textit{Preferences/Verbose mode} has to be checked.
+\item \textit{Fitting options} offers weighted fitting (a) and a choice for the fit algorithm (b).
+\begin{itemize}
+\item[\textbf{a)}] The underlying idea is that data points with higher accuracy should also have a higher impact on model parameters. To derive weights, \textit{PyCorrFit} calculates the variance of the difference between the actual data and a smooth, empiric representation of the curve for a certain neighbourhood. The number of neighbouring data points at each side ($j > 0$) can be set. For such a smooth representation a  spline function or the model function with the current parameter set can be used. The default number of knots for the spline function is 5. This number can be manually edited in the dropdown-selector. To view the spline function after each fit, \textit{Preferences/Verbose mode} has to be checked. If the current page is an average, then the standard deviation from the curves that were used to create the average can be used as weights.
+\item[\textbf{b)}] Several fitting algorithms can be chosen. We recommend to use the Levenberg-Marquardt algorithm (b). For more information, see \hyref{Section}{sec:theor.alg}.
+\end{itemize}
 \end{itemize}
 At the right hand side are two graphics windows. The dimensionless correlation functions $G(\tau)$ are plotted against the lag time ($\tau$) on a logarithmic scale. Below, a second window shows the residuals, the actual numerical difference between the correlation data and the model function. Fitting with appropriate models will scatter the residuals symmetrically around zero ($x$-axis). When weighted fitting was performed, the weighted residuals are shown. A good fit will not leave residuals systematically above or below the $x$-axis at any time scale.
 
@@ -678,9 +680,8 @@ The lateral detection area is a convolution of the point spread function of the 
 with a square of side length $a$.
 
 
-\subsection{Non-linear least-squares fit}
+\subsection{Fitting}
 \label{sec:theor.nonle}
-\textit{PyCorrFit} uses the non-linear least-squares fitting capabilities from \texttt{scipy.optimize}. This package utilizes the Levenberg–Marquardt algorithm to minimize the sum of the squares. More information on this topic can be obtained from the online documentation of \texttt{leastsq}\footnote{\url{http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.leastsq.html##scipy.optimize.leastsq}}. 
 One can define a distance $d(G,H)$ between two discrete functions $G$ and $H$ with the discrete domain of definition $\tau_1 \dots \tau_n$ as the sum of squares:
 \begin{equation}
 d(G,H) = \sum_{i=1}^n \left[ G(\tau_i) - H(\tau_i) \right]^2
@@ -692,7 +693,7 @@ The least-squares method minimizes this distance between the model function $G$ 
 The minimum distance $\chi^2$ is used to characterize the success of a fit. Note, that if the number of fitting parameters $k$ becomes too large, multiple values for $\chi^2$ can be found, depending on the starting values of the $k$ parameters.
 
 
-\subsection{Weighted fitting}
+\subsubsection{Weighted fitting}
 \label{sec:theor.weigh}
 In certain cases, it is useful to implement weights (standard deviation) $\sigma_i$ for the calculation of $\chi^2$. For example, very noisy parts of a correlation curve can falsify the resulting fit. In \textit{PyCorrFit}, weighting is implemented as follows:
 \begin{equation}
@@ -700,5 +701,17 @@ In certain cases, it is useful to implement weights (standard deviation) $\sigma
 \end{equation}
 \textit{PyCorrFit} is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in \textit{PyCorrFit} are explained in \hyref{Section}{sec:intro.graph}.
 
+\subsubsection{Algorithms}
+\label{sec:theor.alg}
+\textit{PyCorrFit} uses the non-linear least-squares fitting capabilities from \texttt{scipy.optimize}. This package contains several algorithms to minimize the sum of the squares. 
+PyCorrFit can utilize several algorithms to perform this minimization. The descriptions of the algorithms listed here are partly copied from the scipy documentation at \url{http://docs.scipy.org/doc/scipy/reference/optimize.html}. 
+\begin{itemize}
+\item The \textbf{BFGS} method uses the quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno (BFGS) \cite{Nocedal2006} (pp. 136). It uses the first derivatives only. BFGS has proven good performance even for non-smooth optimizations.
+\item The \textbf{Levenberg-Marquardt} algorithm \cite{Levenberg1944} uses the first derivatives and combines the Gauss–Newton algorithm with a trust region approach. It is very robust compared to other algorithms and it is very popular in curve-fitting. \textit{PyCorrFit} uses this algorithm by default. If this algorithm is used, \textit{PyCorrFit} can estimate an error of the fit parameters using the covariance matrix.
+\item The \textbf{Nelder-Mead} method uses the Simplex algorithm \cite{Nelder1965,Wright1996}. This algorithm has been successful in many applications but other algorithms using the first and/or second derivatives information might be preferred for their better performances and robustness in general.
+\item The method \textbf{Polak-Ribiere} uses a nonlinear conjugate gradient algorithm by Polak and Ribiere, a variant of the Fletcher-Reeves method described in \cite{Nocedal2006} pp.
+120-122. Only the first derivatives are used.
+\item The method \textbf{Powell} is a modification of Powell's method \cite{Powell1964, Press} which is a conjugate direction method. It performs sequential one-dimensional minimizations along each vector of the directions set, which is updated at each iteration of the main minimization loop. The function need not be differentiable, and no derivatives are taken.
+\end{itemize}
 
 \input{PyCorrFit_doc_models}
