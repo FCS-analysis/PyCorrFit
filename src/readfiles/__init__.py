@@ -222,16 +222,17 @@ def openZIP(dirname, filename):
 
 
 # The string that is shown when opening all supported files
-Allsupfilesstring = "All supported files"
+# We add an empty space so it is listed first in the dialogs.
+Allsupfilesstring = " All supported files"
 
 # Dictionary with filetypes that we can open
 # The wildcards point to the appropriate functions.
 Filetypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-              "Correlator ALV-6000 (*.ASC)|*.ASC" : openASC,
+              "ALV (*.ASC)|*.ASC" : openASC,
               "PyCorrFit (*.csv)|*.csv" : openCSV,
               "Matlab 'Ries (*.mat)|*.mat" : openMAT,
-              "Confocor3 (*.fcs)|*.fcs" : openFCS,
-              "zip file (*.zip)|*.zip" : openZIP,
+              "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
+              "Zip file (*.zip)|*.zip" : openZIP,
               "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
             }
 # For user comfort, add "All supported files" wildcard:
@@ -242,8 +243,8 @@ Filetypes = AddAllWildcard(Filetypes)
 BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "ALV (*.ASC)|*.ASC" : openASC,
                 "PyCorrFit (*.csv)|*.csv" : openCSV,
-                "Confocor3 (*.fcs)|*.fcs" : openFCS,
-                "zip file (*.zip)|*.zip" : openZIP,
+                "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
+                "Zip file (*.zip)|*.zip" : openZIP,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
 BGFiletypes = AddAllWildcard(BGFiletypes)
