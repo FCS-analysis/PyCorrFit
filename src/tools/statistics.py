@@ -176,7 +176,7 @@ class Stat(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         self.OnDropDown()
-        self.OnDropDown()
+
 
     def GetListOfAllParameters(self, e=None, return_std_checked=False,
                                 page=None):
@@ -480,11 +480,9 @@ class Stat(wx.Frame):
                         plotcurve.append([x,y])
         # Prepare plotting
         self.canvas.Clear()
-        linesig = plot.PolyMarker(plotcurve, size=1.5,
-                              fillstyle=wx.TRANSPARENT, marker='circle')
+        linesig = plot.PolyMarker(plotcurve, size=1.5, marker='circle')
         plotlist = [linesig]
         # average line
-
         try:
             avg = np.average(np.array(plotcurve)[:,1])
             maxpage =  np.max(np.array(plotcurve)[:,0])
@@ -496,17 +494,23 @@ class Stat(wx.Frame):
         else:
             # Plot data
             plotavg = [[0.5, avg], [maxpage+.5, avg]]
-            lineclear = plot.PolyLine(plotavg, colour="black",
-                                      style= wx.SHORT_DASH)
-            plotlist.append(linesig)
+            #lineclear = plot.PolyLine(plotavg, colour="black")
+            lineclear = plot.PolyMarker(plotavg, colour="black")
+            plotlist.append(lineclear)
             # Update Text control
             self.WXavg.SetValue(str(avg))
             self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:,1])))
         # Draw
-        graphics = plot.PlotGraphics(plotlist, 
+        # This causes a memory leak after this function has been 
+        # called several times with the same large data set.
+        # This goes away if only linesig OR lineclear are plotted.
+        #
+        #graphics = plot.PlotGraphics(plotlist, 
+        #                             xLabel='page number', 
+        #                             yLabel=label)
+        graphics = plot.PlotGraphics([linesig], 
                                      xLabel='page number', 
                                      yLabel=label)
-        self.canvas.Clear()
         self.canvas.Draw(graphics)
         # Correctly set x-axis
         minticks = 2
