@@ -236,7 +236,7 @@ class SelectChannels(wx.Frame):
         self.Destroy()
 
 
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page, trigger=None):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.

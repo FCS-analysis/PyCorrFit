@@ -660,12 +660,14 @@ class MyFrame(wx.Frame):
 
 
 
-    def OnFNBPageChanged(self,e=None, Page=None):
+    def OnFNBPageChanged(self,e=None, Page=None, trigger=None):
         """ Called, when 
             - Page focus switches to another Page
             - Page with focus changes significantly:
                 - experimental data is loaded
                 - weighted fit was done
+            - trigger is a string. For more information read the
+              doc strings of the `tools` submodule.
         """
         # Get the Page
         if Page is None:
@@ -673,11 +675,11 @@ class MyFrame(wx.Frame):
         keys = self.ToolsOpen.keys()
         for key in keys:
             # Update the information
-            self.ToolsOpen[key].OnPageChanged(Page)
+            self.ToolsOpen[key].OnPageChanged(Page, trigger=trigger)
         # parameter range selection tool for page.
         if self.RangeSelector is not None:
             try:
-                self.RangeSelector.OnPageChanged(Page)
+                self.RangeSelector.OnPageChanged(Page, trigger=trigger)
             except:
                 pass
         # Bugfix-workaround for mac:
@@ -1550,7 +1552,7 @@ class MyFrame(wx.Frame):
             elif len(Parms[5]) == 3:
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
-                algorithm = "Lev-Mar" 
+                algorithm = "Lev-Mar"
             else:
                 # We have different fitting algorithms as of v. 0.8.3
                 [weighted, weights, knots, algorithm] = Parms[5]

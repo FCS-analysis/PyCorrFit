@@ -178,12 +178,15 @@ class Stat(wx.Frame):
         self.OnDropDown()
         self.OnDropDown()
 
-    def GetListOfAllParameters(self, e=None, return_std_checked=False):
+    def GetListOfAllParameters(self, e=None, return_std_checked=False,
+                                page=None):
         """ Returns sorted list of parameters.
             If return_std_checked is True, then a second list with
             standart checked parameters is returned.
         """
-        self.InfoClass.CurPage = self.Page
+        if page is None:
+            page = self.Page
+        self.InfoClass.CurPage = page
         # Now that we know our Page, we may change the available
         # parameter options.
         Infodict = self.InfoClass.GetCurInfo()
@@ -215,11 +218,10 @@ class Stat(wx.Frame):
                             errname = "Err "+parmname
                             if fitp[0] == errname:
                                 headparm.append(fitp)
-                        
                     except:
                         # There was not fit, the fit with "Lev-Mar"
                         # was not good, or another fit algorithm was
-                        # used. 
+                        # used.
                         pass
             elif key == "fitting":
                 for fitp in Infodict[key]:
@@ -265,15 +267,18 @@ class Stat(wx.Frame):
             return Info
 
         
-    def GetListOfPlottableParms(self, e=None, return_values=False):
+    def GetListOfPlottableParms(self, e=None, return_values=False,
+                                page=None):
         """ Returns sorted list of parameters that can be plotted.
             (This means that the values are convertable to floats)
             If return_values is True, then a second list with
             the corresponding values is returned.
         """
+        if page is None:
+            page = self.Page
         if self.parent.notebook.GetPageCount() != 0:
             #Info = self.InfoClass.GetPageInfo(self.Page)
-            Info = self.GetListOfAllParameters()
+            Info = self.GetListOfAllParameters(page=page)
             #keys = Info.keys()
             #keys.sort()
             parmlist = list()
@@ -458,8 +463,7 @@ class Stat(wx.Frame):
                     pages.append(Page)
         plotcurve = list()
         for page in pages:
-            self.Page = page
-            pllabel, pldata = self.GetListOfPlottableParms(
+            pllabel, pldata = self.GetListOfPlottableParms(page=page,
                                                      return_values=True)
             # Get the labels and make a plot of the parameters
             if len(pllabel)-1 >= DDselid and pllabel[DDselid] == label:
@@ -484,6 +488,7 @@ class Stat(wx.Frame):
         try:
             avg = np.average(np.array(plotcurve)[:,1])
             maxpage =  np.max(np.array(plotcurve)[:,0])
+
         except:
             maxpage = 0
             self.WXavg.SetValue("-")
@@ -493,16 +498,16 @@ class Stat(wx.Frame):
             plotavg = [[0.5, avg], [maxpage+.5, avg]]
             lineclear = plot.PolyLine(plotavg, colour="black",
                                       style= wx.SHORT_DASH)
-            plotlist.append(lineclear)
+            plotlist.append(linesig)
             # Update Text control
             self.WXavg.SetValue(str(avg))
             self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:,1])))
-            
         # Draw
-        self.canvas.Draw(plot.PlotGraphics(plotlist, 
-                             xLabel='page number', 
-                             yLabel=label))
-
+        graphics = plot.PlotGraphics(plotlist, 
+                                     xLabel='page number', 
+                                     yLabel=label)
+        self.canvas.Clear()
+        self.canvas.Draw(graphics)
         # Correctly set x-axis
         minticks = 2
         self.canvas.SetXSpec(max(maxpage, minticks))
@@ -519,11 +524,23 @@ class Stat(wx.Frame):
         self.canvas.Redraw()
                          
         
-    def OnPageChanged(self, page):
+    def OnPageChanged(self, page, trigger=None):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+        """
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        
+        # filter unwanted triggers to improve speed
+        if trigger in ["parm_batch", "fit_batch", "load_batch"]:
+            return
+        
         #
         # Prevent this function to be run twice at once:
         #

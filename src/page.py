@@ -28,11 +28,6 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-# Use DEMO for contrast-rich screenshots.
-# This enlarges axis text and draws black lines instead of grey ones.
-DEMO = False
-
-
 import wx                               # GUI interface wxPython
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot              # Plotting in wxPython
@@ -189,14 +184,6 @@ class FittingPanel(wx.Panel):
                                         cupsizey)
         self.sp.SplitVertically(self.panelsettings, self.spcanvas,
                                 self.sizepanelx)
-        ## Check out the DEMO option and make change the plot:
-        try:
-            if DEMO == True:
-                self.canvascorr.SetFontSizeAxis(16)
-                self.canvaserr.SetFontSizeAxis(16)
-        except:
-            # Don't raise any unnecessary erros
-            pass
         # Bind resizing to resizing function.
         wx.EVT_SIZE(self, self.OnSize)
 
@@ -362,12 +349,6 @@ class FittingPanel(wx.Panel):
                 self.startcrop = 0
             else:
                 self.tau = 1*self.taufull[self.startcrop:self.endcrop]
-        ## ## Channel selection
-        ## # Crops the array *self.dataexpfull* from *start* (int) to *end* (int)
-        ## # and assigns the result to *self.dataexp*. If *start* and *end* are 
-        ## # equal (or not given), *self.dataexp* will be equal to 
-        ## # *self.dataexpfull*.
-        ## self.parent.OnFNBPageChanged(e=None, Page=self)
 
 
     def CorrectDataexp(self, dataexp):
@@ -489,8 +470,18 @@ class FittingPanel(wx.Panel):
         return Fitting
 
         
-    def Fit_function(self, event=None, noplots=False):
-        """ Call the fit function. """
+    def Fit_function(self, event=None, noplots=False, trigger=None):
+        """ Calls the fit function.
+            
+            `noplots=True` prevents plotting of spline fits
+        
+            `trigger` is passed to page.PlotAll.
+                      If trigger is "fit_batch", then `noplots` is set
+                      to `True`.
+        
+        """
+        if trigger in ["fit_batch"]:
+            noplots = True
         # Make a busy cursor
         wx.BeginBusyCursor()
         # Apply parameters
@@ -531,7 +522,7 @@ class FittingPanel(wx.Panel):
         # Update spin-control values
         self.apply_parameters_reverse()
         # Plot everthing
-        self.PlotAll()
+        self.PlotAll(trigger=trigger)
         # Return cursor to normal
         wx.EndBusyCursor()
 
@@ -783,7 +774,7 @@ class FittingPanel(wx.Panel):
         self.sp.SetSize(size)
 
 
-    def PlotAll(self, event=None):
+    def PlotAll(self, event=None, trigger=None):
         """
         This function plots the whole correlation and residuals canvas.
         We do:
@@ -791,6 +782,15 @@ class FittingPanel(wx.Panel):
         - Background correction
         - Apply Parameters (separate function)
         - Drawing of plots
+        
+        The `event` is usually just an event from buttons or similar
+        wx objects. It can be "init", then some initial plotting is
+        done before the data is handled.
+        
+        The `trigger` is passed to `self.parent.OnFNBPageChanged` so
+        that tools can update their content accordingly. For more
+        information on triggers, have a look at the doctring of the
+        `tools` submodule.
         """
         if event == "init":
             # We use this to have the page plotted at least once before
@@ -821,21 +821,10 @@ class FittingPanel(wx.Panel):
         zerostart = self.tau[0]
         zeroend = self.tau[-1]
         datazero = [[zerostart, 0], [zeroend,0]]
-        ## Check out the DEMO option and make change the plot:
-        try:
-            if DEMO == True:
-                width = 4
-                colexp = "black"
-                colfit = "red"
-            else:
-                width = 1
-                colexp = "grey"
-                colfit = "blue"
-        except:
-            # Don't raise any unnecessary erros
-            width = 1   
-            colexp = "grey"  
-            colfit = "blue"
+        # Set plot colors
+        width = 1   
+        colexp = "grey"  
+        colfit = "blue"
         colweight = "cyan"
         lines = list()
         linezero = plot.PolyLine(datazero, colour='orange', width=width)
@@ -935,7 +924,7 @@ class FittingPanel(wx.Panel):
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
                        xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
-        self.parent.OnFNBPageChanged()
+        self.parent.OnFNBPageChanged(trigger=trigger)
 
 
     def settings(self):

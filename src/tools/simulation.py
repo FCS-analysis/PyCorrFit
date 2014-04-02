@@ -251,7 +251,15 @@ class Slide(wx.Frame):
         self.OnSize()
 
 
-    def OnPageChanged(self, page=None, init=False):
+    def OnPageChanged(self, page=None, trigger=None, init=False):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+            'init' is used by this tool only.
+        """
         #if init:
         #    # Get the parameters of the current page.
         #    self.SavedParms = self.parent.PackParameters(self.Page)

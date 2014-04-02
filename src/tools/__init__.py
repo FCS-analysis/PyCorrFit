@@ -5,6 +5,20 @@
     This file contains useful tools, such as dialog boxes and other stuff,
     that we need in PyCorrFit.
 
+    The tools work with triggers on page updates. Every tool has a 
+    function `OnPageChanged(self, page, trigger=None)` which is called
+    when something in the frontend chages. In order to minimize user
+    stall time, these functions are not executed for a certain list
+    of triggers that is defined in that function. This e.g. dramatically
+    speeds up tools like "Statistics view" when batch fitting.
+    
+    Recognized triggers:
+     view           : the user is looking at the page right now
+     fit_batch      : the page is batch-fitted right now
+     fit_finalize   : a (batch) fitting process is finished
+     parm_batch     : parameters are changed in a batch process
+     parm_finalize  : finished (batch) changing of a pages parameters
+
     Dimensionless representation:
     unit of time        : 1 ms
     unit of inverse time: 10³ /s
