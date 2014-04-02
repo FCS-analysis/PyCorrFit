@@ -807,7 +807,7 @@ Parameters.yaml
       - [(Weighted fit method (0=None, 1=Spline, 2=Model function)), 
          (No. of bins from left and right),
          (No. of knots (of e.g. spline)),
-         (Type of fitting algorithm (e.g. "leastsq", "simplex")]
+         (Type of fitting algorithm (e.g. "Lev-Mar", "Nelder-Mead")]
       - [B1,B2] Background to use (line in backgrounds.csv)
            B2 is always *null* for autocorrelation curves
       - Data type is Cross-correlation?
