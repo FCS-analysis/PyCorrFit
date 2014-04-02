@@ -130,7 +130,14 @@ class Wrapper_Tools(object):
         self.Selector.Destroy()
 
 
-    def OnPageChanged(self, page=None):
+    def OnPageChanged(self, page=None, trigger=None):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+        """
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page

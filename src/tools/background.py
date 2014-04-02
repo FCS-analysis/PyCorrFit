@@ -417,7 +417,14 @@ class BackgroundCorrection(wx.Frame):
             self.parent.notebook.GetPage(i).OnAmplitudeCheck()
 
 
-    def OnPageChanged(self, page=None):
+    def OnPageChanged(self, page=None, trigger=None):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+        """
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.

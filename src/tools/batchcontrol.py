@@ -117,7 +117,9 @@ class BatchCtrl(wx.Frame):
             OtherPage = self.parent.notebook.GetPage(i)
             if OtherPage.modelid == modelid and OtherPage.dataexp is not None:
                 self.parent.UnpackParameters(Parms, OtherPage)
-                OtherPage.PlotAll()
+                OtherPage.PlotAll(trigger="parm_batch")
+        # Update all other tools fit the finalize trigger.
+        self.parent.OnFNBPageChanged(trigger="parm_finalize")
 
 
     def OnClose(self, event=None):
@@ -144,15 +146,28 @@ class BatchCtrl(wx.Frame):
             if (OtherPage.modelid == modelid and
                 OtherPage.dataexpfull is not None):
                 #Fit
-                OtherPage.Fit_function(noplots=True)
+                OtherPage.Fit_function(noplots=True,trigger="fit_batch")
+        # Update all other tools fit the finalize trigger.
+        self.parent.OnFNBPageChanged(trigger="fit_finalize")
 
 
-    def OnPageChanged(self, Page=None):
+    def OnPageChanged(self, Page=None, trigger=None):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+        """
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
         else:
             self.panel.Enable()
+        # Filter triggers
+        if trigger in ["fit_batch", "fit_finalize",
+                       "parm_batch", "parm_finalize"]:
+            return
         # We need to update the list of Pages in self.dropdown
         if self.rbtnhere.Value == True:
             DDlist = list()
@@ -165,7 +180,7 @@ class BatchCtrl(wx.Frame):
 
 
     def OnRadioHere(self, event=None):
-        self.OnPageChanged()
+        self.OnPageChanged(trigger="view")
 
 
     def OnRadioThere(self, event=None):

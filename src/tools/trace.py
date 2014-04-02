@@ -102,7 +102,14 @@ class ShowTrace(wx.Frame):
                                            yLabel='count rate [kHz]'))
 
 
-    def OnPageChanged(self, page=None):
+    def OnPageChanged(self, page=None, trigger=None):
+        """
+            This function is called, when something in the panel
+            changes. The variable `trigger` is used to prevent this
+            function from being executed to save stall time of the user.
+            Forr a list of possible triggers, see the doc string of
+            `tools`.
+        """
         self.Page = page
         # When parent changes
         if self.parent.notebook.GetPageCount() == 0:
