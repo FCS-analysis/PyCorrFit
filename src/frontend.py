@@ -1546,11 +1546,11 @@ class MyFrame(wx.Frame):
             if len(Parms[5]) == 2:
                 [weighted, weights] = Parms[5]
                 knots = None
-                algorithm = "leastsq"
+                algorithm = "Lev-Mar"
             elif len(Parms[5]) == 3:
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
-                algorithm = "leastsq"
+                algorithm = "Lev-Mar"
             else:
                 # We have different fitting algorithms as of v. 0.8.3
                 [weighted, weights, knots, algorithm] = Parms[5]
