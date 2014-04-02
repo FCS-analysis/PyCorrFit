@@ -219,7 +219,7 @@ class Stat(wx.Frame):
                     except:
                         # There was not fit, the fit with "Lev-Mar"
                         # was not good, or another fit algorithm was
-                        # used.
+                        # used. 
                         pass
             elif key == "fitting":
                 for fitp in Infodict[key]:
