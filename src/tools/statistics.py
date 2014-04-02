@@ -208,20 +208,19 @@ class Stat(wx.Frame):
                 headparm = list()
                 bodyparm = list()
                 for parm in Infodict[key]:
-                    #parminlist = False
+                    headparm.append(parm)
                     try:
                         for fitp in Infodict["fitting"]:
                             parmname = parm[0]
                             errname = "Err "+parmname
                             if fitp[0] == errname:
-                                headparm.append(parm)
-                                #parminlist = True
                                 headparm.append(fitp)
+                        
                     except:
-                        # Maybe there was not fit...
+                        # There was not fit, the fit with "Lev-Mar"
+                        # was not good, or another fit algorithm was
+                        # used.
                         pass
-                    #if parminlist == False:
-                    headparm.append(parm)
             elif key == "fitting":
                 for fitp in Infodict[key]:
                     # We added the error data before in the parm section
@@ -260,7 +259,6 @@ class Stat(wx.Frame):
             for checkitem in checklist:
                 if item[0].count(checkitem):
                     checked[i] = False
-
         if return_std_checked:
             return Info, checked
         else:
