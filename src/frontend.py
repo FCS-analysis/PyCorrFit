@@ -229,7 +229,7 @@ class MyFrame(wx.Frame):
         Newtab = page.FittingPanel(self, counter, modelid, active_parms,
                                    self.tau)
         #self.Freeze()
-        self.notebook.AddPage(Newtab, counter+model, select=True)
+        self.notebook.AddPage(Newtab, counter+model, select=False)
         #self.Thaw()
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
@@ -243,18 +243,15 @@ class MyFrame(wx.Frame):
         # window is open.
         # Find Tool Statistics
         # Get open tools
-        toolkeys = self.ToolsOpen.keys()
-        for key in toolkeys:
-            tool = self.ToolsOpen[key]
-            try:
-                if tool.MyName=="STATISTICS":
-                    # Call the function properly.
-                    tool.OnPageChanged(Newtab)
-            except:
-                pass
-        #
-        #######
-        #
+        #toolkeys = self.ToolsOpen.keys()
+        #for key in toolkeys:
+        #    tool = self.ToolsOpen[key]
+        #    try:
+        #        if tool.MyName=="STATISTICS":
+        #            # Call the function properly.
+        #            tool.OnPageChanged(Newtab)
+        #    except:
+        #        pass
         return Newtab
 
 
@@ -660,7 +657,7 @@ class MyFrame(wx.Frame):
 
 
 
-    def OnFNBPageChanged(self,e=None, Page=None, trigger=None):
+    def OnFNBPageChanged(self, e=None, Page=None, trigger=None):
         """ Called, when 
             - Page focus switches to another Page
             - Page with focus changes significantly:
@@ -669,6 +666,11 @@ class MyFrame(wx.Frame):
             - trigger is a string. For more information read the
               doc strings of the `tools` submodule.
         """
+        
+        if (e is not None and
+            e.GetEventType()==fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED.typeId
+            and trigger is None):
+            trigger = "tab_browse"
         # Get the Page
         if Page is None:
             Page = self.notebook.GetCurrentPage()
@@ -855,7 +857,13 @@ class MyFrame(wx.Frame):
 
 
     def ImportData(self, Page, dataexp, trace, curvetype="",
-                   filename="", curveid="", run=""):
+                   filename="", curveid="", run="", trigger=None):
+        """
+            Import data into the current page.
+            
+            `trigger` is passed to PlotAll. For more info see the
+            submodule `tools`.
+        """
         CurPage = Page
         # Import traces. Traces are usually put into a list, even if there
         # is only one trace. The reason is, that for cross correlation, we 
@@ -884,7 +892,7 @@ class MyFrame(wx.Frame):
         # It might be possible, that we want the channels to be
         # fixed to some interval. This is the case if the 
         # checkbox on the "Channel selection" dialog is checked.
-        self.OnFNBPageChanged()
+        #self.OnFNBPageChanged()
         # Enable Fitting Button
         CurPage.Fit_enable_fitting()
         # Set new tabtitle value and strip leading or trailing
@@ -895,11 +903,11 @@ class MyFrame(wx.Frame):
             title = "{} id{:03d}-{}".format(filename, int(curveid), curvetype)
         CurPage.tabtitle.SetValue(title.strip())
         # Plot everything
-        CurPage.PlotAll()
+        CurPage.PlotAll(trigger=trigger)
         # Call this function to allow the "Channel Selection" window that
         # might be open to update itself.
         # We are aware of the fact, that we just did that
-        self.OnFNBPageChanged()
+        #self.OnFNBPageChanged()
 
 
     def OnLatexCheck(self,e):
@@ -1146,13 +1154,14 @@ class MyFrame(wx.Frame):
             # Fill Page with data
             self.ImportData(CurPage, Correlation[i], Trace[i],
                             curvetype=Type[i], filename=Filename[i],
-                            curveid=str(Curveid[i]), run=str(Run[i]))
+                            curveid=str(Curveid[i]), run=str(Run[i]),
+                            trigger="page_add_batch")
             # Let the user abort, if he wants to:
             # We want to do this here before an empty page is added
             # to the notebok.
             if dlg.Update(i+1, "Loading pages...")[0] == False:
-                dlg.Destroy()
-                return
+                break
+        self.OnFNBPageChanged(trigger="page_add_finalize")
         # If the user did not select curves but chose a model, destroy
         # the dialog.
         dlg.Destroy()
@@ -1212,9 +1221,8 @@ class MyFrame(wx.Frame):
                 # the page later.
                 counter = Infodict["Parameters"][i][0]
                 modelid = Infodict["Parameters"][i][1]
-                self.add_fitting_tab(modelid=modelid, counter=counter)
-                # Get New Page, so we can add our stuff.
-                Newtab = self.notebook.GetCurrentPage()
+                Newtab = self.add_fitting_tab(modelid=modelid,
+                                              counter=counter)
                 # Add experimental Data
                 # Import dataexp:
                 number = counter.strip().strip(":").strip("#")
@@ -1278,7 +1286,7 @@ class MyFrame(wx.Frame):
                     else:
                         Newtab.tracecc = trace
                 # Plot everything
-                Newtab.PlotAll()
+                Newtab.PlotAll(trigger="page_add_batch")
             # Set Session Comment
             try:
                 self.SessionComment = Infodict["Comments"]["Session"]
@@ -1291,7 +1299,7 @@ class MyFrame(wx.Frame):
             if self.notebook.GetPageCount() > 0:
                 # Enable the "Current" Menu
                 self.EnableToolCurrent(True)
-                self.OnFNBPageChanged()
+                self.OnFNBPageChanged(trigger="page_add_finalize")
             else:
                 # There are no pages in the session.
                 # Disable some menus and close some dialogs
@@ -1548,15 +1556,13 @@ class MyFrame(wx.Frame):
             if len(Parms[5]) == 2:
                 [weighted, weights] = Parms[5]
                 knots = None
-                algorithm = "Lev-Mar"
             elif len(Parms[5]) == 3:
                 # We have knots as of v. 0.6.5
                 [weighted, weights, knots] = Parms[5]
-                algorithm = "Lev-Mar"
             else:
                 # We have different fitting algorithms as of v. 0.8.3
                 [weighted, weights, knots, algorithm] = Parms[5]
-            Page.fit_algorithm = algorithm
+                Page.fit_algorithm = algorithm
             if knots is not None:
                 # This is done with apply_paramters_reverse:
                 #       text = Page.Fitbox[1].GetValue()

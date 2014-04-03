@@ -13,11 +13,14 @@
     speeds up tools like "Statistics view" when batch fitting.
     
     Recognized triggers:
-     view           : the user is looking at the page right now
-     fit_batch      : the page is batch-fitted right now
-     fit_finalize   : a (batch) fitting process is finished
-     parm_batch     : parameters are changed in a batch process
-     parm_finalize  : finished (batch) changing of a pages parameters
+     tab_init           : initial stuff that is done for a new page
+     tab_browse         : the tab has change and a new page is visible
+     fit_batch          : the page is batch-fitted right now
+     fit_finalize       : a (batch) fitting process is finished
+     parm_batch         : parameters are changed in a batch process
+     parm_finalize      : finished (batch) changing of page parameters
+     page_add_batch     : when many pages are added at the same time
+     page_add_finalize  : finished (batch) adding of pages
 
     Dimensionless representation:
     unit of time        : 1 ms

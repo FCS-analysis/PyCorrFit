@@ -173,7 +173,7 @@ class FittingPanel(wx.Panel):
         self.canvascorr = plot.PlotCanvas(self.spcanvas)
         self.canvascorr.setLogScale((True, False))  
         self.canvascorr.SetEnableZoom(True)
-        self.PlotAll()
+        self.PlotAll(event="init", trigger="tab_init")
         self.canvascorr.SetSize((canvasx, cupsizey))
         # Lower Plot for plotting of the residuals
         self.canvaserr = plot.PlotCanvas(self.spcanvas)
@@ -742,8 +742,6 @@ class FittingPanel(wx.Panel):
             # in the tab? We choose 9: AC1-012 plus 2 whitespaces
             text = self.counter + self.tabtitle.GetValue()[-9:]
         self.parent.notebook.SetPageText(pid,text)        
-        #import IPython
-        #IPython.embed()
 
         
     def OnSetRange(self, e):
