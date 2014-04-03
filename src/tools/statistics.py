@@ -71,7 +71,7 @@ class Stat(wx.Frame):
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
         # Pagenumbers
-        self.PageNumbers = np.arange(self.parent.notebook.GetPageCount())
+        self.PageNumbers =range(1,1+self.parent.notebook.GetPageCount())
         ## Splitter window. left side: checkboxes
         ##                  right side: plot with parameters
         self.sp = wx.SplitterWindow(self, style=wx.SP_3DSASH)
@@ -540,11 +540,21 @@ class Stat(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
-        
         # filter unwanted triggers to improve speed
-        if trigger in ["parm_batch", "fit_batch", "load_batch"]:
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
             return
-        
+        elif trigger in ["tab_init"] and page is not None:
+            # Check if we have to replot for a new model
+            if self.Page.modelid == page.modelid:
+                return
+        if (trigger in ["page_add_finalize"] and 
+            self.WXTextPages.GetValue() == "1"):
+            # We probably imported data with statistics window open
+            self.PageNumbers = range(1,
+                                  1+self.parent.notebook.GetPageCount())
+            setstring = misc.parsePagenum2String(self.PageNumbers)
+            self.WXTextPages.SetValue(setstring)
+            
         #
         # Prevent this function to be run twice at once:
         #

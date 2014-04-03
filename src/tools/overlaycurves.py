@@ -138,6 +138,9 @@ class Wrapper_Tools(object):
             Forr a list of possible triggers, see the doc string of
             `tools`.
         """
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch",
+                       "tab_init", "tab_browse"]:
+            return
         # When parent changes
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
@@ -146,6 +149,7 @@ class Wrapper_Tools(object):
             self.Selector.SelectBox.SetItems([])
             self.Selector.sp.Disable()
         else:
+            self.Selector.sp.Enable()
             # Sticky behavior cleaned up in 0.7.8
             curvedict, labels = self.GetCurvedict()
             self.Selector.curvedict = curvedict
@@ -155,7 +159,7 @@ class Wrapper_Tools(object):
             self.Selector.SelectBox.SetItems(self.Selector.curvelabels)
             for i in np.arange(len(self.Selector.curvekeys)):
                 self.Selector.SelectBox.SetSelection(i)
-            self.Selector.OnUpdatePlot()
+            self.Selector.OnUpdatePlot(trigger=trigger)
 
 
     def OnResults(self, keyskeep, keysrem):
@@ -191,7 +195,7 @@ class Wrapper_Tools(object):
         self.OnPageChanged()
 
 
-    def OnSelectionChanged(self, keylist):
+    def OnSelectionChanged(self, keylist, trigger=None):
         if len(keylist) == 0:
             return
         # integer type list with page number
@@ -282,6 +286,7 @@ class UserSelectCurves(wx.Frame):
                                     style=style, choices=self.curvelabels)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
+
         # Deselect keys that are not in self.selkeys
         if self.selkeys is not None:
             for i in np.arange(len(self.curvekeys)):
@@ -363,15 +368,21 @@ class UserSelectCurves(wx.Frame):
         self.wrapper.OnResults(keyskeep, keysrem)
 
 
-    def OnUpdatePlot(self, e=None):
+    def OnUpdatePlot(self, e=None, trigger=None):
         """ What should happen when the selection in *self.SelectBox*
             is changed?
+            
             This function will alsy try to call the function
             *self.parent.OnSelectionChanged* and hand over the list of
             currently selected curves. This is an addon for 0.7.8
             where we will control the page selection in the average
             tool.
+            If `trigger` is something that occurs during loading of
+            data, then we will not replot everything.
         """
+        #if e is not None and e.GetEventType() == 10007:
+        #    return
+
         # Get selected curves
         curves = list()
         legends = list()
@@ -401,6 +412,6 @@ class UserSelectCurves(wx.Frame):
         for i in self.SelectBox.GetSelections():
             keyskeep.append(self.curvekeys[i])
         try:
-            self.wrapper.OnSelectionChanged(keyskeep)
+            self.wrapper.OnSelectionChanged(keyskeep, trigger=trigger)
         except:
             pass
