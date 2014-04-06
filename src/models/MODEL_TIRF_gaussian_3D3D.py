@@ -18,7 +18,9 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import numpy as np                  # NumPy
+from __future__ import division
+
+import numpy as np
 import scipy.special as sps
 
 
@@ -124,7 +126,10 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
     particle2 = alpha**2*(1-F) * g2D2 * gz2
 
     ### triplet
-    triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+    if tautrip == 0 or T == 0:
+        triplet = 1
+    else:
+        triplet = 1 + T/(1-T) * np.exp(-tau/tautrip)
 
     ### Norm
     norm = (F + alpha*(1-F))**2
