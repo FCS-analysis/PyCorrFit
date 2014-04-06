@@ -428,6 +428,8 @@ class BackgroundCorrection(wx.Frame):
         # We do not need the *Range* Commands here yet.
         # We open and close the SelectChannelsFrame every time we
         # import some data.
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         if len(self.parent.Background) == 0:
             self.BGlist = list()
             self.UpdateDropdown()

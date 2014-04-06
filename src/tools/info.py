@@ -348,6 +348,8 @@ class ShowInfo(wx.Frame):
             Forr a list of possible triggers, see the doc string of
             `tools`.
         """
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         # When parent changes
         self.Page = page
         self.Content()

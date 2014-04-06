@@ -289,6 +289,8 @@ check parameters on each page and start 'Global fit'.
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return

@@ -241,6 +241,8 @@ class SelectChannels(wx.Frame):
         # We open and close the SelectChannelsFrame every time we
         # import some data.
         #
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         # Check if we have a fixed channel selection
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
