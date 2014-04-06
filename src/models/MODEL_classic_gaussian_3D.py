@@ -18,7 +18,9 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import numpy as np                  # NumPy
+from __future__ import division
+
+import numpy as np
 
 # 3D simple gauss
 def CF_Gxyz_gauss(parms, tau):
@@ -92,10 +94,12 @@ def CF_Gxyz_blink(parms, tau):
     SP = parms[4]
     off = parms[5]
 
+    if tautrip == 0 or T == 0:
+        AA = 1
+    else:
+        AA = 1 + T/(1-T) * np.exp(-tau/tautrip)
 
-    AA = 1. + T/(1.-T) * np.exp(-tau/tautrip)
-
-    BB = 1 / ( (1.+tau/taudiff) * np.sqrt(1.+tau/(SP**2*taudiff)) )
+    BB = 1 / ( (1+tau/taudiff) * np.sqrt(1+tau/(SP**2*taudiff)) )
     G = off + 1/n * AA * BB
     return G
 
@@ -161,9 +165,11 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
 
     particle1 = F/( (1+tau/taud1) * np.sqrt(1+tau/(taud1*SP**2)))
     particle2 = alpha**2*(1-F)/( (1+tau/taud2) * np.sqrt(1+tau/(taud2*SP**2)))
-    # If the fraction of dark molecules is zero, its ok. Python can also handle
-    # exp(-1/inf).
-    triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+    # If the fraction of dark molecules is zero.
+    if tautrip == 0 or T == 0:
+        triplet = 1
+    else:
+        triplet = 1 + T/(1-T) * np.exp(-tau/tautrip)
     # For alpha == 1, *norm* becomes one
     norm = (F + alpha*(1-F))**2
 

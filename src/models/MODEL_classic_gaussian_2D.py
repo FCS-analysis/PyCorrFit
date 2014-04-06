@@ -18,8 +18,9 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
 
-import numpy as np                  # NumPy
+import numpy as np
 
 
 # 2D simple gauss
@@ -87,7 +88,10 @@ def CF_Gxy_T_gauss(parms, tau):
     T = parms[3]
     dc = parms[4]
 
-    triplet = 1 + T/(1-T)*np.exp(-tau/tautrip)
+    if tautrip == 0 or T == 0:
+        triplet = 1
+    else:
+        triplet = 1 + T/(1-T) * np.exp(-tau/tautrip)
 
     BB = 1 / ( (1.+tau/taudiff) )
     G = dc + 1/n * BB * triplet
