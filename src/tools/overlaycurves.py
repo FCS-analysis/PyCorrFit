@@ -149,6 +149,7 @@ class Wrapper_Tools(object):
             self.Selector.SelectBox.SetItems([])
             self.Selector.sp.Disable()
         else:
+            oldlabels = self.Selector.curvelabels
             self.Selector.sp.Enable()
             # Sticky behavior cleaned up in 0.7.8
             curvedict, labels = self.GetCurvedict()
@@ -156,7 +157,9 @@ class Wrapper_Tools(object):
             self.Selector.labels = labels
             self.Selector.ProcessDict()
             self.labels = labels
-            self.Selector.SelectBox.SetItems(self.Selector.curvelabels)
+            if oldlabels != self.Selector.curvelabels:
+                self.Selector.SelectBox.SetItems(
+                                              self.Selector.curvelabels)
             for i in np.arange(len(self.Selector.curvekeys)):
                 self.Selector.SelectBox.SetSelection(i)
             self.Selector.OnUpdatePlot(trigger=trigger)
