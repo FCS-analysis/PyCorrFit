@@ -181,12 +181,12 @@ The lateral detection area has the same shape as in confocal FCS. Thus, correlat
 
 % 3D diffusion (Gauß/exp)
 \noindent \begin{tabular}{lp{.7\textwidth}}
-Name & \textbf{TIR (Gaussian/Exp.) 3D} \\ 
-ID & \textbf{6013} \\ 
-Descr. &  Three-dimensional free diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction\cite{Starr2001, Hassler2005, Ohsugi2006}. \\ 
+Name & \textbf{TIR (Gaussian/Exp.) T+3D} \\ 
+ID & \textbf{6014} \\ 
+Descr. &  Three-dimensional free diffusion with a Gaussian lateral detection profile and an exponentially decaying profile in axial direction, including a triplet component\cite{Starr2001, Hassler2005, Ohsugi2006}. \\ 
 \end{tabular}
 \begin{align}
-G(\tau) = \frac{1}{C}  \frac{ \kappa^2}{ \pi (R_0^2 +4D\tau)}
+G(\tau) = \frac{1}{C}  \frac{ \kappa^2}{ \pi (R_0^2 +4D\tau)} \left(1 + \frac{T e^{-\tau/\tau_\mathrm{trip}}}{1-T}  \right)
  \left( \sqrt{\frac{D \tau}{\pi}} + \frac{1 - 2 D \tau \kappa^2}{2 \kappa}  w\!\left(i \sqrt{D \tau} \kappa\right) \right)
 \end{align} 
 \begin{center}
@@ -195,6 +195,8 @@ $C$ & Particle concentration in confocal volume \\
 $\kappa$ &  Evanescent decay constant ($\kappa = 1/d_\mathrm{eva}$)\\ 
 $R_0$ & Lateral extent of the detection volume \\
 $D$ & Diffusion coefficient  \\
+$T$ &  Fraction of particles in triplet (non-fluorescent) state\\ 
+$\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\ 
 \end{tabular}
 \end{center}
 \vspace{2em}
