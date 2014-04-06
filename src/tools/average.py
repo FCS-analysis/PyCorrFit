@@ -120,13 +120,18 @@ class Average(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
-        idsel = self.WXDropSelMod.GetSelection()
-        self.SetValues()
-        # Set back user selection:
-        self.WXDropSelMod.SetSelection(idsel)
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch",
+                       "parm_finalize", "fit_finalize"]:
+            return
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
+        
+        #idsel = self.WXDropSelMod.GetSelection()
+        self.SetValues()
+        # Set back user selection:
+        #self.WXDropSelMod.SetSelection(idsel)
+
         self.panel.Enable()
         self.Page = page
 

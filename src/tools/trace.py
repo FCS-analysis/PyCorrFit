@@ -110,6 +110,8 @@ class ShowTrace(wx.Frame):
             Forr a list of possible triggers, see the doc string of
             `tools`.
         """
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         self.Page = page
         # When parent changes
         if self.parent.notebook.GetPageCount() == 0:

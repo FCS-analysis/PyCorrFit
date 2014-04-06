@@ -118,6 +118,8 @@ class RangeSelector(wx.Frame):
         # This is a necessary function for PyCorrFit.
         # This is stuff that should be done when the active page
         # of the notebook changes.
+        if trigger in ["parm_batch", "fit_batch", "page_add_batch"]:
+            return
         self.Page = page
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
