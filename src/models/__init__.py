@@ -333,25 +333,35 @@ verification = dict()
 
 
 # 6001 6002 6031
-AppendNewModel(MODEL_classic_gaussian_2D.Modelarray) 
+AppendNewModel(MODEL_classic_gaussian_2D.Modelarray)
+
 # 6011 6012 6030
-AppendNewModel(MODEL_classic_gaussian_3D.Modelarray) 
+AppendNewModel(MODEL_classic_gaussian_3D.Modelarray)
+
 # 6032
-AppendNewModel(MODEL_classic_gaussian_3D2D.Modelarray) 
-# 6013
+AppendNewModel(MODEL_classic_gaussian_3D2D.Modelarray)
+
+# 6013 6014
 AppendNewModel(MODEL_TIRF_gaussian_1C.Modelarray)
+
 # 6033
-AppendNewModel(MODEL_TIRF_gaussian_3D2D.Modelarray) 
+AppendNewModel(MODEL_TIRF_gaussian_3D2D.Modelarray)
+
 # 6034
-AppendNewModel(MODEL_TIRF_gaussian_3D3D.Modelarray) 
+AppendNewModel(MODEL_TIRF_gaussian_3D3D.Modelarray)
+
 # 6000 6010
-AppendNewModel(MODEL_TIRF_1C.Modelarray) 
+AppendNewModel(MODEL_TIRF_1C.Modelarray)
+
 # 6022
-AppendNewModel(MODEL_TIRF_2D2D.Modelarray) 
+AppendNewModel(MODEL_TIRF_2D2D.Modelarray)
+
 # 6020
-AppendNewModel(MODEL_TIRF_3D2D.Modelarray) 
+AppendNewModel(MODEL_TIRF_3D2D.Modelarray)
+
 # 6023
-AppendNewModel(MODEL_TIRF_3D3D.Modelarray) 
+AppendNewModel(MODEL_TIRF_3D3D.Modelarray)
+
 # 6021
 AppendNewModel(MODEL_TIRF_3D2Dkin_Ries.Modelarray) 
 
@@ -365,7 +375,7 @@ modeltypes = dict()
 #modeltypes[u"TIR (□xσ/Exp.)"] = [6000, 6010, 6022, 6020, 6023, 6021]
 
 modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032]
-modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6034, 6033]
+modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 modeltypes[u"User"] = list()
 
