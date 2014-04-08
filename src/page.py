@@ -925,6 +925,16 @@ class FittingPanel(wx.Panel):
         self.parent.OnFNBPageChanged(trigger=trigger)
 
 
+    def SetCorrelationType(self, iscc, init=False):
+        """
+            The correlation type (AC or CC) of the page is set if data
+            is imported to the page (parent.ImportData).
+            In this case, init is `True`, else `False`.
+        """
+        if init:
+            self.IsCrossCorrelation = iscc
+
+
     def settings(self):
         """ Here we define, what should be displayed at the left side
             of the fitting page/tab.

@@ -60,6 +60,10 @@ def openFCS_Multiple(dirname, filename):
         This works with files from the Confocor2, Confocor3 (AIM) and 
         files created from the newer ZEN Software.
     """
+    ### TODO:
+    # match curves with their timestamp
+    # (actimelist and cctimelist)
+    #
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
     # Start progressing through the file. i is the line index.
@@ -75,6 +79,10 @@ def openFCS_Multiple(dirname, filename):
     cclist = list()     # All cross-correlation functions
     # The intensity traces
     traces = list()
+    # we use "AcquisitionTime" to match up curves
+    thistime = None
+    actimelist = list()
+    cctimelist = list()
     # The correlation curves
     ac_correlations = list()
     cc_correlations = list()
@@ -84,6 +92,8 @@ def openFCS_Multiple(dirname, filename):
             fcsset = True
             gottrace = False
         if fcsset == True:
+            if Alldata[i].partition("=")[0].strip() == "AcquisitionTime":
+                thistime = Alldata[i].partition("=")[2].strip()
             if Alldata[i].partition("=")[0].strip() == "Channel":
                 # Find out what type of correlation curve we have.
                 # Might be interesting to the user.
@@ -113,6 +123,11 @@ def openFCS_Multiple(dirname, filename):
                     # the next "FcsDataSet"-section.
                     print "Unknown channel configuration in .fcs file: "+FCStype
                     fcsset = False
+                elif FoundType[:2] == "CC":
+                    cctimelist.append(thistime)
+                elif FoundType[:2] == "AC":
+                    actimelist.append(thistime)
+
             if Alldata[i].partition("=")[0].strip() == "CountRateArray":
                 # Start importing the trace. This is a little difficult, since
                 # traces in those files are usually very large. We will bin
@@ -216,6 +231,11 @@ def openFCS_Multiple(dirname, filename):
     #          ac_correlations. Not in cc_correlations,
     #          because cross-correlations are not saved with traces.?
     #
+    # Identifiers:
+    #  actimelist: aquisition times according to aclist
+    #  cctimelist: aquisition times according to cclist
+    #
+    # Correlations:
     #  ac_correlations: AC-correlation data in list.
     #  cc_correlations: CC-correlation data in list.
     # 
@@ -233,6 +253,11 @@ def openFCS_Multiple(dirname, filename):
     curvelist = list()
     tracelist = list()
     corrlist = list()
+    
+    ### TODO:
+    # match curves with their timestamp
+    # (actimelist and cctimelist)
+    
     for i in np.arange(len(ac_correlations)):
         # Filter curves without correlation (ignore them)
         if ac_correlations[i] is not None:
