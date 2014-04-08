@@ -874,11 +874,11 @@ class MyFrame(wx.Frame):
         # doing this in order to keep data types clean.
         if curvetype[0:2] == "CC":
             # For cross correlation, the trace has two components
-            CurPage.IsCrossCorrelation = True
+            CurPage.SetCorrelationType(True, init=True)
             CurPage.tracecc = trace
             CurPage.trace = None
         else:
-            CurPage.IsCrossCorrelation = False
+            CurPage.SetCorrelationType(False, init=True)
             CurPage.tracecc = None
             if trace is not None:
                 CurPage.trace = trace
@@ -992,7 +992,6 @@ class MyFrame(wx.Frame):
         #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
         for afile in Datafiles:
-            Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
             except:
@@ -1247,7 +1246,8 @@ class MyFrame(wx.Frame):
                     for wkey in wkeys:
                         WeightKinds += [wkey]
                     Newtab.Fitbox[1].SetItems(WeightKinds)
-                self.UnpackParameters(Infodict["Parameters"][i], Newtab)
+                self.UnpackParameters(Infodict["Parameters"][i], Newtab,
+                                      init=True)
                 # Supplementary data
                 try:
                     Sups = Infodict["Supplements"][pageid]
@@ -1509,11 +1509,14 @@ class MyFrame(wx.Frame):
         return Parms
 
 
-    def UnpackParameters(self, Parms, Page):
+    def UnpackParameters(self, Parms, Page, init=False):
         """ Apply the given parameters to the Page in question.
             This function contains several *len(Parms) >= X* statements.
             These are used for opening sessions that were saved using
             earlier versions of PyCorrFit.
+            The `init` variable can be set if fundamental changes
+            are made (loading data). This e.g. might change the type
+            (Autocorrelation/Cross-Correlation) of the page.
         """
         modelid = Parms[1]
         if Page.modelid != modelid:
@@ -1601,7 +1604,7 @@ class MyFrame(wx.Frame):
                 Page.OnAmplitudeCheck("init")
         # Set if Newtab is of type cross-correlation:
         if len(Parms) >= 8:
-            Page.IsCrossCorrelation = Parms[7]
+            Page.SetCorrelationType(Parms[7], init)
         if len(Parms) >= 9:
             # New feature in 0.7.8 includes normalization to a fitting
             # parameter.
