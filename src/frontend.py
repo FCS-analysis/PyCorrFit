@@ -197,7 +197,8 @@ class MyFrame(wx.Frame):
             self.MainIcon = None
 
 
-    def add_fitting_tab(self, event=None, modelid=None, counter=None):
+    def add_fitting_tab(self, event=None, modelid=None, counter=None,
+                        select=False):
         """ This function creates a new page inside the notebook.
             If the function is called from a menu, the modelid is 
             known by the event. If not, the modelid should be specified by 
@@ -212,6 +213,8 @@ class MyFrame(wx.Frame):
         if modelid is None:
             # Get the model id from the menu
             modelid = event.GetId()
+            # Give the new page focus
+            select = True
         if counter is not None:
             # Set the tabcounter right, so the tabs are counted continuously.
             counterint = int(counter.strip().strip(":").strip("#"))
@@ -229,7 +232,13 @@ class MyFrame(wx.Frame):
         Newtab = page.FittingPanel(self, counter, modelid, active_parms,
                                    self.tau)
         #self.Freeze()
-        self.notebook.AddPage(Newtab, counter+model, select=False)
+        self.notebook.AddPage(Newtab, counter+model, select=select)
+        if select:
+            # A hack to have the last page displayed in the tab menu:
+            Npag = self.notebook.GetPageCount()
+            for i in range(int(Npag)):
+                self.notebook.SetSelection(i)
+
         #self.Thaw()
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu

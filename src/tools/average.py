@@ -294,8 +294,8 @@ class Average(wx.Frame):
         # Obtain the model ID from the dropdown selection.
         idsel = self.WXDropSelMod.GetSelection()
         modelid = self.DropdownIndex[idsel]
-        self.parent.add_fitting_tab(modelid = modelid)
-        self.AvgPage = self.parent.notebook.GetCurrentPage()
+        self.AvgPage = self.parent.add_fitting_tab(modelid = modelid,
+                                                   select = True)
         (self.AvgPage.startcrop, self.AvgPage.endcrop) = interval
         self.AvgPage.dataexpfull = average
         self.AvgPage.IsCrossCorrelation = self.IsCrossCorrelation
@@ -303,7 +303,7 @@ class Average(wx.Frame):
             newtrace = newtraces[0]
             if newtrace is not None and len(newtrace) != 0:
                 self.AvgPage.trace = newtrace
-                self.AvgPage.traceavg = newtrace.mean()
+                self.AvgPage.traceavg = newtrace[:,1].mean()
             else:
                 self.AvgPage.trace = None
                 self.AvgPage.traceavg = None
@@ -312,7 +312,6 @@ class Average(wx.Frame):
                 self.AvgPage.tracecc = newtraces
             else:
                 self.AvgPage.tracecc = None
-        self.AvgPage.PlotAll()
         self.AvgPage.Fit_enable_fitting()
         if len(pages) == 1:
             # Use the same title as the first page
@@ -348,6 +347,7 @@ class Average(wx.Frame):
                 WeightKinds += [key]
             self.AvgPage.Fitbox[1].SetItems(WeightKinds)
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
+        self.AvgPage.PlotAll()
         # Keep the average tool open.
         # self.OnClose()
 
