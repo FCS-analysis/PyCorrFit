@@ -1,4 +1,4 @@
-0.8.2-alpha3
+0.8.2-alpha5
 - New .pcfs (PyCorrFit Session) file format (#60)
 - Additional fitting algorithms: Nelder-Mead, BFGS, Powell, Polak-Ribiere (#71)
 - Improvements
