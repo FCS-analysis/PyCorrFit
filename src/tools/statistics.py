@@ -28,6 +28,7 @@
     You should have received a copy of the GNU General Public License 
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
 
 import datetime 
 import wx
@@ -438,6 +439,7 @@ class Stat(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0 or self.Page is None:
             self.canvas.Clear()
             return
+        
         # Get valid pages
         strFull = self.WXTextPages.GetValue()
         try:
@@ -485,9 +487,10 @@ class Stat(wx.Frame):
         # average line
         try:
             avg = np.average(np.array(plotcurve)[:,1])
-            maxpage =  np.max(np.array(plotcurve)[:,0])
-
+            maxpage =  int(np.max(np.array(plotcurve)[:,0]) +1)
+            minpage =  int(np.min(np.array(plotcurve)[:,0]) -1)
         except:
+            minpage = 0
             maxpage = 0
             self.WXavg.SetValue("-")
             self.WXsd.SetValue("-")
@@ -511,22 +514,12 @@ class Stat(wx.Frame):
         graphics = plot.PlotGraphics([linesig], 
                                      xLabel='page number', 
                                      yLabel=label)
-        self.canvas.Draw(graphics)
+        
         # Correctly set x-axis
         minticks = 2
-        self.canvas.SetXSpec(max(maxpage, minticks))
-        # Zoom out such that we can see the end of all curves
-        try:
-            # Something sometimes goes wrong here?
-            xcenter = np.average(np.array(plotcurve)[:,0])
-            ycenter = np.average(np.array(plotcurve)[:,1])
-            scale = (maxpage+2.)/maxpage
-            self.canvas.Zoom((xcenter,ycenter), (scale, scale))
-        except:
-            pass
-        # Redraw result
-        self.canvas.Redraw()
-                         
+        self.canvas.SetXSpec(max(maxpage-minpage, minticks))
+        self.canvas.Draw(graphics, xAxis=(minpage,maxpage))
+
         
     def OnPageChanged(self, page, trigger=None):
         """
