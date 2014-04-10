@@ -1,4 +1,4 @@
-0.8.2-alpha5
+0.8.2-alpha6
 - New .pcfs (PyCorrFit Session) file format (#60)
 - Additional fitting algorithms: Nelder-Mead, BFGS, Powell, Polak-Ribiere (#71)
 - Improvements
@@ -15,6 +15,7 @@
    - wxPython plotting problen on MacOSx (#64)
    - Statistics view: some parameters were duplicated (#76)
    - Catched zero-division warnings (models with triplet component)
+   - x-axis scaling of statistics and trace view now works better
 0.8.2
 - The documentation has been thoroughly reworked
 - The user is now warned if he does not have a TeX distribution installed
