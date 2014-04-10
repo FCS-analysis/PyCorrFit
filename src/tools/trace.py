@@ -28,6 +28,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+import numpy as np
 
 import wx
 import wx.lib.plot as plot    
@@ -81,6 +82,8 @@ class ShowTrace(wx.Frame):
                                  width=1)
             lines = [line]
             self.canvas.SetEnableLegend(False)
+            xmax = np.max(self.trace[:,0])
+            xmin = np.min(self.trace[:,0])
         elif self.Page.tracecc is not None:
             # This means that we have two (CC) traces to plot
             self.tracea = 1*self.Page.tracecc[0]
@@ -93,13 +96,17 @@ class ShowTrace(wx.Frame):
                                   colour='red', width=1)
             lines = [linea, lineb]
             self.canvas.SetEnableLegend(True)
+            xmax = max(np.max(self.tracea[:,0]), np.max(self.traceb[:,0]))
+            xmin = min(np.min(self.tracea[:,0]), np.min(self.traceb[:,0]))
         else: 
             self.canvas.Clear()
             return
         # Plot lines
+        
         self.canvas.Draw(plot.PlotGraphics(lines, 
                                            xLabel='time [s]', 
-                                           yLabel='count rate [kHz]'))
+                                           yLabel='count rate [kHz]'),
+                                           xAxis=(xmin,xmax))
 
 
     def OnPageChanged(self, page=None, trigger=None):
