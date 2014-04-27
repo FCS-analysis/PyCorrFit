@@ -1,4 +1,6 @@
 #!/bin/sh
+# go to script directory (necessary for relative paths with pip)
+cd $(dirname "$0")
 # debian
 if [ -f "/usr/share/pyshared/pycorrfit/PyCorrFit.py" ]
 then
