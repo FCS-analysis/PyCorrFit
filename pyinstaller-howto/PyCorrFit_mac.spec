@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 a = Analysis(['src/PyCorrFit.py'],
              pathex=['PyInstaller-2.1'],
-             hiddenimports=[],
+             hiddenimports=['sympy'],
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
             ('doc/PyCorrFit_doc.pdf', 'PyCorrFit_doc.pdf', 'DATA')]
@@ -23,4 +23,4 @@ coll = COLLECT(exe,
                name='PyCorrFit')
 app = BUNDLE(coll,
              name='PyCorrFit.app',
-             icon=None)
+             icon='pyinstaller-howto/PyCorrFit.icns')
