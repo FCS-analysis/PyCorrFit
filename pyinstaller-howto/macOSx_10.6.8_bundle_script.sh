@@ -5,9 +5,13 @@ cd $BASEDIR
 BASEDIR=$(pwd)
 cd "../"
 
-# successfully bundled PyCorrFit into binary but ".app" did not work.
-# working with stable 2.0 release (MD5 19350c07632e4deef5f4ecf64a556637)
-# and manual python 2.7 installation.
+# We need to run PyCorrFit in a separate Terminal to prevent this error
+# from occuring:
+#
+# UnicodeDecodeError: 'ascii' codec can't decode byte 0xcf
+# in position 0: ordinal not in range(128)
+#
+# tags: pyinstaller app bundling wxpython
 
 python ./Pyinstaller-2.1/pyinstaller.py -y ./pyinstaller-howto/PyCorrFit_mac.spec
 
