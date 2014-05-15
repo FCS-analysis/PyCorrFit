@@ -21,6 +21,7 @@ latest version of PyCorrFit using pip can be found there:
 https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip
 
 Further reading:
+
 - Latest downloads: https://github.com/paulmueller/PyCorrFit/releases   
 - Documentation: https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf   
 - Write model functions: https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions   
