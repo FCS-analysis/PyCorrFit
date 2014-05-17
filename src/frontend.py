@@ -89,6 +89,14 @@ class FlatNotebookDemo(fnb.FlatNotebook):
         agwStyle=style)
 
 
+class MyApp(wx.App):
+    def MacOpenFile(self,filename):
+        """
+        """
+        if filename.endswith(".pcfs"):
+            self.frame.OnOpenSession(sessionfile=filename)
+
+
 ###########################################################
 class MyFrame(wx.Frame):
     def __init__(self, parent, id, version):

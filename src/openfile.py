@@ -111,8 +111,8 @@ def OpenSession(parent, dirname, sessionfile=None):
     else:
         (dirname, filename) = os.path.split(sessionfile)
         path = sessionfile                  # Workaround since 0.7.5
-        if (filename[-len(wc[0]):] != wx[0] and
-            filename[-len(wc[1]):] != wx[1]):
+        if (not filename.endswith(wc[0]) and
+            not filename.endswith(wc[1])):
             # User specified wrong file
             print "Unknown file extension: "+filename
             # stop this function
