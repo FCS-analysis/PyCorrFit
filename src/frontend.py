@@ -473,7 +473,6 @@ class MyFrame(wx.Frame):
             dlg = wx.FileDialog(self, "Open model file", 
                             self.dirname, "", filters, wx.OPEN)
             if dlg.ShowModal() == wx.ID_OK:
-                NewModel = usermodel.UserModel(self)
                 # Workaround since 0.7.5
                 (dirname, filename) = os.path.split(dlg.GetPath())
                 #filename = dlg.GetFilename()
@@ -485,7 +484,10 @@ class MyFrame(wx.Frame):
                 dlg.Destroy()
                 return
         else:
-            (dirname, filename) = os.path.split(modfile)
+            dirname, filename = os.path.split(modfile)
+            self.dirname = dirname
+
+        NewModel = usermodel.UserModel(self)
         try:
             NewModel.GetCode( os.path.join(dirname, filename) )
         except NameError:
@@ -976,7 +978,7 @@ class MyFrame(wx.Frame):
             dlg.ShowModal()
             
 
-    def OnLoadBatch(self, e, dataname=None):
+    def OnLoadBatch(self, e=None, dataname=None):
         """ Open multiple data files and apply a single model to them
             We will create a new window where the user may decide which
             model to use.
@@ -1010,10 +1012,16 @@ class MyFrame(wx.Frame):
                 dlg.Destroy()
                 return
         else:
-            Datafiles = list(filename)
+            Datafiles = list()
+            if isinstance(dataname, list):
+                for item in dataname:
+                    Datafiles.append(os.path.split(item)[1])
+                self.dirname, filename = os.path.split(Datafiles[0])
+            else:
+                Datafiles.append(os.path.split(dataname)[1])
+                self.dirname, filename = os.path.split(dataname)
             Datafiles.sort()
-            self.dirname, filename = os.path.split(Datafiles[0])
-            
+
         ## Get information from the data files and let the user choose
         ## which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
