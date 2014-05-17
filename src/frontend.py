@@ -94,7 +94,13 @@ class MyApp(wx.App):
         """
         """
         if filename.endswith(".pcfs"):
-            self.frame.OnOpenSession(sessionfile=filename)
+            stri = self.frame.OnClearSession()
+            if stri == "clear":
+                self.frame.OnOpenSession(sessionfile=filename)
+        elif filename.endswith(".txt"):
+            self.frame.OnAddModel(modfile=filename)
+        else:
+            self.frame.OnLoadBatch(dataname=filename)
 
 
 ###########################################################
@@ -457,84 +463,89 @@ class MyFrame(wx.Frame):
         wx.AboutBox(info)
         
 
-    def OnAddModel(self, event=None):
+    def OnAddModel(self, event=None, modfile=None):
         """ Import a model from an external .txt file. See example model
             functions available on the web.
         """
         # Add a model using the dialog.
         filters = "text file (*.txt)|*.txt"
-        dlg = wx.FileDialog(self, "Open model file", 
+        if modfile is None:
+            dlg = wx.FileDialog(self, "Open model file", 
                             self.dirname, "", filters, wx.OPEN)
-        if dlg.ShowModal() == wx.ID_OK:
-            NewModel = usermodel.UserModel(self)
-            # Workaround since 0.7.5
-            (dirname, filename) = os.path.split(dlg.GetPath())
-            #filename = dlg.GetFilename()
-            #dirname = dlg.GetDirectory()
-            self.dirname = dirname
-            # Try to import a selected .txt file
-            try:
-                NewModel.GetCode( os.path.join(dirname, filename) )
-            except NameError:
-                # sympy is probably not installed
-                # Warn the user
-                text = ("SymPy not found.\n"+
-                        "In order to import user defined model\n"+
-                        "functions, please install Sympy\n"+
-                        "version 0.7.2 or higher.\nhttp://sympy.org/")
-                if platform.system().lower() == 'linux':
-                    text += ("\nSymPy is included in the package:\n"+
-                             "   'python-sympy'")
-                dlg = wx.MessageDialog(None, text, 'SymPy not found', 
-                                wx.OK | wx.ICON_EXCLAMATION)
-                dlg.ShowModal()
+            if dlg.ShowModal() == wx.ID_OK:
+                NewModel = usermodel.UserModel(self)
+                # Workaround since 0.7.5
+                (dirname, filename) = os.path.split(dlg.GetPath())
+                #filename = dlg.GetFilename()
+                #dirname = dlg.GetDirectory()
+                self.dirname = dirname
+                # Try to import a selected .txt file
+            else:
+                self.dirname = dlg.GetDirectory()
+                dlg.Destroy()
                 return
-            except:
-                # The file does not seem to be what it seems to be.
-                info = sys.exc_info()
-                errstr = "Unknown file format:\n"
-                errstr += str(filename)+"\n\n"
-                errstr += str(info[0])+"\n"
-                errstr += str(info[1])+"\n"
-                for tb_item in traceback.format_tb(info[2]):
-                    errstr += tb_item
-                dlg = wx.MessageDialog(self, errstr, "Error", 
-                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
-                dlg.ShowModal()
+        else:
+            (dirname, filename) = os.path.split(modfile)
+        try:
+            NewModel.GetCode( os.path.join(dirname, filename) )
+        except NameError:
+            # sympy is probably not installed
+            # Warn the user
+            text = ("SymPy not found.\n"+
+                    "In order to import user defined model\n"+
+                    "functions, please install Sympy\n"+
+                    "version 0.7.2 or higher.\nhttp://sympy.org/")
+            if platform.system().lower() == 'linux':
+                text += ("\nSymPy is included in the package:\n"+
+                         "   'python-sympy'")
+            dlg = wx.MessageDialog(None, text, 'SymPy not found', 
+                            wx.OK | wx.ICON_EXCLAMATION)
+            dlg.ShowModal()
+            return
+        except:
+            # The file does not seem to be what it seems to be.
+            info = sys.exc_info()
+            errstr = "Unknown file format:\n"
+            errstr += str(filename)+"\n\n"
+            errstr += str(info[0])+"\n"
+            errstr += str(info[1])+"\n"
+            for tb_item in traceback.format_tb(info[2]):
+                errstr += tb_item
+            dlg = wx.MessageDialog(self, errstr, "Error", 
+                style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+            dlg.ShowModal()
+            del NewModel
+            return
+        # Test the code for sympy compatibility.
+        # If you write your own parser, this might be easier.
+        try:
+            NewModel.TestFunction()
+
+        except:
+            # This means that the imported model file could be
+            # contaminated. Ask the user how to proceed.
+            text = "The model parsing check raised an Error.\n"+\
+                   "This could be the result of a wrong Syntax\n"+\
+                   "or an error of the parser.\n"+\
+                   "This might be dangerous. Procceed\n"+\
+                   "only, if you trust the source of the file.\n"+\
+                   "Try and import offensive file: "+filename+"?"
+            dlg2 = wx.MessageDialog(self, text, "Unsafe Operation",
+                    style=wx.ICON_EXCLAMATION|wx.YES_NO|wx.STAY_ON_TOP)
+            if dlg2.ShowModal() == wx.ID_YES:
+                NewModel.ImportModel()
+            else:
                 del NewModel
                 return
-            # Test the code for sympy compatibility.
-            # If you write your own parser, this might be easier.
-            try:
-                NewModel.TestFunction()
-
-            except:
-                # This means that the imported model file could be
-                # contaminated. Ask the user how to proceed.
-                text = "The model parsing check raised an Error.\n"+\
-                       "This could be the result of a wrong Syntax\n"+\
-                       "or an error of the parser.\n"+\
-                       "This might be dangerous. Procceed\n"+\
-                       "only, if you trust the source of the file.\n"+\
-                       "Try and import offensive file: "+filename+"?"
-                dlg2 = wx.MessageDialog(self, text, "Unsafe Operation",
-                        style=wx.ICON_EXCLAMATION|wx.YES_NO|wx.STAY_ON_TOP)
-                if dlg2.ShowModal() == wx.ID_YES:
-                    NewModel.ImportModel()
-                else:
-                    del NewModel
-                    return
-            else:
-                # The model was loaded correctly
-                NewModel.ImportModel()
-               
         else:
-            dirname = dlg.GetDirectory()
-            dlg.Destroy()
+            # The model was loaded correctly
+            NewModel.ImportModel()
+               
+
         self.dirname = dirname
             
 
-    def OnClearSession(self,e=None,clearmodels=False):
+    def OnClearSession(self, e=None, clearmodels=False):
         """
             Clear the entire session
         
@@ -965,38 +976,44 @@ class MyFrame(wx.Frame):
             dlg.ShowModal()
             
 
-    def OnLoadBatch(self, e):
+    def OnLoadBatch(self, e, dataname=None):
         """ Open multiple data files and apply a single model to them
             We will create a new window where the user may decide which
             model to use.
         """
-        ## Browse the file system
-        SupFiletypes = opf.Filetypes.keys()
-        # Sort them so we have "All suported filetypes" up front
-        SupFiletypes.sort()
-        filters = ""
-        for i in np.arange(len(SupFiletypes)):
-            # Add to the filetype filter
-            filters = filters+SupFiletypes[i]
-            if i+1 != len(SupFiletypes):
-                # Add a separator if item is not last item
-                filters = filters+"|"
-        dlg = wx.FileDialog(self, "Open data files", 
-            self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
-        if dlg.ShowModal() == wx.ID_OK:
-            Datafiles = dlg.GetFilenames()
-            # We rely on sorted filenames
-            Datafiles.sort()
-            # Workaround since 0.7.5
-            paths = dlg.GetPaths()
-            if len(paths) != 0:
-                self.dirname = os.path.split(paths[0])[0]
+        if dataname is None:
+            ## Browse the file system
+            SupFiletypes = opf.Filetypes.keys()
+            # Sort them so we have "All suported filetypes" up front
+            SupFiletypes.sort()
+            filters = ""
+            for i in np.arange(len(SupFiletypes)):
+                # Add to the filetype filter
+                filters = filters+SupFiletypes[i]
+                if i+1 != len(SupFiletypes):
+                    # Add a separator if item is not last item
+                    filters = filters+"|"
+            dlg = wx.FileDialog(self, "Open data files", 
+                self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
+            if dlg.ShowModal() == wx.ID_OK:
+                Datafiles = dlg.GetFilenames()
+                # We rely on sorted filenames
+                Datafiles.sort()
+                # Workaround since 0.7.5
+                paths = dlg.GetPaths()
+                if len(paths) != 0:
+                    self.dirname = os.path.split(paths[0])[0]
+                else:
+                    self.dirname = dlg.GetDirectory()
+                dlg.Destroy()
             else:
-                self.dirname = dlg.GetDirectory()
-            dlg.Destroy()
+                dlg.Destroy()
+                return
         else:
-            dlg.Destroy()
-            return
+            Datafiles = list(filename)
+            Datafiles.sort()
+            self.dirname, filename = os.path.split(Datafiles[0])
+            
         ## Get information from the data files and let the user choose
         ## which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
