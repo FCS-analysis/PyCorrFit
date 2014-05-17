@@ -128,8 +128,11 @@ CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
 
 
 ## Start gui
-app = gui.wx.App(False)
+app = gui.MyApp(False)
+
 frame = gui.MyFrame(None, -1, version)
+app.frame = frame
+
 # Before starting the main loop, check for possible session files
 # in the arguments.
 sysarg = sys.argv
@@ -152,5 +155,6 @@ for arg in sysarg:
         pass
     else:
         print "I do not know what to do with this argument: "+arg
-    
+
+
 app.MainLoop()
