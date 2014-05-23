@@ -48,7 +48,17 @@ setup(
         "sympy >= 0.7.2",
         "PyYAML >= 3.09",
         "wxPython >= 2.8.10.1",
-        "matplotlib >= 1.1.0"]
+        "matplotlib >= 1.1.0"],
+    keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
+              "tir", "fitting"],
+    classifiers= [
+        'Operating System :: Unix',
+        'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Intended Audience :: Science/Research'
+                 ],
+    platforms=['ALL']
     )
 
 
