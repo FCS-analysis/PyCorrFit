@@ -52,8 +52,7 @@ setup(
     keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
               "tir", "fitting"],
     classifiers= [
-        'Operating System :: Unix',
-        'Operating System :: Microsoft :: Windows',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Visualization',
         'Intended Audience :: Science/Research'
