@@ -2,8 +2,8 @@
 """ PicoQuant functionalities from FCS_viewer
 
     This file contains a fast implementation of an algorithm that is
-    very important (yes I have no clou about the inside of pt3 files)
-    for importing *.pt3 files `dividAndConquer`.
+    very important (yes I have no clue about the structure of pt3 files)
+    for importing *.pt3 files: `dividAndConquer`.
     
     The code was written by
     Dr. Dominic Waithe
