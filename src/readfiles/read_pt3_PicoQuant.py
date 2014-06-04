@@ -100,12 +100,6 @@ autotime = po.autotime
 # Cross-Correlation CH1-CH0 ????
 # autotime,auto[:,1,0]
 
-import IPython
-IPython.embed()
-
-
-
-
 
 
 
