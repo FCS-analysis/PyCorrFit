@@ -139,7 +139,7 @@ class Wrapper_Tools(object):
             `tools`.
         """
         if trigger in ["parm_batch", "fit_batch", "page_add_batch",
-                       "tab_init"]:
+                       "tab_init", "tab_browse"]:
             return
         # When parent changes
         # This is a necessary function for PyCorrFit.
