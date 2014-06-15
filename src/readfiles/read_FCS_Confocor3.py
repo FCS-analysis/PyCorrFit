@@ -254,65 +254,142 @@ def openFCS_Multiple(dirname, filename):
     tracelist = list()
     corrlist = list()
     
-    ### TODO:
-    # match curves with their timestamp
+    # match up curves with their timestamps
     # (actimelist and cctimelist)
-    
-    for i in np.arange(len(ac_correlations)):
-        # Filter curves without correlation (ignore them)
-        if ac_correlations[i] is not None:
-            curvelist.append(aclist[i])
-            tracelist.append(1*traces[i])
-            corrlist.append(ac_correlations[i])
-        else:
-            if traces[i] is not None:
-                warnings.warn("File {} curve {} does not contain AC data.".format(filename, i))
-    # Overwrite traces. This way we have equal number of ac correlations
-    # and traces.
-    traces = tracelist
-    ## The CC traces are more tricky:
-    # Add traces to CC-correlation functions.
-    # It seems reasonable, that if number of AC1,AC2 and CC are equal,
-    # CC gets the traces accordingly.
-    # We take the number of ac curves from curvelist instead of aclist,
-    # because aclist may contain curves without ac data (see above).
-    # In that case, the cc traces do most-likely belong to the acs.
-    n_ac1 = curvelist.count("AC1")
-    n_ac2 = curvelist.count("AC2")
-    n_cc12 = cclist.count("CC12")
-    n_cc21 = cclist.count("CC21")
-    if n_ac1==n_ac2==n_cc12==n_cc21>0:
-        CCTraces = True
-    else:
-        CCTraces = False
-    # Commence swapping, if necessary
-    # We want to have CC12 first and the corresponding trace to AC1 as well.
-    if len(cc_correlations) != 0:
-        if cclist[0] == "CC12":
-            if aclist[0] == "AC2":
-                for i in np.arange(len(traces)/2):
-                    traces[2*i], traces[2*i+1] = traces[2*i+1], traces[2*i] 
-            # Everything is OK
-        elif cclist[0] == "CC21":
-            # Switch the order of CC correlations
-            a = cc_correlations
-            for i in np.arange(len(a)/2):
-                a[2*i], a[2*i+1] = a[2*i+1], a[2*i]
-                cclist[2*i], cclist[2*i+1] = cclist[2*i+1], cclist[2*i]
-                if aclist[2*i] == "AC2":
-                    traces[2*i], traces[2*i+1] = traces[2*i+1], traces[2*i] 
-    # Add cc-curves with (if CCTraces) trace.
-    for i in np.arange(len(cc_correlations)):
-        if cc_correlations[i] is not None:
-            curvelist.append(cclist[i])
-            corrlist.append(cc_correlations[i])
-            if CCTraces == True:
-                if cclist[i] == "CC12":
-                    tracelist.append([traces[i], traces[i+1]])
-                elif cclist[i] == "CC21":
-                    tracelist.append([traces[i-1], traces[i]])
-            else:
-                tracelist.append(None)
+    knowntimes = list()
+    for tid in actimelist:
+        if tid not in knowntimes:
+            knowntimes.append(tid)
+            n = actimelist.count(tid)
+            actids = np.where(np.array(actimelist) == tid)[0]
+            cctids = np.where(np.array(cctimelist) == tid)[0]
+            
+            if len(actids) == 0:
+                warnings.warn("File {} timepoint {} has no AC data.".
+                              format(filename, tid))
+            elif len(actids) == 1:
+                # single AC curve
+                if ac_correlations[actids[0]] is not None:
+                    curvelist.append(aclist[i])
+                    tracelist.append(1*traces[i])
+                    corrlist.append(ac_correlations[i])
+                else:
+                    if traces[i] is not None:
+                        warnings.warn("File {} curve {} does not contain AC data.".format(filename, tid))
+            elif len(actids) == 2:
+                
+               
+                # Get AC data
+                if aclist[actids[0]] == "AC1":
+                    acdat1 = ac_correlations[actids[0]]
+                    trace1 = traces[actids[0]]
+                    acdat2 = ac_correlations[actids[1]]
+                    trace2 = traces[actids[1]]
+                elif aclist[actids[0]] == "AC2":
+                    acdat1 = ac_correlations[actids[1]]
+                    trace1 = traces[actids[1]]
+                    acdat2 = ac_correlations[actids[0]]
+                    trace2 = traces[actids[0]]
+                else:
+                    warnings.warn("File {} curve {}: unknown AC data.".format(filename, tid))
+                    continue
+                
+                if acdat1 is not None:
+                    #AC1
+                    curvelist.append("AC1")
+                    tracelist.append(trace1)
+                    corrlist.append(acdat1)
+                if acdat2 is not None:
+                    #AC2
+                    curvelist.append("AC2")
+                    tracelist.append(trace2)
+                    corrlist.append(acdat2)
+                    
+                if len(cctids) == 2:
+                    # Get CC data
+                    if cclist[cctids[0]] == "CC12":
+                        ccdat12 = cc_correlations[cctids[0]]
+                        ccdat21 = cc_correlations[cctids[1]]
+                    elif cclist[cctids[0]] == "CC21":
+                        ccdat12 = cc_correlations[cctids[1]]
+                        ccdat21 = cc_correlations[cctids[0]]
+                    else:
+                        warnings.warn("File {} curve {}: unknown CC data.".format(filename, tid))
+                        continue
+                        
+                    tracecc = [trace1, trace2]
+                    if ccdat12 is not None:
+                        #CC12
+                        curvelist.append("CC12")
+                        tracelist.append(tracecc)
+                        corrlist.append(ccdat12)
+                    if ccdat21 is not None:
+                        #CC21
+                        curvelist.append("CC21")
+                        tracelist.append(tracecc)
+                        corrlist.append(ccdat21)
+
+ #   for i in np.arange(len(ac_correlations)):
+ #       # Filter curves without correlation (ignore them)
+ #       if ac_correlations[i] is not None:
+ #           curvelist.append(aclist[i])
+ #           tracelist.append(1*traces[i])
+ #           corrlist.append(ac_correlations[i])
+ #       else:
+ #           if traces[i] is not None:
+ #               warnings.warn("File {} curve {} does not contain AC data.".format(filename, i))
+ #   # Overwrite traces. Now we have equal number of ac correlations
+ #   # and traces.
+ #   traces = tracelist
+ 
+ #   ## The CC traces are more tricky:
+ #   # Add traces to CC-correlation functions.
+ #   # It seems reasonable, that if number of AC1,AC2 and CC are equal,
+ #   # CC gets the traces accordingly.
+ #   # We take the number of ac curves from curvelist instead of aclist,
+ #   # because aclist may contain curves without ac data (see above).
+ #   # In that case, the cc traces do most-likely belong to the acs.
+ #   n_ac1 = curvelist.count("AC1")
+ #   n_ac2 = curvelist.count("AC2")
+ #   n_cc12 = cclist.count("CC12")
+ #   n_cc21 = cclist.count("CC21")
+ #   if n_ac1==n_ac2==n_cc12==n_cc21>0:
+ #       CCTraces = True
+ #   else:
+ #       CCTraces = False
+ #    
+ #   # Commence swapping, if necessary
+ #   # We want to have CC12 first and the corresponding trace to AC1 as well.
+ #   if len(cc_correlations) != 0:
+ #       if cclist[0] == "CC12":
+ #           if aclist[0] == "AC2":
+ #               for i in np.arange(len(traces)/2):
+ #                   traces[2*i], traces[2*i+1] = traces[2*i+1], traces[2*i] 
+ #           # Everything is OK
+ #       elif cclist[0] == "CC21":
+ #           # Switch the order of CC correlations
+ #           a = cc_correlations
+ #           for i in np.arange(len(a)/2):
+ #               a[2*i], a[2*i+1] = a[2*i+1], a[2*i]
+ #               cclist[2*i], cclist[2*i+1] = cclist[2*i+1], cclist[2*i]
+ #               if aclist[2*i] == "AC2":
+ #                   traces[2*i], traces[2*i+1] = traces[2*i+1], traces[2*i] 
+ #
+ #
+ #    # Add cc-curves with (if CCTraces) trace.
+ #   for i in np.arange(len(cc_correlations)):
+ #       if cc_correlations[i] is not None:
+ #           curvelist.append(cclist[i])
+ #           corrlist.append(cc_correlations[i])
+ #           if CCTraces == True:
+ #               if cclist[i] == "CC12":
+ #                   tracelist.append([traces[i], traces[i+1]])
+ #               elif cclist[i] == "CC21":
+ #                   tracelist.append([traces[i-1], traces[i]])
+ #           else:
+ #               tracelist.append(None)
+                
+
     dictionary = dict()
     dictionary["Correlation"] = corrlist
     dictionary["Trace"] = tracelist
