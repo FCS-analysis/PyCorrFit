@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # To create a distribution package for pip or easy-install:
 # python setup.py sdist
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
+from Cython.Distutils import build_ext
+import numpy as np
+
 from os.path import join, dirname, realpath
 from warnings import warn
 
@@ -21,6 +24,14 @@ try:
 except:
     warn("Could not find 'ChangeLog.txt'. PyCorrFit version is unknown.")
     version = "0.0.0-unknown"
+
+
+EXTENSIONS = [Extension("src.readfiles.read_pt3_PicoQuant_fib4",
+                        ["src/readfiles/read_pt3_PicoQuant_fib4.pyx"],
+                        libraries=[],
+                        include_dirs=[np.get_include()]
+                        )
+              ]
 
 setup(
     name='pycorrfit',
@@ -42,7 +53,10 @@ setup(
     long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
     scripts=['bin/pycorrfit'],
     include_package_data=True,
+    cmdclass={"build_ext": build_ext},
+    ext_modules=EXTENSIONS,
     install_requires=[
+        "cython",
         "NumPy >= 1.5.1",
         "SciPy >= 0.8.0",
         "sympy >= 0.7.2",

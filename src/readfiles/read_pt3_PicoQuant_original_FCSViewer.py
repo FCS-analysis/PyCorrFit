@@ -19,7 +19,7 @@
 import numpy as np
 import os 
 import struct
-import fib4
+import read_pt3_PicoQuant_fib4 as fib4
 
 
 __all__ = ["picoObject", "delayTime2bin", "pt3import", "tttr2xfcs"]
