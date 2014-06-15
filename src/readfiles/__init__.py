@@ -37,6 +37,8 @@ from read_CSV_PyCorrFit import openCSV
 from read_SIN_correlator_com import openSIN
 from read_FCS_Confocor3 import openFCS
 from read_mat_ries import openMAT
+from read_pt3_PicoQuant import openPT3
+
 
 
 def AddAllWildcard(Dictionary):
@@ -231,6 +233,7 @@ Filetypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
               "ALV (*.ASC)|*.ASC" : openASC,
               "PyCorrFit (*.csv)|*.csv" : openCSV,
               "Matlab 'Ries (*.mat)|*.mat" : openMAT,
+              "PicoQuant (*.pt3)|*.pt3" : openPT3,
               "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
               "Zip file (*.zip)|*.zip" : openZIP,
               "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
@@ -243,6 +246,7 @@ Filetypes = AddAllWildcard(Filetypes)
 BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "ALV (*.ASC)|*.ASC" : openASC,
                 "PyCorrFit (*.csv)|*.csv" : openCSV,
+                "PicoQuant (*.pt3)|*.pt3" : openPT3,
                 "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
                 "Zip file (*.zip)|*.zip" : openZIP,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
