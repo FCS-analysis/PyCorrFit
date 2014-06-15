@@ -184,12 +184,17 @@ def SoftwareUsed():
     """ Return some Information about the software used for this program """
     text = "Python "+sys.version+\
            "\n\nModules:"+\
+           "\n - cython "+\
            "\n - matplotlib "+matplotlib.__version__+\
            "\n - NumPy "+numpy.__version__+\
            "\n - PyYAML "+yaml.__version__ +\
            "\n - SciPy "+scipy.__version__+\
            "\n - sympy "+sympy.__version__ +\
            "\n - wxPython "+wx.__version__
+    # Other software
+    text += "\n\nOther software:"+\
+            "\n - FCS_viewer v02" +\
+            "\n    PicoQuant file format for Python by Dominic Waithe"
     if hasattr(sys, 'frozen'):
         pyinst = "\n\nThis executable has been created using PyInstaller."
         text = text+pyinst
