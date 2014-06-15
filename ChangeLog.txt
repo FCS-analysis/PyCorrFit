@@ -1,3 +1,8 @@
+0.8.3-alpha1
+- Experimental support for PicoQuant data file format
+  Many thanks to Dominic Waithe (@dwaithe)
+- Improved comaptibility with Zeiss .fcs file format
+- PyCorrFit is now dependent on Cython
 0.8.3
 - New .pcfs (PyCorrFit Session) file format (#60)
 - Additional fitting algorithms: Nelder-Mead, BFGS, Powell, Polak-Ribiere (#71)
