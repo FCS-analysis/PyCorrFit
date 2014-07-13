@@ -47,9 +47,10 @@ from tools import info
 from readfiles import Filetypes
 from readfiles import BGFiletypes
 
-def ImportParametersYaml(parent, dirname):
+
+def ImportParametersYaml(parent=None, dirname=None, filename=None):
     """ Import the parameters from a parameters.yaml file
-        from an PyCorrFit session.
+        from a PyCorrFit session.
     """
     wc = [".pcfs", ".fcsfit-session.zip"]
     wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(wc[0], wc[1])
@@ -76,7 +77,7 @@ def ImportParametersYaml(parent, dirname):
         return None, dirname, None
 
 
-def OpenSession(parent, dirname, sessionfile=None):
+def OpenSession(parent=None, dirname=None, sessionfile=None):
     """ Load a whole session that has previously been saved
         by PyCorrFit.
         Infodict may contain the following keys:
