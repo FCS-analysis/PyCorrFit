@@ -37,6 +37,7 @@ import shutil
 import tempfile
 import yaml
 import zipfile
+import warnings
 
 import doc
 import edclasses
