@@ -29,6 +29,7 @@
 
 import doc
 import models
+import openfile
 import readfiles
 
 __version__ = doc.__version__

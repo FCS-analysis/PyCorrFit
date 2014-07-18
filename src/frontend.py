@@ -1,35 +1,34 @@
 # -*- coding: utf-8 -*-
-""" PyCorrFit
+""" PyCorrFit - Module frontend
 
-    Module frontend
-    The frontend displays the GUI (Graphic User Interface). All necessary 
-    functions and modules are called from here.
+The frontend displays the GUI (Graphic User Interface). All necessary 
+functions and modules are called from here.
 
-    Dimensionless representation:
-    unit of time        : 1 ms
-    unit of inverse time: 10³ /s
-    unit of distance    : 100 nm
-    unit of Diff.coeff  : 10 µm²/s
-    unit of inverse area: 100 /µm²
-    unit of inv. volume : 1000 /µm³
+Dimensionless representation:
+unit of time        : 1 ms
+unit of inverse time: 10³ /s
+unit of distance    : 100 nm
+unit of Diff.coeff  : 10 µm²/s
+unit of inverse area: 100 /µm²
+unit of inv. volume : 1000 /µm³
 
-    Copyright (C) 2011-2012  Paul Müller
+Copyright (C) 2011-2012  Paul Müller
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License 
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-
+from distutils.version import LooseVersion # For version checking
 import os
 import webbrowser
 import wx                               # GUI interface wxPython
@@ -1209,10 +1208,16 @@ class MyFrame(wx.Frame):
         dlg.Destroy()
 
 
-    def OnOpenSession(self,e=None,sessionfile=None):
-        """Open a previously saved session. 
-           Optional parameter sessionfile defines the file that shall be
-           automatically loaded (without a dialog)
+    def OnOpenSession(self, e=None, sessionfile=None):
+        """ Displays a dialog for opening PyCorrFit sessions
+        
+        Optional parameter sessionfile defines the file that shall be
+        automatically loaded (without a dialog).
+        
+        
+        See Also
+        --------
+        `pycorrfit.openfile.LoadSessionData`
         """
         # We need to clear the session before opening one.
         # This will also ask, if user wants to save the current session.
@@ -1221,142 +1226,204 @@ class MyFrame(wx.Frame):
             # User pressed abort when he was asked if he wants to save
             # the session. Therefore, we cannot open a new session.
             return "abort"
-        Infodict, self.dirname, filename = \
-         opf.OpenSession(self, self.dirname, sessionfile=sessionfile)
-        # Check, if a file has been opened
-        if filename is not None:
-            self.filename = filename
-            self.SetTitleFCS(self.filename)
-            ## Background traces
-            try:
-                self.Background = Infodict["Backgrounds"]
-            except:
-                pass
-            ## Preferences
-            ## if Preferences is Not None:
-            ## add them!
-            # External functions
-            for key in Infodict["External Functions"].keys():
-                NewModel = usermodel.UserModel(self)
-                # NewModel.AddModel(self, code)
-                # code is a list with strings
-                # each string is one line
-                NewModel.AddModel(
-                    Infodict["External Functions"][key].splitlines())
-                NewModel.ImportModel()
-            # Internal functions:
-            N = len(Infodict["Parameters"])
-            # Reset tabcounter
-            self.tabcounter = 1
-            # Show a nice progress dialog:
-            style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
-                    wx.PD_CAN_ABORT
-            dlg = wx.ProgressDialog("Import", "Loading pages..."
-            , maximum = N, parent=self, style=style)
-            for i in np.arange(N):
-                # Let the user abort, if he wants to:
-                if dlg.Update(i+1, "Loading pages...")[0] == False:
-                    dlg.Destroy()
-                    return
-                # Add a new page to the notebook. This page is created with
-                # variables from models.py. We will write our data to
-                # the page later.
-                counter = Infodict["Parameters"][i][0]
-                modelid = Infodict["Parameters"][i][1]
-                Newtab = self.add_fitting_tab(modelid=modelid,
-                                              counter=counter)
-                # Add experimental Data
-                # Import dataexp:
-                number = counter.strip().strip(":").strip("#")
-                pageid = int(number)
-                [tau, dataexp] = Infodict["Correlations"][pageid]
-                if dataexp is not None:
-                    # Write experimental data
-                    Newtab.dataexpfull = dataexp
-                    Newtab.dataexp = True # not None
-                # As of 0.7.3: Add external weights to page
-                try:
-                    Newtab.external_std_weights = \
-                                   Infodict["External Weights"][pageid]
-                except KeyError:
-                    # No data
-                    pass
-                else:
-                    # Add external weights to fitbox
-                    WeightKinds = Newtab.Fitbox[1].GetItems()
-                    wkeys = Newtab.external_std_weights.keys()
-                    wkeys.sort()
-                    for wkey in wkeys:
-                        WeightKinds += [wkey]
-                    Newtab.Fitbox[1].SetItems(WeightKinds)
-                self.UnpackParameters(Infodict["Parameters"][i], Newtab,
-                                      init=True)
-                # Supplementary data
-                try:
-                    Sups = Infodict["Supplements"][pageid]
-                except KeyError:
-                    pass
-                else:
-                    errdict = dict()
-                    for errInfo in Sups["FitErr"]:
-                        for ierr in np.arange(len(errInfo)):
-                            errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
-                            errval = float(errInfo[1])
-                            errdict[errkey] = errval
-                    Newtab.parmoptim_error = errdict
-                    try:
-                        Newtab.GlobalParameterShare = Sups["Global Share"]
-                    except:
-                        pass
-                    try:
-                        Newtab.chi2 = Sups["Chi sq"]
-                    except:
-                        pass
-                # Set Title of the Page
-                try:
-                    Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
-                except:
-                    pass # no page title
-                # Import the intensity trace
-                try:
-                    trace = Infodict["Traces"][pageid]
-                except:
-                    trace = None
-                if trace is not None:
-                    if Newtab.IsCrossCorrelation is False:
-                        Newtab.trace = trace[0]
-                        Newtab.traceavg = trace[0][:,1].mean()
-                    else:
-                        Newtab.tracecc = trace
-                # Plot everything
-                Newtab.PlotAll(trigger="page_add_batch")
-            # Set Session Comment
-            try:
-                self.SessionComment = Infodict["Comments"]["Session"]
-            except:
-                pass
-            try:
-                Infodict["Preferences"] # not used yet
-            except:
-                pass
-            if self.notebook.GetPageCount() > 0:
-                # Enable the "Current" Menu
-                self.EnableToolCurrent(True)
-                self.OnFNBPageChanged(trigger="page_add_finalize")
+        
+        ## Create user dialog
+        wc = opf.session_wildcards
+        wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(
+                                                           wc[0], wc[1])
+        if sessionfile is None:
+            dlg = wx.FileDialog(self, "Open session file",
+                                self.dirname, "", wcstring, wx.OPEN)
+            # user cannot do anything until he clicks "OK"
+            if dlg.ShowModal() == wx.ID_OK:
+                sessionfile = dlg.GetPath()
+                (self.dirname, self.filename) = os.path.split(
+                                                            sessionfile)
             else:
-                # There are no pages in the session.
-                # Disable some menus and close some dialogs
-                self.EnableToolCurrent(False)
+                # User did not press OK
+                # stop this function
+                self.dirname = dlg.GetDirectory()
+                return "abort"
+            dlg.Destroy()
+        Infodict = opf.LoadSessionData(sessionfile)
+        
+        ## Check for correct version
+        try:
+            arcv = LooseVersion(Infodict["Version"])
+            thisv = LooseVersion(self.version.strip())
+            if arcv > thisv:
+                errstring = "Your version of Pycorrfit ("+str(thisv)+\
+                       ") is too old to open this session ("+\
+                       str(arcv).strip()+").\n"+\
+                       "Please download the lates version of "+\
+                       " PyCorrFit from \n"+doc.HomePage+".\n"+\
+                       "Continue opening this session?"
+                dlg = edclasses.MyOKAbortDialog(self, errstring, "Warning")
+                returns = dlg.ShowModal()
+                if returns == wx.ID_OK:
+                    dlg.Destroy()
+                else:
+                    dlg.Destroy()
+                    return "abort"
+        except:
+            pass
+        
+        self.SetTitleFCS(self.filename)
+        ## Background traces
+        try:
+            self.Background = Infodict["Backgrounds"]
+        except:
+            pass
+        ## Preferences
+        ## if Preferences is Not None:
+        ## add them!
+        # External functions
+        for key in Infodict["External Functions"].keys():
+            NewModel = usermodel.UserModel(self)
+            # NewModel.AddModel(self, code)
+            # code is a list with strings
+            # each string is one line
+            NewModel.AddModel(
+                Infodict["External Functions"][key].splitlines())
+            NewModel.ImportModel()
+        # Internal functions:
+        N = len(Infodict["Parameters"])
+        # Reset tabcounter
+        self.tabcounter = 1
+        # Show a nice progress dialog:
+        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
+                wx.PD_CAN_ABORT
+        dlg = wx.ProgressDialog("Import", "Loading pages...",
+                                maximum = N, parent=self, style=style)
+        for i in np.arange(N):
+            # Let the user abort, if he wants to:
+            if dlg.Update(i+1, "Loading pages...")[0] == False:
+                dlg.Destroy()
+                return
+            # Add a new page to the notebook. This page is created with
+            # variables from models.py. We will write our data to
+            # the page later.
+            counter = Infodict["Parameters"][i][0]
+            modelid = Infodict["Parameters"][i][1]
+            Newtab = self.add_fitting_tab(modelid=modelid,
+                                          counter=counter)
+            # Add experimental Data
+            # Import dataexp:
+            number = counter.strip().strip(":").strip("#")
+            pageid = int(number)
+            [tau, dataexp] = Infodict["Correlations"][pageid]
+            if dataexp is not None:
+                # Write experimental data
+                Newtab.dataexpfull = dataexp
+                Newtab.dataexp = True # not None
+            # As of 0.7.3: Add external weights to page
+            try:
+                Newtab.external_std_weights = \
+                               Infodict["External Weights"][pageid]
+            except KeyError:
+                # No data
+                pass
+            else:
+                # Add external weights to fitbox
+                WeightKinds = Newtab.Fitbox[1].GetItems()
+                wkeys = Newtab.external_std_weights.keys()
+                wkeys.sort()
+                for wkey in wkeys:
+                    WeightKinds += [wkey]
+                Newtab.Fitbox[1].SetItems(WeightKinds)
+            self.UnpackParameters(Infodict["Parameters"][i], Newtab,
+                                  init=True)
+            # Supplementary data
+            try:
+                Sups = Infodict["Supplements"][pageid]
+            except KeyError:
+                pass
+            else:
+                errdict = dict()
+                for errInfo in Sups["FitErr"]:
+                    for ierr in np.arange(len(errInfo)):
+                        errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
+                        errval = float(errInfo[1])
+                        errdict[errkey] = errval
+                Newtab.parmoptim_error = errdict
+                try:
+                    Newtab.GlobalParameterShare = Sups["Global Share"]
+                except:
+                    pass
+                try:
+                    Newtab.chi2 = Sups["Chi sq"]
+                except:
+                    pass
+            # Set Title of the Page
+            try:
+                Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
+            except:
+                pass # no page title
+            # Import the intensity trace
+            try:
+                trace = Infodict["Traces"][pageid]
+            except:
+                trace = None
+            if trace is not None:
+                if Newtab.IsCrossCorrelation is False:
+                    Newtab.trace = trace[0]
+                    Newtab.traceavg = trace[0][:,1].mean()
+                else:
+                    Newtab.tracecc = trace
+            # Plot everything
+            Newtab.PlotAll(trigger="page_add_batch")
+        # Set Session Comment
+        dlg.Destroy()
+        try:
+            self.SessionComment = Infodict["Comments"]["Session"]
+        except:
+            pass
+        try:
+            Infodict["Preferences"] # not used yet
+        except:
+            pass
+        if self.notebook.GetPageCount() > 0:
+            # Enable the "Current" Menu
+            self.EnableToolCurrent(True)
+            self.OnFNBPageChanged(trigger="page_add_finalize")
+        else:
+            # There are no pages in the session.
+            # Disable some menus and close some dialogs
+            self.EnableToolCurrent(False)
 
 
     def OnSaveData(self,e=None):
-        # Save the Data
-        """ Save calculated Data including optional fitted exp. data. """
+        """ Opens a dialog for saving correlation data of a Page
+        
+        Also saves the parameters that are accessible in the Info
+        dialog and the trace(s).
+        """
         # What Data do we wish to save?
         Page = self.notebook.GetCurrentPage()
-        # Export CSV
-        # If no file has been selected, self.filename will be set to 'None'.
-        self.dirname, self.filename = opf.saveCSV(self, self.dirname, Page)
+        # Export CSV data
+        filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+".csv"
+        dlg = wx.FileDialog(self, "Save curve", self.dirname, filename, 
+              "Correlation with trace (*.csv)|*.csv;*.CSV"+\
+              "|Correlation only (*.csv)|*.csv;*.CSV",
+               wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+        # user cannot do anything until he clicks "OK"
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()            # Workaround since 0.7.5
+            if not path.lower().endswith(".csv"):
+                path += ".csv"
+            (self.dirname, self.filename) = os.path.split(path)
+
+
+            if dlg.GetFilterIndex() == 0:
+                savetrace = True
+            else:
+                savetrace = False
+            opf.ExportCorrelation(path, Page, tools.info,
+                                  savetrace=savetrace)
+        else:
+            dirname = dlg.GetDirectory()
+        
+        dlg.Destroy()
 
 
     def OnSavePlotCorr(self, e=None):
@@ -1380,12 +1447,18 @@ class MyFrame(wx.Frame):
 
 
     def OnSaveSession(self,e=None):
-        """ 
-            Save a session to a session file
+        """ Displays a dialog for saving PyCorrFit sessions
         
-            Returns:
-            - the filename of the session if it was saved
-            - None, if the user canceled the action
+        
+        Returns
+        -------
+        - the filename of the session if it was saved
+        - None, if the user canceled the action
+        
+        
+        See Also
+        --------
+        `pycorrfit.openfile.SaveSessionData`
         """
         # Parameters are all in one dictionary:
         Infodict = dict()
@@ -1449,11 +1522,22 @@ class MyFrame(wx.Frame):
                 Infodict["External Weights"][counter] = Page.external_std_weights
         # Append Session Comment:
         Infodict["Comments"]["Session"] = self.SessionComment
-        # Save everything
-        # If no file has been selected, self.filename will be set to 'None'.
-        self.dirname, self.filename = opf.SaveSession(self, self.dirname,
-          Infodict)
-        # Set title of our window
+        # File dialog
+        dlg = wx.FileDialog(self, "Save session file", self.dirname, "",
+                            "PyCorrFit session (*.pcfs)|*.pcfs",
+                            wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+        if dlg.ShowModal() == wx.ID_OK:
+            # Save everything
+            path = dlg.GetPath()            # Workaround since 0.7.5
+            (self.dirname, self.filename) = os.path.split(path)
+            opf.SaveSessionData(path, Infodict)
+        else:
+            self.dirname = dlg.GetDirectory()
+            self.filename = None
+            # Set title of our window
+        if not self.filename.endswith(".pcfs"):
+            self.filename += ".pcfs"
+        dlg.Destroy()
         self.SetTitleFCS(self.filename)
         return self.filename
 
