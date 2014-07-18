@@ -252,3 +252,4 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
 BGFiletypes = AddAllWildcard(BGFiletypes)
+

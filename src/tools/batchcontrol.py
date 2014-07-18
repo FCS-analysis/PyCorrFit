@@ -30,10 +30,12 @@
 
 
 import numpy as np
+import os
 import wx
 
 import openfile as opf     # How to treat an opened file
 import models as mdls
+
 
 # Menu entry name
 MENUINFO = ["B&atch control", "Batch fitting."]
@@ -186,18 +188,29 @@ class BatchCtrl(wx.Frame):
     def OnRadioThere(self, event=None):
         # If user clicks on pages in main program, we do not want the list
         # to be changed.
-        self.YamlParms, dirname, filename = \
-                      opf.ImportParametersYaml(self.parent, self.parent.dirname)
-        if filename == None:
-            # User did not select any sesion file
-            self.rbtnhere.SetValue(True)
+        wc = opf.session_wildcards
+        wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(
+                                                           wc[0], wc[1])
+        dlg = wx.FileDialog(self.parent, "Open session file",
+                            self.parent.dirname, "", wcstring, wx.OPEN)
+        # user cannot do anything until he clicks "OK"
+        if dlg.ShowModal() == wx.ID_OK:
+            sessionfile = dlg.GetPath()
+            self.dirname = os.path.split(sessionfile)[0]
         else:
-            DDlist = list()
-            for i in np.arange(len(self.YamlParms)):
-                # Rebuild the list
-                modelid = self.YamlParms[i][1]
-                modelname = mdls.modeldict[modelid][1]
-                DDlist.append(self.YamlParms[i][0]+modelname)
-            self.dropdown.SetItems(DDlist)
-            # Set selection text to first item
-            self.dropdown.SetSelection(0)
+            self.parent.dirname=dlg.GetDirectory()
+            self.rbtnhere.SetValue(True)
+            return
+
+        Infodict = opf.LoadSessionData(sessionfile,
+                                       parameters_only=True)
+        self.YamlParms = Infodict["Parameters"]
+        DDlist = list()
+        for i in np.arange(len(self.YamlParms)):
+            # Rebuild the list
+            modelid = self.YamlParms[i][1]
+            modelname = mdls.modeldict[modelid][1]
+            DDlist.append(self.YamlParms[i][0]+modelname)
+        self.dropdown.SetItems(DDlist)
+        # Set selection text to first item
+        self.dropdown.SetSelection(0)
