@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """ Wrapper for Loading PicoQuant .pt3 data files
 
-    This function (in a very hackish way) wraps around classes and
-    functions from FCS_viewer. Wrapping involves creating fake classes
-    that usually are the graphical user interface.
-    
-    See Also:
-    The wrapped file: `read_pt3_PicoQuant_original_FCSViewer.py`
-    Fast implementation of dividAndConquer: `fib4.pyx`
+This function (in a very hackish way) wraps around classes and
+functions from FCS_viewer. Wrapping involves creating fake classes
+that usually are the graphical user interface.
+
+See Also:
+The wrapped file: `read_pt3_PicoQuant_original_FCSViewer.py`
+Fast implementation of dividAndConquer: `read_pt3_PicoQuant_fib4.pyx`
 """
 import numpy as np
 import os

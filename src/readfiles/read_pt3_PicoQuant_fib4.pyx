@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 """ PicoQuant functionalities from FCS_viewer
 
-    This file contains a fast implementation of an algorithm that is
-    very important (yes I have no clue about the structure of pt3 files)
-    for importing *.pt3 files: `dividAndConquer`.
-    
-    The code was written by
-    Dr. Dominic Waithe
-    Wolfson Imaging Centre.
-    Weatherall Institute of Molecular Medicine.
-    University of Oxford
+This file contains a fast implementation of an algorithm that is
+very important (yes I have no clue about the structure of pt3 files)
+for importing *.pt3 files: `dividAndConquer`.
 
-    https://github.com/dwaithe/FCS_viewer
+The code was written by
+Dr. Dominic Waithe
+Wolfson Imaging Centre.
+Weatherall Institute of Molecular Medicine.
+University of Oxford
 
-    See Also:
-        The wrapper: `read_pt3_PicoQuant.py`
-        The wrapped file: `read_pt3_PicoQuant_original_FCSViewer.py`.
+https://github.com/dwaithe/FCS_viewer
 
+See Also:
+    The wrapper: `read_pt3_PicoQuant.py`
+    The wrapped file: `read_pt3_PicoQuant_original_FCSViewer.py`.
 """
 
 import cython

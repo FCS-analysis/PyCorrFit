@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 """ PicoQuant functionalities from FCS_viewer
 
-    This file contains classes and functions that are used by PyCorrFit
-    to import PicoQuant *.pt3 files.
-    
-    The code was written by
-    Dr. Dominic Waithe
-    Wolfson Imaging Centre.
-    Weatherall Institute of Molecular Medicine.
-    University of Oxford
+This file contains classes and functions that are used by PyCorrFit
+to import PicoQuant *.pt3 files.
 
-    https://github.com/dwaithe/FCS_viewer
+The code was written by
+Dr. Dominic Waithe
+Wolfson Imaging Centre.
+Weatherall Institute of Molecular Medicine.
+University of Oxford
 
-    See Also:
-        The wrapper: `read_pt3_PicoQuant.py`
-        Fast implementation of dividAndConquer: `fib4.pyx`
+https://github.com/dwaithe/FCS_viewer
+
+See Also:
+The wrapper: `read_pt3_PicoQuant.py`
+Fast implementation of dividAndConquer: `read_pt3_PicoQuant_fib4.pyx`
 """
 import numpy as np
 import os 
