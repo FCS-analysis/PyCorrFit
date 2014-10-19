@@ -727,6 +727,7 @@ class MyFrame(wx.Frame):
         """Import experimental data from a all filetypes specified in 
            *opf.Filetypes*.
            Is called by the curmenu and applies to currently opened model.
+           Calls self.ImportData.
         """
         # Open a data file
         # Get Data
@@ -1032,7 +1033,19 @@ class MyFrame(wx.Frame):
         Filename = list()   # there might be zipfiles with additional name info
         #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
-        for afile in Datafiles:
+        
+        # Display a progress dialog for file import
+        N = len(Datafiles)
+        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
+                wx.PD_CAN_ABORT
+        dlgi = wx.ProgressDialog("Import", "Loading data...",
+                                maximum = N, parent=self, style=style)
+        for j in np.arange(N):
+            afile=Datafiles[j]
+            # Let the user abort, if he wants to:
+            if dlgi.Update(i+1, "Loading data: "+afile)[0] == False:
+                dlgi.Destroy()
+                return
             #Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
@@ -1046,6 +1059,8 @@ class MyFrame(wx.Frame):
                     Type.append(Stuff["Type"][i])
                     Filename.append(Stuff["Filename"][i])
                     #Curveid.append(str(i+1))
+        dlgi.Destroy()
+        
         # Add number of the curve within a file.
         nameold = None
         counter = 1
