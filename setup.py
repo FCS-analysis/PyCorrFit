@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# To just compile the cython part in-place:
+# python setup.py build_ext --inplace
 # To create a distribution package for pip or easy-install:
 # python setup.py sdist
 from setuptools import setup, find_packages, Extension

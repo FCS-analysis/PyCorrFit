@@ -186,6 +186,7 @@ class MyFrame(wx.Frame):
         panel.SetSizer(sizer)
         self.Layout()
 
+        self.Centre()
         self.Show()
         
         # Notebook Handler
