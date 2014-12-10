@@ -1,25 +1,40 @@
 PyCorrFit - creating binaries with PyInstaller
 =========
 
-Usage
--------------------
+Note that these files are only interesting to developers.
 
-Download PyInstaller v.2.0 from http://www.pyinstaller.org/
-To create a single binary file, go to the unpacked pyinstaller directory and execute
+### Usage
 
-    python pyinstaller.py /Path/To/PyCorrFit.py
+I use PyInstaller (http://www.pyinstaller.org/) for packaging PyCorrFit. There are pre-defined spec-files for 
+different platforms. From the PyCorrFit directory, just run
 
-Alternatively, there are ~.spec files and scripts for Windows XP / Ubuntu12.04 in this directory for bundling binary files.
+    pyinstaller pyinstaller-howto/some_file.spec
 
+or use the `.bat` or `.sh` files for your OS.
 
-Windows (XP)
--------------------
-
-Install "pywin32" from http://sourceforge.net/projects/pywin32/files/pywin32/ 
+### Linux
 
 
-Known problems
--------------------
+- On Ubuntu 13.04 the following revision of Pyinstaller worked for me: [fdeef345233bc13836f2b4bf6fa15ac55b8563ac](https://github.com/pyinstaller/pyinstaller/tree/fdeef345233bc13836f2b4bf6fa15ac55b8563ac/)
+- On Ubuntu 13.10 this one also worked: [1c35a62b65624623babc898ff0acd3080682cc20](https://github.com/matysek/pyinstaller/tree/1c35a62b65624623babc898ff0acd3080682cc20)
+
+### Windows 7
+This configuration works on a Windows 7 32bit machine:
+- Install Anaconda 32 bit 2.1.0 system-wide
+- (Delete the Anaconda3 folder if it exists)
+- Install git (with git Bash)
+- Install pywin32-219 (solves collect errors with empty file strings)
+- install pyinstaller
+
+        pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
+
+- Clone this repository with git
+- Run the executable `win7_32bit_bundle_script.bat`
+
+### Windows XP
+Install Python and all packages required for PyCorrFit. Anaconda might work as well but is not tested.
+Install "pywin32" from (http://sourceforge.net/projects/pywin32/files/pywin32/). Known Problems are:
+
 
 - PyInstaller v.2.0 might complain about a "_core_" module. This has been fixed in a later dev version ([6ca4af80a2a621e0bd48a6d149aef7a023e10afc](https://github.com/pyinstaller/pyinstaller/tree/6ca4af80a2a621e0bd48a6d149aef7a023e10afc/) is working).
 
@@ -45,6 +60,3 @@ Known problems
             C:\Python27\include\
     2. Use the revision [6ca4af80a2a621e0bd48a6d149aef7a023e10afc](https://github.com/pyinstaller/pyinstaller/tree/6ca4af80a2a621e0bd48a6d149aef7a023e10afc/) of the pyinstaller-pyinstaller *develop* branch.   
     3. Make sure your windows user name does not conatin any unicode characters such as ü,é,etc. or create a new user.
-
-- On Ubuntu 13.04 the following revision of Pyinstaller worked for me: [fdeef345233bc13836f2b4bf6fa15ac55b8563ac](https://github.com/pyinstaller/pyinstaller/tree/fdeef345233bc13836f2b4bf6fa15ac55b8563ac/)
-- On Ubuntu 13.10 this one also worked: [1c35a62b65624623babc898ff0acd3080682cc20](https://github.com/matysek/pyinstaller/tree/1c35a62b65624623babc898ff0acd3080682cc20)
