@@ -31,6 +31,8 @@ This configuration works on a Windows 7 32bit machine:
 - Clone this repository with git
 - Run the executable `win7_32bit_bundle_script.bat`
 
+If everything goes well, there will be a `dist` directory that contains the frozen PyCorrFit and, additionally, there will be a `win7_innosetup.iss` for building the installer with [Inno Setup](http://www.jrsoftware.org).
+
 ### Windows XP
 Install Python and all packages required for PyCorrFit. Anaconda might work as well but is not tested.
 Install "pywin32" from (http://sourceforge.net/projects/pywin32/files/pywin32/). Known Problems are:
