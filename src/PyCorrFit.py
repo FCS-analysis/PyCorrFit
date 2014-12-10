@@ -44,7 +44,7 @@ class Fake(object):
 # http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
 # and it helped (needs to be done before import of matplotlib):
 import platform
-if platform.system() == 'Windows':
+if platform.system().lower in ['windows', 'darwin']:
     reload(sys)
     sys.setdefaultencoding('utf-8')
 

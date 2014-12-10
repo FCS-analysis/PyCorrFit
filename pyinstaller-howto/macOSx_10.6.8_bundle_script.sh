@@ -1,4 +1,5 @@
 #!/bin/bash
+# pip install pyinstaller==2.1
 
 BASEDIR=$(dirname $BASH_SOURCE)
 cd $BASEDIR
@@ -17,14 +18,12 @@ appn="./PyCorrFit.app"
 
 if [ -e $appn ]; then rm -R $appn; fi
 
-python ./Pyinstaller-2.1/pyinstaller.py -y ./pyinstaller-howto/PyCorrFit_mac.spec
+pyinstaller -y ./pyinstaller-howto/PyCorrFit_mac.spec
 
 if [ $? != 0 ]; then exit 1; fi
 
 # move aside the binary and replace with script
-
 mv ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit.bin
-
 cp ./pyinstaller-howto/macOSx_script_starter.sh ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit
 
 chmod +x ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit
@@ -44,7 +43,7 @@ binn="./PyCorrFit_bin"
 
 if [ -e $binn ]; then rm $binn; fi
 
-python ./Pyinstaller-2.1/pyinstaller.py --onefile ./pyinstaller-howto/PyCorrFit_mac_bin.spec
+pyinstaller --onefile ./pyinstaller-howto/PyCorrFit_mac_bin.spec
 
 if [ $? != 0 ]; then exit 1; fi
 
