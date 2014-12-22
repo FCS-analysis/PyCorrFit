@@ -1,3 +1,4 @@
 #!/bin/bash
+# go to this directory to prevent execution of a git checkout
 cd "$(dirname "$0")"
 python -m pycorrfit
