@@ -1,5 +1,6 @@
 include doc/*.tex
 include doc/*.bib
+include doc/*.pdf
 include doc/Images/*
 include external_model_functions/*
 include Readme.txt

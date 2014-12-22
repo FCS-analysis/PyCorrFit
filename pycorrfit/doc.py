@@ -67,22 +67,20 @@ import yaml
 import readfiles
 
 
-def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
-    locations = list()
-    fname1 = os.path.realpath(__file__)
-    # Try one directory up
-    dir1 = os.path.dirname(fname1)+"/../"
-    locations.append(os.path.realpath(dir1))
-    # In case of distribution with .egg files (pip, easy_install)
-    dir2 = os.path.dirname(fname1)+"/../pycorrfit_doc/"
-    locations.append(os.path.realpath(dir2))
+def GetLocationOfFile(filename):
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    locations = [
+                    dirname+"/../",
+                    dirname+"/../pycorrfit_doc/",
+                    dirname+"/../doc/",
+                ]
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
         try:
-            dir2 = sys._MEIPASS + "/doc/"
+            adir = sys._MEIPASS + "/doc/"
         except:
-            dir2 = "./"
-        locations.append(os.path.realpath(dir2))
+            adir = "./"
+        locations.append(os.path.realpath(adir))
     for loc in locations:
         thechl = os.path.join(loc,filename)
         if os.path.exists(thechl):
@@ -92,31 +90,13 @@ def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
     return None
 
 
+def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
+    return GetLocationOfFile(filename)
+
+
 def GetLocationOfDocumentation(filename = "PyCorrFit_doc.pdf"):
     """ Returns the location of the documentation if there is any."""
-    ## running from source
-    locations = list()
-    fname1 = os.path.realpath(__file__)
-    # Documentation is usually one directory up
-    dir1 = os.path.dirname(fname1)+"/../"
-    locations.append(os.path.realpath(dir1))
-    # In case of distribution with .egg files (pip, easy_install)
-    dir2 = os.path.dirname(fname1)+"/../pycorrfit_doc/"
-    locations.append(os.path.realpath(dir2))
-    ## freezed binaries:
-    if hasattr(sys, 'frozen'):
-        try:
-            dir2 = sys._MEIPASS + "/doc/"
-        except:
-            dir2 = "./"
-        locations.append(os.path.realpath(dir2))
-    for loc in locations:
-        thedoc = os.path.join(loc,filename)
-        if os.path.exists(thedoc):
-            return thedoc
-            break
-    # if this does not work:
-    return None
+    return GetLocationOfFile(filename)
 
 
 def info(version):

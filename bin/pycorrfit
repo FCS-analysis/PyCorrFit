@@ -1,18 +1,3 @@
-#!/bin/sh
-# go to script directory (necessary for relative paths with pip)
-cd $(dirname "$0")
-# debian
-if [ -f "/usr/share/pyshared/pycorrfit/PyCorrFit.py" ]
-then
-    python /usr/share/pyshared/pycorrfit/PyCorrFit.py
-elif [ -f "/usr/local/lib/python2.7/dist-packages/pycorrfit/PyCorrFit.py" ]
-# pip
-then
-    python /usr/local/lib/python2.7/dist-packages/pycorrfit/PyCorrFit.py
-# pip and virtualenv
-elif [ -f "../lib/python2.7/site-packages/pycorrfit/PyCorrFit.py" ]
-then
-    python ../lib/python2.7/site-packages/pycorrfit/PyCorrFit.py
-else
-    echo "Could not find PyCorrFit.py. Please notify the author."
-fi
+#!/bin/bash
+cd "$(dirname "$0")"
+python -m pycorrfit
