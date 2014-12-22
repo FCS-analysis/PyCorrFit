@@ -7,7 +7,7 @@ from setuptools import setup, find_packages, Extension
 from Cython.Distutils import build_ext
 import numpy as np
 
-from os.path import join, dirname, realpath
+from os.path import join, dirname, realpath, exists
 from warnings import warn
 
 # The next three lines are necessary for setup.py install to include
@@ -16,6 +16,16 @@ from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
+
+# Download documentation if it was not compiled
+Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
+webdoc = "https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf"
+if not exists(Documentation):
+    print "Downloading {} from {}".format(Documentation, webdoc)
+    import urllib
+    #testfile = urllib.URLopener()
+    urllib.urlretrieve(webdoc, Documentation)
+    
 
 # Get the version of PyCorrFit from the Changelog.txt
 StaticChangeLog = join(dirname(realpath(__file__)), "ChangeLog.txt")
@@ -29,7 +39,7 @@ except:
 
 
 EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_PicoQuant_fib4",
-                        ["src/readfiles/read_pt3_PicoQuant_fib4.pyx"],
+                        ["pycorrfit/readfiles/read_pt3_PicoQuant_fib4.pyx"],
                         libraries=[],
                         include_dirs=[np.get_include()]
                         )
@@ -45,11 +55,11 @@ setup(
               'pycorrfit.models',
               'pycorrfit.readfiles',
               'pycorrfit.tools'],
-    package_dir={'pycorrfit': 'src',
-                 'pycorrfit.models': 'src/models',
-                 'pycorrfit.readfiles': 'src/readfiles',
-                 'pycorrfit.tools': 'src/tools'},
-    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'PyCorrFit_doc.pdf'])],
+    package_dir={'pycorrfit': 'pycorrfit',
+                 'pycorrfit.models': 'pycorrfit/models',
+                 'pycorrfit.readfiles': 'pycorrfit/readfiles',
+                 'pycorrfit.tools': 'pycorrfit/tools'},
+    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
     license="GPL v2",
     description='Scientific tool for fitting correlation curves on a logarithmic plot.',
     long_description=open(join(dirname(__file__), 'Readme.txt')).read(),

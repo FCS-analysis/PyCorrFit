@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ PyCorrFit
 
@@ -87,9 +87,10 @@ except ImportError:
 import yaml
 
 ## Continue with the import:
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 import doc
 import frontend as gui              # The actual program
-
 
 
 
@@ -111,48 +112,55 @@ def CheckVersion(given, required, name):
         print " OK: "+name+" v. "+given+" | "+required+" required"
 
 
-## VERSION
-version = doc.__version__
-__version__ = version
-
-print gui.doc.info(version)
-
-## Check important module versions
-print "\n\nChecking module versions..."
-CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
-CheckVersion(np.__version__, "1.5.1", "NumPy")
-CheckVersion(yaml.__version__, "3.09", "PyYAML")
-CheckVersion(scipy.__version__, "0.8.0", "SciPy")
-CheckVersion(sympy.__version__, "0.7.2", "sympy")
-CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
-
-
 ## Start gui
-app = gui.MyApp(False)
+def Main():
 
-frame = gui.MyFrame(None, -1, version)
-app.frame = frame
+    ## VERSION
+    version = doc.__version__
+    __version__ = version
 
-# Before starting the main loop, check for possible session files
-# in the arguments.
-sysarg = sys.argv
-for arg in sysarg:
-    if arg.endswith(".pcfs"):
-        print "\nLoading Session "+arg
-        frame.OnOpenSession(sessionfile=arg)
-        break
-    if arg.endswith(".fcsfit-session.zip"):
-        print "\nLoading Session "+arg
-        frame.OnOpenSession(sessionfile=arg)
-        break
-    elif arg[:6] == "python":
-        pass
-    elif arg[-12:] == "PyCorrFit.py":
-        pass
-    elif arg[-11:] == "__main__.py":
-        pass
-    else:
-        print "I do not know what to do with this argument: "+arg
+    print gui.doc.info(version)
+
+    ## Check important module versions
+    print "\n\nChecking module versions..."
+    CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
+    CheckVersion(np.__version__, "1.5.1", "NumPy")
+    CheckVersion(yaml.__version__, "3.09", "PyYAML")
+    CheckVersion(scipy.__version__, "0.8.0", "SciPy")
+    CheckVersion(sympy.__version__, "0.7.2", "sympy")
+    CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
 
 
-app.MainLoop()
+    ## Start gui
+    app = gui.MyApp(False)
+
+    frame = gui.MyFrame(None, -1, version)
+    app.frame = frame
+
+    # Before starting the main loop, check for possible session files
+    # in the arguments.
+    sysarg = sys.argv
+    for arg in sysarg:
+        if arg.endswith(".pcfs"):
+            print "\nLoading Session "+arg
+            frame.OnOpenSession(sessionfile=arg)
+            break
+        if arg.endswith(".fcsfit-session.zip"):
+            print "\nLoading Session "+arg
+            frame.OnOpenSession(sessionfile=arg)
+            break
+        elif arg[:6] == "python":
+            pass
+        elif arg[-12:] == "PyCorrFit.py":
+            pass
+        elif arg[-11:] == "__main__.py":
+            pass
+        else:
+            print "I do not know what to do with this argument: "+arg
+
+
+    app.MainLoop()
+
+
+if __name__ == "__main__":
+    Main()
