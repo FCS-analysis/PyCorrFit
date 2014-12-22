@@ -23,6 +23,6 @@ https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip
 Further reading:
 
 - Latest downloads: https://github.com/paulmueller/PyCorrFit/releases   
-- Documentation: https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf   
+- Documentation: https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf  
 - Write model functions: https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions   
 - Need help? https://github.com/paulmueller/PyCorrFit/wiki/Creating-a-new-issue   
