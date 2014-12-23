@@ -1,10 +1,10 @@
 # -*- mode: python -*-
-a = Analysis(['C:\\Python27\\PyCorrFit\\src\\PyCorrFit.py'],
+a = Analysis(['C:\\Python27\\PyCorrFit\\pycorrfit\\PyCorrFit.py'],
              pathex=['C:\\Python27\\pyinstaller'],
              hiddenimports=[],
              hookspath=None)
 a.datas += [('doc\\ChangeLog.txt', 'C:\\Python27\\PyCorrFit\\ChangeLog.txt', 'DATA'),
-            ('doc\\PyCorrFit_doc.pdf', 'C:\\Python27\\PyCorrFit\\PyCorrFit_doc.pdf', 'DATA')]
+            ('doc\\PyCorrFit_doc.pdf', 'C:\\Python27\\PyCorrFit\\doc\\PyCorrFit_doc.pdf', 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
@@ -15,7 +15,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          icon='C:\\Python27\\PyCorrFit\\pyinstaller-howto\\PyCorrFit.ico',
+          icon='C:\\Python27\\PyCorrFit\\freeze_pyinstaller\\PyCorrFit.ico',
 #          console=False )
           console=True )
 #app = BUNDLE(exe,

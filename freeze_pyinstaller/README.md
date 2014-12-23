@@ -8,15 +8,16 @@ Note that these files are only interesting to developers.
 I use PyInstaller (http://www.pyinstaller.org/) for packaging PyCorrFit. There are pre-defined spec-files for 
 different platforms. From the PyCorrFit directory, just run
 
-    pyinstaller pyinstaller-howto/some_file.spec
+    pyinstaller freeze_pyinstaller/some_file.spec
 
 or use the `.bat` or `.sh` files for your OS.
 
 ### Linux
 
-
 - On Ubuntu 13.04 the following revision of Pyinstaller worked for me: [fdeef345233bc13836f2b4bf6fa15ac55b8563ac](https://github.com/pyinstaller/pyinstaller/tree/fdeef345233bc13836f2b4bf6fa15ac55b8563ac/)
 - On Ubuntu 13.10 this one also worked: [1c35a62b65624623babc898ff0acd3080682cc20](https://github.com/matysek/pyinstaller/tree/1c35a62b65624623babc898ff0acd3080682cc20)
+- On Debian Jessie use: [779d07b236a943a4bf9d2b1a0ae3e0ebcc914798](https://github.com/pyinstaller/pyinstaller/commit/779d07b236a943a4bf9d2b1a0ae3e0ebcc914798)
+
 
 ### Windows 7
 This configuration works on a Windows 7 32bit machine:
