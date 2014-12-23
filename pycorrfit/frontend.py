@@ -48,16 +48,16 @@ except ImportError:
     print " Update function will not work."
 
 # PyCorrFit modules
-import doc                          # Documentation/some texts
-import edclasses
+from . import doc                          # Documentation/some texts
+from . import edclasses
 
-import models as mdls
-import openfile as opf              # How to treat an opened file
-import page
-import plotting
-import readfiles
-import tools                        # Some tools
-import usermodel
+from . import models as mdls
+from . import openfile as opf              # How to treat an opened file
+from . import page
+from . import plotting
+from . import readfiles
+from . import tools                        # Some tools
+from . import usermodel
 
 
 ## On Windows XP I had problems with the unicode Characters.

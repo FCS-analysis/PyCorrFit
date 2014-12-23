@@ -32,12 +32,12 @@ import zipfile
 
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.
-from read_ASC_ALV import openASC
-from read_CSV_PyCorrFit import openCSV
-from read_SIN_correlator_com import openSIN
-from read_FCS_Confocor3 import openFCS
-from read_mat_ries import openMAT
-from read_pt3_PicoQuant import openPT3
+from .read_ASC_ALV import openASC
+from .read_CSV_PyCorrFit import openCSV
+from .read_SIN_correlator_com import openSIN
+from .read_FCS_Confocor3 import openFCS
+from .read_mat_ries import openMAT
+from .read_pt3_PicoQuant import openPT3
 
 
 

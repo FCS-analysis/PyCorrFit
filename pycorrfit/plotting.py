@@ -50,8 +50,8 @@ from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
 import unicodedata
 
 # For finding latex tools
-from misc import findprogram
-import models as mdls
+from .misc import findprogram
+from . import models as mdls
 
 
 def greek2tex(char):

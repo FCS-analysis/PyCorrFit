@@ -32,8 +32,8 @@
 import numpy as np
 import wx
 
-import misc
-import models as mdls
+from .. import misc
+from .. import models as mdls
 
 # Menu entry name
 MENUINFO = ["&Average data", "Create an average curve from whole session."]

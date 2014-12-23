@@ -39,12 +39,12 @@ import yaml
 import zipfile
 import warnings
 
-import doc
-import edclasses
+from . import doc
+from . import edclasses
 
 # These imports are required for loading data
-from readfiles import Filetypes
-from readfiles import BGFiletypes
+from .readfiles import Filetypes
+from .readfiles import BGFiletypes
 
 
 

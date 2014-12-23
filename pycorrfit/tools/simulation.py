@@ -33,8 +33,8 @@
 import wx
 import numpy as np
 
-import edclasses  # edited floatspin
-import models as mdls
+from .. import edclasses  # edited floatspin
+from .. import models as mdls
 
 # Menu entry name
 MENUINFO = ["S&lider simulation",

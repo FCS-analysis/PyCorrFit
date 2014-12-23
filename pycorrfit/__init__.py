@@ -27,10 +27,12 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-import doc
-import models
-import openfile
-import readfiles
+from . import doc
+from . import models
+from . import openfile
+from . import readfiles
+
+from .main import Main
 
 __version__ = doc.__version__
 __author__ = "Paul Mueller"

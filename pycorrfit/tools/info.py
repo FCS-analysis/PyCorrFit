@@ -32,8 +32,8 @@
 import wx
 import numpy as np
 
-import fitting
-import models as mdls
+from .. import fitting
+from .. import models as mdls
 
 # Menu entry name
 MENUINFO = ["Page &info",

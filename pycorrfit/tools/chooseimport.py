@@ -33,9 +33,9 @@
 import numpy as np
 import wx
 
-import models as mdls
-import doc
-import overlaycurves
+from .. import models as mdls
+from .. import doc
+from . import overlaycurves
 
 
 class ChooseImportTypes(wx.Dialog):

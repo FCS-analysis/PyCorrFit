@@ -36,8 +36,8 @@ import platform
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 
-import edclasses
-import misc
+from .. import edclasses
+from .. import misc
 
 # Menu entry name
 MENUINFO = ["&Overlay curves", "Select experimental curves."]

@@ -48,7 +48,7 @@ except ImportError:
     Function = object
 import wx
 
-import models as mdls
+from . import models as mdls
 
 
 class CorrFunc(object):
