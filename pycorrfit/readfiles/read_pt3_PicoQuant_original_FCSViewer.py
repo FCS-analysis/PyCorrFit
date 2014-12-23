@@ -19,7 +19,7 @@ Fast implementation of dividAndConquer: `read_pt3_PicoQuant_fib4.pyx`
 import numpy as np
 import os 
 import struct
-import read_pt3_PicoQuant_fib4 as fib4
+from . import read_pt3_PicoQuant_fib4 as fib4
 
 
 __all__ = ["picoObject", "delayTime2bin", "pt3import", "tttr2xfcs"]

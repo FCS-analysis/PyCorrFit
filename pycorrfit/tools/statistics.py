@@ -35,8 +35,8 @@ import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np
 
-from info import InfoClass
-import misc
+from .info import InfoClass
+from .. import misc
 
 # Menu entry name
 MENUINFO = ["&Statistics view", "Show some session statistics."]

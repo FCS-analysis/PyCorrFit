@@ -54,17 +54,17 @@ sys.setdefaultencoding('utf-8')
 
 
 ## Models
-import MODEL_classic_gaussian_2D
-import MODEL_classic_gaussian_3D
-import MODEL_classic_gaussian_3D2D
-import MODEL_TIRF_gaussian_1C
-import MODEL_TIRF_gaussian_3D2D
-import MODEL_TIRF_gaussian_3D3D
-import MODEL_TIRF_1C
-import MODEL_TIRF_2D2D
-import MODEL_TIRF_3D2D
-import MODEL_TIRF_3D3D
-import MODEL_TIRF_3D2Dkin_Ries
+from . import MODEL_classic_gaussian_2D
+from . import MODEL_classic_gaussian_3D
+from . import MODEL_classic_gaussian_3D2D
+from . import MODEL_TIRF_gaussian_1C
+from . import MODEL_TIRF_gaussian_3D2D
+from . import MODEL_TIRF_gaussian_3D3D
+from . import MODEL_TIRF_1C
+from . import MODEL_TIRF_2D2D
+from . import MODEL_TIRF_3D2D
+from . import MODEL_TIRF_3D3D
+from . import MODEL_TIRF_3D2Dkin_Ries
 
 def AppendNewModel(Modelarray):
     """ Append a new model from a modelarray. *Modelarray* has to be a list

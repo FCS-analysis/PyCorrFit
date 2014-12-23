@@ -33,8 +33,8 @@ import numpy as np
 import os
 import wx
 
-import openfile as opf     # How to treat an opened file
-import models as mdls
+from .. import openfile as opf     # How to treat an opened file
+from .. import models as mdls
 
 
 # Menu entry name

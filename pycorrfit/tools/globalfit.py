@@ -33,8 +33,8 @@ import wx
 import numpy as np
 from scipy import optimize as spopt
 
-import misc
-import models as mdls
+from .. import misc
+from .. import models as mdls
 
 # Menu entry name
 MENUINFO = ["&Global fitting",

@@ -25,10 +25,10 @@
 """
 
 from . import doc
-from . import PyCorrFit
+from . import main
 
 ## VERSION
 version = doc.__version__
 __version__ = version
 
-PyCorrFit.Main()
+main.Main()

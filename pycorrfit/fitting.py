@@ -30,7 +30,7 @@ from scipy import optimize as spopt
 # If we use this module with PyCorrFit, we can plot things with latex using
 # our own special thing.
 try:
-    import plotting
+    from . import plotting
 except:
     pass
 

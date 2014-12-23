@@ -35,10 +35,10 @@ import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
 import sys                              # System stuff
 
-import edclasses                    # Cool stuf like better floatspin
-import fitting as fit       # For fitting
-import models as mdls
-import tools
+from . import edclasses                    # Cool stuf like better floatspin
+from . import fitting as fit       # For fitting
+from . import models as mdls
+from . import tools
 
 
 ## On Windows XP I had problems with the unicode Characters.

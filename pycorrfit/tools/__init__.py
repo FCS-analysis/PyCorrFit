@@ -61,17 +61,17 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-import datarange
-import background
-import overlaycurves
-import batchcontrol
-import globalfit
-import average
-import simulation
+from . import datarange
+from . import background
+from . import overlaycurves
+from . import batchcontrol
+from . import globalfit
+from . import average
+from . import simulation
 
-import info
-import statistics
-import trace
+from . import info
+from . import statistics
+from . import trace
 # Load all of the classes
 # This also defines the order of the tools in the menu
 ImpA = [ 
@@ -106,9 +106,9 @@ for i in np.arange(len(ImpB)):
     #ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
 
 # This is in the file menu and not needed in the dictionaries below.
-from chooseimport import ChooseImportTypes
-from chooseimport import ChooseImportTypesModel
-from comment import EditComment
+from .chooseimport import ChooseImportTypes
+from .chooseimport import ChooseImportTypesModel
+from .comment import EditComment
 # the "special" tool RangeSelector
 from parmrange import RangeSelector
 

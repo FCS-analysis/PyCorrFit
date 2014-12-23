@@ -11,7 +11,7 @@ Fast implementation of dividAndConquer: `read_pt3_PicoQuant_fib4.pyx`
 """
 import numpy as np
 import os
-import read_pt3_PicoQuant_original_FCSViewer as wrapped
+from . import read_pt3_PicoQuant_original_FCSViewer as wrapped
 
 
 class FakeMainObject2():
