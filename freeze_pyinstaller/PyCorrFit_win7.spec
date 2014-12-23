@@ -3,24 +3,24 @@ import codecs
 import os
 import sys
 
-if not os.path.exists("pyinstaller-howto"):
+if not os.path.exists("freeze_pyinstaller"):
     raise Exception("Please go to `PyCorrFit` directory.")
 
     
 name = "PycorrFit"
 DIR = os.path.realpath(".")
-PyInstDir = os.path.join(DIR, "pyinstaller-howto")
-PCFDIR = os.path.join(DIR, "src")
+PyInstDir = os.path.join(DIR, "freeze_pyinstaller")
+PCFDIR = os.path.join(DIR, "pycorrfit")
 ProgPy = os.path.join(PCFDIR,"PyCorrFit.py")
 ChLog = os.path.join(DIR,"ChangeLog.txt")
-DocPDF = os.path.join(DIR,"PyCorrFit_doc.pdf")
+DocPDF = os.path.join(DIR,"doc/PyCorrFit_doc.pdf")
 ICO = os.path.join(PyInstDir,"PyCorrFit.ico")
 
 sys.path.append(DIR)
 
 ## Create inno setup .iss file
-import src
-version = src.__version__
+import pycorrfit
+version = pycorrfit.__version__
 issfile = codecs.open(os.path.join(PyInstDir,"win7_innosetup.iss.dummy"), 'r', "utf-8")
 iss = issfile.readlines()
 issfile.close()

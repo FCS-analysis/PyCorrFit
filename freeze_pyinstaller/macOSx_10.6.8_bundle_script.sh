@@ -18,13 +18,13 @@ appn="./PyCorrFit.app"
 
 if [ -e $appn ]; then rm -R $appn; fi
 
-pyinstaller -y ./pyinstaller-howto/PyCorrFit_mac.spec
+pyinstaller -y ./freeze_pyinstaller/PyCorrFit_mac.spec
 
 if [ $? != 0 ]; then exit 1; fi
 
 # move aside the binary and replace with script
 mv ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit.bin
-cp ./pyinstaller-howto/macOSx_script_starter.sh ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit
+cp ./freeze_pyinstaller/macOSx_script_starter.sh ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit
 
 chmod +x ./dist/PyCorrFit.app/Contents/MacOS/PyCorrFit
 
@@ -43,7 +43,7 @@ binn="./PyCorrFit_bin"
 
 if [ -e $binn ]; then rm $binn; fi
 
-pyinstaller --onefile ./pyinstaller-howto/PyCorrFit_mac_bin.spec
+pyinstaller --onefile ./freeze_pyinstaller/PyCorrFit_mac_bin.spec
 
 if [ $? != 0 ]; then exit 1; fi
 

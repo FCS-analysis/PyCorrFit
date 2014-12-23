@@ -8,11 +8,11 @@ PyInstaller="PyInstaller-2.1/"
 # Progname.py should be in the Progdir
 Progname="PyCorrFit"
 # We require a ChangeLog.txt and a source directory in the Progdir
-# BASEDIR/PyCorrFit/pyinstaller-howto
+# BASEDIR/PyCorrFit/freeze_pyinstaller
 BASEDIR=$(dirname $BASH_SOURCE)
 cd $BASEDIR
 BASEDIR=$(pwd)
-cd "../../"
+cd "../"
 StartDir=$(pwd)"/"
 Progdir=${StartDir}${Progname}"/"
 # Virtualenv
@@ -74,7 +74,7 @@ then
     # a.datas += [('doc/ChangeLog.txt', '/PATH/TO/PyCorrFit/ChangeLog.txt', 'DATA')]
     python ${PyInstallerDir}pyinstaller.py -F $Specfile
 else
-    python ${PyInstallerDir}pyinstaller.py -F ${Progdir}"src/"${Progname}".py"
+    python ${PyInstallerDir}pyinstaller.py -F ${Progdir}"pycorrfit/"${Progname}".py"
 fi
 # Move the resulting file and rename it
 
