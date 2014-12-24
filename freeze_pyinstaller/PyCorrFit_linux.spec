@@ -1,6 +1,8 @@
 # -*- mode: python -*-
 a = Analysis(['pycorrfit/PyCorrFit.py'],
-             hiddenimports=[],
+             hiddenimports=["sympy.assumptions.handlers", # sympy
+                            "sympy.assumptions.handlers.common",
+                            "scipy.special._ufuncs_cxx"],
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
             ('doc/PyCorrFit_doc.pdf', 'doc/PyCorrFit_doc.pdf', 'DATA')]
