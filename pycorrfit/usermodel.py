@@ -35,6 +35,8 @@
 
 import numpy as np
 import scipy.special as sps
+import sys
+import warnings
 try:
     import sympy
     from sympy.core.function import Function
@@ -42,7 +44,8 @@ try:
     from sympy import sympify, I
     from sympy.functions import im
 except ImportError:
-    print " Warning: module sympy not found!"
+    warnings.warn("Importing sympy failed."+\
+                  " Reason: {}.".format(sys.exc_info()[1].message))
     # Define Function, so PyCorrFit will start, even if sympy is not there.
     # wixi needs Function.
     Function = object
