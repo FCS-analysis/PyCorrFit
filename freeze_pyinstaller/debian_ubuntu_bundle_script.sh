@@ -1,6 +1,5 @@
 #!/bin/bash
 Progname="PyCorrFit"
-Prgname_lower="pycorrfit"
 # Go to base dir of repo
 BASEDIR=$(dirname $0)
 cd $BASEDIR
@@ -18,21 +17,63 @@ distrib=$(lsb_release -i | awk 'BEGIN { FS = "\t" }; { print $2 }')
 version=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 #Binname="dist/"${Progname}_${distrib}_${codename}_$(uname -r)".bin"
 Zipname="dist/"${Progname}_${version}_${distrib}_${codename}_$(uname -r)".zip"
+Env="env_${Progname}"
 
 echo $Specfile
 
 cd $StartDir
 
-if [ -f $Specfile ]
-then
-    # added following line (remove build directory beforehand!)
-    # a.datas += [('doc/ChangeLog.txt', '/PATH/TO/PyCorrFit/ChangeLog.txt', 'DATA')]
-    pyinstaller -F $Specfile
-else
-    echo "Could not find specfile. Proceeding without..."
-    sleep 1
-    pyinstaller -F ${Progdir}${Prgname_lower}"/"${Progname}".py"
+echo "############"
+echo "Checking pip"
+echo "############"
+# Check if pip is installed
+if [ 1 -ne $(dpkg -s python-pip | grep -c "Status: install ok installed") ]; then
+    echo "Please install package `python-pip`"
+    exit
+fi
+if ! [ -e $Env ]; then
+    virtualenv --system-site-packages $Env
+    if [ $? -ne 0 ]; then
+        echo "Error - Aborting"
+        exit
+    fi
+fi
+source $Env"/bin/activate"
+# Pyinstaller
+pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
+
+
+echo "###################"
+echo "Building Extensions"
+echo "###################"
+python setup.py build_ext --inplace
+if [ $? -ne 0 ]; then
+    echo "Error - Aborting"
+    exit
 fi
 
-# zip the release
+
+echo "############################"
+echo "Removing old build directory"
+echo "############################"
+rm -rf build
+if [ $? -ne 0 ]; then
+    echo "Error - Aborting"
+    exit
+fi
+
+
+echo "###################"
+echo "Running Pyinstaller"
+echo "###################"
+pyinstaller -F $Specfile
+if [ $? -ne 0 ]; then
+    echo "Error - Aborting"
+    exit
+fi
+
+
+echo "############"
+echo "Creating Zip"
+echo "############"
 zip -j ${Zipname} "dist/"${Progname} ${Docname} ${Changelogname}
