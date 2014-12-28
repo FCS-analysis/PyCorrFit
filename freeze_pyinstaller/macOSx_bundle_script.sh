@@ -19,8 +19,8 @@ distrib=$(sw_vers -productVersion )
 version=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 appn="./dist/${Progname}.app"
 StarterScript="./freeze_pyinstaller/macOSx_script_starter.sh"
-ZipnameBIN="dist/"${Progname}_${version}_${distrib}_${codename}_bin".zip"
-Zipname=${Progname}_${version}_${distrib}_${codename}_app".zip"
+ZipnameBIN="dist/"${Progname}_${version}_${codename}_${distrib}"_bin.zip"
+Zipname=${Progname}_${version}_${codename}_${distrib}"_app.zip"
 
 echo $Specfile
 
@@ -40,7 +40,7 @@ fi
 echo "############################"
 echo "Removing old build directory"
 echo "############################"
-#rm -rf build
+rm -rf build
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
