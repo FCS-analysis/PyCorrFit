@@ -37,10 +37,11 @@ if ! [ -e $Env ]; then
         echo "Error - Aborting"
         exit
     fi
+    # Pyinstaller
+    pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
+
 fi
 source $Env"/bin/activate"
-# Pyinstaller
-pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
 
 
 echo "###################"
