@@ -70,7 +70,16 @@ if platform.system() == 'Windows':
 # ~paulmueller
 
 
-###########################################################
+########################################################################
+class ExceptionDialog(wx.MessageDialog):
+    """"""
+    def __init__(self, msg):
+        """Constructor"""
+        wx.MessageDialog.__init__(self, None, msg, "Error",
+                                          wx.OK|wx.ICON_ERROR)   
+
+
+########################################################################
 class FlatNotebookDemo(fnb.FlatNotebook):
     """
     Flatnotebook class
@@ -105,6 +114,8 @@ class MyApp(wx.App):
 ###########################################################
 class MyFrame(wx.Frame):
     def __init__(self, parent, id, version):
+
+        sys.excepthook = MyExceptionHook
         ## Set initial variables that make sense
         tau = 10**np.linspace(-6,8,1001)
 
@@ -704,7 +715,7 @@ class MyFrame(wx.Frame):
         # Get the Page
         if Page is None:
             Page = self.notebook.GetCurrentPage()
-        keys = self.ToolsOpen.keys()
+        keys = list(self.ToolsOpen.keys())
         for key in keys:
             # Update the information
             self.ToolsOpen[key].OnPageChanged(Page, trigger=trigger)
@@ -1551,7 +1562,8 @@ class MyFrame(wx.Frame):
             self.dirname = dlg.GetDirectory()
             self.filename = None
             # Set title of our window
-        if not self.filename.endswith(".pcfs"):
+        if (self.filename is not None and
+            not self.filename.endswith(".pcfs")):
             self.filename += ".pcfs"
         dlg.Destroy()
         self.SetTitleFCS(self.filename)
@@ -1769,3 +1781,23 @@ class MyFrame(wx.Frame):
             self.SetTitle('PyCorrFit ' + self.version + title)
         else:
             self.SetTitle('PyCorrFit ' + self.version)
+
+
+def MyExceptionHook(etype, value, trace):
+    """
+    Handler for all unhandled exceptions.
+ 
+    :param `etype`: the exception type (`SyntaxError`, `ZeroDivisionError`, etc...);
+    :type `etype`: `Exception`
+    :param string `value`: the exception error message;
+    :param string `trace`: the traceback header, if any (otherwise, it prints the
+     standard Python header: ``Traceback (most recent call last)``.
+    """
+    frame = wx.GetApp().GetTopWindow()
+    tmp = traceback.format_exception(etype, value, trace)
+    exception = "".join(tmp)
+ 
+    dlg = ExceptionDialog(exception)
+    dlg.ShowModal()
+    dlg.Destroy()     
+    wx.EndBusyCursor()
