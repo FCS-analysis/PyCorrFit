@@ -33,13 +33,13 @@ if [ 1 -ne $(dpkg -s python-pip | grep -c "Status: install ok installed") ]; the
 fi
 if ! [ -e $Env ]; then
     virtualenv --system-site-packages $Env
+    source $Env"/bin/activate"
     if [ $? -ne 0 ]; then
         echo "Error - Aborting"
         exit
     fi
     # Pyinstaller
     pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
-
 fi
 source $Env"/bin/activate"
 
