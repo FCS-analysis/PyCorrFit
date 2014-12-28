@@ -1,6 +1,5 @@
 # -*- mode: python -*-
 a = Analysis(['pycorrfit/PyCorrFit.py'],
-             pathex=['PyInstaller-2.1'],
              hiddenimports=[],
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
