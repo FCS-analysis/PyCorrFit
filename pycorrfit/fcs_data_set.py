@@ -330,6 +330,7 @@ class Fit(object):
         if model_parms is None:
             model_parms = mdls.GetModelParametersFromId(model_id)
         self.model_parms = model_parms
+        self.model_parms_initial = 1*model_parms
         
         # values to fit
         if fit_bool is None:
@@ -360,7 +361,9 @@ class Fit(object):
             assert isinstance(weights, np.ndarray)        
         self.weights = weights
 
+        self.fit_algorithm = fit_algorithm
         self.verbose = verbose
+        self.uselatex = uselatex
 
         self.ComputetXYArrays()
         self.ComputeWeights()
@@ -396,64 +399,70 @@ class Fit(object):
 
 
     def ComputeWeights(self):
-        ##
-        ## Weights
-        ##
-        ## weight_type
-        ## weight_spread
-        ## weights
-        ##
+        """ Determines if we have weights and computes them.
+         
+        sets
+        - self.fit_weights
+        - self.is_weighted_fit
+        """
         ival = self.fit_ival_index
-        
-        if self.weight_type[:6] == "spline":
+        weight_spread = self.weight_spread
+        weight_type = self.weight_type
+
+        # some frequently used lengths
+        datalen = self.x.shape[0]
+        datalenfull = self.x_full.shape[0]        
+        # Calculated dataweights
+        dataweights = np.zeros(datalen)
+
+        self.is_weighted_fit = True # will be set to False if not weights
+
+        if weight_type[:6] == "spline":
             # Number of knots to use for spline
             try:
-                knotnumber = int(self.weight_type[6:])
+                knotnumber = int(weight_type[6:])
             except:
                 if self.verbose > 1:
                     print("Could not get knot number. Setting it to 5.")
                 knotnumber = 5
 
-            # Calculated dataweights
-            datalen = self.x.shape[0]
-            datalenfull = self.x_full.shape[0]
-            dataweights = np.zeros(datalen)
             # Compute borders for spline fit.
-            if ival[0] < self.weight_spread:
+            if ival[0] < weight_spread:
                 # optimal case
                 pmin = ival[0]
             else:
                 # non-optimal case
                 # we need to cut pmin
                 pmin = weight_spread
-            if datalenfull - ival[1] < self.weight_spread:
+            if datalenfull - ival[1] < weight_spread:
                 # optimal case
-                pmax = datalenfull - self.ival[1]
+                pmax = datalenfull - ival[1]
             else:
                 # non-optimal case
                 # we need to cut pmax
                 pmax = weight_spread
-            x = self.x_full[self.ival[0]-pmin:self.ival[1]+pmax]
-            y = self.y_full[self.ival[0]-pmin:self.ival[1]+pmax]
+            x = self.x_full[ival[0]-pmin:ival[1]+pmax]
+            y = self.y_full[ival[0]-pmin:ival[1]+pmax]
             # we are fitting knots on a base 10 logarithmic scale.
             xs = np.log10(x)
             knots = np.linspace(xs[1], xs[-1], knotnumber+2)[1:-1]
             try:
-                tck = spintp.splrep(xs,y,s=0,k=3,t=knots,task=-1)
-                ys = spintp.splev(xs,tck,der=0)
+                tck = spintp.splrep(xs, y, s=0, k=3, t=knots, task=-1)
+                ys = spintp.splev(xs, tck, der=0)
             except:
                 if self.verbose > 0:
-                    print("Could not find spline with {} knots.".
-                                                     format(knotnumber))
+                    raise ValueError("Could not find spline fit with "+\
+                                     "{} knots.".format(knotnumber))
                 return
             if self.verbose > 0:
                 try:
                     # If plotting module is available:
                     name = "Spline fit: "+str(knotnumber)+" knots"
                     plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
-                                             dirname = ".",
+                                             dirname=".",
                                              uselatex=self.uselatex)
                 except:
+                    # use matplotlib.pylab
                     try:
                         from matplotlib import pylab as plt
                         plt.xscale("log")
@@ -464,29 +473,29 @@ class Fit(object):
                         print("Couldn't import pylab! - not Plotting")
 
             ## Calculation of variance
-            # In some cases, the actual cropping interval from self.ival[0] to
-            # self.ival[1] is chosen, such that the dataweights must be
+            # In some cases, the actual cropping interval from ival[0]
+            # ro ival[1] is chosen, such that the dataweights must be
             # calculated from unknown datapoints.
             # (e.g. points+endcrop > len(dataexpfull)
             # We deal with this by multiplying dataweights with a factor
             # corresponding to the missed points.
-            for i in np.arange(datalen):
+            for i in range(datalen):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
-                if  i + self.ival[0] <  weight_spread:
+                if  i + ival[0] <  weight_spread:
                     # The offset that occurs
-                    offsetstart = self.weight_spread - i - self.ival[0]
+                    offsetstart = weight_spread - i - ival[0]
                     offsetcrop = 0
-                elif self.ival[0] > self.weight_spread:
+                elif ival[0] > weight_spread:
                     offsetstart = 0
-                    offsetcrop = self.ival[0] - weight_spread
+                    offsetcrop = ival[0] - weight_spread
                 else:
                     offsetstart = 0
                     offsetcrop = 0
                 # i: counter on dataexp array
                 # start: counter on y array
-                start = i - weight_spread + offsetstart + self.ival[0] - offsetcrop
+                start = i - weight_spread + offsetstart + ival[0] - offsetcrop
                 end = start + 2*weight_spread + 1 - offsetstart
                 dataweights[i] = (y[start:end] - ys[start:end]).std()
                 # The standard deviation at the end and the start of the
@@ -504,43 +513,40 @@ class Fit(object):
                     reference = 2*weight_spread + 1
                     dividor = reference - backset
                     dataweights[i] *= reference/dividor
-        elif self.fittype == "model function":
+        elif weight_type == "model function":
             # Number of neighbouring (left and right) points to include
-            weight_spread = self.weights
-            if self.ival[0] < weight_spread:
-                pmin = self.ival[0]
+            if ival[0] < weight_spread:
+                pmin = ival[0]
             else:
                 pmin = weight_spread
-            if len(self.dataexpfull) - self.ival[1] <  weight_spread:
-                pmax = (len(self.dataexpfull) - self.ival[1])
+            if datalenfull - ival[1] <  weight_spread:
+                pmax = datalenfull - self.ival[1]
             else:
                 pmax = weight_spread
-            x = self.dataexpfull[self.ival[0]-pmin:self.ival[1]+pmax,0]
-            y = self.dataexpfull[self.ival[0]-pmin:self.ival[1]+pmax,1]
+            x = self.x_full[ival[0]-pmin:ival[1]+pmax]
+            y = self.y_full[ival[0]-pmin:ival[1]+pmax]
             # Calculated dataweights
-            datalen = len(self.dataexp[:,1])
-            dataweights = np.zeros(datalen)
             for i in np.arange(datalen):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
-                if  i + self.ival[0] <  weight_spread:
+                if  i + ival[0] <  weight_spread:
                     # The offset that occurs
-                    offsetstart = weight_spread - i - self.ival[0]
+                    offsetstart = weight_spread - i - ival[0]
                     offsetcrop = 0
-                elif self.ival[0] > weight_spread:
+                elif ival[0] > weight_spread:
                     offsetstart = 0
-                    offsetcrop = self.ival[0] - weight_spread
+                    offsetcrop = ival[0] - weight_spread
                 else:
                     offsetstart = 0
                     offsetcrop = 0
                 # i: counter on dataexp array
                 # start: counter on dataexpfull array
-                start = i - weight_spread + offsetstart + self.ival[0] - offsetcrop
+                start = i - weight_spread + offsetstart + ival[0] - offsetcrop
                 end = start + 2*weight_spread + 1 - offsetstart
-                #start = self.ival[0] - weight_spread + i
-                #end = self.ival[0] + weight_spread + i + 1
-                diff = y - self.function(self.values, x)
+                #start = ival[0] - weight_spread + i
+                #end = ival[0] + weight_spread + i + 1
+                diff = y - self.func(self.model_parms, x)
                 dataweights[i] = diff[start:end].std()
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
@@ -560,13 +566,174 @@ class Fit(object):
         elif self.fittype == "other":
             # This means that the user knows the dataweights and already
             # gave it to us.
-            if self.external_deviations is not None:
-                dataweights = \
-                           self.external_deviations[self.ival[0]:self.ival[1]]
+            assert self.weights is not None
+            
+            # Check if these other weights have length of the cropped
+            # or the full array.
+            if len(self.weights) == datalen:
+                dataweights = self.weights
+            elif len(self.weights) == datalenfull:
+                dataweights = self.weights[ival[0], ival[1]+1]
             else:
                 raise ValueError, \
-                      "self.external_deviations not set for fit type 'other'."
+                  "`weights` must have length of full or cropped array."
         else:
             # The fit.Fit() class will divide the function to minimize
             # by the dataweights only if we have weights
-            self.weightedfit=False
+            self.is_weighted_fit = False
+        
+        self.fit_weights = dataweights
+        
+
+    def fit_func(self, parms, x):
+        """ Create the function to be minimized. The old function
+            `function` has more parameters than we need for the fitting.
+            So we use this function to set only the necessary 
+            parameters. Returns what `function` would have done.
+        """
+        # We reorder the needed variables to only use these that are
+        # not fixed for minimization
+        index = 0
+        for i in np.arange(len(self.model_parms)):
+            if self.fit_bool[i]:
+                self.model_parms[i] = parms[index]
+                index = index + 1
+        # Only allow physically correct parameters
+        self.model_parms = self.check_parms(self.model_parms)
+        tominimize = (self.func(self.model_parms, x) - self.y)
+        # Check if we have a weighted fit
+        if self.is_weighted_fit:
+            # Check dataweights for zeros and don't use these
+            # values for the least squares method.
+            with np.errstate(divide='ignore'):
+                tominimize = np.where(self.fit_weights!=0, 
+                                      tominimize/self.fit_weights, 0)
+            ## There might be NaN values because of zero weights:
+            #tominimize = tominimize[~np.isinf(tominimize)]
+        return tominimize
+
+
+    def fit_function_scalar(self, parms, x):
+        """
+            Wrapper of `fit_function` for scalar minimization methods.
+            Returns the sum of squares of the input data.
+            (Methods that are not "Lev-Mar")
+        """
+        e = self.fit_func(parms,x)
+        return np.sum(e*e)
+
+
+    def get_chi_squared(self):
+        """
+            Calculate Chi² for the current class.
+        """
+        # Calculate degrees of freedom
+        dof = len(self.x) - len(self.model_parms) - 1
+        # This is exactly what is minimized by the scalar minimizers
+        chi2 = self.fit_function_scalar(self.model_parms, self.x)
+        return chi2 / dof
+
+
+    def minimize(self):
+        """ This will minimize *self.fit_function()* using least squares.
+            *self.values*: The values with which the function is called.
+            *valuestofit*: A list with bool values that indicate which values
+            should be used for fitting.
+            Function *self.fit_function()* takes two parameters:
+            self.fit_function(parms, x) where *x* are x-values of *dataexp*.
+        """
+        assert (np.sum(self.fit_bool) == 0), "No parameter selected for fitting."
+
+        # Get algorithm
+        algorithm = Algorithms[self.fit_algorithm][0]
+
+        # Begin fitting
+        if self.fit_algorithm == "Lev-Mar":
+            res = algorithm(self.fit_function, self.fitparms[:],
+                            args=(self.x), full_output=1)
+        else:
+            res = algorithm(self.fit_function_scalar, self.fitparms[:],
+                            args=([self.x]), full_output=1)
+
+        # The optimal parameters
+        parmoptim = res[0]
+
+        # Now write the optimal parameters to our values:
+        index = 0
+        for i in range(len(self.model_parms)):
+            if self.valuestofit[i]:
+                self.model_parms[i] = parmoptim[index]
+                index = index + 1
+        # Only allow physically correct parameters
+        self.model_parms = self.check_parms(self.model_parms)
+        # Write optimal parameters back to this class.
+
+        self.chi = self.get_chi_squared()
+        
+        # Compute error estimates for fit (Only "Lev-Mar")
+        if self.fit_algorithm == "Lev-Mar":
+            # This is the standard way to minimize the data. Therefore,
+            # we are a little bit more verbose.
+            if res[4] not in [1,2,3,4]:
+                warnings.warn("Optimal parameters not found: " + res[3])
+            try:
+                self.covar = res[1] * self.chi # The covariance matrix
+            except:
+                warnings.warn("PyCorrFit Warning: Error estimate not "+\
+                              "possible, because we could not "+\
+                              "calculate covariance matrix. Please "+\
+                              "try reducing the number of fitting "+\
+                              "parameters.")
+                self.parmoptim_error = None
+            else:
+                # Error estimation of fitted parameters
+                if self.covar is not None:
+                    self.parmoptim_error = np.diag(self.covar)
+        else:
+            self.parmoptim_error = None
+
+
+
+def GetAlgorithmStringList():
+    """
+        Get supported fitting algorithms as strings.
+        Returns two lists (that are key-sorted) for key and string.
+    """
+    A = Algorithms
+    out1 = list()
+    out2 = list()
+    a = list(A.keys())
+    a.sort()
+    for key in a:
+        out1.append(key)
+        out2.append(A[key][1])
+    return out1, out2
+    
+
+# As of version 0.8.3, we support several minimization methods for
+# fitting data to experimental curves.
+# These functions must be callable like scipy.optimize.leastsq. e.g.
+# res = spopt.leastsq(self.fit_function, self.fitparms[:],
+#                     args=(self.x), full_output=1)
+Algorithms = dict()
+
+# the original one is the least squares fit "leastsq"
+Algorithms["Lev-Mar"] = [spopt.leastsq, 
+           "Levenberg-Marquardt"]
+
+# simplex 
+Algorithms["Nelder-Mead"] = [spopt.fmin,
+           "Nelder-Mead (downhill simplex)"]
+
+# quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
+Algorithms["BFGS"] = [spopt.fmin_bfgs,
+           "BFGS (quasi-Newton)"]
+
+# modified Powell-method
+Algorithms["Powell"] = [spopt.fmin_powell,
+           "modified Powell (conjugate direction)"]
+
+# nonliner conjugate gradient method by Polak and Ribiere
+Algorithms["Polak-Ribiere"] = [spopt.fmin_cg,
+           "Polak-Ribiere (nonlinear conjugate gradient)"]
+
