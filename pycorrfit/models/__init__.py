@@ -218,6 +218,17 @@ def GetModelType(modelid):
                 except:
                     return ""
 
+def GetModelFunctionFromId(modelid):
+    return pycorrfit.models.modeldict[modelid][3]
+    
+
+def GetModelParametersFromId(modelid):
+    return pycorrfit.models.valuedict[modelid][1]
+
+
+def GetModelFitBoolFromId(modelid):
+    return pycorrfit.models.valuedict[modelid][2]
+
 
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated

@@ -9,6 +9,7 @@ from __future__ import print_function, division
 import hashlib
 import numpy as np
 
+from . import models as mdls
 
 class Background(object):
     """ A class to unify background handling
@@ -258,33 +259,314 @@ class FCSDataSet(object):
 class Fit(object):
     """ Used for fitting FCS data to models.
     """
-    def __init__(self, raw_data, modelid, modelparms=None, weights=None,
-                 fit_range=None, fit_type=None, fit_algorithm="Lev-Mar"):
+    def __init__(self, raw_data, model_id, model_parms=None,
+                 fit_bool=None, fit_ival=None, fit_ival_is_index=False,
+                 weight_type="none", weight_spread=0, weights=None,
+                 fit_algorithm="Lev-Mar",
+                 verbose=False, uselatex=False):
         """ Using an FCS model, fit the data of shape (N,2).
 
 
-        fittype - type of fit. Can be one of the following
-                  - "None" (standard) - no weights. (*weights* is ignored)
-                  - "splineX" - fit a Xth order spline and calulate standard
-                               deviation from that difference
-                  - "model function" - calculate std. dev. from difference
-                                        of fit function and dataexpfull.
-                  - "other" - use `weights`
-        fit_algorithm - The fitting algorithm to be used for minimization
-                        Have a look at the PyCorrFit documentation for more
-                        information.
-                        - "Lev-Mar" Least squares minimization
-                        - "Nelder-Mead" Simplex
-                        - "BFGS" quasi-Newton method of Broyden,
-                                 Fletcher, Goldfarb and Shanno
-                        - "Powell"
-                        - "Polak-Ribiere"
-                        
-                        
+        Parameters
+        ----------
+        raw_data : 2d `numpy.ndarray` of shape (2,N)
+            The data to which should be fitted. The first column
+            contains the x data (time in s). The second column contains
+            the y values (correlation data).
+        mode_lid : int
+            Modelid as in `pycorrfit.models.modeldict.keys()`.
+        model_parms : array-type of length P
+            The initial parameters for the specific model.
+        fit_bool : bool array of length P
+            Defines the model parameters that are variable (True) or
+            fixed (False) durin fitting.
+        fit_ival : tuple
+            Interval of x values for fitting given in seconds or by
+            indices (see `fit_ival_is_index`). If the discrete array
+            does not match the interval, then the index closer towards
+            the center of the interval is used.
+        fit_ival_is_index : bool
+            Set to `True` if `fit_ival` is given in indices instead of
+            seconds.
+        weight_type : str
+            Type of weights. Should be one of
+
+                - 'none' (standard) : no weights.
+                - 'splineX' : fit a Xth order spline and calulate standard
+                        deviation from that difference
+                - 'model function' : calculate std. dev. from difference
+                        of fit function and dataexpfull.
+                - 'other' - use `weights`
+        
+        weight_spread : int
+            Number of values left and right from a data point to include
+            to weight a data point. The total number of points included
+            is 2*`weight_spread` + 1.
+        weights : 1d `numpy.ndarray` of length (N)
+            Weights to use when `weight_type` is set to 'other'.
+        fit_algorithm : str
+            The fitting algorithm to be used for minimization. Have a
+            look at the PyCorrFit documentation for more information.
+            Should be one of
+
+                - 'Lev-Mar' : Least squares minimization
+                - 'Nelder-Mead' : Simplex
+                - 'BFGS' : quasi-Newton method of Broyden,
+                         Fletcher, Goldfarb and Shanno
+                - 'Powell'
+                - 'Polak-Ribiere'
+        verbose : int
+            Increase verbosity by incrementing this number.
+        uselatex : bool
+            If verbose > 0, plotting will be performed with LaTeX.
         """
-        self.y = raw_data[:,1].copy()
-        self.x = raw_data[:,0] * 1000 # convert to ms
+        self.y_full = raw_data[:,1].copy()
+        self.x_full = raw_data[:,0] * 1000 # convert to ms
+        
+        # model function
+        self.func = mdls.GetModelFunctionFromId(model_id)
+        
+        # fit parameters
+        if model_parms is None:
+            model_parms = mdls.GetModelParametersFromId(model_id)
+        self.model_parms = model_parms
+        
+        # values to fit
+        if fit_bool is None:
+            fit_bool = mdls.GetModelFitBoolFromId(model_id)
+        assert len(fit_bool) == len(model_parms)
+        self.fit_bool = fit_bool
+
+        # fiting interval
+        if fit_ival is None:
+            fit_ival = (self.x[0], self.x[-1])
+        assert fit_ival[0] < fit_ival[1]
+        self.fit_ival = fit_ival
+        
+        self.fit_ival_is_index = fit_ival_is_index
         
         
+        # weight type
+        assert weight_type.strip("1234567890") in ["none", "spline",
+                                              "model function", "other"]
+        self.weight_type = weight_type
         
+        # weight spread
+        assert int(weight_spread) >= 0
+        self.weight_spread = int(weight_spread)
         
+        # weights
+        if weight_type == "other":
+            assert isinstance(weights, np.ndarray)        
+        self.weights = weights
+
+        self.verbose = verbose
+
+        self.ComputetXYArrays()
+        self.ComputeWeights()
+
+        
+    def ComputeXYArrays(self):
+        """ Determine the fitting interval and set `self.x` and `self.y`
+        
+        Sets:
+        self.x
+        self.y
+        self.fit_ival_index
+        """
+        if not self.fit_ival_is_index:
+            # we need to compute the indices that are inside the
+            # fitting interval.
+            #
+            # interval in seconds:
+            # self.ival
+            #
+            # x values:
+            # self.x
+            #
+            start = np.sum(self.x <= self.ival[0]) - 1 
+            end = self.x.shape[0] - np.sum(self.x >= self.ival[1])
+            self.fit_ival_index = (start, end)
+        else:
+            self.fit_ival_index = start, end = self.fit_ival
+        # We now have two values. Both values will be included in the
+        # cropped arrays.
+        self.x = self.x_full[start:end+1]
+        self.y = self.y_full[start:end+1]
+
+
+    def ComputeWeights(self):
+        ##
+        ## Weights
+        ##
+        ## weight_type
+        ## weight_spread
+        ## weights
+        ##
+        ival = self.fit_ival_index
+        
+        if self.weight_type[:6] == "spline":
+            # Number of knots to use for spline
+            try:
+                knotnumber = int(self.weight_type[6:])
+            except:
+                if self.verbose > 1:
+                    print("Could not get knot number. Setting it to 5.")
+                knotnumber = 5
+
+            # Calculated dataweights
+            datalen = self.x.shape[0]
+            datalenfull = self.x_full.shape[0]
+            dataweights = np.zeros(datalen)
+            # Compute borders for spline fit.
+            if ival[0] < self.weight_spread:
+                # optimal case
+                pmin = ival[0]
+            else:
+                # non-optimal case
+                # we need to cut pmin
+                pmin = weight_spread
+            if datalenfull - ival[1] < self.weight_spread:
+                # optimal case
+                pmax = datalenfull - self.ival[1]
+            else:
+                # non-optimal case
+                # we need to cut pmax
+                pmax = weight_spread
+            x = self.x_full[self.ival[0]-pmin:self.ival[1]+pmax]
+            y = self.y_full[self.ival[0]-pmin:self.ival[1]+pmax]
+            # we are fitting knots on a base 10 logarithmic scale.
+            xs = np.log10(x)
+            knots = np.linspace(xs[1], xs[-1], knotnumber+2)[1:-1]
+            try:
+                tck = spintp.splrep(xs,y,s=0,k=3,t=knots,task=-1)
+                ys = spintp.splev(xs,tck,der=0)
+            except:
+                if self.verbose > 0:
+                    print("Could not find spline with {} knots.".
+                                                     format(knotnumber))
+                return
+            if self.verbose > 0:
+                try:
+                    # If plotting module is available:
+                    name = "Spline fit: "+str(knotnumber)+" knots"
+                    plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
+                                             dirname = ".",
+                                             uselatex=self.uselatex)
+                except:
+                    try:
+                        from matplotlib import pylab as plt
+                        plt.xscale("log")
+                        plt.plot(x, ys, x, y)
+                        plt.show()
+                    except ImportError:
+                        # Tell the user to install matplotlib
+                        print("Couldn't import pylab! - not Plotting")
+
+            ## Calculation of variance
+            # In some cases, the actual cropping interval from self.ival[0] to
+            # self.ival[1] is chosen, such that the dataweights must be
+            # calculated from unknown datapoints.
+            # (e.g. points+endcrop > len(dataexpfull)
+            # We deal with this by multiplying dataweights with a factor
+            # corresponding to the missed points.
+            for i in np.arange(datalen):
+                # Define start and end positions of the sections from
+                # where we wish to calculate the dataweights.
+                # Offset at beginning:
+                if  i + self.ival[0] <  weight_spread:
+                    # The offset that occurs
+                    offsetstart = self.weight_spread - i - self.ival[0]
+                    offsetcrop = 0
+                elif self.ival[0] > self.weight_spread:
+                    offsetstart = 0
+                    offsetcrop = self.ival[0] - weight_spread
+                else:
+                    offsetstart = 0
+                    offsetcrop = 0
+                # i: counter on dataexp array
+                # start: counter on y array
+                start = i - weight_spread + offsetstart + self.ival[0] - offsetcrop
+                end = start + 2*weight_spread + 1 - offsetstart
+                dataweights[i] = (y[start:end] - ys[start:end]).std()
+                # The standard deviation at the end and the start of the
+                # array are multiplied by a factor corresponding to the
+                # number of bins that were not used for calculation of the
+                # standard deviation.
+                if offsetstart != 0:
+                    reference = 2*weight_spread + 1
+                    dividor = reference - offsetstart
+                    dataweights[i] *= reference/dividor   
+                # Do not substitute len(y[start:end]) with end-start!
+                # It is not the same!
+                backset =  2*weight_spread + 1 - len(y[start:end]) - offsetstart
+                if backset != 0:
+                    reference = 2*weight_spread + 1
+                    dividor = reference - backset
+                    dataweights[i] *= reference/dividor
+        elif self.fittype == "model function":
+            # Number of neighbouring (left and right) points to include
+            weight_spread = self.weights
+            if self.ival[0] < weight_spread:
+                pmin = self.ival[0]
+            else:
+                pmin = weight_spread
+            if len(self.dataexpfull) - self.ival[1] <  weight_spread:
+                pmax = (len(self.dataexpfull) - self.ival[1])
+            else:
+                pmax = weight_spread
+            x = self.dataexpfull[self.ival[0]-pmin:self.ival[1]+pmax,0]
+            y = self.dataexpfull[self.ival[0]-pmin:self.ival[1]+pmax,1]
+            # Calculated dataweights
+            datalen = len(self.dataexp[:,1])
+            dataweights = np.zeros(datalen)
+            for i in np.arange(datalen):
+                # Define start and end positions of the sections from
+                # where we wish to calculate the dataweights.
+                # Offset at beginning:
+                if  i + self.ival[0] <  weight_spread:
+                    # The offset that occurs
+                    offsetstart = weight_spread - i - self.ival[0]
+                    offsetcrop = 0
+                elif self.ival[0] > weight_spread:
+                    offsetstart = 0
+                    offsetcrop = self.ival[0] - weight_spread
+                else:
+                    offsetstart = 0
+                    offsetcrop = 0
+                # i: counter on dataexp array
+                # start: counter on dataexpfull array
+                start = i - weight_spread + offsetstart + self.ival[0] - offsetcrop
+                end = start + 2*weight_spread + 1 - offsetstart
+                #start = self.ival[0] - weight_spread + i
+                #end = self.ival[0] + weight_spread + i + 1
+                diff = y - self.function(self.values, x)
+                dataweights[i] = diff[start:end].std()
+                # The standard deviation at the end and the start of the
+                # array are multiplied by a factor corresponding to the
+                # number of bins that were not used for calculation of the
+                # standard deviation.
+                if offsetstart != 0:
+                    reference = 2*weight_spread + 1
+                    dividor = reference - offsetstart
+                    dataweights[i] *= reference/dividor   
+                # Do not substitute len(diff[start:end]) with end-start!
+                # It is not the same!
+                backset =  2*weight_spread + 1 - len(diff[start:end]) - offsetstart
+                if backset != 0:
+                    reference = 2*weight_spread + 1
+                    dividor = reference - backset
+                    dataweights[i] *= reference/dividor
+        elif self.fittype == "other":
+            # This means that the user knows the dataweights and already
+            # gave it to us.
+            if self.external_deviations is not None:
+                dataweights = \
+                           self.external_deviations[self.ival[0]:self.ival[1]]
+            else:
+                raise ValueError, \
+                      "self.external_deviations not set for fit type 'other'."
+        else:
+            # The fit.Fit() class will divide the function to minimize
+            # by the dataweights only if we have weights
+            self.weightedfit=False
