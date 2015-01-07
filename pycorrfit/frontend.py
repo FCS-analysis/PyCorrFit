@@ -39,6 +39,7 @@ import numpy as np                      # NumPy
 import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
+import warnings
 
 try:
     # contains e.g. update and icon, but no vital things.
@@ -54,7 +55,11 @@ from . import edclasses
 from . import models as mdls
 from . import openfile as opf              # How to treat an opened file
 from . import page
-from . import plotting
+try:
+    from . import plotting
+except ImportError:
+    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
+             "available. Reason: {}.".format(sys.exc_info()[1].message))
 from . import readfiles
 from . import tools                        # Some tools
 from . import usermodel
