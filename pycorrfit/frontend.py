@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" PyCorrFit - Module frontend
+u""" PyCorrFit - Module frontend
 
 The frontend displays the GUI (Graphic User Interface). All necessary 
 functions and modules are called from here.
@@ -465,12 +465,12 @@ class MyFrame(wx.Frame):
         info.SetName('PyCorrFit')
         info.SetVersion(self.version)
         info.SetDescription(description)
-        info.SetCopyright('(C) 2011 - 2012 Paul Müller')
+        info.SetCopyright(u'(C) 2011 - 2012 Paul Müller')
         info.SetWebSite(doc.HomePage)
         info.SetLicence(licence)
         info.SetIcon(misc.getMainIcon(pxlength=64))
-        info.AddDeveloper('Paul Müller')
-        info.AddDocWriter('Thomas Weidemann, Paul Müller')
+        info.AddDeveloper(u'Paul Müller')
+        info.AddDocWriter(u'Thomas Weidemann, Paul Müller')
         wx.AboutBox(info)
         
 

@@ -114,7 +114,7 @@ def info(version):
     unit of Diff.coeff  : 10 µm²/s
     unit of inverse area: 100 /µm²
     unit of inv. volume : 1000 /µm^3 """
-    textlin = """
+    textlin = u"""
     © 2011-2012 Paul Müller, Biotec - TU Dresden
 
     A versatile tool for fitting and analyzing correlation curves.
