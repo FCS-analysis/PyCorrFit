@@ -30,7 +30,13 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from matplotlib import cm
+try:
+    from matplotlib import cm
+except:
+    mpl_available = False
+else:
+    mpl_available = True
+    
 import numpy as np
 import platform
 import wx
@@ -394,16 +400,20 @@ class UserSelectCurves(wx.Frame):
             curves.append(self.curvedict[self.curvekeys[i]])
             legends.append(self.curvekeys[i])
         # Set color map
-        cmap = cm.get_cmap("gist_rainbow")
+        if mpl_available:
+            cmap = cm.get_cmap("gist_rainbow")
         # Clear Plot
         self.canvas.Clear()
         # Draw Plot
         lines = list()
         for i in np.arange(len(curves)):
-            color = cmap(1.*i/(len(curves)), bytes=True)
-            color = wx.Colour(color[0], color[1], color[2])
-            line = plot.PolyLine(curves[i], legend=legends[i], colour=color,
-                                 width=1)
+            if mpl_available:
+                color = cmap(1.*i/(len(curves)), bytes=True)
+                color = wx.Colour(color[0], color[1], color[2])
+            else:
+                color = "black"
+            line = plot.PolyLine(curves[i], legend=legends[i],
+                                 colour=color, width=1)
             lines.append(line)
         self.canvas.SetEnableLegend(True)
         if len(curves) != 0:
