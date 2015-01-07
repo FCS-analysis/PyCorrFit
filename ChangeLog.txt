@@ -1,3 +1,11 @@
+0.8.5
+- Fixed bug that made it impossible to load data (#88)
+- Exceptions are now handled by wxPython
+- Under the hood:
+   - pythonic repository structure
+   - Relative imports
+   - Windows build machine is now Windows 7
+   - Removed strict dependency on matplotlib
 0.8.4
 - Support for PicoQuant data file format
   Many thanks to Dominic Waithe (@dwaithe)
