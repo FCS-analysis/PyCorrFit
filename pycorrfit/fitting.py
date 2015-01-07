@@ -21,8 +21,11 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except:
+    pass
+    
 import numpy as np
 from scipy import interpolate as spintp
 from scipy import optimize as spopt
