@@ -30,6 +30,7 @@ cd $StartDir
 echo "###################"
 echo "Building Extensions"
 echo "###################"
+rm -f $Docname
 python setup.py build_ext --inplace
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
