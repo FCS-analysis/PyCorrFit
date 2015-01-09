@@ -240,5 +240,5 @@ class MyYesNoAbortDialog(wx.Dialog):
 try:
     # Add the save_figure function to the standard class for wx widgets.
     matplotlib.backends.backend_wx.NavigationToolbar2Wx.save = save_figure
-except NameError:
+except (NameError, AttributeError):
     pass
