@@ -156,7 +156,7 @@ def Main():
         elif arg[-11:] == "__main__.py":
             pass
         else:
-            print "I do not know what to do with this argument: "+arg
+            print "Ignoring command line parameter: "+arg
 
 
     app.MainLoop()
