@@ -1069,6 +1069,8 @@ class MyFrame(wx.Frame):
             except:
                 # The file does not seem to be what it seems to be.
                 BadFiles.append(afile)
+                warnings.warn("Problem processing a file."+\
+                  " Reason: {}.".format(sys.exc_info()[1].message))
             else:
                 for i in np.arange(len(Stuff["Type"])):
                     Correlation.append(Stuff["Correlation"][i])
