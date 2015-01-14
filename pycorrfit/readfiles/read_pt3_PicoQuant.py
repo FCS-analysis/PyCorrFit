@@ -84,7 +84,6 @@ def openPT3(dirname, filename):
     This function is a wrapper around the PicoQuant capability of
     FCS_Viewer by Dominic Waithe.
     """
-
     wrapped.fname = os.path.join(dirname, filename)
     wrapped.corrObject = corrObject
     wrapped.form = FakeMainObject()
