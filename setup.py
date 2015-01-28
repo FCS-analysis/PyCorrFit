@@ -38,8 +38,8 @@ except:
     version = "0.0.0-unknown"
 
 
-EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_PicoQuant_fib4",
-                        ["pycorrfit/readfiles/read_pt3_PicoQuant_fib4.pyx"],
+EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
+                        ["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
                         libraries=[],
                         include_dirs=[np.get_include()]
                         )
