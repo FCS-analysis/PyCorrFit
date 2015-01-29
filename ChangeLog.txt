@@ -1,3 +1,6 @@
+0.8.5-pt3dev1
+- Improved pt3-file support from
+  https://github.com/dwaithe/FCS_point_correlator
 0.8.5
 - Fixed bug that made it impossible to load data (#88)
 - Exceptions are now handled by wxPython
