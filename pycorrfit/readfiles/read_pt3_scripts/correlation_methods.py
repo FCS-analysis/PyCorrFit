@@ -1,5 +1,5 @@
 import numpy as np
-import fib4
+from . import fib4
 
 
 """FCS Bulk Correlation Software
