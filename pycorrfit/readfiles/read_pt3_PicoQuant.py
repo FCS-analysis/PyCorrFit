@@ -87,5 +87,5 @@ def openPT3(dirname, filename):
         filelist.append(filename)
         tracelist.append(None)
     dictionary["Filename"] = filelist
-    
+
     return dictionary
