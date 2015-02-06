@@ -1,82 +1,30 @@
 # -*- coding: utf-8 -*-
 """ Wrapper for Loading PicoQuant .pt3 data files
 
-This function (in a very hackish way) wraps around classes and
-functions from FCS_viewer. Wrapping involves creating fake classes
-that usually are the graphical user interface.
-
-See Also:
-The wrapped file: `read_pt3_PicoQuant_original_FCSViewer.py`
-Fast implementation of dividAndConquer: `read_pt3_PicoQuant_fib4.pyx`
+Wraps around FCS_point_correlator by Dominic Waithe
+https://github.com/dwaithe/FCS_point_correlator
 """
 import numpy as np
 import os
-from . import read_pt3_PicoQuant_original_FCSViewer as wrapped
+from .read_pt3_scripts.correlation_objects import picoObject
 
 
-class FakeMainObject2():
-    def __init__(self, value=None):
-        self.name = " "
-        self.autoNorm = None
-        self.autotime = None
-        self.param = None
+class ParameterClass():
+	"""Stores parameters for correlation """
+	def __init__(self):
+		
+		#Where the data is stored.
+		self.data = []
+		self.objectRef =[]
+		self.subObjectRef =[]
+		self.colors = ['blue','green','red','cyan','magenta','yellow','black']
+		self.numOfLoaded = 0
+		self.NcascStart = 0
+		self.NcascEnd = 25
+		self.Nsub = 6
+		self.winInt = 10
+		self.photonCountBin = 25
         
-    def updateFitList(self):
-        pass
-        
-class FakeMainObject():
-    def __init__(self, value=None):
-        self.value = value
-        self.numOfLoaded = 0
-        self.objId = FakeMainObject2()
-        self.objIdArr = list()
-        self.name = " "
-        self.def_param = 0
-
-    def text(self):
-        return self.value
-
-    def generateList(self):
-        pass
-        
-    def setCurrentIndex(self, *args):
-        pass
-
-    def fill_series_list(self, *args):
-        pass
-
-
-class corrObject(FakeMainObject):
-    def __init__(self, *args):
-        FakeMainObject.__init__(self)
-    pass
-
-
-class FakeMain():
-    def __init__(self):
-        self.data = list()
-        self.objectRef = list()
-        self.label = FakeMainObject()
-        self.TGScrollBoxObj = FakeMainObject()
-        self.cbx = FakeMainObject()
-        
-        self.NcascStartEdit = FakeMainObject(0)
-        self.NcascEndEdit = FakeMainObject(25)
-        self.NsubEdit = FakeMainObject(6)
-        self.winIntEdit = FakeMainObject(10)
-        self.photonCountEdit = FakeMainObject(25)
-        
-        self.colors = self.colors = ['blue','green','red','cyan']
-
-        self.name = " "
-
-
-    def updateCombo(self, e=None):
-        pass
-    
-    def plot_PhotonCount(self, e=None):
-        pass
-
 
 def openPT3(dirname, filename):
     """ Retreive correlation curves from PicoQuant data files 
@@ -84,11 +32,11 @@ def openPT3(dirname, filename):
     This function is a wrapper around the PicoQuant capability of
     FCS_Viewer by Dominic Waithe.
     """
-    wrapped.fname = os.path.join(dirname, filename)
-    wrapped.corrObject = corrObject
-    wrapped.form = FakeMainObject()
-    wrapped.main = FakeMain()
-    po = wrapped.picoObject(wrapped.fname)
+    par_obj = ParameterClass()
+    
+    pt3file = picoObject(os.path.join(dirname, filename), par_obj, None)
+
+    po = pt3file
 
     auto = po.autoNorm
     # lag time [ms]
@@ -139,5 +87,5 @@ def openPT3(dirname, filename):
         filelist.append(filename)
         tracelist.append(None)
     dictionary["Filename"] = filelist
-    
+
     return dictionary
