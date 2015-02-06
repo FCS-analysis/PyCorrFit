@@ -1060,7 +1060,7 @@ class MyFrame(wx.Frame):
         for j in np.arange(N):
             afile=Datafiles[j]
             # Let the user abort, if he wants to:
-            if dlgi.Update(j+1, "Loading data: "+afile)[0] == False:
+            if dlgi.Update(j, "Loading data: "+afile)[0] == False:
                 dlgi.Destroy()
                 return
             #Stuff = readfiles.openAny(self.dirname, afile)
