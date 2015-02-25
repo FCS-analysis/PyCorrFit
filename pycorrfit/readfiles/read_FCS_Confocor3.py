@@ -277,8 +277,6 @@ def openFCS_Multiple(dirname, filename):
                     if traces[actids[0]] is not None:
                         warnings.warn("File {} curve {} does not contain AC data.".format(filename, tid))
             elif len(actids) == 2:
-                
-               
                 # Get AC data
                 if aclist[actids[0]] == "AC1":
                     acdat1 = ac_correlations[actids[0]]
