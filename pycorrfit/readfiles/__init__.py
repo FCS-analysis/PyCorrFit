@@ -26,8 +26,10 @@
 import csv
 import numpy as np
 import os
+import sys
 import tempfile
 import yaml
+import warnings
 import zipfile
 
 # To add a filetype add it here and in the
@@ -110,8 +112,8 @@ def openZIP(dirname, filename):
     Trace = list()        # Corresponding traces
     ## First test, if we are opening a session file
     sessionwc = [".fcsfit-session.zip", ".pcfs"]
-    if ( (len(filename)>19 and filename[-19:] == sessionwc[0]) or
-         (len(filename)> 5 and filename[-5:] == sessionwc[1])     ):
+    if ( filename.endswith(sessionwc[0]) or
+         filename.endswith(sessionwc[1])     ):
         # Get the yaml parms dump:
         yamlfile = Arc.open("Parameters.yaml")
         # Parms: Fitting and drawing parameters of the correlation curve
@@ -198,22 +200,33 @@ def openZIP(dirname, filename):
         allfiles = Arc.namelist()
         # Extract data to temporary folder
         tempdir = tempfile.mkdtemp()
+        rmdirs = list()
         for afile in allfiles:
-            Arc.extract(afile, path=tempdir)
+            apath = Arc.extract(afile, path=tempdir)
+            if os.path.isdir(apath):
+                rmdirs.append(apath)
+                continue
             ReturnValue = openAny(tempdir, afile)
             if ReturnValue is not None:
-                cs = ReturnValue["Correlation"]
-                ts = ReturnValue["Trace"]
-                ls = ReturnValue["Type"]
-                fs = ReturnValue["Filename"]
-                for i in np.arange(len(cs)):
-                    Correlations.append(cs[i])
-                    Trace.append(ts[i])
-                    Curvelist.append(ls[i])
-                    Filelist.append(filename+"/"+fs[i])
+                Correlations += ReturnValue["Correlation"]
+                Trace += ReturnValue["Trace"]
+                Curvelist += ReturnValue["Type"]
+                fnames = ReturnValue["Filename"]
+                Filelist += [ filename+"/"+fs for fs in fnames ]
             # Delte file
-            os.remove(os.path.join(tempdir,afile))
-        os.removedirs(tempdir)
+            try:
+                os.remove(os.path.join(tempdir, afile))
+            except:
+                warnings.warn("{}".format(sys.exc_info()[1]))
+        for rmd in rmdirs:
+            try:
+                os.removedirs(rmd)
+            except:
+                    warnings.warn("{}".format(sys.exc_info()[1]))
+        try:
+            os.removedirs(tempdir)
+        except:
+                warnings.warn("{}".format(sys.exc_info()[1]))
     Arc.close()
     dictionary = dict()
     dictionary["Correlation"] = Correlations

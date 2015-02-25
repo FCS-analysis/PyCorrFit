@@ -49,34 +49,38 @@ def openPT3(dirname, filename):
     # Some data points are zero for some reason
     id1 = np.where(autotime!=0)
 
-    
+
     # AC0 - autocorrelation CH0
-    typelist.append("AC0")
-    # autotime,auto[:,0,0]
-    corrac0 = auto[:,0,0]
-    corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
-                                corrac0[id1].reshape(-1,1)) ))
-
+    corrac0 = auto[:,0,0]    
+    if np.sum(np.abs(corrac0[id1])) != 0:
+        typelist.append("AC0")
+        # autotime,auto[:,0,0]
+        corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
+                                    corrac0[id1].reshape(-1,1)) ))
+    
     # AC1 - autocorrelation CH1
-    typelist.append("AC1")
-    # autotime,auto[:,1,1]
     corrac1 = auto[:,1,1]
-    corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
-                                corrac1[id1].reshape(-1,1)) ))
-
+    if np.sum(np.abs(corrac1[id1])) != 0:
+        typelist.append("AC1")
+        # autotime,auto[:,1,1]
+        corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
+                                    corrac1[id1].reshape(-1,1)) ))
+    
     # CC01 - Cross-Correlation CH0-CH1
-    typelist.append("CC01")
-    # autotime,auto[:,0,1]
     corrcc01 = auto[:,0,1]
-    corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
-                                corrcc01[id1].reshape(-1,1)) ))
+    if np.sum(np.abs(corrcc01[id1])) != 0:
+        typelist.append("CC01")
+        # autotime,auto[:,0,1]
+        corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
+                                    corrcc01[id1].reshape(-1,1)) ))
     
     # CC10 - Cross-Correlation CH1-CH0
-    typelist.append("CC10")
-    # autotime,auto[:,1,0]
     corrcc10 = auto[:,1,0]
-    corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
-                                corrcc10[id1].reshape(-1,1)) ))
+    if np.sum(np.abs(corrcc10[id1])) != 0:
+        typelist.append("CC10")
+        # autotime,auto[:,1,0]
+        corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
+                                    corrcc10[id1].reshape(-1,1)) ))
 
     dictionary = dict()
     dictionary["Correlation"] = corrlist
