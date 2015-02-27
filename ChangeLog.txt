@@ -1,6 +1,8 @@
-0.8.5-pt3dev1
+0.8.6
+- Bugfix: Opening .fcs files with only one AC curve works now
+- Zip files with measurements may now contain subfolders
 - Improved pt3-file support from
-  https://github.com/dwaithe/FCS_point_correlator
+  https://github.com/dwaithe/FCS_point_correlator (#89)
 0.8.5
 - Fixed bug that made it impossible to load data (#88)
 - Exceptions are now handled by wxPython
