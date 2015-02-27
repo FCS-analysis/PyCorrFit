@@ -172,11 +172,14 @@ def SoftwareUsed():
            "\n - wxPython "+wx.__version__
     # Other software
     text += "\n\nOther software:"+\
-            "\n - FCS_viewer v02" +\
+            "\n - FCS_point_correlator (9311a5c15e)" +\
             "\n    PicoQuant file format for Python by Dominic Waithe"
     if hasattr(sys, 'frozen'):
         pyinst = "\n\nThis executable has been created using PyInstaller."
-        text = text+pyinst
+        text += pyinst
+        if 'conda' in sys.version:
+            conda = "\n\nPowered by Anaconda"
+            text += conda
     return text
 
 
