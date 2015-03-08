@@ -1063,7 +1063,7 @@ class MyFrame(wx.Frame):
             if dlgi.Update(j, "Loading data: "+afile)[0] == False:
                 dlgi.Destroy()
                 return
-            #Stuff = readfiles.openAny(self.dirname, afile)
+            Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
             except:
