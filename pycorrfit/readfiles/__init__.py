@@ -243,7 +243,7 @@ Allsupfilesstring = " All supported files"
 # Dictionary with filetypes that we can open
 # The wildcards point to the appropriate functions.
 Filetypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-              "ALV (*.ASC)|*.ASC" : openASC,
+              "ALV (*.ASC)|*.ASC;*.asc" : openASC,
               "PyCorrFit (*.csv)|*.csv" : openCSV,
               "Matlab 'Ries (*.mat)|*.mat" : openMAT,
               "PicoQuant (*.pt3)|*.pt3" : openPT3,

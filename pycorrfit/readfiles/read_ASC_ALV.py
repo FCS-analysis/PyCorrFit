@@ -107,10 +107,12 @@ def openASC(dirname, filename):
     """
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
+    # End of trace
+    EndT = Alldata.__len__()
     ## Correlation function
     # Find out where the correlation function is
     for i in np.arange(len(Alldata)):
-        if Alldata[i][0:4] == 'Mode':
+        if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
             if mode.lower().count('single'):
                 single = True
@@ -123,7 +125,7 @@ def openASC(dirname, filename):
                 accc = "CC"
             else:
                 accc = "AC"
-        if Alldata[i][0:12] == '"Correlation':
+        if Alldata[i].startswith('"Correlation'):
             # This tells us if there is only one curve or if there are
             # multiple curves with an average.
             if (Alldata[i].strip().lower() == 
@@ -131,19 +133,21 @@ def openASC(dirname, filename):
                 multidata = True
             else:
                 multidata = False
-        if Alldata[i][0:13] == '"Correlation"':
+        if Alldata[i].startswith('"Correlation"'):
             # Start of correlation function
             StartC = i+1
-        if Alldata[i][0:31] == '"Correlation (Multi, Averaged)"':
+        if Alldata[i].startswith('"Correlation (Multi, Averaged)"'):
             # Start of AVERAGED correlation function !!!
             # There are several curves now.
             StartC = i+2
-        if Alldata[i][0:12] == '"Count Rate"':
+        if Alldata[i].replace(" ", "").lower().strip() == '"countrate"':
+            # takes cate of "Count Rate" and "Countrate"
             # End of correlation function
-            EndC = i-2
+            EndC = i-1
             # Start of trace (goes until end of file)
             StartT = i+1
-    EndT = Alldata.__len__()
+        if Alldata[i].startswith('Monitor Diode'):
+            EndT = i-1
     # Get the header
     Namedata = Alldata.__getslice__(StartC-1, StartC)
     ## Define *curvelist*
@@ -168,7 +172,8 @@ def openASC(dirname, filename):
     # Work through the rows in the read data
     for row in readdata:
         for i in np.arange(len(curvelist)):
-            data[i].append( (np.float(row[0]), np.float(row[i+1])) )
+            if len(row) > 0:
+                data[i].append( (np.float(row[0]), np.float(row[i+1])) )
     ## Trace
     # Trace is stored in two columns
     # 1st column: time [s]
