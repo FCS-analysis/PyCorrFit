@@ -234,9 +234,9 @@ def MoreInfo_6030(parms, countrate):
 # 3D Model blink gauss
 m_3dblink6011 = [6011, "T+3D","3D confocal diffusion with triplet", 
                  CF_Gxyz_blink]
-labels_6011 = ["n","T","τ_trip [ms]", "τ_diff [ms]", "SP", "offset"]
+labels_6011 = ["n", "T", u"τ_trip [ms]", u"τ_diff [ms]", "SP", "offset"]
 values_6011 = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
-labels_hr_6011 = ["n","T","τ_trip [µs]", "τ_diff [ms]", "SP", "offset"]
+labels_hr_6011 = ["n", "T", u"τ_trip [µs]", u"τ_diff [ms]", "SP", "offset"]
 factors_hr_6011 = [1., 1., 1000., 1., 1., 1.]
 valuestofit_6011 = [True, True, True, True, False, False]
 parms_6011 = [labels_6011, values_6011, valuestofit_6011,
@@ -244,7 +244,7 @@ parms_6011 = [labels_6011, values_6011, valuestofit_6011,
 
 # 3D Model gauss
 m_3dgauss6012 = [6012, "3D","3D confocal diffusion", CF_Gxyz_gauss]
-labels_6012 = ["n", "τ_diff [ms]", "SP", "offset"]
+labels_6012 = ["n", u"τ_diff [ms]", "SP", "offset"]
 values_6012 = [4.0, 0.4, 5.0, 0.0]
 valuestofit_6012 = [True, True, False, False]
 parms_6012 = [labels_6012, values_6012, valuestofit_6012]
@@ -254,12 +254,12 @@ m_gauss_3d_3d_t_mix_6030 = [6030, "T+3D+3D",
                             "Separate 3D diffusion + triplet, Gauß",
                             CF_Gxyz_gauss_3D3DT]
 labels_6030  = ["n",
-                "τ"+u"\u2081"+" [ms]",
-                "τ"+u"\u2082"+" [ms]",
+                u"τ"+u"\u2081"+" [ms]",
+                u"τ"+u"\u2082"+" [ms]",
                 "F"+u"\u2081", 
                 "SP",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                "τ_trip [ms]",
+                u"τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -278,12 +278,12 @@ values_6030 = [
 # Theese will be used for output that only humans can read.
 labels_human_readable_6030  = [
                         "n",
-                        "τ"+u"\u2081"+" [ms]",
-                        "τ"+u"\u2082"+" [ms]",
+                        u"τ"+u"\u2081"+" [ms]",
+                        u"τ"+u"\u2082"+" [ms]",
                         "F"+u"\u2081", 
                         "SP",
                         u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                        "τ_trip [µs]",
+                        u"τ_trip [µs]",
                         "T",
                         "offset"
                             ]

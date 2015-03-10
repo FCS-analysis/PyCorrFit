@@ -125,12 +125,12 @@ m_gauss_3d_2d_t = [6032, "T+3D+2D",
                             "Separate 3D and 2D diffusion + triplet, Gauß",
                             CF_Gxyz_3d2dT_gauss]
 labels  = ["n",
-                "τ_2D [ms]",
-                "τ_3D [ms]",
+                u"τ_2D [ms]",
+                u"τ_3D [ms]",
                 "F_3D", 
                 "SP",
                 u"\u03b1"+" (q_3D/q_2D)", 
-                "τ_trip [ms]",
+                u"τ_trip [ms]",
                 "T",
                 "offset"
                 ]
@@ -148,12 +148,12 @@ values = [
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable  = [  "n",
-                            "τ_2D [ms]",
-                            "τ_3D [ms]",
+                            u"τ_2D [ms]",
+                            u"τ_3D [ms]",
                             "F_3D", 
                             "SP",
                             u"\u03b1"+" (q_3D/q_2D)", 
-                            "τ_trip [µs]",
+                            u"τ_trip [µs]",
                             "T",
                             "offset"
                             ]
