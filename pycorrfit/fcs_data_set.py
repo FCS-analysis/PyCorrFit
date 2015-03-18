@@ -177,7 +177,7 @@ class FCSDataSet(object):
              self.background1 is not None and
              self.background2 is not None and
              self.IsCrossCorrelation
-           )
+           ):
             S = self.countrate1
             S2 = self.countrate2
             B = self.background1.countrate1
