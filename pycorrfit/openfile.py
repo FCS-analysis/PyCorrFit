@@ -30,7 +30,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 import csv
-from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
 import shutil
