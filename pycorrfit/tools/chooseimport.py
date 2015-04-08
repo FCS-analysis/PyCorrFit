@@ -34,7 +34,6 @@ import numpy as np
 import wx
 
 from .. import models as mdls
-from .. import doc
 from . import overlaycurves
 
 

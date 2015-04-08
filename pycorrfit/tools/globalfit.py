@@ -138,7 +138,7 @@ check parameters on each page and start 'Global fit'.
                            )
 
         # Flatten the list and make an array out of it.
-        return np.array([item for sublist in minimize for item in sublist])
+        return np.array([it for sublist in minimize for it in sublist])
 
 
     def OnClose(self, event=None):
@@ -224,7 +224,7 @@ check parameters on each page and start 'Global fit'.
             # Get the function
             item = self.PageData[key]
             modelid = item["modelid"]
-            function = mdls.modeldict[modelid][3]
+            #function = mdls.modeldict[modelid][3]
             values = 1*Page.active_parms[1]
             # Set parameters for each Page)
             for i in np.arange(len(self.parmstofit)):
@@ -242,7 +242,7 @@ check parameters on each page and start 'Global fit'.
             # Calculate resulting correlation function
             # corr = function(item.values, item.x)
             # Subtract data. This is the function we want to minimize
-            residual = function(values, item["x"]) - item["data"]
+            #residual = function(values, item["x"]) - item["data"]
             # Calculate chi**2
             # Set the parameter error estimates for all pages
             minimized = self.fit_function(self.parmoptim)
@@ -253,7 +253,6 @@ check parameters on each page and start 'Global fit'.
             except:
                 self.parmoptim_error = None
             else:
-                parmoptim_error = list()
                 if self.covar is not None:
                     self.parmoptim_error = np.diag(self.covar)
             p_error = self.parmoptim_error

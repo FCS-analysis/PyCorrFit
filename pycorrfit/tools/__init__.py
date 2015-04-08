@@ -50,7 +50,6 @@
 # This file is necessary for this folder to become a module that can be 
 # imported by PyCorrFit or other people.
 
-import importlib
 import numpy as np                  # NumPy
 import sys
 
@@ -110,7 +109,7 @@ from .chooseimport import ChooseImportTypes
 from .chooseimport import ChooseImportTypesModel
 from .comment import EditComment
 # the "special" tool RangeSelector
-from parmrange import RangeSelector
+from .parmrange import RangeSelector
 
 ToolDict = dict()
 ToolDict["A"] = ToolsActive

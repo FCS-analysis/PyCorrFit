@@ -37,7 +37,6 @@ import wx
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot    
 
-from .. import doc
 from .. import misc
 from .. import openfile as opf                  # How to treat an opened file
 from .. import readfiles
@@ -505,7 +504,7 @@ class BackgroundCorrection(wx.Frame):
             # an error message.
             return
         # BG number
-        item = self.dropdown.GetSelection()
+        #item = self.dropdown.GetSelection()
         # Apply to corresponding pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
@@ -551,10 +550,6 @@ class BackgroundCorrection(wx.Frame):
         for item in self.parent.Background:
             bgname = "{} ({:.2f} kHz)".format(item[1],item[0])
             self.BGlist.append(bgname)
-        if len(self.BGlist) == 0:
-            ddlist = ["File/User"]
-        else:
-            ddlist = 1*self.BGlist
         self.dropdown.SetItems(self.BGlist)
         # Show the last item
         self.dropdown.SetSelection(len(self.BGlist)-1)
