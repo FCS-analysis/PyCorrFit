@@ -130,7 +130,6 @@ def openZIP(dirname, filename):
             expfile = Arc.open(expfilename, 'r')
             readdata = csv.reader(expfile, delimiter=',')
             dataexp = list()
-            tau = list()
             if str(readdata.next()[0]) == "# tau only":
                 # We do not have a curve here
                 pass
