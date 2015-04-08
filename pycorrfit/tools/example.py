@@ -33,7 +33,7 @@
 
 
 import wx
-import numpy as np
+#import numpy as np
 
 
 class Tool(wx.Frame):

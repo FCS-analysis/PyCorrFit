@@ -30,7 +30,6 @@
 """
 from __future__ import division
 
-import datetime 
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import numpy as np
