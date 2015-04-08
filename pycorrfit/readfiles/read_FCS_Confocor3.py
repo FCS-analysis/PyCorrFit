@@ -260,7 +260,7 @@ def openFCS_Multiple(dirname, filename):
     for tid in actimelist:
         if tid not in knowntimes:
             knowntimes.append(tid)
-            n = actimelist.count(tid)
+            #n = actimelist.count(tid)
             actids = np.where(np.array(actimelist) == tid)[0]
             cctids = np.where(np.array(cctimelist) == tid)[0]
             

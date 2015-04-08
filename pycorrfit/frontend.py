@@ -33,7 +33,6 @@ import os
 import webbrowser
 import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
-import wx.lib.delayedresult as delayedresult
 import wx.py.shell
 import numpy as np                      # NumPy
 import platform
@@ -532,7 +531,6 @@ class MyFrame(wx.Frame):
             dlg = wx.MessageDialog(self, errstr, "Error", 
                 style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             dlg.ShowModal()
-            del NewModel
             return
         # Test the code for sympy compatibility.
         # If you write your own parser, this might be easier.
@@ -553,7 +551,6 @@ class MyFrame(wx.Frame):
             if dlg2.ShowModal() == wx.ID_YES:
                 NewModel.ImportModel()
             else:
-                del NewModel
                 return
         else:
             # The model was loaded correctly
@@ -1454,8 +1451,6 @@ class MyFrame(wx.Frame):
                 savetrace = False
             opf.ExportCorrelation(path, Page, tools.info,
                                   savetrace=savetrace)
-        else:
-            dirname = dlg.GetDirectory()
         
         dlg.Destroy()
 
@@ -1800,7 +1795,7 @@ def MyExceptionHook(etype, value, trace):
     :param string `trace`: the traceback header, if any (otherwise, it prints the
      standard Python header: ``Traceback (most recent call last)``.
     """
-    frame = wx.GetApp().GetTopWindow()
+    wx.GetApp().GetTopWindow()
     tmp = traceback.format_exception(etype, value, trace)
     exception = "".join(tmp)
  
