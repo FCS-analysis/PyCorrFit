@@ -1689,10 +1689,17 @@ class MyFrame(wx.Frame):
             if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
                 lindex = 1
                 changeTIRF = True
+        elif (modelid == 6022 and
+              len(Parms[2]) == len(mdls.valuedict[modelid][0]) + 1):
+            # Change in verson 0.8.7: TIRF_2D2D model remove d_eva
+            active_values = np.delete(active_values, 4)
+            active_fitting = np.delete(active_fitting, 4)
+           
         elif modelid in [6020, 6021, 6022, 6023]:
             if len(Parms[2]) > len(mdls.valuedict[modelid][0]):
                 lindex = 2
                 changeTIRF = True
+
         if changeTIRF:
             lamb = active_values[lindex]
             NA = active_values[lindex+1]
