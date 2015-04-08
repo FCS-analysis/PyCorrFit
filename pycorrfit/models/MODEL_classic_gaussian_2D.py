@@ -101,7 +101,7 @@ def CF_Gxy_T_gauss(parms, tau):
 
 def Check_xy_T_gauss(parms):
     parms[0] = np.abs(parms[0])
-    taudiff = parms[1] = np.abs(parms[1])
+    parms[1] = np.abs(parms[1]) # = taudiff
     tautrip = np.abs(parms[2])
     T=parms[3]
 
@@ -168,13 +168,13 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
 
 def Check_6031(parms):
     parms[0] = np.abs(parms[0])
-    parms[1] = taud1 = np.abs(parms[1])
-    parms[2] = taud2 = np.abs(parms[2])
+    parms[1] = np.abs(parms[1]) # = taud1
+    parms[2] = np.abs(parms[2]) # = taud2
     F=parms[3]
     parms[4] = np.abs(parms[4])
     tautrip = np.abs(parms[5])
     T=parms[6]
-    off=parms[7]
+    #off=parms[7]
     
      
     # Triplet fraction is between 0 and one. T may not be one!

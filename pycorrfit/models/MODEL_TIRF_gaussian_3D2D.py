@@ -124,18 +124,18 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
 def Checkme(parms):
     parms[0] = np.abs(parms[0])
-    parms[1] = D2D = np.abs(parms[1])
-    parms[2] = D3D = np.abs(parms[2])
+    parms[1] = np.abs(parms[1]) # = D2D
+    parms[2] = np.abs(parms[2]) # = D3D
     F=parms[3]
-    parms[4] = r0 = np.abs(parms[4])
+    parms[4] = np.abs(parms[4]) # = r0
     parms[5]=np.abs(parms[5])
     parms[6]=np.abs(parms[6])
     tautrip=np.abs(parms[7])
     T=parms[8]
-    off=parms[9]
+    #off=parms[9]
 
-    taud2D = r0**2/(4*D2D)
-    taud3D = r0**2/(4*D3D)
+    #taud2D = r0**2/(4*D2D)
+    #taud3D = r0**2/(4*D3D)
     # We are not doing this anymore (Issue #2).
     ## Force triplet component to be smaller than diffusion times
     ## tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
@@ -169,12 +169,12 @@ def MoreInfo(parms, countrate):
     """
     # We can only give you the effective particle number
     n=parms[0]
-    D2D=parms[1]
-    D3D=parms[2]
+    #D2D=parms[1]
+    #D3D=parms[2]
     F=parms[3]
     r0=parms[4]
     deva=parms[5]
-    alpha=parms[6]
+    #alpha=parms[6]
 
     Info=list()
     # The enumeration of these parameters is very important for

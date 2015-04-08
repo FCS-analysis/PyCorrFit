@@ -51,10 +51,9 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
         [2] σ      Lateral size of the point spread function
                    σ = σ₀ * λ / NA
         [3] a      Side size of the square-shaped detection area
-        [4] d_eva  Evanescent penetration depth
-        [5] C_2D1  Two-dimensional concentration of species 1
-        [6] C_2D2  Two-dimensional concentration of species 2
-        [7] α      Relative molecular brightness of particle
+        [4] C_2D1  Two-dimensional concentration of species 1
+        [5] C_2D2  Two-dimensional concentration of species 2
+        [6] α      Relative molecular brightness of particle
                    2 compared to particle 1 (α = q₂/q₁)
         *tau* - lag time
     """
@@ -62,10 +61,9 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
     D_2D2 = parms[1]
     sigma = parms[2]
     a = parms[3]
-    kappa = 1/parms[4]
-    Conc_2D1 = parms[5]
-    Conc_2D2 = parms[6]
-    alpha = parms[7]
+    Conc_2D1 = parms[4]
+    Conc_2D2 = parms[5]
+    alpha = parms[6]
 
     ## First the 2D-diffusion of species 1
     var1 = sigma**2+D_2D1*tau
@@ -100,7 +98,6 @@ labels_6022 = [ "D"+u"\u2081"+u" [10 µm²/s]",
                 "D"+u"\u2082"+u" [10 µm²/s]",
                 u"σ [100 nm]",
                 "a [100 nm]", 
-                "d_eva [100 nm]", 
                 "C"+u"\u2081"+u" [100 /µm²]", 
                 "C"+u"\u2082"+u" [100 /µm²]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
@@ -110,7 +107,6 @@ values_6022 = [
                 0.01,    # D_2D₂ [10 µm²/s]
                 2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
-                1.0,     # d_eva [100 nm]
                 0.01,    # conc.2D₁ [100 /µm²]
                 0.03,    # conc.2D₂ [100 /µm²]
                 1        # alpha
@@ -122,7 +118,6 @@ labels_human_readable_6022 = [
                 "D"+u"\u2082"+u" [µm²/s]",
                 u"σ [nm]",
                 "a [nm]", 
-                "d_eva [nm]", 
                 "C"+u"\u2081"+u" [1/µm²]", 
                 "C"+u"\u2082"+u" [1/µm²]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
@@ -132,12 +127,11 @@ values_factor_human_readable_6022 = [
                 10,     # D_2D₂ [10 µm²/s]
                 100,    # σ [100 nm]
                 100,    # a [100 nm]
-                100,    # d_eva [100 nm]
                 100,    # conc.2D₁ [100 /µm²]
                 100,    # conc.2D₂ [100 /µm²]
                 1
                 ]
-valuestofit_6022 = [False, True, False, False, False, False, True, False]
+valuestofit_6022 = [False, True, False, False, False, True, False]
 parms_6022 = [labels_6022, values_6022, valuestofit_6022, 
               labels_human_readable_6022, values_factor_human_readable_6022]
 

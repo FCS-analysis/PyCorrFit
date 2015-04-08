@@ -108,9 +108,9 @@ def Check_6011(parms):
     parms[0] = np.abs(parms[0])
     T = parms[1]
     tautrip = np.abs(parms[2])
-    parms[3] = taudiff = np.abs(parms[3])
+    parms[3] = np.abs(parms[3])# = taudiff
     parms[4] = np.abs(parms[4])
-    off = parms[5]
+    #off = parms[5]
     
     # Triplet fraction is between 0 and one.
     T = (0.<=T<1.)*T + .999999999*(T>=1)
@@ -178,14 +178,14 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
 
 def Check_3D3DT(parms):
     parms[0] = np.abs(parms[0])
-    parms[1] = taud1 = np.abs(parms[1])
-    parms[2] = taud2 = np.abs(parms[2])
+    parms[1] = np.abs(parms[1]) # = taud1
+    parms[2] = np.abs(parms[2]) # = taud2
     F=parms[3]
     parms[4]=np.abs(parms[4])
     parms[5]=np.abs(parms[5])
     tautrip=np.abs(parms[6])
     T=parms[7]
-    off=parms[8]
+    #off=parms[8]
     
     
     # Triplet fraction is between 0 and one. T may not be one!

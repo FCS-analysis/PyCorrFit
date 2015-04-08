@@ -78,14 +78,14 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
 def Checkme(parms):
     parms[0] = np.abs(parms[0])
-    parms[1] = taud2D = np.abs(parms[1])
-    parms[2] = taud3D = np.abs(parms[2])
+    parms[1] = np.abs(parms[1]) #= taud2D
+    parms[2] = np.abs(parms[2]) #= taud3D
     F=parms[3]
     parms[4]=np.abs(parms[4])
     parms[5]=np.abs(parms[5])
     tautrip=np.abs(parms[6])
     T=parms[7]
-    off=parms[8]
+    #off=parms[8]
     # Triplet fraction is between 0 and one. T may not be one!
     T = (0.<=T<1.)*T + .99999999999999*(T>=1)
     # Fraction of molecules may also be one

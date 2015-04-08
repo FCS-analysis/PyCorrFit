@@ -41,7 +41,6 @@
 # imported from within Python/PyCorrFit.
 
 import numpy as np                  # NumPy
-import platform
 import sys
 
 
@@ -219,15 +218,15 @@ def GetModelType(modelid):
                     return ""
 
 def GetModelFunctionFromId(modelid):
-    return pycorrfit.models.modeldict[modelid][3]
+    return modeldict[modelid][3]
     
 
 def GetModelParametersFromId(modelid):
-    return pycorrfit.models.valuedict[modelid][1]
+    return valuedict[modelid][1]
 
 
 def GetModelFitBoolFromId(modelid):
-    return pycorrfit.models.valuedict[modelid][2]
+    return valuedict[modelid][2]
 
 
 def GetMoreInfo(modelid, Page):
