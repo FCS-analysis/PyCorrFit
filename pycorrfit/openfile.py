@@ -40,7 +40,6 @@ import zipfile
 import warnings
 
 from . import doc
-from . import edclasses
 
 # These imports are required for loading data
 from .readfiles import Filetypes

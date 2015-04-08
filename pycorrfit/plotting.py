@@ -42,11 +42,6 @@ import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 # Text rendering with matplotlib
 from matplotlib import rcParams
-from matplotlib.backends.backend_wx import NavigationToolbar2Wx #We hack this
-## In edclasses, we edited the wxWidgets version of the NavigationToolbar2Wx.
-## This hack enables us to remember directories.
-# import edclasses
-# NavigationToolbar2Wx = edclasses.NavigationToolbar2Wx
 import unicodedata
 
 # For finding latex tools
@@ -371,12 +366,10 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     if Page.trace is not None:
         # Set trace
         traces = [Page.trace]
-        averages = [np.average(Page.trace)]
         labels = ["{} ({:.2f} kHz)".format(tabtitle, np.average(traces[0][:,1]))]
     elif Page.tracecc is not None:
         # We have some cross-correlation here. Two traces.
         traces = Page.tracecc
-        averages = [np.average(traces[0]), np.average(traces[1])]
         labels = ["{} A ({:.4g} kHz)".format(tabtitle, np.average(traces[0][:,1])),
                   "{} B ({:.4g} kHz)".format(tabtitle, np.average(traces[1][:,1]))]
     else:
@@ -484,7 +477,7 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
         rcParams['text.usetex']=False
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
-    fig=plt.figure()
+    plt.figure()
     ax = plt.subplot(111)
     #    ax = plt.axes()
     ax.semilogx()

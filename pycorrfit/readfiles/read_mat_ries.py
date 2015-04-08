@@ -69,14 +69,12 @@ def openMAT(dirname, filename):
     except KeyError:
         pass
     else:
-        N = len(ac)
         # Workaround for single ACs, they are not stored in a separate list,
         # but directly inserted into g["ac"]. We put it in a list.
         # This is not the case for the trace averages.
         # There are a maximum of 4 autocorrelation functions in one file,
         # as far as I know.
         if len(ac) > 4:
-            N=1
             ac = [ac]
             g["act"] = [g["act"]]
         for i in np.arange(len(ac)):

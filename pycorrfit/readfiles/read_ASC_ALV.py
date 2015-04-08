@@ -356,7 +356,7 @@ def mysplit(a, n):
     yp = a[:,1]
     
     # time frame for each new curve
-    dx = xp[-1]/n
+    #dx = xp[-1]/n
 
     # perform interpolation of new trace
     x, newstep = np.linspace(0, xp[-1], lensplit*n,
