@@ -1,8 +1,11 @@
 include doc/*.tex
 include doc/*.bib
 include doc/*.pdf
+include doc/*.md
 include doc/Images/*
-include examples/external_model_functions/*
+include examples/external_model_functions/*.txt
 include Readme.txt
 include ChangeLog.txt
-
+include pycorrfit/readfiles/read_pt3_scripts/*.py
+include pycorrfit/readfiles/read_pt3_scripts/*.pyx
+include pycorrfit/readfiles/read_pt3_scripts/LICENSE
