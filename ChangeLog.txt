@@ -1,4 +1,4 @@
-0.8.6-alpha1
+0.8.7
 - Removed unused fitting parameter d_eva from model 6022 and
   secured backwards compatibility.
 - Improved support for ALV700X (#92)
@@ -6,10 +6,6 @@
 - Under the hood:
    - Code cleanup with pyflakes
    - Repo cleanup (#98)
-0.8.6-alpha1
-- Improved support for ALV700X (#92)
-- Corrected false display of Unicode characters on Windows
-- Code cleanup (#98)
 0.8.6
 - Bugfix: Opening .fcs files with only one AC curve works now
 - Zip files with measurements may now contain subfolders
