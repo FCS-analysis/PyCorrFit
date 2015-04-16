@@ -220,16 +220,16 @@ def MoreInfo(parms, countrate):
 m_gauss_3d_3d_t = [6034, "T+3D+3D",
                             "Combined 3D diffusion + triplet w/ TIR",
                             CF_Gxyz_3D3DT_gauss]
-labels  = ["n",
-                u"D"+u"\u2081"+" [10 µm²/s]",
-                u"D"+u"\u2082"+" [10 µm²/s]",
-                "F"+u"\u2081", 
-                u"r₀ [100 nm]",
-                "d_eva [100 nm]",
-                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                u"τ_trip [ms]",
-                "T",
-                "offset"
+labels  = [u"n",
+           u"D"+u"\u2081"+" [10 µm²/s]",
+           u"D"+u"\u2082"+" [10 µm²/s]",
+           u"F"+u"\u2081", 
+           u"r₀ [100 nm]",
+           u"d_eva [100 nm]",
+           u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+           u"τ_trip [ms]",
+           u"T",
+           u"offset"
                 ]
 values = [ 
                 25,      # n
@@ -244,16 +244,16 @@ values = [
                 0.0      # offset
                 ]    
 # Human readable stuff
-labelshr  = ["n",
+labelshr  = [   u"n",
                 u"D"+u"\u2081"+u" [µm²/s]",
                 u"D"+u"\u2082"+u" [µm²/s]",
-                "F"+u"\u2081", 
-                "r₀ [nm]",
-                "d_eva [nm]",
+                u"F"+u"\u2081", 
+                u"r₀ [nm]",
+                u"d_eva [nm]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
                 u"τ_trip [µs]",
-                "T",
-                "offset"
+                u"T",
+                u"offset"
                 ]
 valueshr = [ 
                 1.,      # n

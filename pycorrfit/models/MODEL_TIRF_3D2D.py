@@ -103,13 +103,13 @@ m_tir_3d_2d_mix_6020 = [6020, u"3D+2D",
                         "Separate 3D and 2D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d2d]
 labels_6020 = [u"D_3D [10 µm²/s]",
-                u"D_2D [10 µm²/s]",
-                u"σ [100 nm]",
-                "a [100 nm]", 
-                "d_eva [100 nm]", 
-                u"C_3D [1000 /µm³]", 
-                u"C_2D [100 /µm²]", 
-                u"\u03b1"+" (q3D/q2D)"
+               u"D_2D [10 µm²/s]",
+               u"σ [100 nm]",
+               u"a [100 nm]", 
+               u"d_eva [100 nm]", 
+               u"C_3D [1000 /µm³]", 
+               u"C_2D [100 /µm²]", 
+               u"\u03b1"+" (q3D/q2D)"
                 ]
 values_6020 = [
                 50.0,     # D_3D [10 µm²/s]
@@ -123,11 +123,12 @@ values_6020 = [
                 ]        
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6020 = ["D_3D [µm²/s]",
+labels_human_readable_6020 = [
+                u"D_3D [µm²/s]",
                 u"D_2D [µm²/s]",
                 u"σ [nm]",
-                "a [nm]", 
-                "d_eva [nm]", 
+                u"a [nm]", 
+                u"d_eva [nm]", 
                 u"C_3D [1/µm³]", 
                 u"C_2D [1/µm²]", 
                 u"\u03b1"+" (q3D/q2D)"
