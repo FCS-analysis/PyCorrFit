@@ -94,12 +94,12 @@ def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
 # 2D-2D Model TIR
 m_tir_2d_2d_mix_6022 = [6022, u"2D+2D","Separate 2D diffusion, TIR", 
                         CF_Gxy_TIR_square_2d2d]
-labels_6022 = [ "D"+u"\u2081"+u" [10 µm²/s]",
-                "D"+u"\u2082"+u" [10 µm²/s]",
+labels_6022 = [ u"D"+u"\u2081"+u" [10 µm²/s]",
+                u"D"+u"\u2082"+u" [10 µm²/s]",
                 u"σ [100 nm]",
-                "a [100 nm]", 
-                "C"+u"\u2081"+u" [100 /µm²]", 
-                "C"+u"\u2082"+u" [100 /µm²]", 
+                u"a [100 nm]", 
+                u"C"+u"\u2081"+u" [100 /µm²]", 
+                u"C"+u"\u2082"+u" [100 /µm²]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_6022 = [
@@ -114,12 +114,12 @@ values_6022 = [
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6022 = [
-                "D"+u"\u2081"+u" [µm²/s]",
-                "D"+u"\u2082"+u" [µm²/s]",
+                u"D"+u"\u2081"+u" [µm²/s]",
+                u"D"+u"\u2082"+u" [µm²/s]",
                 u"σ [nm]",
-                "a [nm]", 
-                "C"+u"\u2081"+u" [1/µm²]", 
-                "C"+u"\u2082"+u" [1/µm²]", 
+                u"a [nm]", 
+                u"C"+u"\u2081"+u" [1/µm²]", 
+                u"C"+u"\u2082"+u" [1/µm²]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_factor_human_readable_6022 = [

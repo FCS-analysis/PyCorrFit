@@ -116,23 +116,23 @@ def MoreInfo(parms, countrate):
     if countrate is not None:
         # CPP
         cpp = countrate/n
-        Info.append(["cpp [kHz]", cpp])
+        Info.append([u"cpp [kHz]", cpp])
     return Info
 
 
 # 3D + 3D + T model gauss
-m_gauss_3d_2d_t = [6032, "T+3D+2D",
+m_gauss_3d_2d_t = [6032, u"T+3D+2D",
                             "Separate 3D and 2D diffusion + triplet, Gauß",
                             CF_Gxyz_3d2dT_gauss]
-labels  = ["n",
-                u"τ_2D [ms]",
-                u"τ_3D [ms]",
-                "F_3D", 
-                "SP",
-                u"\u03b1"+" (q_3D/q_2D)", 
-                u"τ_trip [ms]",
-                "T",
-                "offset"
+labels  = [ u"n",
+            u"τ_2D [ms]",
+            u"τ_3D [ms]",
+            u"F_3D", 
+            u"SP",
+            u"\u03b1"+" (q_3D/q_2D)", 
+            u"τ_trip [ms]",
+            u"T",
+            u"offset"
                 ]
 values = [ 
                 25,      # n
@@ -147,15 +147,15 @@ values = [
                 ]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable  = [  "n",
+labels_human_readable  = [  u"n",
                             u"τ_2D [ms]",
                             u"τ_3D [ms]",
-                            "F_3D", 
-                            "SP",
+                            u"F_3D", 
+                            u"SP",
                             u"\u03b1"+" (q_3D/q_2D)", 
                             u"τ_trip [µs]",
-                            "T",
-                            "offset"
+                            u"T",
+                            u"offset"
                             ]
 values_factor_human_readable = [
                           1.,     # "n",

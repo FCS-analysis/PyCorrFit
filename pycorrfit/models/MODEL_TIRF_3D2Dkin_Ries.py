@@ -353,16 +353,16 @@ m_tir_3d_2d_ubib6021 = [6021, u"3D+2D+kin",
                         "Surface binding and unbinding, 3D TIR",
                         CF_Gxyz_TIR_square_ubibi]
 labels_6021 = [u"D_3D [10 µm²/s]",
-                u"D_2D [10 µm²/s]",
-                u"σ [100 nm]",
-                "a [100 nm]", 
-                "d_eva [100 nm]", 
-                u"C_3D [1000 /µm³]", 
-                u"C_2D[100 /µm²]", 
-                u"η_3D", 
-                u"η_2D", 
-                u"k_a [µm³/s]", 
-                u"k_d [10³ /s]"
+               u"D_2D [10 µm²/s]",
+               u"σ [100 nm]",
+               u"a [100 nm]", 
+               u"d_eva [100 nm]", 
+               u"C_3D [1000 /µm³]", 
+               u"C_2D[100 /µm²]", 
+               u"η_3D", 
+               u"η_2D", 
+               u"k_a [µm³/s]", 
+               u"k_d [10³ /s]"
                 ]
 values_6021 = [
                 9.0,      # D_3D [10 µm²/s]
@@ -385,14 +385,14 @@ labels_human_readable_6021 = [
                 u"D_3D [µm²/s]",
                 u"D_2D [µm²/s]",
                 u"σ [nm]",
-                "a [nm]", 
-                "d_eva [nm]", 
+                u"a [nm]", 
+                u"d_eva [nm]", 
                 u"C_3D [1/µm³]", 
                 u"C_2D [1/µm²]", 
                 u"η_3D", 
                 u"η_2D", 
                 u"k_a [µm³/s]", 
-                "k_d [1/s]"
+                u"k_d [1/s]"
                 ]
 values_factor_human_readable_6021 = [10, # "D_3D [µm²/s]",
                 10,     # D_2D [10 µm²/s]

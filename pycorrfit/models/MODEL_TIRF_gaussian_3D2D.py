@@ -187,15 +187,15 @@ def MoreInfo(parms, countrate):
     C2D = n*(1-F) / ( np.pi*r0**2 )
     # Correlation function at tau = 0
     G_0 = CF_Gxyz_3d2dT_gauss(parms, 0)
-    Info.append(["G(0)", G_0])
-    Info.append(["V_eff [al]", Veff])
-    Info.append(["C_2D [1/µm²]", C2D * 100])
-    Info.append(["C_3D [nM]", C3D * 10000/6.0221415])
+    Info.append([u"G(0)", G_0])
+    Info.append([u"V_eff [al]", Veff])
+    Info.append([u"C_2D [1/µm²]", C2D * 100])
+    Info.append([u"C_3D [nM]", C3D * 10000/6.0221415])
 
     if countrate is not None:
         # CPP
         cpp = countrate/n
-        Info.append(["cpp [kHz]", cpp])
+        Info.append([u"cpp [kHz]", cpp])
     return Info
 
 
@@ -203,16 +203,16 @@ def MoreInfo(parms, countrate):
 m_gauss_3d_2d_t = [6033, "T+3D+2D",
                             "Separate 3D and 2D diffusion + triplet w/ TIR",
                             CF_Gxyz_3d2dT_gauss]
-labels  = ["n",
-                u"D_2D [10 µm²/s]",
-                u"D_3D [10 µm²/s]",
-                "F_3D", 
-                u"r₀ [100 nm]",
-                "d_eva [100 nm]",
-                u"\u03b1"+" (q_3D/q_2D)", 
-                u"τ_trip [ms]",
-                "T",
-                "offset"
+labels  = [ u"n",
+            u"D_2D [10 µm²/s]",
+            u"D_3D [10 µm²/s]",
+            u"F_3D", 
+            u"r₀ [100 nm]",
+            u"d_eva [100 nm]",
+            u"\u03b1"+" (q_3D/q_2D)", 
+            u"τ_trip [ms]",
+            u"T",
+            u"offset"
                 ]
 values = [ 
                 25,      # n
@@ -227,16 +227,16 @@ values = [
                 0.0      # offset
                 ]  
 # Human readable stuff
-labelshr  = ["n",
-                u"D_2D [µm²/s]",
-                u"D_3D [µm²/s]",
-                "F_3D", 
-                u"r₀ [nm]",
-                "d_eva [nm]",
-                u"\u03b1"+" (q_3D/q_2D)", 
-                u"τ_trip [µs]",
-                "T",
-                "offset"
+labelshr  = [u"n",
+             u"D_2D [µm²/s]",
+             u"D_3D [µm²/s]",
+             u"F_3D", 
+             u"r₀ [nm]",
+             u"d_eva [nm]",
+             u"\u03b1"+" (q_3D/q_2D)", 
+             u"τ_trip [µs]",
+             u"T",
+             u"offset"
                 ] 
 valueshr = [ 
                 1.,      # n

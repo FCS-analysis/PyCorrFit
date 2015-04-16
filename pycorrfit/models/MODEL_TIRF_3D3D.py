@@ -108,11 +108,11 @@ def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
 m_tir_3d_3d_mix_6023 = [6023, u"3D+3D",
                         "Separate 3D diffusion, 3D TIR",
                         CF_Gxyz_TIR_square_3d3d]
-labels_6023 = ["D"+u"\u2081"+u" [10 µm²/s]",
-               "D"+u"\u2082"+u" [10 µm²/s]",
+labels_6023 = [u"D"+u"\u2081"+u" [10 µm²/s]",
+               u"D"+u"\u2082"+u" [10 µm²/s]",
                u"σ [100 nm]",
-               "a [100 nm]", 
-               "d_eva [100 nm]", 
+               u"a [100 nm]", 
+               u"d_eva [100 nm]", 
                u"C"+u"\u2081"+u" [1000 /µm³]", 
                u"C"+u"\u2082"+u" [1000 /µm³]", 
                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
@@ -129,13 +129,14 @@ values_6023 = [
                 ]        
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
-labels_human_readable_6023 = ["D"+u"\u2081"+u" [µm²/s]",
-                "D"+u"\u2082"+u" [µm²/s]",
+labels_human_readable_6023 = [
+                u"D"+u"\u2081"+u" [µm²/s]",
+                u"D"+u"\u2082"+u" [µm²/s]",
                 u"σ [nm]",
-                "a [nm]", 
-                "d_eva [nm]", 
-                "C"+u"\u2081"+u" [1/µm³]", 
-                "C"+u"\u2082"+u" [1/µm³]", 
+                u"a [nm]", 
+                u"d_eva [nm]", 
+                u"C"+u"\u2081"+u" [1/µm³]", 
+                u"C"+u"\u2082"+u" [1/µm³]", 
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_factor_human_readable_6023 = [10, # "D_3D₁ [µm²/s]",
