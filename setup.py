@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # To just compile the cython part in-place:
-# python setup.py build_ext --inplace
+#  python setup.py build_ext --inplace
 # To create a distribution package for pip or easy-install:
-# python setup.py sdist
+#  python setup.py sdist
+# To create wheels package and upload securely
+#  pip install wheel twine
+#  python setup.py bdist wheel
 from setuptools import setup, find_packages, Extension
 from Cython.Distutils import build_ext
 import numpy as np
