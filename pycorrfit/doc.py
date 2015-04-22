@@ -75,14 +75,11 @@ def GetLocationOfFile(filename):
                     os.path.realpath(dirname+"/../doc/"),
                 ]
 
-    # check /usr/lib64 -> /usr/lib
-    if dirname.count("lib64"):
-        for i in range(len(locations)):
-            locations.append(locations[i].replace("lib64", "lib", 1))
-    # check /usr/lib32 -> /usr/lib
-    if dirname.count("lib32"):
-        for i in range(len(locations)):
-            locations.append(locations[i].replace("lib32", "lib", 1))
+    for i in range(len(locations)):
+        # check /usr/lib64/32 -> /usr/lib
+        for larch in ["lib32", "lib64"]:
+            if dirname.count(larch):
+                locations.append(locations[i].replace(larch, "lib", 1))
     
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
