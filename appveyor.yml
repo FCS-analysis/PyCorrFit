@@ -7,21 +7,34 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\freeze_appveyor\\run_with_compiler.cmd"
 
   matrix:
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.8"
+    - PYTHON: "C:\\Python27-conda32"
+      PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
 
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.8"
+    - PYTHON: "C:\\Python27-conda64"
+      PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "64"
-      WINDOWS_SDK_VERSION: "v7.0"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
+  # Install Python (from the official .msi of http://python.org) and pip when
+  # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
-  - "%CMD_IN_ENV% pip install cython"
+  
+  # Prepend newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  
+  # Install the build dependencies of the project. 
+  - "pip install cython"
+  - "pip install wheel"
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
 shallow_clone: true
@@ -32,7 +45,10 @@ test_script:
   - "%WITH_COMPILER% %PYTHON%/python setup.py test"
 
 after_test:
+  # If tests are successful, create a whl package for the project.
   - "%WITH_COMPILER% %PYTHON%/python setup.py bdist_wheel"
+  - ps: "ls dist"
 
 artifacts:
+  # Archive the generated wheel package in the ci.appveyor.com build report.
   - path: dist\*
