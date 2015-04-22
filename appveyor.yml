@@ -21,7 +21,7 @@ init:
 
 install:
   - "powershell freeze_appveyor\\install.ps1"
-  - "pip install cython"
+  - "%CMD_IN_ENV% pip install cython"
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
 shallow_clone: true
