@@ -73,7 +73,14 @@ def GetLocationOfFile(filename):
                     dirname+"/../",
                     dirname+"/../pycorrfit_doc/",
                     dirname+"/../doc/",
+                    # check /usr/lib64 -> /usr/lib
+                    dirname.replace("/usr/lib64", "/usr/lib", 1),
                 ]
+
+    if dirname.startswith("/usr/lib64/"):
+        locations
+    
+    
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
         try:
