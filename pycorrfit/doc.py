@@ -70,16 +70,19 @@ import readfiles
 def GetLocationOfFile(filename):
     dirname = os.path.dirname(os.path.abspath(__file__))
     locations = [
-                    dirname+"/../",
-                    dirname+"/../pycorrfit_doc/",
-                    dirname+"/../doc/",
-                    # check /usr/lib64 -> /usr/lib
-                    dirname.replace("/usr/lib64", "/usr/lib", 1),
+                    os.path.realpath(dirname+"/../"),
+                    os.path.realpath(dirname+"/../pycorrfit_doc/"),
+                    os.path.realpath(dirname+"/../doc/"),
                 ]
 
-    if dirname.startswith("/usr/lib64/"):
-        locations
-    
+    # check /usr/lib64 -> /usr/lib
+    if dirname.count("lib64"):
+        for i in range(len(locations)):
+            locations.append(locations[i].replace("lib64", "lib", 1))
+    # check /usr/lib32 -> /usr/lib
+    if dirname.count("lib32"):
+        for i in range(len(locations)):
+            locations.append(locations[i].replace("lib32", "lib", 1))
     
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
