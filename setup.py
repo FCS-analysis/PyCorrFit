@@ -6,9 +6,9 @@
 # To create wheels package and upload securely
 #  pip install wheel twine
 #  python setup.py bdist wheel
+from __future__ import print_function
 from setuptools import setup, find_packages, Extension
-from Cython.Distutils import build_ext
-import numpy as np
+
 
 from os.path import join, dirname, realpath, exists
 from warnings import warn
@@ -18,6 +18,22 @@ from warnings import warn
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
+
+
+# Cython only where available
+try:
+    from Cython.Distutils import build_ext
+    import numpy as np
+except ImportError:
+    print("Cython or NumPy not available.")
+    EXTENSIONS = []
+else:
+    EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
+                        ["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
+                        libraries=[],
+                        include_dirs=[np.get_include()]
+                        )
+              ]
 
 
 # Download documentation if it was not compiled
@@ -41,12 +57,7 @@ except:
     version = "0.0.0-unknown"
 
 
-EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
-                        ["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
-                        libraries=[],
-                        include_dirs=[np.get_include()]
-                        )
-              ]
+
 
 name = 'pycorrfit'
 
