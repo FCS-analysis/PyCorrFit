@@ -40,7 +40,7 @@ else:
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
 webdoc = "https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf"
 if not exists(Documentation):
-    print "Downloading {} from {}".format(Documentation, webdoc)
+    print("Downloading {} from {}".format(Documentation, webdoc))
     import urllib
     #testfile = urllib.URLopener()
     urllib.urlretrieve(webdoc, Documentation)
