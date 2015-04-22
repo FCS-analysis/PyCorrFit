@@ -21,6 +21,7 @@ init:
 
 install:
   - "powershell freeze_appveyor\\install.ps1"
+  - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
 build: off
 
