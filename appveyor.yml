@@ -23,6 +23,8 @@ install:
   - "powershell freeze_appveyor\\install.ps1"
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
+shallow_clone: true
+
 build: off
 
 test_script:
