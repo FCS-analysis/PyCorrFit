@@ -45,8 +45,10 @@ EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
                         )
               ]
 
+name = 'pycorrfit'
+
 setup(
-    name='pycorrfit',
+    name=name,
     author='Paul Mueller',
     author_email='paul.mueller@biotec.tu-dresden.de',
     url='https://github.com/paulmueller/PyCorrFit',
@@ -63,7 +65,6 @@ setup(
     license="GPL v2",
     description='Scientific tool for fitting correlation curves on a logarithmic plot.',
     long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
-    scripts=['bin/pycorrfit'],
     include_package_data=True,
     cmdclass={"build_ext": build_ext},
     ext_modules=EXTENSIONS,
@@ -83,7 +84,10 @@ setup(
         'Topic :: Scientific/Engineering :: Visualization',
         'Intended Audience :: Science/Research'
                  ],
-    platforms=['ALL']
+    platforms=['ALL'],
+    entry_points={
+       "gui_scripts": ["{name:s}={name:s}:Main".format(**{"name":name})]
+       }
     )
 
 
