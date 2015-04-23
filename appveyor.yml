@@ -19,6 +19,11 @@ init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
+  # Install InnoSetup and add to path
+  # Copied from
+  # https://github.com/Phonations/Joker/blob/master/appveyor.yml
+  - choco install InnoSetup
+  - set PATH=%PATH%;"C:\Program Files (x86)\Inno Setup 5"
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
@@ -54,7 +59,14 @@ after_test:
   # If tests are successful, create a whl package for the project.
   - "%WITH_COMPILER% %PYTHON%/python setup.py bdist_wheel"
   - ps: "ls dist"
+  # Run pyinstaller
+  # This will create the "win7_innosetup.iss" file
+  - "freeze_pyinstaller\win7_32bit_bundle_script.bat"
+  # Create InnoSetup installers
+  - iscc win7_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
   - path: dist\*
+  # InnoSetup files
+  - path: Output\*
