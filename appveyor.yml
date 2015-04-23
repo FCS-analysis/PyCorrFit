@@ -10,10 +10,12 @@ environment:
     - PYTHON: "C:\\Python27-conda32"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
+      PYWIN_BIN: "pywin32-219.win32-py2.7.exe"
 
     - PYTHON: "C:\\Python27-conda64"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "64"
+      PYWIN_BIN: "pywin32-219.win-amd64-py2.7.exe"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
@@ -45,8 +47,8 @@ install:
   - "pip install sympy"
   
   # Install pyinstaller
-  - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe', 'C:/pywin32-219.win32-py2.7.exe')
-  - "%PYTHON%/Scripts/easy_install.exe C:/pywin32-219.win32-py2.7.exe"
+  - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/%PYWIN_BIN%', 'C:/%PYWIN_BIN%')
+  - "%PYTHON%/Scripts/easy_install.exe C:/%PYWIN_BIN%"
   - "pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
 
   # Run develop (installs yet missing packages and runs cython)
