@@ -23,7 +23,6 @@ install:
   # Copied from
   # https://github.com/Phonations/Joker/blob/master/appveyor.yml
   - choco install -y InnoSetup
-  - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
@@ -49,11 +48,10 @@ install:
   - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe', 'C:/pywin32-219.win32-py2.7.exe')
   - "%PYTHON%/Scripts/easy_install.exe C:/pywin32-219.win32-py2.7.exe"
   - "pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
-  
-  # Show the installed packages
-  - "pip freeze"
-  #- "conda install --yes --quiet wxpython"
+
+  # Run develop (installs yet missing packages and runs cython)
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
+
   # Show the installed packages
   - "pip freeze"
 
@@ -72,6 +70,8 @@ after_test:
   # This will create the "win7_innosetup.iss" file
   - "freeze_pyinstaller\\win7_32bit_bundle_script.bat"
   # Create InnoSetup installers
+  # Set InnoSetup path here, because Cython complained about it.
+  - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
   - iscc appveyor_innosetup.iss
 
 artifacts:
