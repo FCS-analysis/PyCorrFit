@@ -39,7 +39,10 @@ install:
   # Install the build dependencies of the project. 
   - "pip install cython"
   - "pip install wheel"
+  
+  # Install package-specific libraries  
   - "pip install matplotlib"
+  - "pip install sympy"
   
   # Install pyinstaller
   - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe', 'C:/pywin32-219.win32-py2.7.exe')
