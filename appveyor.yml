@@ -61,7 +61,7 @@ after_test:
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "freeze_pyinstaller\win7_32bit_bundle_script.bat"
+  - "freeze_pyinstaller\\win7_32bit_bundle_script.bat"
   # Create InnoSetup installers
   - iscc win7_innosetup.iss
 
