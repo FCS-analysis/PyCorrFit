@@ -88,7 +88,7 @@ setup(
         "SciPy >= 0.8.0",
         "sympy >= 0.7.2",
         "PyYAML >= 3.09",
-        "wxPython >= 2.8.10.1",
+        "wxPython",
         "matplotlib >= 1.1.0"],
     keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
               "tir", "fitting"],
