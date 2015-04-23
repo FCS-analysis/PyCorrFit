@@ -35,12 +35,13 @@ install:
   # Install the build dependencies of the project. 
   - "pip install cython"
   - "pip install wheel"
+  - "pip install matplotlib"
   # Show the installed packages
   - "pip freeze"
-  # Show installed packages with path
-  - "%WITH_COMPILER% pip freeze"
   #- "conda install --yes --quiet wxpython"
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
+  # Show the installed packages
+  - "pip freeze"
 
 shallow_clone: true
 

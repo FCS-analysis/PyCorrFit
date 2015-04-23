@@ -82,25 +82,35 @@ setup(
     include_package_data=True,
     cmdclass={"build_ext": build_ext},
     ext_modules=EXTENSIONS,
-    install_requires=[
+    setup_requires=[
         "cython",
+        ],
+    install_requires=[
         "NumPy >= 1.5.1",
         "SciPy >= 0.8.0",
-        "sympy >= 0.7.2",
         "PyYAML >= 3.09",
-        "wxPython",
-        "matplotlib >= 1.1.0"],
+        ],
+    extras_require = {
+        # If you need the GUI of this project in your project, add
+        # "thisproject[GUI]" to your install_requires
+        # Graphical User Interface
+        'GUI':  ["wxPython", "matplotlib >= 1.1.0"],
+        # User Model Checks
+        'UMC': ["sympy >= 0.7.2"],
+        },
     keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
-              "tir", "fitting"],
+              "tir", "fitting"
+        ],
     classifiers= [
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Visualization',
         'Intended Audience :: Science/Research'
-                 ],
+        ],
     platforms=['ALL'],
     entry_points={
-       "gui_scripts": ["{name:s}={name:s}:Main".format(**{"name":name})]
+       "gui_scripts": ["{name:s}={name:s}:Main [GUI]".format(
+                                                       **{"name":name})]
        }
     )
 
