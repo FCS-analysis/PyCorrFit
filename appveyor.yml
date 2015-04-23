@@ -23,6 +23,7 @@ install:
   # Copied from
   # https://github.com/Phonations/Joker/blob/master/appveyor.yml
   - choco install -y InnoSetup
+  - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
@@ -71,8 +72,7 @@ after_test:
   # This will create the "win7_innosetup.iss" file
   - "freeze_pyinstaller\\win7_32bit_bundle_script.bat"
   # Create InnoSetup installers
-  - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
-  - iscc win7_innosetup.iss
+  - iscc appveyor_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
