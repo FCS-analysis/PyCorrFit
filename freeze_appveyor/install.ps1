@@ -181,6 +181,14 @@ function InstallMinicondaNumpy ($python_home) {
     Start-Process -FilePath "$conda_path" -ArgumentList $args -Wait -Passthru
 }
 
+function InstallMinicondaScipy ($python_home) {
+    $conda_path = $python_home + "\Scripts\conda.exe"
+    Write-Host "Installing scipy..."
+    $args = "install --yes scipy"
+    Write-Host $conda_path $args
+    Start-Process -FilePath "$conda_path" -ArgumentList $args -Wait -Passthru
+}
+
 
 function InstallMinicondaWxpython ($python_home) {
     $conda_path = $python_home + "\Scripts\conda.exe"
@@ -197,6 +205,7 @@ function main () {
     InstallMiniconda $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
     InstallMinicondaPip $env:PYTHON
     InstallMinicondaNumpy $env:PYTHON
+    InstallMinicondaScipy $env:PYTHON
     InstallMinicondaWxpython $env:PYTHON
 }
 
