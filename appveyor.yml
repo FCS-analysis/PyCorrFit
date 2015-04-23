@@ -35,7 +35,7 @@ install:
   # Install the build dependencies of the project. 
   - "pip install cython"
   - "pip install wheel"
-  - "conda install --yes --quiet wxpython"
+  #- "conda install --yes --quiet wxpython"
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
 shallow_clone: true
