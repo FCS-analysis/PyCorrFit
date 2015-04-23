@@ -72,7 +72,7 @@ after_test:
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
-  - iscc appveyor_innosetup.iss
+  - iscc win7_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
