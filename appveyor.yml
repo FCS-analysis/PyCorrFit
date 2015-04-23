@@ -40,6 +40,10 @@ install:
   - "pip install cython"
   - "pip install wheel"
   - "pip install matplotlib"
+  
+  # Install pyinstaller
+  - "pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
+  
   # Show the installed packages
   - "pip freeze"
   #- "conda install --yes --quiet wxpython"
