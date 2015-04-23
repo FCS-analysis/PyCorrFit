@@ -1,5 +1,8 @@
 ![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/doc-src/Images/PyCorrFit_logo_dark.png)
 =========
+[![PyPI](http://img.shields.io/pypi/v/PyCorrFit.png)](https://pypi.python.org/pypi/pycorrfit)
+
+[![PyPI](https://img.shields.io/appveyor/ci/paulmueller/PyCorrFit.png)](https://ci.appveyor.com/project/paulmueller/pycorrfit)
 
 This repository contains the source code of PyCorrFit - a scientific tool for fitting
 correlation curves on a logarithmic plot.
