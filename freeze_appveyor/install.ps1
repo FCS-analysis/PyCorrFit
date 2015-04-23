@@ -187,7 +187,10 @@ function InstallMinicondaNumpy ($python_home) {
 function InstallMinicondaScipy ($python_home) {
     $conda_path = $python_home + "\Scripts\conda.exe"
     Write-Host "Installing scipy..."
-    $args = "install --yes scipy"
+    # Current WxPython will not work with numpy>1.9.0 due to this bug:
+    # http://trac.wxwidgets.org/ticket/16590
+    #$args = "install --yes scipy"
+    $args = "install --yes scipy numpy=1.8"
     Write-Host $conda_path $args
     Start-Process -FilePath "$conda_path" -ArgumentList $args -Wait -Passthru
 }
