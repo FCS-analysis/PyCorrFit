@@ -47,8 +47,8 @@ install:
   - "pip install sympy"
   
   # Install pyinstaller
-  - "ECHO Downloading https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/%PYWIN_BIN%"
-  - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/%PYWIN_BIN%', 'C:/%PYWIN_BIN%')
+  - "ECHO Downloading https://downloads.sourceforge.net/project/pywin32/pywin32/Build 219/%PYWIN_BIN%"
+  - ps: (new-object net.webclient).DownloadFile('https://downloads.sourceforge.net/project/pywin32/pywin32/Build 219/%PYWIN_BIN%', 'C:/%PYWIN_BIN%')
   - "%PYTHON%/Scripts/easy_install.exe C:/%PYWIN_BIN%"
   - "pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
 
