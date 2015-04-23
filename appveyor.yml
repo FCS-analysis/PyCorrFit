@@ -22,7 +22,7 @@ install:
   # Install InnoSetup and add to path
   # Copied from
   # https://github.com/Phonations/Joker/blob/master/appveyor.yml
-  - choco install InnoSetup
+  - choco install -y InnoSetup
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
