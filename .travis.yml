@@ -3,6 +3,10 @@ language:
 - objective-c
 python:
 - "2.7"
+# Only build master branch
+branches:
+  only:
+  - master
 install:
 # install python via brew
 - brew install python
