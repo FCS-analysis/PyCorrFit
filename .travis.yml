@@ -44,6 +44,8 @@ before_deploy:
 # sudo apt-get install ruby1.9.1-dev
 # sudo gem install travis
 # travis setup releases
+
+# Uncomment this when the deployed application works
 deploy:
   provider: releases
   api_key:
@@ -52,8 +54,10 @@ deploy:
   # Allow
   file_glob: true
   file: 
-    - "${RELEASE_PKG_FILEA}"
-    - "${RELEASE_PKG_FILEB}"
+# Uncomment if macOSx bundling produces working binaries
+#    - "${RELEASE_PKG_FILEA}"
+#    - "${RELEASE_PKG_FILEB}"
     - "${RELEASE_PKG_FILEC}"
   on:
     tags: true
+    repo: paulmueller/PyCorrFit
