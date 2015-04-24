@@ -6,8 +6,12 @@ python:
 - "2.7"
 
 install:
-- brew install cmake
-#- brew install python
+#- brew install cmake
+- brew install python
+- ls /usr/local/bin
+- which python
+- brew link --overwrite python
+- which python
 - pip install --upgrade pip
 - pip freeze
 - pip install conda
