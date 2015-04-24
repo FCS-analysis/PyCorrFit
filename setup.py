@@ -25,7 +25,7 @@ try:
     from Cython.Distutils import build_ext
     import numpy as np
 except ImportError:
-    print("Cython or NumPy not available.")
+    print("Cython or NumPy not available:", sys.exc_info())
     EXTENSIONS = []
 else:
     EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
