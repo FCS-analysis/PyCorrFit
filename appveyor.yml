@@ -94,7 +94,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: /b5SfmYssAfLaWi0qkPhxR5CruSVBZUurSQLEL3RAaRlHn6HTPrkIqvrLDk/8JxB
-  artifact: /.*\.exe/
+  artifact: /.*\.exe/, /.*\.whl/
   draft: true
   prerelease: true
   on:
