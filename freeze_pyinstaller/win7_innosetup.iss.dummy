@@ -6,6 +6,7 @@
 #define MyAppPublisher "Paul Müller"
 #define MyAppURL "http://pycorrfit.craban.de"
 #define MyAppExeName "PyCorrFit.exe"
+#define MyAppPlatform "win32"
 #define MyAppDir = SourcePath + "\dist\PyCorrFit\"
 
 [Setup]
@@ -24,7 +25,7 @@ DefaultDirName={pf}\{#MyAppName}
 DisableDirPage=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename={#MyAppName}_{#MyAppVersion}_Windows_setup
+OutputBaseFilename={#MyAppName}_{#MyAppVersion}_{#MyAppPlatform}_setup
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
