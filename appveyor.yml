@@ -1,3 +1,6 @@
+# Changes in online interface:
+# - Set build schedule to "0 3 * * *" for nightly builds.
+# - Only build branches with appveyor.yml
 environment:
 
   global:

@@ -1,0 +1,25 @@
+# Mac OS X (https://github.com/travis-ci-tester/toolchain-table)
+language:
+- objective-c
+
+install:
+- brew install cmake
+- brew install python
+- brew install freetype
+- pip install --upgrade pip
+- pip install conda
+- conda init
+- conda install --yes matplotlib
+- conda install --yes scipy numpy=1.8
+- conda install --yes 'numpy<1.9.0'
+- conda install --yes wxpython
+- pip install cython
+- pip install wheel
+- pip install sympy
+- pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
+- pip freeze
+- python setup.py develop
+
+script:
+- python setup.py bdist_wheel
+
