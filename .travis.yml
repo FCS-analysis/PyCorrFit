@@ -1,10 +1,8 @@
 # Mac OS X Python build
 language:
 - objective-c
-
 python:
 - "2.7"
-
 install:
 # install python via brew
 - brew install python
@@ -30,16 +28,23 @@ install:
 - pip freeze
 # build extensions
 - python setup.py develop
-
 script:
 # Create wheel pacakge
 - python setup.py bdist_wheel
 # Create binary
 - ./freeze_pyinstaller/macOSx_bundle_script.sh
-- ls -l
-- ls -l dist/
-
-after_script:
-# upload?
-- ls -l
-- ls -l dist/
+# This section was created with
+# sudo apt-get install ruby1.9.1-dev
+# sudo gem install travis
+# travis setup releases
+deploy:
+  provider: releases
+  api_key:
+    secure: gQu6BKSo5sucrieOvyLz/kn5Ai+vrnXK6Kdm+WMqzXE6keE0LzujXOHWQX2G2EBl1NCjzvt3HrEvJqwGEjLbduJBBPBHaOy71AfKuHaxRQPlFWMLn2iAVVval3q7xU4kEfjAdS50WmARqh6sT7gMj+pHpg1e3pz1SxybOeC40+k=
+  file: 
+    - ./dist/PyCorrFit*.zip
+    - ./dist/PyCorrFit*.whl
+  skip_cleanup: true
+  on:
+    repo: paulmueller/PyCorrFit
+    tags: true
