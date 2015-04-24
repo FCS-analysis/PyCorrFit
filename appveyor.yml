@@ -1,6 +1,10 @@
 # Changes in online interface:
 # - Set build schedule to "0 3 * * *" for nightly builds.
 # - Only build branches with appveyor.yml
+skip_commits:
+  # Do not build on commits. Only nightly builds (web interface)
+  author: (.*?)
+
 environment:
 
   global:
