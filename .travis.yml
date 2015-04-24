@@ -7,8 +7,9 @@ python:
 
 install:
 - brew install cmake
-- brew install python
+#- brew install python
 - pip install --upgrade pip
+- pip freeze
 - pip install conda
 - conda init
 - conda install --yes matplotlib
