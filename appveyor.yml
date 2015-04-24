@@ -5,6 +5,11 @@
 #  # Do not build on commits. Only nightly builds (web interface)
 #  author: /.*/
 
+# Only build master branch
+branches:
+  only:
+  - master
+
 environment:
 
   global:
