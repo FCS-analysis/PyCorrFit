@@ -3,7 +3,7 @@
 # - Only build branches with appveyor.yml
 skip_commits:
   # Do not build on commits. Only nightly builds (web interface)
-  author: (.*?)
+  author: /.*/
 
 environment:
 
