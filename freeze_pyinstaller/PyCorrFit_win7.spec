@@ -1,5 +1,6 @@
 # -*- mode: python -*-
 import codecs
+import numpy as np
 import os
 import sys
 
@@ -28,7 +29,7 @@ for i in range(len(iss)):
     if iss[i].strip().startswith("#define MyAppVersion"):
         iss[i] = '#define MyAppVersion "{:s}"\n'.format(version)
     if iss[i].strip().startswith("#define MyAppPlatform"):
-        iss[i] = '#define MyAppPlatform "{:s}"\n'.format(sys.platform)
+        iss[i] = '#define MyAppPlatform "Win-{}bit"\n'.format(int(np.log2(sys.maxint+1)+1))
         nissfile = codecs.open("win7_innosetup.iss", 'wb', "utf-8")
 nissfile.write(u"\ufeff")
 nissfile.writelines(iss)
