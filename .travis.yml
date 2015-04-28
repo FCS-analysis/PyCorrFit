@@ -7,8 +7,8 @@ python:
 
 # Only build master branch
 branches:
-only:
-- master
+  only:
+  - master
 
 before_install:
 - which python
