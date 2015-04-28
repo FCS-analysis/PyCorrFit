@@ -13,10 +13,10 @@ branches:
 before_install:
 - which python
 # a lot of cool formulae for scientific tools
-- brew tap homebrew/science
+#- brew tap homebrew/science
 # numpy, scipy, matplotlib, ...
 - brew tap homebrew/python
-- brew update && brew upgrade
+#- brew update && brew upgrade
 - brew install python --universal --framework
 - brew install wget
 - which python
