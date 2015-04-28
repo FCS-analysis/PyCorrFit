@@ -82,7 +82,7 @@ after_test:
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "freeze_pyinstaller\\win7_32bit_bundle_script.bat"
+  - "%WITH_COMPILER% pyinstaller -y freeze_pyinstaller\\PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
