@@ -22,7 +22,7 @@ before_install:
 #- brew tap homebrew/science
 # numpy, scipy, matplotlib, ...
 - brew tap homebrew/python
-#- brew update && brew upgrade
+- brew update && brew upgrade
 - brew install python --universal --framework
 - brew install wget
 - which python
