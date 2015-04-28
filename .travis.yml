@@ -18,6 +18,11 @@ python:
 
 before_install:
 - which python
+# a lot of cool formulae for scientific tools
+- brew tap homebrew/science
+# numpy, scipy, matplotlib, ...
+- brew tap homebrew/python
+- brew update && brew upgrade
 - brew install python --universal --framework
 - brew install wget
 - which python
@@ -29,8 +34,8 @@ before_install:
 #- brew install wxpython --universal
 
 install:
-- brew install scipy --universal
 - brew install numpy --universal
+- brew install scipy --universal
 - brew install matplotlib --universal
 - wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
 - sudo ./freeze_travis/install_dmg.sh
