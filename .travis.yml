@@ -1,42 +1,47 @@
 # Mac OS X Python build
 language:
 - objective-c
+
 python:
 - "2.7"
-# Only build master branch
-branches:
-  only:
-  - master
-install:
-# install python via brew
-- brew install python
-# make brews python the system default
-- brew link --overwrite python
+
+before_install:
+- which python
+- brew install python --universal --framework
+- brew install wget
 - which python
 - python --version
-# pip init
-- pip install --upgrade pip
-# use anaconda
-- pip install conda
-- conda init
-- conda install --yes matplotlib
-- conda install --yes scipy numpy=1.8
-- conda install --yes 'numpy<1.9.0'
-- conda install --yes wxpython
+- export VERSIONER_PYTHON_PREFER_32_BIT=yes
+- defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+# wxPython is only available in 64bit version with homebrew
+# https://github.com/Homebrew/homebrew/issues/34470
+#- brew install wxpython --universal
+
+install:
+- brew install scipy --universal
+- brew install numpy --universal
+- brew install matplotlib --universal
+- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
+- sudo ./freeze_travis/install_dmg.sh
+- arch -i386 python -c "import wx; print wx.__version__"
+- arch -i386 pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
 # final pip installs
 - pip install cython
 - pip install wheel
 - pip install sympy
-- pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798
 # show packages
-- pip freeze
+- arch -i386 pip freeze
 # build extensions
-- python setup.py develop
+- arch -i386 python setup.py develop
+
 script:
 # Create wheel pacakge
-- python setup.py bdist_wheel
+- arch -i386 python setup.py bdist_wheel
 # Create binary
-- ./freeze_pyinstaller/macOSx_bundle_script.sh
+- arch -i386 ./freeze_pyinstaller/macOSx_bundle_script.sh
+- ls dist/
+#- hdiutil create dist/hw.dmg -srcfolder dist/ -ov
+
 before_deploy:
   - export RELEASE_PKG_FILEA=$(ls ./dist/*bin.zip)
   - export RELEASE_PKG_FILEB=$(ls ./dist/*app.zip)
@@ -44,12 +49,11 @@ before_deploy:
   - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEB to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEC to GitHub releases"
+
 # This section was created with
 # sudo apt-get install ruby1.9.1-dev
 # sudo gem install travis
 # travis setup releases
-
-# Uncomment this when the deployed application works
 deploy:
   provider: releases
   api_key:
@@ -59,8 +63,8 @@ deploy:
   file_glob: true
   file: 
 # Uncomment if macOSx bundling produces working binaries
-#    - "${RELEASE_PKG_FILEA}"
-#    - "${RELEASE_PKG_FILEB}"
+    - "${RELEASE_PKG_FILEA}"
+    - "${RELEASE_PKG_FILEB}"
     - "${RELEASE_PKG_FILEC}"
   on:
     tags: true
