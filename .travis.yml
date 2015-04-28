@@ -1,4 +1,10 @@
 # Mac OS X Python build
+# If Travis does not build, try this:
+# Change something in the repo
+#  git commit -a -m "new version"
+#  git tag ...
+#  git push origin master && git push --tags
+# 
 language:
 - objective-c
 
@@ -6,9 +12,9 @@ python:
 - "2.7"
 
 # Only build master branch
-branches:
-  only:
-  - master
+#branches:
+#  only:
+#  - master
 
 before_install:
 - which python
