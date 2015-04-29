@@ -39,7 +39,12 @@ install:
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - "powershell freeze_appveyor\\install.ps1"
-  
+
+  # Determine platform
+  - '%PYTHON%/python -c "import platform; print platform.uname()"'
+  - '%PYTHON%/python -c "import sys; print sys.maxint"'
+  - '%PYTHON%/python -c "import sys; print sys.version"'
+
   # Prepend newly installed Python to the PATH of this build (this cannot be
   # done from inside the powershell script as it would require to restart
   # the parent CMD process).
@@ -69,10 +74,6 @@ install:
   # Show the installed packages
   - "pip freeze"
   
-  # Determine platform
-  - "%PYTHON%/python -c 'import platform; print platform.uname()'"
-  - "%PYTHON%/python -c 'import sys; print sys.maxint"
-
 shallow_clone: true
 
 build: off
