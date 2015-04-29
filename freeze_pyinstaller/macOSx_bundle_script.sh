@@ -31,7 +31,7 @@ echo "###################"
 echo "Building Extensions"
 echo "###################"
 rm -f $Docname
-python setup.py build_ext --inplace
+VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 python setup.py build_ext --inplace
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
@@ -51,7 +51,7 @@ fi
 echo "#######################"
 echo "Running Pyinstaller BIN"
 echo "#######################"
-pyinstaller --onefile -F $SpecfileBIN
+VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 pyinstaller --onefile -F $SpecfileBIN
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
