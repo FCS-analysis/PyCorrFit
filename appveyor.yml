@@ -61,13 +61,17 @@ install:
   - 'ECHO Downloading %PYWIN_DL%'
   - ps: (new-object net.webclient).DownloadFile("$env:PYWIN_DL", 'C:/pywin_inst.exe')
   - "%PYTHON%/Scripts/easy_install.exe C:/pywin_inst.exe"
-  - "pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
+  - "%WITH_COMPILER% pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
 
   # Run develop (installs yet missing packages and runs cython)
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
   # Show the installed packages
   - "pip freeze"
+  
+  # Determine platform
+  - "%PYTHON% -c 'import platform; print platform.uname()'"
+  - "%PYTHON% -c 'import sys; print sys.maxint"
 
 shallow_clone: true
 
