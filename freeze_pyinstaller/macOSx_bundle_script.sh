@@ -71,7 +71,7 @@ echo "#######################"
 
 if [ -e $appn ]; then rm -R $appn; fi
 
-pyinstaller -y -F $Specfile
+VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 pyinstaller -y -F $Specfile
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
