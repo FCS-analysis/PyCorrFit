@@ -70,8 +70,8 @@ install:
   - "pip freeze"
   
   # Determine platform
-  - "%PYTHON% -c 'import platform; print platform.uname()'"
-  - "%PYTHON% -c 'import sys; print sys.maxint"
+  - "%PYTHON%/python -c 'import platform; print platform.uname()'"
+  - "%PYTHON%/python -c 'import sys; print sys.maxint"
 
 shallow_clone: true
 
