@@ -275,7 +275,7 @@ class BackgroundCorrection(wx.Frame):
                 # Add a separator
                 filters = filters+"|"
         dlg = wx.FileDialog(self, "Choose a data file", 
-            self.parent.dirname, "", filters, wx.OPEN)
+            self.parent.dirname, "", filters, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # Workaround since 0.7.5
             (dirname, filename) = os.path.split(dlg.GetPath())

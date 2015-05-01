@@ -486,7 +486,7 @@ class MyFrame(wx.Frame):
         filters = "text file (*.txt)|*.txt"
         if modfile is None:
             dlg = wx.FileDialog(self, "Open model file", 
-                            self.dirname, "", filters, wx.OPEN)
+                            self.dirname, "", filters, wx.FD_OPEN)
             if dlg.ShowModal() == wx.ID_OK:
                 # Workaround since 0.7.5
                 (dirname, filename) = os.path.split(dlg.GetPath())
@@ -756,7 +756,7 @@ class MyFrame(wx.Frame):
                 # This is wx widgets stuff.
                 filters = filters+"|"
         dlg = wx.FileDialog(self, "Open data file", 
-            self.dirname, "", filters, wx.OPEN)
+            self.dirname, "", filters, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # The filename the page will get
             path = dlg.GetPath()            # Workaround since 0.7.5
@@ -1010,7 +1010,7 @@ class MyFrame(wx.Frame):
                     # Add a separator if item is not last item
                     filters = filters+"|"
             dlg = wx.FileDialog(self, "Open data files", 
-                self.dirname, "", filters, wx.OPEN|wx.FD_MULTIPLE)
+                self.dirname, "", filters, wx.FD_OPEN|wx.FD_MULTIPLE)
             if dlg.ShowModal() == wx.ID_OK:
                 Datafiles = dlg.GetFilenames()
                 # We rely on sorted filenames
@@ -1264,7 +1264,7 @@ class MyFrame(wx.Frame):
                                                            wc[0], wc[1])
         if sessionfile is None:
             dlg = wx.FileDialog(self, "Open session file",
-                                self.dirname, "", wcstring, wx.OPEN)
+                                self.dirname, "", wcstring, wx.FD_OPEN)
             # user cannot do anything until he clicks "OK"
             if dlg.ShowModal() == wx.ID_OK:
                 sessionfile = dlg.GetPath()
@@ -1436,7 +1436,7 @@ class MyFrame(wx.Frame):
         dlg = wx.FileDialog(self, "Save curve", self.dirname, filename, 
               "Correlation with trace (*.csv)|*.csv;*.CSV"+\
               "|Correlation only (*.csv)|*.csv;*.CSV",
-               wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+               wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()            # Workaround since 0.7.5
@@ -1554,7 +1554,7 @@ class MyFrame(wx.Frame):
         # File dialog
         dlg = wx.FileDialog(self, "Save session file", self.dirname, "",
                             "PyCorrFit session (*.pcfs)|*.pcfs",
-                            wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+                            wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_OK:
             # Save everything
             path = dlg.GetPath()            # Workaround since 0.7.5

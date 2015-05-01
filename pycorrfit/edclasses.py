@@ -140,7 +140,7 @@ def save_figure(self, evt=None):
     # remove last |
     fieltypestring = fieltypestring[:-1]
     dlg = wx.FileDialog(parent, "Save figure", dirname, filename, 
-           fieltypestring, wx.SAVE|wx.OVERWRITE_PROMPT)
+           fieltypestring, wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
     # png is default
     dlg.SetFilterIndex(keys.index("png"))
     # user cannot do anything until he clicks "OK"

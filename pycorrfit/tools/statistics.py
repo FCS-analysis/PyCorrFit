@@ -605,7 +605,7 @@ class Stat(wx.Frame):
         dirname = self.parent.dirname
         dlg = wx.FileDialog(self.parent, "Choose file to save", dirname,
                 "", "Text file (*.txt)|*.txt;*.TXT",
-                wx.SAVE|wx.FD_OVERWRITE_PROMPT)
+                wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetPath()

@@ -192,7 +192,7 @@ class BatchCtrl(wx.Frame):
         wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(
                                                            wc[0], wc[1])
         dlg = wx.FileDialog(self.parent, "Open session file",
-                            self.parent.dirname, "", wcstring, wx.OPEN)
+                            self.parent.dirname, "", wcstring, wx.FD_OPEN)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             sessionfile = dlg.GetPath()
