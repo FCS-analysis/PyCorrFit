@@ -81,7 +81,7 @@ class UpdateDlg(wx.Frame):
 
 
 class wxHTML(wx.html.HtmlWindow):
-    def OnLinkClicked(parent, link):
+    def OnLinkClicked(self, link):
         webbrowser.open(link.GetHref())
 
 
