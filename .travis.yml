@@ -38,6 +38,7 @@ before_install:
 
 install:
 - arch -i386 pip install numpy
+- brew unlink gcc
 - brew install gcc --universal
 - arch -i386 pip install scipy
 - brew install freetype --universal
