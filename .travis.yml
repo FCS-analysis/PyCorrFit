@@ -22,9 +22,10 @@ before_install:
 #- brew tap homebrew/science
 # numpy, scipy, matplotlib, ...
 - brew tap homebrew/python
+- brew tap homebrew/dupes
 - brew update && brew upgrade
 - brew install python --universal --framework
-- brew install wget
+#- brew install wget
 - which python
 - python --version
 - export VERSIONER_PYTHON_PREFER_32_BIT=yes
@@ -34,11 +35,11 @@ before_install:
 #- brew install wxpython --universal
 
 install:
-- arch -i386 pip install numpy
+- arch -i386 pip install numpy==1.8
 - brew install gcc --universal
-- arch -i386 pip install scipy
+- arch -i386 pip install scipy==0.13
 - brew install freetype --universal
-- arch -i386 pip install matplotlib
+- arch -i386 pip install matplotlib==1.3
 #- brew install numpy --universal
 #- brew install scipy --universal
 #- brew install matplotlib --universal
