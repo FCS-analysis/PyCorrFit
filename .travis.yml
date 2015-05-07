@@ -23,7 +23,7 @@ before_install:
 # numpy, scipy, matplotlib, ...
 - brew tap homebrew/python
 - brew tap homebrew/dupes
-- brew update && brew upgrade
+- brew update #&& brew upgrade
 - brew install python --universal --framework
 #- brew install wget
 - which python
@@ -33,13 +33,15 @@ before_install:
 # wxPython is only available in 64bit version with homebrew
 # https://github.com/Homebrew/homebrew/issues/34470
 #- brew install wxpython --universal
+#- brew install openblas
+#- brew install gfortran
 
 install:
-- arch -i386 pip install numpy==1.8
+- arch -i386 pip install numpy
 - brew install gcc --universal
-- arch -i386 pip install scipy==0.13
+- arch -i386 pip install scipy
 - brew install freetype --universal
-- arch -i386 pip install matplotlib==1.3
+- arch -i386 pip install matplotlib
 #- brew install numpy --universal
 #- brew install scipy --universal
 #- brew install matplotlib --universal
@@ -51,7 +53,7 @@ install:
 - arch -i386 pip install cython
 - arch -i386 pip install wheel
 - arch -i386 pip install sympy
-- arch -i386 pip install pyaml
+- arch -i386 pip install PyYAML
 # show packages
 - arch -i386 pip freeze
 # build extensions
