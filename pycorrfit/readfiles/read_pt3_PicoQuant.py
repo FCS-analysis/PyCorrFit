@@ -10,20 +10,19 @@ from .read_pt3_scripts.correlation_objects import picoObject
 
 
 class ParameterClass():
-	"""Stores parameters for correlation """
-	def __init__(self):
-		
-		#Where the data is stored.
-		self.data = []
-		self.objectRef =[]
-		self.subObjectRef =[]
-		self.colors = ['blue','green','red','cyan','magenta','yellow','black']
-		self.numOfLoaded = 0
-		self.NcascStart = 0
-		self.NcascEnd = 25
-		self.Nsub = 6
-		self.winInt = 10
-		self.photonCountBin = 25
+    """Stores parameters for correlation """
+    def __init__(self):
+        #Where the data is stored.
+        self.data = []
+        self.objectRef =[]
+        self.subObjectRef =[]
+        self.colors = ['blue','green','red','cyan','magenta','yellow','black']
+        self.numOfLoaded = 0
+        self.NcascStart = 0
+        self.NcascEnd = 25
+        self.Nsub = 6
+        self.winInt = 10
+        self.photonCountBin = 25
         
 
 def openPT3(dirname, filename):
@@ -43,7 +42,6 @@ def openPT3(dirname, filename):
     autotime = po.autotime.reshape(-1)
 
     corrlist = list()
-    tracelist = list()
     typelist = list()
     
     # Some data points are zero for some reason
@@ -82,14 +80,14 @@ def openPT3(dirname, filename):
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrcc10[id1].reshape(-1,1)) ))
 
+
+    filelist = [filename] * len(typelist)
+    tracelist = [None] * len(typelist)
+
     dictionary = dict()
     dictionary["Correlation"] = corrlist
     dictionary["Trace"] = tracelist
     dictionary["Type"] = typelist
-    filelist = list()
-    for i in typelist:
-        filelist.append(filename)
-        tracelist.append(None)
     dictionary["Filename"] = filelist
 
     return dictionary

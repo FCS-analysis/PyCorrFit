@@ -57,7 +57,7 @@ class Average(wx.Frame):
         self.MyID = None
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-         ## Content
+        ## Content
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         textinit = wx.StaticText(self.panel,
@@ -153,11 +153,11 @@ class Average(wx.Frame):
             if Page.counter.strip(" :#") == str(PageNumbers[0]):
                 referencePage = Page
                 break
-		if referencePage is not None:
-			# If that did not work, we have to raise an error.
-			raise IndexError("PyCorrFit could not find the first"+
+        if referencePage is not None:
+            # If that did not work, we have to raise an error.
+            raise IndexError("PyCorrFit could not find the first"+
 							 " page for averaging.")
-			return
+            return
         
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)

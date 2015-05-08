@@ -1,8 +1,15 @@
 # -*- mode: python -*-
+
+hiddenimports = ["scipy.io.matlab.streams",
+                 "sympy.assumptions.handlers",
+                 "sympy.assumptions.handlers.common",
+                 "scipy.special._ufuncs_cxx",
+                 "scipy.sparse.csgraph",
+                 "scipy.sparse.csgraph.shortest_path",
+                 "scipy.sparse.csgraph"._validation]
+
 a = Analysis(['pycorrfit/PyCorrFit.py'],
-             hiddenimports=["sympy.assumptions.handlers", # sympy
-                            "sympy.assumptions.handlers.common",
-                            "scipy.special._ufuncs_cxx"],
+             hiddenimports=hiddenimports,
              hookspath=None)
 a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
             ('doc/PyCorrFit_doc.pdf', 'doc/PyCorrFit_doc.pdf', 'DATA')]

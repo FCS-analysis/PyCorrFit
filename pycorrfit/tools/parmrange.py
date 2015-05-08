@@ -68,7 +68,7 @@ class RangeSelector(wx.Frame):
         """
         
         self.parameter_range = np.zeros(self.Page.parameter_range.shape)
-        labels, parmleft = mdls.GetHumanReadableParms(self.Page.modelid,
+        labels, parmleft = mdls.GetHumanReadableParms(self.Page.modelid,  # @UnusedVariable
                                                  self.Page.parameter_range[:,0])
         labels, parmright = mdls.GetHumanReadableParms(self.Page.modelid,
                                                  self.Page.parameter_range[:,1])
@@ -158,10 +158,10 @@ class RangeSelector(wx.Frame):
                 self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
                 self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
         # Set parameters
-        l, parm0 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
-                                                     self.parameter_range[:,0])
-        l, parm1 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
-                                                     self.parameter_range[:,1])
+        parm0 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+                                                     self.parameter_range[:,0])[1]
+        parm1 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+                                                     self.parameter_range[:,1])[1]
         self.Page.parameter_range[:,0] = np.array(parm0)
         self.Page.parameter_range[:,1] = np.array(parm1)
         #self.Page.PlotAll()

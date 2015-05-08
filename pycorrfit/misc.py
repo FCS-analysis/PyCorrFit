@@ -27,7 +27,6 @@ import sys
 import tempfile
 import urllib2
 import webbrowser
-import wx                               # GUI interface wxPython
 import wx.html
 import wx.lib.delayedresult as delayedresult
 

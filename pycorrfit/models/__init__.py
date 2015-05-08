@@ -44,14 +44,6 @@ import numpy as np                  # NumPy
 import sys
 
 
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped:
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
-
 ## Models
 from . import MODEL_classic_gaussian_2D
 from . import MODEL_classic_gaussian_3D
@@ -89,7 +81,7 @@ def AppendNewModel(Modelarray):
         modeldict[texts[0]] = texts
         # Suplementary Data might be there
         try:
-             supper = Model["Supplements"]
+            supper = Model["Supplements"]
         except KeyError:
             # Nothing to do
             pass
@@ -97,7 +89,7 @@ def AppendNewModel(Modelarray):
             supplement[texts[0]] = supper
         # Check functions - check for correct values
         try:
-             verify = Model["Verification"]
+            verify = Model["Verification"]
         except KeyError:
             # Nothing to do. Return empty function, so we do not need to
             # do this try and error thing again.

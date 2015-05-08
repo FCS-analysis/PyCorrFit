@@ -203,7 +203,7 @@ check parameters on each page and start 'Global fit'.
         if len(fitparms) == 0:
             return
         res = spopt.leastsq(self.fit_function, fitparms[:], full_output=1)
-        (popt, pcov, infodict, errmsg, ier) = res
+        pcov = res[1]
         #self.parmoptim, self.mesg = spopt.leastsq(self.fit_function, 
         #                                          fitparms[:])
         self.parmoptim = res[0]

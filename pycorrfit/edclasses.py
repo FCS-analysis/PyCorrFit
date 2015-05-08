@@ -36,12 +36,8 @@ with warnings.catch_warnings():
         matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
     except:
         pass
-# We will hack this toolbar here
-try:
-    from matplotlib.backends.backend_wx import NavigationToolbar2Wx 
-except ImportError:
-    pass
-    
+
+
 import numpy as np
 import sys
 import traceback

@@ -19,6 +19,15 @@ ICO = os.path.join(PyInstDir,"PyCorrFit.ico")
 
 sys.path.append(DIR)
 
+hiddenimports = ["scipy.io.matlab.streams",
+                 "sympy.assumptions.handlers",
+                 "sympy.assumptions.handlers.common",
+                 "scipy.special._ufuncs_cxx",
+                 "scipy.sparse.csgraph",
+                 "scipy.sparse.csgraph.shortest_path",
+                 "scipy.sparse.csgraph"._validation]
+
+
 ## Create inno setup .iss file
 import pycorrfit
 version = pycorrfit.__version__
@@ -39,9 +48,7 @@ nissfile.close()
 
 a = Analysis([ProgPy],
              pathex=[DIR],
-             hiddenimports=["sympy.assumptions.handlers", # sympy
-                            "sympy.assumptions.handlers.common",
-                            "scipy.special._ufuncs_cxx"],
+             hiddenimports=hiddenimports,
              hookspath=None)
 a.datas += [('doc\\ChangeLog.txt', ChLog, 'DATA'),
             ('doc\\PyCorrFit_doc.pdf', DocPDF, 'DATA')]

@@ -41,8 +41,8 @@ import warnings
 from . import doc
 
 # These imports are required for loading data
-from .readfiles import Filetypes
-from .readfiles import BGFiletypes
+from .readfiles import Filetypes  # @UnusedImport
+from .readfiles import BGFiletypes  # @UnusedImport
 
 
 

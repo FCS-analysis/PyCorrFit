@@ -84,7 +84,7 @@ def GetLocationOfFile(filename):
     ## freezed binaries:
     if hasattr(sys, 'frozen'):
         try:
-            adir = sys._MEIPASS + "/doc/"
+            adir = sys._MEIPASS + "/doc/"  # @UndefinedVariable
         except:
             adir = "./"
         locations.append(os.path.realpath(adir))
