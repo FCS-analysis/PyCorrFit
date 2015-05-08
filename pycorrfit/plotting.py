@@ -183,11 +183,11 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         fitlabel += ur", normalized to "+Page.active_parms[0][Page.normparm]
 
     ## Check if we can use latex for plotting:
-    (r1, path) = findprogram("latex")
-    (r2, path) = findprogram("dvipng")
+    r1 = findprogram("latex")[0]
+    r2 = findprogram("dvipng")[0]
     # Ghostscript
-    (r31, path) = findprogram("gs")
-    (r32, path) = findprogram("mgs") # from miktex
+    r31 = findprogram("gs")[0]
+    r32 = findprogram("mgs")[0] # from miktex
     r3 = max(r31,r32)
     if r1+r2+r3 < 3:
         uselatex = False
@@ -375,11 +375,11 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     else:
         return
     ## Check if we can use latex for plotting:
-    (r1, path) = findprogram("latex")
-    (r2, path) = findprogram("dvipng")
+    r1 = findprogram("latex")[0]
+    r2 = findprogram("dvipng")[0]
     # Ghostscript
-    (r31, path) = findprogram("gs")
-    (r32, path) = findprogram("mgs") # from miktex
+    r31 = findprogram("gs")[0]
+    r32 = findprogram("mgs")[0]
     r3 = max(r31,r32)
     if r1+r2+r3 < 3:
         uselatex = False
@@ -459,11 +459,11 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
     except:
         pass
     ## Check if we can use latex for plotting:
-    (r1, path) = findprogram("latex")
-    (r2, path) = findprogram("dvipng")
+    r1 = findprogram("latex")[0]
+    r2 = findprogram("dvipng")[0]
     # Ghostscript
-    (r31, path) = findprogram("gs")
-    (r32, path) = findprogram("mgs") # from miktex
+    r31 = findprogram("gs")[0]
+    r32 = findprogram("mgs")[0] # from miktex
     r3 = max(r31,r32)
     if r1+r2+r3 < 3:
         uselatex = False

@@ -165,10 +165,8 @@ def openASC(dirname, filename):
     ## Correlation function
     Truedata = Alldata.__getslice__(StartC, EndC)
     readdata = csv.reader(Truedata, delimiter='\t')
-    data = list()
     # Add lists to *data* according to the length of *curvelist*
-    for item in curvelist:
-        data.append(list())
+    data = [[]]*len(curvelist)
     # Work through the rows in the read data
     for row in readdata:
         for i in np.arange(len(curvelist)):
@@ -348,8 +346,7 @@ def mysplit(a, n):
     lensplit = np.int(np.ceil(N/n))
 
     # xp is actually rounded -> recalculate
-    xp, step = np.linspace(a[:,0][0], a[:,0][-1], N,
-                           endpoint=True, retstep=True)
+    xp = np.linspace(a[:,0][0], a[:,0][-1], N,  endpoint=True)
     
     # let xp start at zero
     xp -= a[:,0][0]

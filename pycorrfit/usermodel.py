@@ -39,10 +39,10 @@ import sys
 import warnings
 try:
     import sympy
-    from sympy.core.function import Function
+    import sympy.functions
     from sympy.core import S
-    from sympy import sympify, I
-    from sympy.functions import im
+    from sympy.core.function import Function
+    from sympy import sympify
 except ImportError:
     warnings.warn("Importing sympy failed."+\
                   " Reason: {}.".format(sys.exc_info()[1].message))
@@ -273,14 +273,14 @@ class wixi(Function):
     nargs = 1
     is_real = True
     @classmethod
-    def eval(csl,arg):
+    def eval(self, arg):
         return None
-    #def _should_evalf(csl,arg):
-    #    return True
-    def as_base_exp(cls):
-        return cls,S.One
-    def _eval_evalf(cls, prec):
-        result = sps.wofz(1j*float(cls.args[0]))
+
+    def as_base_exp(self):
+        return self, S.One  # @UndefinedVariable
+
+    def _eval_evalf(self, prec):
+        result = sps.wofz(1j*float(self.args[0]))
         return sympy.numbers.Number(sympy.functions.re(result))
 
 

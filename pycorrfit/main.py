@@ -27,6 +27,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License 
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import print_function
 
 from distutils.version import LooseVersion
 import sys
@@ -39,14 +40,6 @@ class Fake(object):
         self.version = "0.0 unknown"
         self.use = lambda x: None
 
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped (needs to be done before import of matplotlib):
-import platform
-if platform.system().lower in ['windows', 'darwin']:
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
 
 # Import matplotlib a little earlier. This way some problems with saving
 # dialogs that are not made by "WXAgg" are solved.
@@ -64,20 +57,13 @@ import numpy as np                  # NumPy
 import os
 import scipy
 
-# A missing import hook prevented us from bundling PyCorrFit on Mac using
-# pyinstaller. The following imports solved that issue:
-try:
-    from scipy.sparse.csgraph import shortest_path
-    from scipy.sparse.csgraph import _validation
-except:
-    pass
 
 # Sympy is optional:
 try:
     import sympy
 except ImportError:
-    print "Importing sympy failed! Checking of external model functions"
-    print "will not work!"
+    print("Importing sympy failed! Checking of external model functions")
+    print("will not work!")
     # We create a fake module sympy with a __version__ property.
     # This way users can run PyCorrFit without having installed sympy.
     sympy = Fake()
@@ -103,13 +89,13 @@ def CheckVersion(given, required, name):
         req = LooseVersion(required)
         giv = LooseVersion(given)
     except:
-        print " WARNING: Could not verify version of "+name+"."
+        print(" WARNING: Could not verify version of "+name+".")
         return
     if req > giv:
-        print " WARNING: You are using "+name+" v. "+given+\
-              " | Required: "+name+" "+ required
+        print(" WARNING: You are using "+name+" v. "+given+\
+              " | Required: "+name+" "+ required)
     else:
-        print " OK: "+name+" v. "+given+" | "+required+" required"
+        print(" OK: "+name+" v. "+given+" | "+required+" required")
 
 
 ## Start gui
@@ -119,10 +105,10 @@ def Main():
     version = doc.__version__
     __version__ = version
 
-    print gui.doc.info(version)
+    print(gui.doc.info(version))
 
     ## Check important module versions
-    print "\n\nChecking module versions..."
+    print("\n\nChecking module versions...")
     CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
     CheckVersion(np.__version__, "1.5.1", "NumPy")
     CheckVersion(yaml.__version__, "3.09", "PyYAML")
@@ -142,11 +128,11 @@ def Main():
     sysarg = sys.argv
     for arg in sysarg:
         if arg.endswith(".pcfs"):
-            print "\nLoading Session "+arg
+            print("\nLoading Session "+arg)
             frame.OnOpenSession(sessionfile=arg)
             break
         if arg.endswith(".fcsfit-session.zip"):
-            print "\nLoading Session "+arg
+            print("\nLoading Session "+arg)
             frame.OnOpenSession(sessionfile=arg)
             break
         elif arg[:6] == "python":
@@ -156,7 +142,7 @@ def Main():
         elif arg[-11:] == "__main__.py":
             pass
         else:
-            print "Ignoring command line parameter: "+arg
+            print("Ignoring command line parameter: "+arg)
 
 
     app.MainLoop()

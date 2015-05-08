@@ -31,7 +31,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from distutils.version import LooseVersion # For version checking
 import os
 import webbrowser
-import wx                               # GUI interface wxPython
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
 import wx.py.shell
 import numpy as np                      # NumPy
@@ -62,16 +61,6 @@ except ImportError:
 from . import readfiles
 from . import tools                        # Some tools
 from . import usermodel
-
-
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped:
-if platform.system() == 'Windows':
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-# ~paulmueller
 
 
 ########################################################################
@@ -117,14 +106,14 @@ class MyApp(wx.App):
 
 ###########################################################
 class MyFrame(wx.Frame):
-    def __init__(self, parent, id, version):
+    def __init__(self, parent, anid, version):
 
         sys.excepthook = MyExceptionHook
         ## Set initial variables that make sense
         tau = 10**np.linspace(-6,8,1001)
 
         self.version = version
-        wx.Frame.__init__(self, parent, id, "PyCorrFit " + self.version)
+        wx.Frame.__init__(self, parent, anid, "PyCorrFit " + self.version)
         self.CreateStatusBar() # A Statusbar in the bottom of the window
         self.StatusBar.SetStatusText("Find help and updates online:"+
                                      " 'Help > Update'")
@@ -877,7 +866,7 @@ class MyFrame(wx.Frame):
         pc = self.notebook._pages
         # forget the zone that was initially clicked
         self._nLeftClickZone = fnb.FNB_NOWHERE
-        where, tabIdx = pc.HitTest(event.GetPosition())
+        where = pc.HitTest(event.GetPosition())[0]
         FNB_X = 2
         FNB_TAB_X = 3
         if not pc.HasAGWFlag(fnb.FNB_NO_TAB_FOCUS):
@@ -963,11 +952,11 @@ class MyFrame(wx.Frame):
             # do nothing
             return
         ## Check if we can use latex for plotting:
-        (r1, path) = misc.findprogram("latex")
-        (r2, path) = misc.findprogram("dvipng")
+        r1 = misc.findprogram("latex")[0]
+        r2 = misc.findprogram("dvipng")[0]
         # Ghostscript
-        (r31, path) = misc.findprogram("gs")
-        (r32, path) = misc.findprogram("mgs") # from miktex
+        r31 = misc.findprogram("gs")[0]
+        r32 = misc.findprogram("mgs")[0] # from miktex
         r3 = max(r31,r32)
         if r1+r2+r3 < 3:
             # Warn the user
@@ -1030,10 +1019,10 @@ class MyFrame(wx.Frame):
             if isinstance(dataname, list):
                 for item in dataname:
                     Datafiles.append(os.path.split(item)[1])
-                self.dirname, filename = os.path.split(Datafiles[0])
+                self.dirname = os.path.split(Datafiles[0])[0]
             else:
                 Datafiles.append(os.path.split(dataname)[1])
-                self.dirname, filename = os.path.split(dataname)
+                self.dirname = os.path.split(dataname)[0]
             Datafiles.sort()
 
         ## Get information from the data files and let the user choose
@@ -1342,7 +1331,7 @@ class MyFrame(wx.Frame):
             # Import dataexp:
             number = counter.strip().strip(":").strip("#")
             pageid = int(number)
-            [tau, dataexp] = Infodict["Correlations"][pageid]
+            dataexp = Infodict["Correlations"][pageid][1]
             if dataexp is not None:
                 # Write experimental data
                 Newtab.dataexpfull = dataexp
@@ -1372,10 +1361,9 @@ class MyFrame(wx.Frame):
             else:
                 errdict = dict()
                 for errInfo in Sups["FitErr"]:
-                    for ierr in np.arange(len(errInfo)):
-                        errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
-                        errval = float(errInfo[1])
-                        errdict[errkey] = errval
+                    errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
+                    errval = float(errInfo[1])
+                    errdict[errkey] = errval
                 Newtab.parmoptim_error = errdict
                 try:
                     Newtab.GlobalParameterShare = Sups["Global Share"]

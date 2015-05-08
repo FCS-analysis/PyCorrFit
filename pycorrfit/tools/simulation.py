@@ -374,8 +374,8 @@ class Slide(wx.Frame):
         parms_0 = 1.*np.array(mdls.valuedict[self.modelid][1])
         parms_0[idA] = self.valueA # human readable units
         parms_0[idB] = self.valueB # human readable units
-        label, parms_i =\
-            mdls.GetInternalFromHumanReadableParm(self.modelid, parms_0)
+        parms_i =\
+            mdls.GetInternalFromHumanReadableParm(self.modelid, parms_0)[1]
         self.Page.active_parms[1][idA] = parms_i[idA]
         self.Page.active_parms[1][idB] = parms_i[idB]
         self.Page.apply_parameters_reverse()
@@ -429,14 +429,14 @@ class Slide(wx.Frame):
         # self.valueA = self.Page.active_parms[1][idA]
         if self.parent.notebook.GetPageCount() == 0:
             self.modelid = 6000
-            ParmLabels, ParmValues = \
+            ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,
-                                              mdls.valuedict[6000][1])
+                                        mdls.valuedict[6000][1])[1]
         else:
             self.modelid = self.Page.modelid
-            ParmLabels, ParmValues = \
+            ParmValues = \
                    mdls.GetHumanReadableParms(self.modelid,
-                                              self.Page.active_parms[1])
+                                        self.Page.active_parms[1])[1]
         self.valueA = ParmValues[idA]
         self.valueB = ParmValues[idB]                             
         # Operator

@@ -33,20 +33,11 @@ from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
-import sys                              # System stuff
 
-from . import edclasses                    # Cool stuf like better floatspin
+from . import edclasses                    # Cool stuff like better floatspin
 from . import fitting as fit       # For fitting
 from . import models as mdls
 from . import tools
-
-
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped:
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 
 class FittingPanel(wx.Panel):
@@ -203,8 +194,8 @@ class FittingPanel(wx.Panel):
         # in the Page info tool.
         # Here: Convert human readable units to program internal
         # units
-        e, self.active_parms[1] = mdls.GetInternalFromHumanReadableParm(
-                                  self.modelid, np.array(parameters))
+        self.active_parms[1] = mdls.GetInternalFromHumanReadableParm(
+                                  self.modelid, np.array(parameters))[1]
         self.active_parms[1] = self.check_parms(1*self.active_parms[1])
         # Fitting parameters
         self.weighted_nuvar = self.Fitbox[5].GetValue()
@@ -222,7 +213,7 @@ class FittingPanel(wx.Panel):
             Knots = filter(lambda x: x.isdigit(), Knots)
             self.FitKnots = int(Knots)
         # Fitting algorithm
-        keys, items = fit.GetAlgorithmStringList()
+        keys = fit.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
         self.fit_algorithm = keys[idalg]
         # If parameters have been changed because of the check_parms
@@ -243,9 +234,9 @@ class FittingPanel(wx.Panel):
         # 
         # Here: Convert program internal units to
         # human readable units
-        labels, parameters = \
+        parameters = \
                      mdls.GetHumanReadableParms(self.modelid,
-                                        self.active_parms[1])
+                                        self.active_parms[1])[1]
         # Write parameters to the form on the Page
         for i in np.arange(len(self.active_parms[1])):
             self.spincontrol[i].SetValue(parameters[i])
@@ -258,7 +249,7 @@ class FittingPanel(wx.Panel):
         self.Fitbox[1].SetItems(List)
         self.Fitbox[1].SetSelection(idf)
         # Fitting algorithm
-        keys, items = fit.GetAlgorithmStringList()
+        keys = fit.GetAlgorithmStringList()[0]
         idalg = keys.index(self.fit_algorithm)
         self.AlgorithmDropdown.SetSelection(idalg)
 
@@ -570,8 +561,8 @@ class FittingPanel(wx.Panel):
         # human readable - the way they are displayed 
         # in the Page info tool.
         # 
-        labels, parameters = mdls.GetHumanReadableParms(self.modelid,
-                                                self.active_parms[1])
+        labels = mdls.GetHumanReadableParms(self.modelid,
+                                            self.active_parms[1])[0]
         for label in labels:
             sizerh = wx.BoxSizer(wx.HORIZONTAL)
             checkbox = wx.CheckBox(self.panelsettings, label=label)
@@ -1062,7 +1053,7 @@ class FittingPanel(wx.Panel):
         textalg = wx.StaticText(self.panelsettings, label="Algorithm")
         fitsizer.Add(textalg)
         self.AlgorithmDropdown = wx.ComboBox(self.panelsettings)
-        keys, items = fit.GetAlgorithmStringList()
+        items = fit.GetAlgorithmStringList()[1]
         self.AlgorithmDropdown.SetItems(items)
         self.Bind(wx.EVT_COMBOBOX, self.apply_parameters,
                   self.AlgorithmDropdown)

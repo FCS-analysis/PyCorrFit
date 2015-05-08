@@ -53,13 +53,6 @@
 import numpy as np                  # NumPy
 import sys
 
-## On Windows XP I had problems with the unicode Characters.
-# I found this at 
-# http://stackoverflow.com/questions/5419/python-unicode-and-the-windows-console
-# and it helped:
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 from . import datarange
 from . import background
 from . import overlaycurves
