@@ -8,8 +8,12 @@ from __future__ import print_function, division
 
 import hashlib
 import numpy as np
+import scipy.interpolate as spintp
+import scipy.optimize as spopt
+import warnings
 
 from . import models as mdls
+from . import plotting
 
 class Background(object):
     """ A class to unify background handling
@@ -89,7 +93,7 @@ class FCSDataSet(object):
         if background1 is not None:
             self.background1 = Background(trace = background1)
         if background2 is not None:
-            self.background2 = background(trace = background2)
+            self.background2 = Background(trace = background2)
 
         self.InitComputeDerived()
         self.DoBackgroundCorrection()
