@@ -5,7 +5,6 @@ Classes for FCS data evaluation.
 """
 from __future__ import print_function, division
 
-
 import hashlib
 import numpy as np
 import scipy.interpolate as spintp
@@ -15,60 +14,269 @@ import warnings
 from . import models as mdls
 from . import plotting
 
-class Background(object):
-    """ A class to unify background handling
+class Trace(object):
+    """ unifies trace handling
     """
-    def __init__(self, coutrate=None, duration_s=None, trace=None,
-                 identifier=None, name=None):
-        """ Initiate a background.
+    def __init__(self, trace=None, countrate=None, duration=None,
+                 name=None):
+        """ Load trace data
         
         Parameters
         ----------
+        trace : ndarray of shape (N, 2)
+            The array contains time [s] and count rate [Hz].
         coutrate : float
-            Average countrate [Hz].
-        duration_s : float
+            Average count rate [Hz].
+            Mandatory if data is None. 
+        duration : float
             Duration of measurement in seconds.
-        trace : 2d `numpy.ndarray` of shape (N,2)
-            The trace (time [s], countrate [Hz]).
-            Overwrites `average` and `duration_s`
+            Mandatory if data is None.
         name : str
-            The name of the measurement.
-        identifier : str
-            A unique identifier. If not given, a sha256 hash will be
-            created.
-        
+            The name of the trace.
         """
-        self.coutrate = coutrate
-        self.duration_s = duration_s
-        self.identifier = identifier
-        self.name = name
-            
-        if trace is not None:
+        self._countrate = None
+        self._duration = None
+        self._trace = None
+        self._uid = None
+        
+        if trace is None:
+            self.countrate = countrate
+            self.duration = duration
+        else:
             self.trace = trace
-            self.coutrate = np.average(trace[:,1])
-            self.duration_s = trace[-1,0] - trace[0,0]
         
-        ## Make sure all parameters have sensible values
-        if self.duration_s is None:
-            self.duration_s = 0
-        
-        if self.countrate is None:
-            self.countrate = 0
-        
-        if self.trace is None:
-            self.trace = np.zeros((2,2))
-            self.trace[:,1] = self.countrate
-            
         if name is None:
-            self.name = "{:.2f kHz, {} s}".format(coutrate/1000,
-                                                  self.duration_s)
-        if identifier is None:
+            name = "{:.2f}kHz, {:.0f}s".format(self.countrate/1000,
+                                               self.duration)
+        self.name = name
+        
+    @property
+    def countrate(self):
+        if self._countrate is None:
+            self._countrate = self._trace[0,-1] - self._trace[0,0]
+        return self._countrate
+    
+    @countrate.setter
+    def countrate(self, value):
+        assert value is not None, "Setting value with None forbidden!"
+        assert self._trace is None, "Setting value impossible, "+\
+                                    "if `self.trace` is set."
+        self._countrate = value
+
+    @property
+    def duration(self):
+        if not hasattr(self, "_duration"):
+            self._duration = self._trace[0,-1] - self._trace[0,0]
+        return self._duration
+    
+    @duration.setter
+    def duration(self, value):
+        assert value is not None, "Setting value with None forbidden!"
+        assert self._trace is None, "Setting value impossible, "+\
+                                    "if `self.trace` is set."
+        self._duration = value
+    
+    @property
+    def uid(self):
+        if self._uid is None:
             hasher = hashlib.sha256()
+            hasher.update(str(np.random.random()))
             hasher.update(str(self.trace))
             hasher.update(self.name)
-            self.identifier = hasher.hexdigest()            
-            
-           
+            self._uid = hasher.hexdigest()
+        return self._uid
+    
+    @property
+    def trace(self):
+        if self._trace is None:
+            self._trace = np.array([ [0,             self.countrate],
+                                     [self.duration, self.countrate] 
+                                    ])
+        return self._trace
+    
+    @trace.setter
+    def trace(self, value):
+        assert value is not None, "Setting value with None forbidden!"
+        assert isinstance(value, np.ndarray), "value must be array!"
+        assert value.shape[1] == 2, "shape of array must be (N,2)!"
+        self._trace = value
+
+
+class Correlation(object):
+    """ unifies correlation curve handling
+    """
+    def __init__(self, backgrounds=[], correlation=None, corr_type="AC", 
+                 filename=None, fit_algorithm="LevMar",
+                 fit_model=None, fit_range=(0,-1),
+                 fit_weight_data=None, fit_weight_type="none", 
+                 normalize_parm=None, title=None, traces=[]):
+        """
+        Parameters
+        ----------
+        backgrounds: list of instances of Trace
+            background traces
+        correlation: ndarray of shape (N,2)
+            correlation data (time [s], correlation)
+        corr_type: str
+            type of correlation, e.g. "AC", "AC1", "cc12"
+        filename: str
+            path to filename of correlation
+        fit_algorithm: str
+            valid fit algorithm identifier (Algorithms.keys())
+        fit_model: instance of FitModel
+            the model used for fitting
+        fit_range:
+            fitting range in indices
+        fit_weight_data: any
+            data for the certain fit_weight_type
+        normalize_parm: int
+            identifier of normalization parameter
+        title: str
+            user-editable title of this correlation
+        traces: list of instances of Trace
+            traces of the current correlation
+        """
+        # Todo:
+        # - set default values for fit_memory
+        # - normalize correlation and modeled
+        # - when setting model, reset normalize parameter
+        # - implement shared data sets for global fit
+        # - compute bg correction for plotting
+        #   - background_correction = True
+        #   - DoBackgroundCorrection (below)
+        # - fit algorithm property setter: check for valid values with Algorithms.keys()
+        # - self._fit_weight_memory: external weights
+        # - implement Model class with
+        #   - parameters
+        #   - func (for fitting)
+        #   - __call__
+        # - Use existing Fit class below
+        #   - change it to only accept one or more Correlation instances
+        
+        
+        # must be created before setting properties
+        self._correlation = None
+        self._fit_algorithm = None   
+        self._fit_model = None
+        self._fit_parameters = None
+        self._fit_weight_memory = dict()
+        self._model_memory = dict()
+
+        self.backgrounds = backgrounds
+        if correlation is not None:
+            self.correlation = correlation
+        self.corr_type = corr_type
+        self.filename = filename
+        
+        self.fit_algorithm = fit_algorithm
+        self.fit_model = fit_model
+        self.fit_range = fit_range
+        # Do not change order:
+        self.fit_weight_type = fit_weight_type
+        self.fit_weight_parameters = fit_weight_data
+        
+        self.normalize_parm = normalize_parm
+        self.title = title
+        self.traces = traces
+
+    @property
+    def correlation(self):
+        """the correlation data, shape (N,2) with (time, correlation) """
+        return self._correlation
+    
+    @correlation.setter
+    def correlation(self, value):
+        assert value is not None, "Setting value with None forbidden!"
+        assert isinstance(value, np.ndarray), "value must be array!"
+        assert value.shape[1] == 2, "shape of array must be (N,2)!"
+        self._correlation = value
+
+    @property
+    def correlation_plot(self):
+        """ returns correlation data for plotting (normalized, fit_ranged) """
+        # TODO: normalize with self.normalize_parm
+        return self._correlation[:, self.fit_range[0]:self.fit_range[1]]
+    
+    @property
+    def is_ac(self):
+        """True if instance contains autocorrelation"""
+        return self.corr_type.lower().count("ac") > 0
+
+    @property
+    def fit_is_weighted(self):
+        """True if the current fit has weights"""
+        if self.fit_weight_type == "none":
+            return True
+        else:
+            return False
+
+    @property
+    def fit_model(self):
+        """instance of a fit model"""
+        return self._fit_model
+
+    @fit_model.setter
+    def fit_model(self, value):
+        """set the fit model
+        TODO: also allow model_id
+        """
+        if value != self._fit_model:
+            self._fit_model = value
+            # overwrite fit parameters
+            self._fit_parameters = self._fit_model.parameters.copy()
+
+    @property
+    def fit_weight_data(self):
+        """data of weighted fitting"""
+        return self._fit_weight_memory[self.fit_weight_type]
+
+    @fit_weight_data.setter
+    def fit_weight_data(self, value):
+        self._fit_weight_memory[self.fit_weight_type] = value
+
+    @property
+    def fit_parameters(self):
+        """parameters that were fitted/will be used for fitting"""
+        return self._fit_parameters
+
+    @fit_parameters.setter
+    def fit_parameters(self, value):
+        self._fit_parameters = value
+        self.fit_model.parameters = value
+
+    @property
+    def modeled(self):
+        """fitted data values, same shape as self.correlation"""
+        return self.fit_model(self.correlation[:,0])
+
+    @property
+    def modeled_plot(self):
+        """fitted data values, same shape as self.correlation_plot"""
+        # TODO: normalize with self.normalize_parm
+        return self.modeled[:, self.fit_range[0]:self.fit_range[1]]
+
+    @property
+    def residuals(self):
+        """fit residuals, same shape as self.correlation"""
+        return self.correlation - self.modeled
+    
+    @property
+    def residuals_plot(self):
+        """fit residuals, same shape as self.correlation_plot"""
+        return self.residuals[:, self.fit_range[0]:self.fit_range[1]]
+    
+    @property
+    def uid(self):
+        """unique identifier of this instance"""
+        if self._uid is None:
+            hasher = hashlib.sha256()
+            hasher.update(str(np.random.random()))
+            hasher.update(str(self.correlation))
+            hasher.update(self.name)
+            self._uid = hasher.hexdigest()
+        return self._uid
+
+
 
 class FCSDataSet(object):
     """ The class has all methods necessary for an FCS measurement.
@@ -91,9 +299,9 @@ class FCSDataSet(object):
         self.cc21 = cc21
 
         if background1 is not None:
-            self.background1 = Background(trace = background1)
+            self.background1 = Trace(trace = background1)
         if background2 is not None:
-            self.background2 = Background(trace = background2)
+            self.background2 = Trace(trace = background2)
 
         self.InitComputeDerived()
         self.DoBackgroundCorrection()
