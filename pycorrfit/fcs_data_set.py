@@ -109,7 +109,7 @@ class Correlation(object):
                  filename=None, fit_algorithm="LevMar",
                  fit_model=None, fit_range=(0,-1),
                  fit_weight_data=None, fit_weight_type="none", 
-                 normalize_parm=None, title=None, traces=[]):
+                 normparm=None, title=None, traces=[]):
         """
         Parameters
         ----------
@@ -129,7 +129,7 @@ class Correlation(object):
             fitting range in indices
         fit_weight_data: any
             data for the certain fit_weight_type
-        normalize_parm: int
+        normparm: int
             identifier of normalization parameter
         title: str
             user-editable title of this correlation
@@ -137,19 +137,11 @@ class Correlation(object):
             traces of the current correlation
         """
         # Todo:
-        # - set default values for fit_memory
-        # - normalize correlation and modeled
-        # - when setting model, reset normalize parameter
+        # - use fit parameters range for fitting
+        # - set default values for fit_weight_memory
         # - implement shared data sets for global fit
-        # - compute bg correction for plotting
-        #   - background_correction = True
-        #   - DoBackgroundCorrection (below)
         # - fit algorithm property setter: check for valid values with Algorithms.keys()
         # - self._fit_weight_memory: external weights
-        # - implement Model class with
-        #   - parameters
-        #   - func (for fitting)
-        #   - __call__
         # - Use existing Fit class below
         #   - change it to only accept one or more Correlation instances
         
@@ -159,10 +151,13 @@ class Correlation(object):
         self._fit_algorithm = None   
         self._fit_model = None
         self._fit_parameters = None
+        self._fit_parameters_range = None
+        self._fit_parameters_variable = None
         self._fit_weight_memory = dict()
         self._model_memory = dict()
 
         self.backgrounds = backgrounds
+        self.bg_correction_enabled = True
         if correlation is not None:
             self.correlation = correlation
         self.corr_type = corr_type
@@ -174,15 +169,63 @@ class Correlation(object):
         # Do not change order:
         self.fit_weight_type = fit_weight_type
         self.fit_weight_parameters = fit_weight_data
-        
-        self.normalize_parm = normalize_parm
+    
+        # lock prevents any changes to the parameters
+        self.lock_parameters = False
+        self.normparm = normparm
         self.title = title
         self.traces = traces
 
     @property
+    def bg_correction_factor(self):
+        """
+        Returns background corrected version of
+        self._correlation
+        
+        Notes
+        -----
+        Thompson, N. Lakowicz, J.;
+        Geddes, C. D. & Lakowicz, J. R. (ed.)
+        Fluorescence Correlation Spectroscopy
+        Topics in Fluorescence Spectroscopy,
+        Springer US, 2002, 1, 337-378
+        """
+        if not self.bg_correction_enabled:
+            # bg correction disabled
+            return 1
+
+        if self.is_ac:
+            # Autocorrelation
+            if len(self.traces) == 1 and len(self.backgrounds) == 1:
+                S = self.traces[0].countrate
+                B = self.backgrounds[0].countrate
+                bgfactor = (S/(S-B))**2
+            else:
+                warnings.warn("Correlation {}: no bg-correction".
+                              format(self.uis))
+                bgfactor = 1
+        else:
+            # Crosscorrelation
+            if len(self.traces) == 2 and len(self.backgrounds) == 2:
+                S = self.traces[0].countrate
+                S2 = self.traces[1].countrate
+                B = self.backgrounds[0].countrate
+                B2 = self.backgrounds[1].countrate
+                bgfactor = (S/(S-B)) * (S2/(S2-B2))
+            else:
+                warnings.warn("Correlation {}: no bg-correction".
+                              format(self.uis))
+                bgfactor = 1
+        return bgfactor
+    
+    @property
     def correlation(self):
         """the correlation data, shape (N,2) with (time, correlation) """
-        return self._correlation
+        if self._correlation is not None:
+            corr = self._correlation
+            # perform background correction
+            corr[:,1] *= self.bg_correction_factor
+            return corr
     
     @correlation.setter
     def correlation(self, value):
@@ -194,8 +237,11 @@ class Correlation(object):
     @property
     def correlation_plot(self):
         """ returns correlation data for plotting (normalized, fit_ranged) """
-        # TODO: normalize with self.normalize_parm
-        return self._correlation[:, self.fit_range[0]:self.fit_range[1]]
+        corr = self.correlation
+        if corr is not None:
+            # perform parameter normalization
+            corr[:,1] *= self.normalize_factor
+            return self.corr[:, self.fit_range[0]:self.fit_range[1]]
     
     @property
     def is_ac(self):
@@ -220,10 +266,13 @@ class Correlation(object):
         """set the fit model
         TODO: also allow model_id
         """
-        if value != self._fit_model:
+        if value != self._fit_model :
             self._fit_model = value
-            # overwrite fit parameters
-            self._fit_parameters = self._fit_model.parameters.copy()
+            # overwrite fitting parameters
+            self._fit_parameters = self._fit_model.default_values
+            self._fit_parameters_variables = self._fit_model.default_variables
+            self._fit_parameters_range = np.zeros((len(self.self._fit_parameters, 2)))
+            self.normalize_parm = None
 
     @property
     def fit_weight_data(self):
@@ -241,30 +290,85 @@ class Correlation(object):
 
     @fit_parameters.setter
     def fit_parameters(self, value):
-        self._fit_parameters = value
-        self.fit_model.parameters = value
+        if self.lock_parameters == False:
+            self._fit_parameters = value
+        else:
+            warnings.warn("Correlation {}: fixed parameters unchanged.".
+                          format(self.uid))
+    
+    @property
+    def fit_parameters_range(self):
+        """valid fitting ranges for fit parameters"""
+        return self._fit_parameters_range
+
+    @fit_parameters_range.setter
+    def fit_parameters_range(self, value):
+        assert self.value.shape[1] == 2
+        assert value.shape[0] == self.fit_parameters.shape[0]
+        self._fit_parameters_range = value
+
+    @property
+    def fit_parameters_variable(self):
+        """which parameters are variable during fitting"""
+        return self._fit_parameters_variable
+
+    @fit_parameters_variable.setter
+    def fit_parameters_variable(self, value):
+        assert value.shape[0] == self.fit_parameters.shape[0]
+        self._fit_parameters_variable = value
+
+    @property
+    def lag_time(self):
+        """logarithmic lag time axis"""
+        if self.correlation is not None:
+            return self._correlation[:,0]
+        else:
+            # some default lag time
+            return np.exp(np.linspace(np.log(1e-8),np.log(100)))
 
     @property
     def modeled(self):
         """fitted data values, same shape as self.correlation"""
-        return self.fit_model(self.correlation[:,0])
+        # perform parameter normalization
+        return self.fit_model(self.parameters, self.lag_time)
 
     @property
     def modeled_plot(self):
         """fitted data values, same shape as self.correlation_plot"""
-        # TODO: normalize with self.normalize_parm
-        return self.modeled[:, self.fit_range[0]:self.fit_range[1]]
+        toplot = self.modeled[:, self.fit_range[0]:self.fit_range[1]].copy()
+        toplot[:,1] *= self.normalize_factor
+        return toplot
+
+    @property
+    def normalize_factor(self):
+        """plot normalization according to self.normparm"""
+        if self.normparm is None:
+            # nothing to do
+            return 1
+        
+        if self.normparm < self.fit_parameters.shape[0]:
+            nfactor = self.fit_parameters[self.normparm]
+        else:
+            # get supplementary parameters
+            alt = self.fit_model.get_supplementary_values(self.fit_parameters)
+            nfactor = alt[self.normparm - self.fit_parameters.shape[0]:]
+        
+        return nfactor
 
     @property
     def residuals(self):
         """fit residuals, same shape as self.correlation"""
-        return self.correlation - self.modeled
+        residuals = self.correlation.copy()
+        residuals[:,1] -= self.modeled[:,1]
+        return residuals 
     
     @property
     def residuals_plot(self):
         """fit residuals, same shape as self.correlation_plot"""
-        return self.residuals[:, self.fit_range[0]:self.fit_range[1]]
-    
+        residuals_plot = self.correlation_plot.copy()
+        residuals_plot[:,1] -= self.modeled_plot[:,1]
+        return residuals_plot
+
     @property
     def uid(self):
         """unique identifier of this instance"""
@@ -275,197 +379,6 @@ class Correlation(object):
             hasher.update(self.name)
             self._uid = hasher.hexdigest()
         return self._uid
-
-
-
-class FCSDataSet(object):
-    """ The class has all methods necessary for an FCS measurement.
-    
-    """
-    def __init__(self, ac=None, trace=None, trace2=None,
-                  ac2=None, cc12=None, cc21=None,
-                  background1=None, background2=None):
-        """ Initializes the FCS data set.
-        
-        All parms are 2d ndarrays of shape (N,2).
-        
-        """
-        self.filename = None
-        self.trace1 = trace
-        self.trace2 = trace2
-        self.ac1 = ac
-        self.ac2 = ac2
-        self.cc12 = cc12
-        self.cc21 = cc21
-
-        if background1 is not None:
-            self.background1 = Trace(trace = background1)
-        if background2 is not None:
-            self.background2 = Trace(trace = background2)
-
-        self.InitComputeDerived()
-        self.DoBackgroundCorrection()
-        
-
-    def EnableBackgroundCorrection(self, enable=True):
-        """ Set to false to disable background correction.
-        """
-        self.UseBackgroundCorrection = enable
-        
-        
-    def InitComputeDerived(self):
-        """ Computes all parameters that can be derived from the
-            correlation data and traces themselves.
-        """
-        # lenght of traces determines auto- or cross-correlation
-        if self.cc12 is not None or self.cc21 is not None:
-            self.IsCrossCorrelation = True
-        else:
-            self.IsCrossCorrelation = False
-        if self.ac1 is not None or self.ac2 is not None:
-            self.IsAutCorrelation = True
-        else:
-            self.IsAutCorrelation = False
-        
-        if self.trace1 is not None:
-            self.duration1_s = self.trace1[-1,0] - self.trace1[0,0]
-            self.countrate1 = np.average(self.trace1[:,1])
-        else:
-            self.countrate1 = None
-            self.duration1_s = None
-
-        if self.trace2 is not None:
-            self.duration2_s = self.trace2[-1,0] - self.trace2[0,0]
-            self.countrate2 = np.average(self.trace2[:,1])
-        else:
-            self.duration2_s = None
-            self.countrate2 = None            
-
-
-        # Initial fitting range is entire data set
-        self.fit_range = {}
-        names = ["ac1", "ac2", "cc12", "cc21"]
-        for name in names:
-            if hasattr(self, name):
-                data = getattr(self, name)
-                self.fit_range[name] = (data[0,0], data[-1,0])
-
-
-
-    def DoBackgroundCorrection(self, data):
-        """ Performs background correction.
-        
-        Notes
-        -----
-        Thompson, N. Lakowicz, J.;
-        Geddes, C. D. & Lakowicz, J. R. (ed.)
-        Fluorescence Correlation Spectroscopy
-        Topics in Fluorescence Spectroscopy,
-        Springer US, 2002, 1, 337-378
-        """
-        # Autocorrelation
-        if ( not self.countrate1 in [0, None] and
-             self.background1 is not None and
-             self.ac1 is not None):
-            S = self.countrate1
-            B = self.background1.countrate
-            # Calculate correction factor
-            bgfactor = (S/(S-B))**2
-            # set plotting data
-            self.plot_ac1 = self.ac1 * bgfactor
-        if ( not self.countrate2 in [0, None] and
-             self.background2 is not None and
-             self.ac2 is not None):
-            S = self.countrate2
-            B = self.background2.countrate
-            # Calculate correction factor
-            bgfactor = (S/(S-B))**2
-            # set plotting data
-            self.plot_ac2 = self.ac2 * bgfactor            
-        
-        # Crosscorrelation
-        if ( not self.countrate1 in [0, None] and
-             not self.countrate2 in [0, None] and
-             self.background1 is not None and
-             self.background2 is not None and
-             self.IsCrossCorrelation
-           ):
-            S = self.countrate1
-            S2 = self.countrate2
-            B = self.background1.countrate1
-            B2 = self.background1.countrate2
-            bgfactor = (S/(S-B)) * (S2/(S2-B2))
-            if self.cc12 is not None:
-                self.plot_cc12 = self.cc12 * bgfactor 
-            if self.cc21 is not None:
-                self.plot_cc21 = self.cc21 * bgfactor             
-            
-
-    def GetBackground(self):
-        """ Returns the backgrounds of the data set.
-        """
-        return self.background1, self.background2
-        
-    
-    def GetPlotCorrelation(self):
-        """ Returns a dictionary with correlation curves.
-        
-        Keys may include "ac1", "ac2", "cc12", "cc21" as well as
-        "ac1_fit", "ac2_fit", "cc12_fit", "cc21_fit".
-        """
-        if self.UseBackgroundCorrection:
-            self.DoBackgroundCorrection()
-    
-        result = dict()
-        
-        names = ["ac1", "ac2", "cc12", "cc21"]
-        
-        for name in names:
-            if not hasattr(self, "plot_"+name):
-                rawdata = getattr(self, name)
-                if rawdata is not None:
-                    result[name] = rawdata.copy()
-            else:
-                plotdata = getattr(self, name)
-                result[name] = plotdata.copy()
-            if hasattr(self, "plot_"+name+"_fit"):
-                fitted = getattr(self, "plot_"+name+"_fit")
-                result[name+"_fit"] = fitted.copy()
-
-        return result
-
-
-    def SetBackground(self, bgac1=None, bgac2=None):
-        """ Set the background of the measurement.
-        
-        `bg*` is an instance of `pycorrfit.Background`.
-        """
-        #if isinstance(background, Background):
-        #    self.background = bg
-        #elif isinstance(background, list)
-        self.background1 = bgac1
-        self.background2 = bgac2
-
-
-    def SetFitRange(self, start, end, components=None):
-        """ Set the range for fitting a correlation curve.
-        
-        The unit is seconds.
-        
-        Exapmles
-        --------
-        SetFitRange(.2, 1)
-        SetFitRange(.4, .7, ["ac2", "cc12"])
-        """
-        if components is not None:
-            self.fit_range = {"ac1" : (start,end),
-                              "ac2" : (start,end),
-                              "cc12": (start,end),
-                              "cc21": (start,end)  }
-        else:
-            for cc in components:
-                self.fitrange[cc] = (start,end)
-            
 
 
 class Fit(object):
