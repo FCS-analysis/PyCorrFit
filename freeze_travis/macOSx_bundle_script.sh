@@ -79,6 +79,8 @@ echo "Creating DMG"
 echo "############"
 pushd dist
 mkdir dmgsrc
+cp ../doc/*.pdf dmgsrc/
+cp ../ChangeLog.txt dmgsrc/
 cp -r ${Progname}".app" dmgsrc/
 hdiutil create ${DMGname} -srcfolder dmgsrc/ -ov
 popd
