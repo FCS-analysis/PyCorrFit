@@ -12,7 +12,7 @@ import scipy.optimize as spopt
 import warnings
 
 from . import models as mdls
-#from . import plotting
+from . import plotting
 
 class Trace(object):
     """ unifies trace handling
