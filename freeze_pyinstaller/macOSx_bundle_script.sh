@@ -1,5 +1,6 @@
 #!/bin/bash
 # pip install pyinstaller==2.1
+export PATH=/usr/local/bin:$PATH
 Progname="PyCorrFit"
 # Go to base dir of repo
 BASEDIR=$(dirname $0)
@@ -31,7 +32,7 @@ echo "###################"
 echo "Building Extensions"
 echo "###################"
 rm -f $Docname
-VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 python setup.py build_ext --inplace
+python setup.py build_ext --inplace
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
@@ -51,7 +52,7 @@ fi
 echo "#######################"
 echo "Running Pyinstaller BIN"
 echo "#######################"
-VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 pyinstaller --onefile -F $SpecfileBIN
+pyinstaller --onefile -F $SpecfileBIN
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
@@ -71,7 +72,7 @@ echo "#######################"
 
 if [ -e $appn ]; then rm -R $appn; fi
 
-VERSIONER_PYTHON_PREFER_32_BIT=yes arch -i386 pyinstaller -y -F $Specfile
+pyinstaller -y -F $Specfile
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit

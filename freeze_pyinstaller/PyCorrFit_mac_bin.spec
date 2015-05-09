@@ -1,6 +1,10 @@
 # -*- mode: python -*-
 
-hiddenimports = ["scipy.io.matlab.streams",
+hiddenimports = [
+		 "scipy.io.matlab.streams",
+                 "scipy.special",
+                 "scipy.special.specfun",
+                 "scipy.io.matlab.streams",
                  "sympy.assumptions.handlers",
                  "sympy.assumptions.handlers.common",
                  "scipy.special._ufuncs_cxx",
