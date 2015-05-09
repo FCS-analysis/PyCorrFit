@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Documentation and program specific information
+u""" Documentation and program specific information
 
 PyCorrFit
 
@@ -110,7 +110,7 @@ def info(version):
     """ Returns a little info about our program and what it can do.
     """
     textwin = u"""
-    Copyright 2011-2012 Paul Müller, Biotec - TU Dresden
+    Copyright 2011-2012 Paul Mueller, Biotec - TU Dresden
 
     A versatile tool for fitting and analyzing correlation curves.
 
@@ -118,9 +118,9 @@ def info(version):
     unit of time        : 1 ms
     unit of inverse time: 1000 /s
     unit of distance    : 100 nm
-    unit of Diff.coeff  : 10 µm²/s
-    unit of inverse area: 100 /µm²
-    unit of inv. volume : 1000 /µm^3 """
+    unit of Diff.coeff  : 10 um^2/s
+    unit of inverse area: 100 /um^2
+    unit of inv. volume : 1000 /um^3 """
     textlin = u"""
     © 2011-2012 Paul Müller, Biotec - TU Dresden
 
@@ -137,8 +137,8 @@ def info(version):
         texta = textwin
     else:
         texta = textlin
-    one = "    PyCorrFit version "+version+"\n\n"
-    two = "\n\n    Supported file types:"
+    one = u"    PyCorrFit version "+version+"\n\n"
+    two = u"\n\n    Supported file types:"
     keys = readfiles.Filetypes.keys()
     keys.sort()
     for item in keys:
