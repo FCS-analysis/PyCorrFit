@@ -49,7 +49,6 @@ install:
 #- brew install openblas
 #- brew install gfortran
 
-- arch -i386 python -c "import wx; print wx.__version__"
 - arch -i386 pip install git+git://github.com/pyinstaller/pyinstaller.git@6c2fe6a2c49cfe3216a93c33bb7275f9cf76103a
 # final pip installs
 - arch -i386 pip install ./freeze_travis/requirements.txt
@@ -59,6 +58,7 @@ install:
 - sudo ./freeze_travis/install_dmg.sh
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
+- arch -i386 python -c "import wx; print wx.__version__"
 - arch -i386 python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
 #- patch /usr/local/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
 # wxPython is only available in 64bit version with homebrew
