@@ -27,7 +27,8 @@ before_install:
 # numpy, scipy, matplotlib, ...
 - brew tap homebrew/python
 - brew tap homebrew/dupes
-- brew update #&& brew upgrade
+- brew update
+#- brew update && brew upgrade
 - brew install python --universal --framework
 #- brew install wget
 - which python
@@ -36,44 +37,39 @@ before_install:
 - defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
 
 install:
-- pip install numpy
 - brew unlink gcc
 - brew install gcc --universal
-# scipy.special.specfun problems with pyinstaller
-- pip install scipy==0.14
 - brew install freetype --universal
-- pip install matplotlib
 #- brew install numpy --universal
 #- brew install scipy --universal
 #- brew install matplotlib --universal
-#- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
-#- sudo ./freeze_travis/install_dmg.sh
+- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
+- sudo ./freeze_travis/install_dmg.sh
 # wxPython is only available in 64bit version with homebrew
-# We don't need the 32bit version anyways.
+#- brew install wxpython
+
 # https://github.com/Homebrew/homebrew/issues/34470
 #- brew install wxpython --universal
 #- brew install openblas
 #- brew install gfortran
-- brew install wxpython
+
+
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
-- python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
-- patch /usr/local/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
-- python -c "import wx; print wx.__version__"
-- pip install git+git://github.com/pyinstaller/pyinstaller.git@6c2fe6a2c49cfe3216a93c33bb7275f9cf76103a
+- arch -i386 python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
+#- patch /usr/local/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
+- arch -i386 python -c "import wx; print wx.__version__"
+- arch -i386 pip install git+git://github.com/pyinstaller/pyinstaller.git@6c2fe6a2c49cfe3216a93c33bb7275f9cf76103a
 # final pip installs
-- pip install cython
-- pip install wheel
-- pip install sympy
-- pip install PyYAML
+- arch -i386 pip install ./freeze_travis/requirements.txt
 # show packages
-- pip freeze
+- arch -i386 pip freeze
 # build extensions
-- python setup.py develop
+- arch -i386 python setup.py develop
 
 script:
 # Create wheel pacakge
-- python setup.py bdist_wheel
+- arch -i386 python setup.py bdist_wheel
 # Create binary
 - ./freeze_travis/macOSx_bundle_script.sh
 - ls dist/
