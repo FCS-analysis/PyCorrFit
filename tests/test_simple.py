@@ -15,19 +15,27 @@ corr = Correlation()
 
 tau = np.exp(np.linspace(np.log(1e-3),np.log(1e6), 100))
 data = corr.fit_model(corr.fit_parameters, tau)
-noise = np.random.random(data.shape[0])*.0005
+noise = (np.random.random(data.shape[0])-.5)*.0005
 data += noise
 
 corr.correlation = np.dstack((tau, data))[0]
 
-fig, ax = plt.subplots(1,1)
-plt.plot(corr.correlation_fit[:,0], corr.correlation_fit[:,1])
-plt.plot(corr.modeled_fit[:,0], corr.modeled_fit[:,1])
+fig, (ax1, ax2) = plt.subplots(2,1)
+ax1.set_xscale("log")
+ax2.set_xscale("log")
 
-ax.set_xscale("log")
-plt.show()
+ax1.plot(corr.correlation_fit[:,0], corr.correlation_fit[:,1])
+ax1.plot(corr.modeled_fit[:,0], corr.modeled_fit[:,1])
 
 Fit(corr)
+
+ax2.plot(corr.correlation_fit[:,0], corr.correlation_fit[:,1])
+ax2.plot(corr.modeled_fit[:,0], corr.modeled_fit[:,1])
+
+plt.show()
+
+import IPython
+IPython.embed()
 
 # todo -> check outcome
 
