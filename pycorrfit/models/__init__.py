@@ -90,7 +90,13 @@ class Model(object):
 
     @property
     def default_values(self):
+        """default fitting values"""
         return self._parameters[1]
+    
+    @property
+    def default_variables(self):
+        """indexes default variable fitting (bool)"""
+        return self._parameters[2]
 
     @property
     def id(self):
