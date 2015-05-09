@@ -11,10 +11,14 @@ language:
 python:
 - "2.7"
 
-# Only build master branch
+# Only build master branch - This breaks building tags
 #branches:
 #  only:
 #  - master
+
+# Do not send email notifications
+notifications:
+  email: false
 
 before_install:
 - which python
@@ -30,11 +34,6 @@ before_install:
 - python --version
 - export VERSIONER_PYTHON_PREFER_32_BIT=yes
 - defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
-# wxPython is only available in 64bit version with homebrew
-# https://github.com/Homebrew/homebrew/issues/34470
-#- brew install wxpython --universal
-#- brew install openblas
-#- brew install gfortran
 
 install:
 - pip install numpy
@@ -49,6 +48,12 @@ install:
 #- brew install matplotlib --universal
 #- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
 #- sudo ./freeze_travis/install_dmg.sh
+# wxPython is only available in 64bit version with homebrew
+# We don't need the 32bit version anyways.
+# https://github.com/Homebrew/homebrew/issues/34470
+#- brew install wxpython --universal
+#- brew install openblas
+#- brew install gfortran
 - brew install wxpython
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
