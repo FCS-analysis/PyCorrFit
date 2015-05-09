@@ -107,7 +107,7 @@ class Correlation(object):
     """
     def __init__(self, backgrounds=[], correlation=None, corr_type="AC", 
                  filename=None, fit_algorithm="LevMar",
-                 fit_model=None, fit_range=(0,-1),
+                 fit_model=6000, fit_range=(0,-1),
                  fit_weight_data=None, fit_weight_type="none", 
                  normparm=None, title=None, traces=[]):
         """
@@ -264,14 +264,20 @@ class Correlation(object):
     @fit_model.setter
     def fit_model(self, value):
         """set the fit model
-        TODO: also allow model_id
         """
-        if value != self._fit_model :
-            self._fit_model = value
+        if isinstance(value, (int, long)):
+            newmodel = mdls.modeldict[value]
+        elif isinstance(value, mdls.Model):
+            newmodel = value
+        else:
+            raise NotImplementedError("Unknown model identifier")
+        
+        if newmodel != self._fit_model :
+            self._fit_model = newmodel
             # overwrite fitting parameters
             self._fit_parameters = self._fit_model.default_values
             self._fit_parameters_variables = self._fit_model.default_variables
-            self._fit_parameters_range = np.zeros((len(self._fit_parameters, 2)))
+            self._fit_parameters_range = np.zeros((len(self._fit_parameters), 2))
             self.normalize_parm = None
 
     @property
@@ -290,12 +296,13 @@ class Correlation(object):
 
     @fit_parameters.setter
     def fit_parameters(self, value):
+        # must unlock parameters, if change is required
         if self.lock_parameters == False:
             self._fit_parameters = value
         else:
             warnings.warn("Correlation {}: fixed parameters unchanged.".
                           format(self.uid))
-    
+
     @property
     def fit_parameters_range(self):
         """valid fitting ranges for fit parameters"""
@@ -324,13 +331,17 @@ class Correlation(object):
             return self._correlation[:,0]
         else:
             # some default lag time
-            return np.exp(np.linspace(np.log(1e-8),np.log(100)))
+            return np.exp(np.linspace(np.log(1e-8),np.log(100), 200))
 
     @property
     def modeled(self):
         """fitted data values, same shape as self.correlation"""
         # perform parameter normalization
-        return self.fit_model(self.fit_parameters, self.lag_time)
+        lag = self.lag_time
+        modeled = np.zeros((lag.shape[0], 2))
+        modeled[:,0] = lag
+        modeled[:,1] = self.fit_model(self.fit_parameters, self.lag_time)
+        return modeled
 
     @property
     def modeled_plot(self):
