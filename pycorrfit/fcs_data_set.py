@@ -12,7 +12,7 @@ import scipy.optimize as spopt
 import warnings
 
 from . import models as mdls
-from . import plotting
+#from . import plotting
 
 class Trace(object):
     """ unifies trace handling
@@ -106,8 +106,8 @@ class Correlation(object):
     """ unifies correlation curve handling
     """
     def __init__(self, backgrounds=[], correlation=None, corr_type="AC", 
-                 filename=None, fit_algorithm="LevMar",
-                 fit_model=6000, fit_range=(0,-1),
+                 filename=None, fit_algorithm="Lev-Mar",
+                 fit_model=6000, fit_ival=(0,0),
                  fit_weight_data=None, fit_weight_type="none", 
                  normparm=None, title=None, traces=[]):
         """
@@ -123,10 +123,10 @@ class Correlation(object):
             path to filename of correlation
         fit_algorithm: str
             valid fit algorithm identifier (Algorithms.keys())
+        fit_ival:
+            fitting interval of lag times in indices
         fit_model: instance of FitModel
             the model used for fitting
-        fit_range:
-            fitting range in indices
         fit_weight_data: any
             data for the certain fit_weight_type
         normparm: int
@@ -155,6 +155,7 @@ class Correlation(object):
         self._fit_parameters_variable = None
         self._fit_weight_memory = dict()
         self._model_memory = dict()
+        self._uid = None
 
         self.backgrounds = backgrounds
         self.bg_correction_enabled = True
@@ -164,8 +165,8 @@ class Correlation(object):
         self.filename = filename
         
         self.fit_algorithm = fit_algorithm
+        self.fit_ival = fit_ival
         self.fit_model = fit_model
-        self.fit_range = fit_range
         # Do not change order:
         self.fit_weight_type = fit_weight_type
         self.fit_weight_parameters = fit_weight_data
@@ -202,7 +203,7 @@ class Correlation(object):
                 bgfactor = (S/(S-B))**2
             else:
                 warnings.warn("Correlation {}: no bg-correction".
-                              format(self.uis))
+                              format(self.uid))
                 bgfactor = 1
         else:
             # Crosscorrelation
@@ -235,13 +236,13 @@ class Correlation(object):
         self._correlation = value
 
     @property
-    def correlation_plot(self):
-        """ returns correlation data for plotting (normalized, fit_ranged) """
+    def correlation_fit(self):
+        """ returns correlation data for plotting (normalized, fit_ivald) """
         corr = self.correlation
         if corr is not None:
             # perform parameter normalization
             corr[:,1] *= self.normalize_factor
-            return self.corr[:, self.fit_range[0]:self.fit_range[1]]
+            return corr[:, self.fit_ival[0]:self.fit_ival[1]]
     
     @property
     def is_ac(self):
@@ -281,9 +282,34 @@ class Correlation(object):
             self.normalize_parm = None
 
     @property
+    def fit_ival(self):
+        """lag time interval for fitting"""
+        corr = self._correlation
+        if corr is not None:
+            if self._fit_ival[1] <= 0 or self._fit_ival[1] > corr.shape[0]:
+                self._fit_ival[1] = corr.shape[0]
+        return self._fit_ival
+    
+    @fit_ival.setter
+    def fit_ival(self, value):
+        corr = self.correlation
+        value = list(value)
+        if value[1] <= 0:
+            if corr is not None:
+                value[1] = corr.shape[0]
+            else:
+                # just to be sure
+                value[1] = 10000000000000000
+        self._fit_ival = value
+
+    @property
     def fit_weight_data(self):
         """data of weighted fitting"""
-        return self._fit_weight_memory[self.fit_weight_type]
+        try:
+            data = self._fit_weight_memory[self.fit_weight_type]
+        except KeyError:
+            data = None
+        return data
 
     @fit_weight_data.setter
     def fit_weight_data(self, value):
@@ -317,12 +343,14 @@ class Correlation(object):
     @property
     def fit_parameters_variable(self):
         """which parameters are variable during fitting"""
+        if self._fit_parameters_variable is None:
+            self._fit_parameters_variable = np.array(self.fit_model.default_variables, dtype=bool)
         return self._fit_parameters_variable
 
     @fit_parameters_variable.setter
     def fit_parameters_variable(self, value):
         assert value.shape[0] == self.fit_parameters.shape[0]
-        self._fit_parameters_variable = value
+        self._fit_parameters_variable = np.array(value, dtype=bool)
 
     @property
     def lag_time(self):
@@ -332,6 +360,11 @@ class Correlation(object):
         else:
             # some default lag time
             return np.exp(np.linspace(np.log(1e-8),np.log(100), 200))
+
+    @property
+    def lag_time_fit(self):
+        """lag time as used for fitting"""
+        return self.lag_time[self.fit_ival[0]:self.fit_ival[1]]
 
     @property
     def modeled(self):
@@ -344,9 +377,9 @@ class Correlation(object):
         return modeled
 
     @property
-    def modeled_plot(self):
-        """fitted data values, same shape as self.correlation_plot"""
-        toplot = self.modeled[:, self.fit_range[0]:self.fit_range[1]].copy()
+    def modeled_fit(self):
+        """fitted data values, same shape as self.correlation_fit"""
+        toplot = self.modeled[:, self.fit_ival[0]:self.fit_ival[1]].copy()
         toplot[:,1] *= self.normalize_factor
         return toplot
 
@@ -374,11 +407,11 @@ class Correlation(object):
         return residuals 
     
     @property
-    def residuals_plot(self):
-        """fit residuals, same shape as self.correlation_plot"""
-        residuals_plot = self.correlation_plot.copy()
-        residuals_plot[:,1] -= self.modeled_plot[:,1]
-        return residuals_plot
+    def residuals_fit(self):
+        """fit residuals, same shape as self.correlation_fit"""
+        residuals_fit = self.correlation_fit.copy()
+        residuals_fit[:,1] -= self.modeled_fit[:,1]
+        return residuals_fit
 
     @property
     def uid(self):
@@ -386,8 +419,9 @@ class Correlation(object):
         if self._uid is None:
             hasher = hashlib.sha256()
             hasher.update(str(np.random.random()))
-            hasher.update(str(self.correlation))
-            hasher.update(self.name)
+            hasher.update(str(self._correlation))
+            hasher.update(str(self.filename))
+            hasher.update(str(self.title))
             self._uid = hasher.hexdigest()
         return self._uid
 
@@ -395,170 +429,98 @@ class Correlation(object):
 class Fit(object):
     """ Used for fitting FCS data to models.
     """
-    def __init__(self, raw_data, model_id, model_parms=None,
-                 fit_bool=None, fit_ival=None, fit_ival_is_index=False,
-                 weight_type="none", weight_spread=0, weights=None,
-                 fit_algorithm="Lev-Mar",
-                 verbose=False, uselatex=False):
+    def __init__(self, correlations=[], global_fit_variables=[],
+                 uselatex=False, verbose=0):
         """ Using an FCS model, fit the data of shape (N,2).
 
 
         Parameters
         ----------
-        raw_data : 2d `numpy.ndarray` of shape (2,N)
-            The data to which should be fitted. The first column
-            contains the x data (time in s). The second column contains
-            the y values (correlation data).
-        mode_lid : int
-            Modelid as in `pycorrfit.models.modeldict.keys()`.
-        model_parms : array-type of length P
-            The initial parameters for the specific model.
-        fit_bool : bool array of length P
-            Defines the model parameters that are variable (True) or
-            fixed (False) durin fitting.
-        fit_ival : tuple
-            Interval of x values for fitting given in seconds or by
-            indices (see `fit_ival_is_index`). If the discrete array
-            does not match the interval, then the index closer towards
-            the center of the interval is used.
-        fit_ival_is_index : bool
-            Set to `True` if `fit_ival` is given in indices instead of
-            seconds.
-        weight_type : str
-            Type of weights. Should be one of
-
-                - 'none' (standard) : no weights.
-                - 'splineX' : fit a Xth order spline and calulate standard
-                        deviation from that difference
-                - 'model function' : calculate std. dev. from difference
-                        of fit function and dataexpfull.
-                - 'other' - use `weights`
-        
-        weight_spread : int
-            Number of values left and right from a data point to include
-            to weight a data point. The total number of points included
-            is 2*`weight_spread` + 1.
-        weights : 1d `numpy.ndarray` of length (N)
-            Weights to use when `weight_type` is set to 'other'.
-        fit_algorithm : str
-            The fitting algorithm to be used for minimization. Have a
-            look at the PyCorrFit documentation for more information.
-            Should be one of
-
-                - 'Lev-Mar' : Least squares minimization
-                - 'Nelder-Mead' : Simplex
-                - 'BFGS' : quasi-Newton method of Broyden,
-                         Fletcher, Goldfarb and Shanno
-                - 'Powell'
-                - 'Polak-Ribiere'
-        verbose : int
+        correlations: list of instances of Correlation
+            Correlations to fit.
+        global_fit_variables: list of list of strings
+            Each item contains a list of strings that are names
+            of parameters which will be treated as a common
+            parameter.
+        verbose: int
             Increase verbosity by incrementing this number.
-        uselatex : bool
+        uselatex: bool
             If verbose > 0, plotting will be performed with LaTeX.
         """
-        self.y_full = raw_data[:,1].copy()
-        self.x_full = raw_data[:,0] * 1000 # convert to ms
+        if isinstance(correlations, Correlation):
+            correlations = [correlations]
         
-        # model function
-        self.func = mdls.GetModelFunctionFromId(model_id)
-        
-        # fit parameters
-        if model_parms is None:
-            model_parms = mdls.GetModelParametersFromId(model_id)
-        self.model_parms = model_parms
-        self.model_parms_initial = 1*model_parms
-        
-        # values to fit
-        if fit_bool is None:
-            fit_bool = mdls.GetModelFitBoolFromId(model_id)
-        assert len(fit_bool) == len(model_parms)
-        self.fit_bool = fit_bool
-
-        # fiting interval
-        if fit_ival is None:
-            fit_ival = (self.x[0], self.x[-1])
-        assert fit_ival[0] < fit_ival[1]
-        self.fit_ival = fit_ival
-        
-        self.fit_ival_is_index = fit_ival_is_index
-        
-        
-        # weight type
-        assert weight_type.strip("1234567890") in ["none", "spline",
-                                              "model function", "other"]
-        self.weight_type = weight_type
-        
-        # weight spread
-        assert int(weight_spread) >= 0
-        self.weight_spread = int(weight_spread)
-        
-        # weights
-        if weight_type == "other":
-            assert isinstance(weights, np.ndarray)        
-        self.weights = weights
-
-        self.fit_algorithm = fit_algorithm
+        self.correlations = correlations
+        self.global_fit_variables = global_fit_variables
         self.verbose = verbose
         self.uselatex = uselatex
-
-        self.ComputetXYArrays()
-        self.ComputeWeights()
-
         
-    def ComputeXYArrays(self):
-        """ Determine the fitting interval and set `self.x` and `self.y`
-        
-        Sets:
-        self.x
-        self.y
-        self.fit_ival_index
-        """
-        if not self.fit_ival_is_index:
-            # we need to compute the indices that are inside the
-            # fitting interval.
-            #
-            # interval in seconds:
-            # self.ival
-            #
-            # x values:
-            # self.x
-            #
-            start = np.sum(self.x <= self.ival[0]) - 1 
-            end = self.x.shape[0] - np.sum(self.x >= self.ival[1])
-            self.fit_ival_index = (start, end)
+        if len(global_fit_variables) == 0:
+            for corr in self.correlations:
+                self.x = corr.correlation_fit[:,0]
+                self.y = corr.correlation_fit[:,1]
+                self.fit_algorithm = corr.fit_algorithm
+                self.fit_bool = corr.fit_parameters_variable
+                self.fit_parm = corr.fit_parameters
+                self.check_parms = corr.fit_model.func_verification
+                self.func = corr.fit_model.function
+                self.fit_weights = Fit.compute_weights(corr,
+                                                   verbose=verbose,
+                                                   uselatex=uselatex)
+                self.minimize()
+                corr.fit = self
+                
         else:
-            self.fit_ival_index = start, end = self.fit_ival
-        # We now have two values. Both values will be included in the
-        # cropped arrays.
-        self.x = self.x_full[start:end+1]
-        self.y = self.y_full[start:end+1]
+            x_values = list()
+            y_values = list()
+            raise NotImplementedError("No global fit supported yet.")
+        
 
-
-    def ComputeWeights(self):
-        """ Determines if we have weights and computes them.
-         
-        sets
-        - self.fit_weights
-        - self.is_weighted_fit
+                   
+    @property
+    def chi_squared(self):
         """
-        ival = self.fit_ival_index
-        weight_spread = self.weight_spread
-        weight_type = self.weight_type
+            Calculate Chi² for the current class.
+        """
+        # Calculate degrees of freedom
+        dof = len(self.x) - len(self.fit_parm) - 1
+        # This is exactly what is minimized by the scalar minimizers
+        chi2 = self.fit_function_scalar(self.fit_parm, self.x)
+        return chi2 / dof
 
-        # some frequently used lengths
-        datalen = self.x.shape[0]
-        datalenfull = self.x_full.shape[0]        
-        # Calculated dataweights
-        dataweights = np.zeros(datalen)
-
-        self.is_weighted_fit = True # will be set to False if not weights
+    @staticmethod
+    def compute_weights(correlation, verbose=0, uselatex=False):
+        """ computes and returns weights
+        
+        correlation is instance of Correlation
+        """
+        corr = correlation
+        model = corr.fit_model
+        model_parms = corr.fit_parameters
+        ival = corr.fit_ival
+        weight_data = corr.fit_weight_data
+        weight_type = corr.fit_weight_type
+        #parameters = corr.fit_parameters
+        #parameters_range = corr.fit_parameters_range
+        #parameters_variable = corr.fit_parameters_variable
+        
+        cdat = corr.correlation
+        cdatfit = corr.correlation_fit
+        x_full = cdat[:,0]
+        y_full = cdat[:,1]
+        x_fit = cdatfit[:,0]
+        #y_fit = cdatfit[:,1]
+        
+        dataweights = np.ones_like(x_fit)
+        
 
         if weight_type[:6] == "spline":
             # Number of knots to use for spline
+            weight_spread = weight_data
             try:
                 knotnumber = int(weight_type[6:])
             except:
-                if self.verbose > 1:
+                if verbose > 1:
                     print("Could not get knot number. Setting it to 5.")
                 knotnumber = 5
 
@@ -570,15 +532,16 @@ class Fit(object):
                 # non-optimal case
                 # we need to cut pmin
                 pmin = weight_spread
-            if datalenfull - ival[1] < weight_spread:
+            if x_full.shape[0] - ival[1] < weight_spread:
                 # optimal case
-                pmax = datalenfull - ival[1]
+                pmax = x_full.shape[0] - ival[1]
             else:
                 # non-optimal case
                 # we need to cut pmax
                 pmax = weight_spread
-            x = self.x_full[ival[0]-pmin:ival[1]+pmax]
-            y = self.y_full[ival[0]-pmin:ival[1]+pmax]
+
+            x = x_full[ival[0]-pmin:ival[1]+pmax]
+            y = y_full[ival[0]-pmin:ival[1]+pmax]
             # we are fitting knots on a base 10 logarithmic scale.
             xs = np.log10(x)
             knots = np.linspace(xs[1], xs[-1], knotnumber+2)[1:-1]
@@ -586,17 +549,17 @@ class Fit(object):
                 tck = spintp.splrep(xs, y, s=0, k=3, t=knots, task=-1)
                 ys = spintp.splev(xs, tck, der=0)
             except:
-                if self.verbose > 0:
+                if verbose > 0:
                     raise ValueError("Could not find spline fit with "+\
                                      "{} knots.".format(knotnumber))
                 return
-            if self.verbose > 0:
+            if verbose > 0:
                 try:
                     # If plotting module is available:
                     name = "Spline fit: "+str(knotnumber)+" knots"
                     plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
                                              dirname=".",
-                                             uselatex=self.uselatex)
+                                             uselatex=uselatex)
                 except:
                     # use matplotlib.pylab
                     try:
@@ -615,7 +578,7 @@ class Fit(object):
             # (e.g. points+endcrop > len(dataexpfull)
             # We deal with this by multiplying dataweights with a factor
             # corresponding to the missed points.
-            for i in range(datalen):
+            for i in range(x_fit.shape[0]):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
@@ -650,19 +613,19 @@ class Fit(object):
                     dividor = reference - backset
                     dataweights[i] *= reference/dividor
         elif weight_type == "model function":
-            # Number of neighbouring (left and right) points to include
+            # Number of neighboring (left and right) points to include
             if ival[0] < weight_spread:
                 pmin = ival[0]
             else:
                 pmin = weight_spread
-            if datalenfull - ival[1] <  weight_spread:
-                pmax = datalenfull - self.ival[1]
+            if x_full.shape[0] - ival[1] <  weight_spread:
+                pmax = x_full.shape[0] - ival[1]
             else:
                 pmax = weight_spread
-            x = self.x_full[ival[0]-pmin:ival[1]+pmax]
-            y = self.y_full[ival[0]-pmin:ival[1]+pmax]
+            x = x_full[ival[0]-pmin:ival[1]+pmax]
+            y = y_full[ival[0]-pmin:ival[1]+pmax]
             # Calculated dataweights
-            for i in np.arange(datalen):
+            for i in np.arange(x_fit.shape[0]):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
@@ -682,7 +645,7 @@ class Fit(object):
                 end = start + 2*weight_spread + 1 - offsetstart
                 #start = ival[0] - weight_spread + i
                 #end = ival[0] + weight_spread + i + 1
-                diff = y - self.func(self.model_parms, x)
+                diff = y - model(model_parms, x)
                 dataweights[i] = diff[start:end].std()
                 # The standard deviation at the end and the start of the
                 # array are multiplied by a factor corresponding to the
@@ -699,29 +662,28 @@ class Fit(object):
                     reference = 2*weight_spread + 1
                     dividor = reference - backset
                     dataweights[i] *= reference/dividor
-        elif self.fittype == "other":
+        elif weight_type == "other":
             # This means that the user knows the dataweights and already
             # gave it to us.
-            assert self.weights is not None
+            weights = weight_data
+            assert weights is not None
             
             # Check if these other weights have length of the cropped
             # or the full array.
-            if len(self.weights) == datalen:
-                dataweights = self.weights
-            elif len(self.weights) == datalenfull:
-                dataweights = self.weights[ival[0], ival[1]+1]
+            if weights.shape[0] == x_full.shape[0]:
+                dataweights = weights
+            elif weights.shape[0] == x_full.shape[0]:
+                dataweights = weights[ival[0], ival[1]]
             else:
                 raise ValueError, \
                   "`weights` must have length of full or cropped array."
         else:
-            # The fit.Fit() class will divide the function to minimize
-            # by the dataweights only if we have weights
-            self.is_weighted_fit = False
+            dataweights  = 1
         
-        self.fit_weights = dataweights
+        return dataweights
         
 
-    def fit_func(self, parms, x):
+    def fit_function(self, parms, x):
         """ Create the function to be minimized. The old function
             `function` has more parameters than we need for the fitting.
             So we use this function to set only the necessary 
@@ -730,22 +692,20 @@ class Fit(object):
         # We reorder the needed variables to only use these that are
         # not fixed for minimization
         index = 0
-        for i in np.arange(len(self.model_parms)):
+        for i in np.arange(len(self.fit_parm)):
             if self.fit_bool[i]:
-                self.model_parms[i] = parms[index]
-                index = index + 1
+                self.fit_parm[i] = parms[index]
+                index += 1
         # Only allow physically correct parameters
-        self.model_parms = self.check_parms(self.model_parms)
-        tominimize = (self.func(self.model_parms, x) - self.y)
-        # Check if we have a weighted fit
-        if self.is_weighted_fit:
-            # Check dataweights for zeros and don't use these
-            # values for the least squares method.
-            with np.errstate(divide='ignore'):
-                tominimize = np.where(self.fit_weights!=0, 
-                                      tominimize/self.fit_weights, 0)
-            ## There might be NaN values because of zero weights:
-            #tominimize = tominimize[~np.isinf(tominimize)]
+        self.fit_parm = self.check_parms(self.fit_parm)
+        tominimize = (self.func(self.fit_parm, x) - self.y)
+        # Check dataweights for zeros and don't use these
+        # values for the least squares method.
+        with np.errstate(divide='ignore'):
+            tominimize = np.where(self.fit_weights!=0, 
+                                  tominimize/self.fit_weights, 0)
+        ## There might be NaN values because of zero weights:
+        #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
 
@@ -755,40 +715,22 @@ class Fit(object):
             Returns the sum of squares of the input data.
             (Methods that are not "Lev-Mar")
         """
-        e = self.fit_func(parms,x)
+        e = self.func(parms, x)
         return np.sum(e*e)
 
-
-    def get_chi_squared(self):
-        """
-            Calculate Chi² for the current class.
-        """
-        # Calculate degrees of freedom
-        dof = len(self.x) - len(self.model_parms) - 1
-        # This is exactly what is minimized by the scalar minimizers
-        chi2 = self.fit_function_scalar(self.model_parms, self.x)
-        return chi2 / dof
-
-
     def minimize(self):
-        """ This will minimize *self.fit_function()* using least squares.
-            *self.values*: The values with which the function is called.
-            *valuestofit*: A list with bool values that indicate which values
-            should be used for fitting.
-            Function *self.fit_function()* takes two parameters:
-            self.fit_function(parms, x) where *x* are x-values of *dataexp*.
+        """ This will run the minimization process
         """
-        assert (np.sum(self.fit_bool) == 0), "No parameter selected for fitting."
-
+        assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
         # Get algorithm
         algorithm = Algorithms[self.fit_algorithm][0]
 
         # Begin fitting
         if self.fit_algorithm == "Lev-Mar":
-            res = algorithm(self.fit_function, self.fitparms[:],
+            res = algorithm(self.fit_function, self.fit_parm[:],
                             args=(self.x), full_output=1)
         else:
-            res = algorithm(self.fit_function_scalar, self.fitparms[:],
+            res = algorithm(self.fit_function_scalar, self.fit_parm[:],
                             args=([self.x]), full_output=1)
 
         # The optimal parameters
@@ -796,16 +738,15 @@ class Fit(object):
 
         # Now write the optimal parameters to our values:
         index = 0
-        for i in range(len(self.model_parms)):
-            if self.valuestofit[i]:
-                self.model_parms[i] = parmoptim[index]
+        for i in range(len(self.fit_parm)):
+            if self.fit_bool[i]:
+                self.fit_parm[i] = parmoptim[index]
                 index = index + 1
         # Only allow physically correct parameters
-        self.model_parms = self.check_parms(self.model_parms)
+        self.fit_parm = self.check_parms(self.fit_parm)
         # Write optimal parameters back to this class.
 
-        self.chi = self.get_chi_squared()
-        
+        chi = self.chi_squared
         # Compute error estimates for fit (Only "Lev-Mar")
         if self.fit_algorithm == "Lev-Mar":
             # This is the standard way to minimize the data. Therefore,
@@ -813,7 +754,7 @@ class Fit(object):
             if res[4] not in [1,2,3,4]:
                 warnings.warn("Optimal parameters not found: " + res[3])
             try:
-                self.covar = res[1] * self.chi # The covariance matrix
+                self.covar = res[1] * chi # The covariance matrix
             except:
                 warnings.warn("PyCorrFit Warning: Error estimate not "+\
                               "possible, because we could not "+\
@@ -872,4 +813,3 @@ Algorithms["Powell"] = [spopt.fmin_powell,
 # nonliner conjugate gradient method by Polak and Ribiere
 Algorithms["Polak-Ribiere"] = [spopt.fmin_cg,
            "Polak-Ribiere (nonlinear conjugate gradient)"]
-
