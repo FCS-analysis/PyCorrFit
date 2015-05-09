@@ -89,14 +89,29 @@ class Model(object):
         return self.function(parameters, tau)
 
     @property
+    def components(self):
+        """how many components does this model have"""
+        return self._definitions[1]
+    
+    @property
     def default_values(self):
         """default fitting values"""
-        return self._parameters[1]
+        return np.array(self._parameters[1]).copy()
     
     @property
     def default_variables(self):
         """indexes default variable fitting (bool)"""
-        return self._parameters[2]
+        return np.array(self._parameters[2]).copy()
+
+    @property
+    def description_long(self):
+        """long description"""
+        return self._definitions[3].__doc__
+    
+    @property
+    def description_short(self):
+        """short description"""
+        return self._definitions[2]
 
     @property
     def id(self):
