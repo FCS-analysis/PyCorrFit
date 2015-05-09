@@ -1,39 +1,37 @@
 # -*- coding: utf-8 -*-
-"""
-    PyCorrFit
+u"""PyCorrFit - module "models"
 
-    Module models:
-    Define all models and set initial parameters.
+Define all models and set initial parameters.
 
-    Each model has a unique ID. This ID is very important:
-        1. It is a wxWidgets ID.
-        2. It is used in the saving of sessions to identify a model.
-    It is very important, that model IDs do NOT change in newer versions
-    of PyCorrFit, because it would not be possible to restore older
-    PyCorrFit sessions.
+Each model has a unique ID. This ID is very important:
+    1. It is a wxWidgets ID.
+    2. It is used in the saving of sessions to identify a model.
+It is very important, that model IDs do NOT change in newer versions
+of PyCorrFit, because it would not be possible to restore older
+PyCorrFit sessions.
 
-    Dimensionless representation:
-    unit of time        : 1 ms
-    unit of inverse time: 10³ /s
-    unit of distance    : 100 nm
-    unit of Diff.coeff  : 10 µm²/s
-    unit of inverse area: 100 /µm²
-    unit of inv. volume : 1000 /µm³
+Dimensionless representation:
+unit of time        : 1 ms
+unit of inverse time: 10³ /s
+unit of distance    : 100 nm
+unit of Diff.coeff  : 10 µm²/s
+unit of inverse area: 100 /µm²
+unit of inv. volume : 1000 /µm³
 
-    Copyright (C) 2011-2012  Paul Müller
+Copyright (C) 2011-2012  Paul Müller
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License 
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 
@@ -57,6 +55,61 @@ from . import MODEL_TIRF_3D2D
 from . import MODEL_TIRF_3D3D
 from . import MODEL_TIRF_3D2Dkin_Ries
 
+
+class Model(object):
+    """General class for handling FCS fitting models"""
+    def __init__(self, datadict):
+        """datadict is an item in Modelarray"""
+        self._parameters = datadict["Parameters"]
+        self._definitions = datadict["Definitions"]
+
+        if "Supplements" in list(datadict.keys()):
+            self._supplements = datadict["Supplements"]
+        else:
+            self._supplements = None
+
+        if "Verification" in list(datadict.keys()):
+            self._verification = datadict["Verification"]
+        else:
+            # dummy verification function
+            self._verification = lambda parms: parms
+
+    def __call__(self, parameters, tau):
+        return self.function(parameters, tau)
+    
+    def __getitem__(self, key):
+        """Emulate old list behavior of models"""
+        return self._definitions[key]
+
+    def apply(self, parameters, tau):
+        """ 
+        Apply the model with `parameters` and lag
+        times `tau`
+        """
+        return self.function(parameters, tau)
+
+    @property
+    def id(self):
+        return self._definitions[0]
+    
+    @property
+    def function(self):
+        return self._definitions[3]
+    
+    @property
+    def vardefaults(self):
+        return self._parameters
+
+    @property
+    def supplements(self):
+        return self._supplements
+
+    @property
+    def verification(self):
+        return self._verification
+
+
+
 def AppendNewModel(Modelarray):
     """ Append a new model from a modelarray. *Modelarray* has to be a list
         whose elements have two items:
@@ -68,34 +121,25 @@ def AppendNewModel(Modelarray):
     global valuedict
     global models
     global modeldict
+    global supplement
     global verification
 
-    for Model in Modelarray:
+    for datadict in Modelarray:
         # We can have many models in one model array
-        parms = Model["Parameters"]
-        texts = Model["Definitions"]
-        values.append(parms)
-        # model ID is texts[0]
-        valuedict[texts[0]] = parms
-        models.append(texts)
-        modeldict[texts[0]] = texts
-        # Suplementary Data might be there
-        try:
-            supper = Model["Supplements"]
-        except KeyError:
-            # Nothing to do
-            pass
-        else:
-            supplement[texts[0]] = supper
+        amod = Model(datadict)
+
+        models.append(amod)
+        modeldict[amod.id] = amod
+
+        values.append(amod.vardefaults)
+        valuedict[amod.id] = amod.vardefaults
+
+        # Supplementary Data might be there
+        if amod.supplements is not None:
+            supplement[amod.id] = amod.supplements
+
         # Check functions - check for correct values
-        try:
-            verify = Model["Verification"]
-        except KeyError:
-            # Nothing to do. Return empty function, so we do not need to
-            # do this try and error thing again.
-            verification[texts[0]] = lambda parms: parms
-        else:
-            verification[texts[0]] = verify
+        verification[amod.id] = amod.verification
 
 
 def GetHumanReadableParms(model, parameters):
@@ -334,40 +378,10 @@ supplement = dict()
 verification = dict()
 
 
-# 6001 6002 6031
-AppendNewModel(MODEL_classic_gaussian_2D.Modelarray)
-
-# 6011 6012 6030
-AppendNewModel(MODEL_classic_gaussian_3D.Modelarray)
-
-# 6032
-AppendNewModel(MODEL_classic_gaussian_3D2D.Modelarray)
-
-# 6013 6014
-AppendNewModel(MODEL_TIRF_gaussian_1C.Modelarray)
-
-# 6033
-AppendNewModel(MODEL_TIRF_gaussian_3D2D.Modelarray)
-
-# 6034
-AppendNewModel(MODEL_TIRF_gaussian_3D3D.Modelarray)
-
-# 6000 6010
-AppendNewModel(MODEL_TIRF_1C.Modelarray)
-
-# 6022
-AppendNewModel(MODEL_TIRF_2D2D.Modelarray)
-
-# 6020
-AppendNewModel(MODEL_TIRF_3D2D.Modelarray)
-
-# 6023
-AppendNewModel(MODEL_TIRF_3D3D.Modelarray)
-
-# 6021
-AppendNewModel(MODEL_TIRF_3D2Dkin_Ries.Modelarray) 
-
-
+# Load all models from the imported "MODEL_*" submodules
+for g in list(globals().keys()):
+    if g.startswith("MODEL_") and hasattr(globals()[g], "Modelarray"):
+        AppendNewModel(globals()[g].Modelarray)
 
 # Create a list for the differentiation between the models
 # This should make everything look a little cleaner
