@@ -25,7 +25,7 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph.shortest_path",
-                 "scipy.sparse.csgraph"._validation]
+                 "scipy.sparse.csgraph._validation"]
 
 
 ## Create inno setup .iss file
