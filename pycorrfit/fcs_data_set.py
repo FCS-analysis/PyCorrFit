@@ -373,7 +373,7 @@ class Correlation(object):
         lag = self.lag_time
         modeled = np.zeros((lag.shape[0], 2))
         modeled[:,0] = lag
-        modeled[:,1] = self.fit_model(self.fit_parameters, self.lag_time)
+        modeled[:,1] = self.fit_model(self.fit_parameters, lag)
         return modeled
 
     @property
@@ -468,7 +468,10 @@ class Fit(object):
                                                    verbose=verbose,
                                                    uselatex=uselatex)
                 self.minimize()
+                # save fit instance in correlation class
                 corr.fit = self
+                # update correlation model parameters
+                corr.fit_parameters = self.fit_parm
                 
         else:
             x_values = list()
@@ -708,7 +711,6 @@ class Fit(object):
         #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
-
     def fit_function_scalar(self, parms, x):
         """
             Wrapper of `fit_function` for scalar minimization methods.
@@ -727,10 +729,10 @@ class Fit(object):
 
         # Begin fitting
         if self.fit_algorithm == "Lev-Mar":
-            res = algorithm(self.fit_function, self.fit_parm[:],
+            res = algorithm(self.fit_function, self.fit_parm[self.fit_bool],
                             args=(self.x), full_output=1)
         else:
-            res = algorithm(self.fit_function_scalar, self.fit_parm[:],
+            res = algorithm(self.fit_function_scalar, self.fit_parm[self.fit_bool],
                             args=([self.x]), full_output=1)
 
         # The optimal parameters
