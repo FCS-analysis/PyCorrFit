@@ -66,7 +66,7 @@ class Model(object):
         if "Supplements" in list(datadict.keys()):
             self._supplements = datadict["Supplements"]
         else:
-            self._supplements = None
+            self._supplements = lambda x, y: []
 
         if "Verification" in list(datadict.keys()):
             self._verification = datadict["Verification"]
@@ -89,25 +89,58 @@ class Model(object):
         return self.function(parameters, tau)
 
     @property
+    def default_values(self):
+        return self._parameters[1]
+
+    @property
     def id(self):
         return self._definitions[0]
     
     @property
     def function(self):
         return self._definitions[3]
-    
-    @property
-    def vardefaults(self):
-        return self._parameters
 
     @property
-    def supplements(self):
+    def func_supplements(self):
         return self._supplements
 
     @property
-    def verification(self):
+    def func_verification(self):
         return self._verification
+    
+    def get_supplementary_parameters(self, values, countrate):
+        """
+        Compute additional information for the model
+        
+        Parameters
+        ----------
+        values: list-like of same length as `self.default_values`
+            parameters for the model
+        countrate: float
+            count rate in Hz
+        """
+        return self.func_supplements(values, countrate*1e-3)
 
+    def get_supplementary_values(self, values, countrate):
+        """
+        Returns only the values of
+        self.get_supplementary_parameters
+        
+        Parameters
+        ----------
+        values: list-like of same length as `self.default_values`
+            parameters for the model
+        countrate: float
+            count rate in Hz
+        """
+        out = list()
+        for item in  self.get_supplementary_parameters(values, countrate):
+            out.append(item[1])
+        return out
+
+    @property
+    def parameters(self):
+        return self._parameters
 
 
 def AppendNewModel(Modelarray):
@@ -131,15 +164,14 @@ def AppendNewModel(Modelarray):
         models.append(amod)
         modeldict[amod.id] = amod
 
-        values.append(amod.vardefaults)
-        valuedict[amod.id] = amod.vardefaults
+        values.append(amod.parameters)
+        valuedict[amod.id] = amod.parameters
 
         # Supplementary Data might be there
-        if amod.supplements is not None:
-            supplement[amod.id] = amod.supplements
+        supplement[amod.id] = amod.func_supplements
 
         # Check functions - check for correct values
-        verification[amod.id] = amod.verification
+        verification[amod.id] = amod.func_verification
 
 
 def GetHumanReadableParms(model, parameters):
