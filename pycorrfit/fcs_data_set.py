@@ -271,7 +271,7 @@ class Correlation(object):
             # overwrite fitting parameters
             self._fit_parameters = self._fit_model.default_values
             self._fit_parameters_variables = self._fit_model.default_variables
-            self._fit_parameters_range = np.zeros((len(self.self._fit_parameters, 2)))
+            self._fit_parameters_range = np.zeros((len(self._fit_parameters, 2)))
             self.normalize_parm = None
 
     @property
@@ -330,7 +330,7 @@ class Correlation(object):
     def modeled(self):
         """fitted data values, same shape as self.correlation"""
         # perform parameter normalization
-        return self.fit_model(self.parameters, self.lag_time)
+        return self.fit_model(self.fit_parameters, self.lag_time)
 
     @property
     def modeled_plot(self):
