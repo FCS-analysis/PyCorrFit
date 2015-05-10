@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" PyCorrFit
+u""" PyCorrFit
 
     Module tools - statistics
     Provide the user with tab-separated statistics of their curves.
@@ -226,7 +226,7 @@ class Stat(wx.Frame):
             elif key == "fitting":
                 for fitp in Infodict[key]:
                     # We added the error data before in the parm section
-                    if str(fitp[0])[0:4] != "Err ":
+                    if unicode(fitp[0])[0:4] != u"Err ":
                         tail.append(fitp)
             elif key == "supplement":
                 body += Infodict[key]
@@ -594,9 +594,9 @@ class Stat(wx.Frame):
         (ax, ay) = self.GetSizeTuple()
         (px, py) = self.topSizer.GetMinSizeTuple()
         self.sp.SetSashPosition(px+5)
+        self.SetMinSize((px+400, py))
         self.SetSize((np.max([px+400,ax,oldsize[0]]),
                       np.max([py,ay,oldsize[1]])))
-        self.SetMinSize((px+400, py))
         # Replot
         self.OnDropDown()
 
