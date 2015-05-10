@@ -167,7 +167,8 @@ class Stat(wx.Frame):
         # Set size of window
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self.panel)
-
+        px = self.topSizer.GetMinSizeTuple()[0]
+        
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
