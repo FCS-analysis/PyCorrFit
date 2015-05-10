@@ -32,6 +32,7 @@ from __future__ import division
 
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
+import wx.lib.scrolledpanel as scrolled
 import numpy as np
 
 from .info import InfoClass
@@ -60,7 +61,7 @@ class Stat(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Statistics",
-                 pos=pos,
+                 pos=pos, size=(700,600),
                  style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
         ## MYID
         # This ID is given by the parent for an instance of this class
@@ -86,7 +87,8 @@ class Stat(wx.Frame):
         #   do not make a mess out of it.
         # Then the user presses a button and sees/saves the table
         # with all the info.
-        self.panel = wx.Panel(self.sp)
+        self.panel = scrolled.ScrolledPanel(self.sp)
+        self.panel.SetupScrolling(scroll_y=True)
         # Parameter settings.
         if self.parent.notebook.GetPageCount() != 0:
             self.InfoClass = InfoClass(CurPage=self.Page)
@@ -164,13 +166,11 @@ class Stat(wx.Frame):
         self.topSizer.Add(self.btnSave)
         # Set size of window
         self.panel.SetSizer(self.topSizer)
-        self.topSizer.Fit(self)
-        (px, py) = self.topSizer.GetMinSizeTuple()
+        self.topSizer.Fit(self.panel)
 
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
-        self.SetMinSize((px+400, py))
         ## Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
