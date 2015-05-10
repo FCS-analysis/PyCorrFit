@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- mode: python -*-
 hiddenimports = [
  		 "scipy.io.matlab.streams",
