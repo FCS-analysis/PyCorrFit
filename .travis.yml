@@ -98,8 +98,9 @@ deploy:
   file_glob: true
   file: 
     - "${RELEASE_PKG_FILEC}"
-#    - "${RELEASE_PKG_FILEB}"
-    - "${RELEASE_PKG_FILEA}"
+    - "${RELEASE_PKG_FILEB}"
+# zip file only for debug reasons
+#    - "${RELEASE_PKG_FILEA}"
   on:
     tags: true
     repo: paulmueller/PyCorrFit
