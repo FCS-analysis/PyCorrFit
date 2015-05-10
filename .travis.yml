@@ -60,7 +60,7 @@ install:
 # http://trac.wxwidgets.org/ticket/16767#no1
 - arch -i386 python -c "import wx; print wx.__version__"
 - arch -i386 python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
-#- patch /usr/local/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
+- patch /usr/local/lib/wxPython-3.0.2.0/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
 # wxPython is only available in 64bit version with homebrew
 #- brew install wxpython
 
@@ -98,7 +98,7 @@ deploy:
   file_glob: true
   file: 
     - "${RELEASE_PKG_FILEC}"
-    - "${RELEASE_PKG_FILEB}"
+#    - "${RELEASE_PKG_FILEB}"
     - "${RELEASE_PKG_FILEA}"
   on:
     tags: true
