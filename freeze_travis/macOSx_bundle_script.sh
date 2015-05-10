@@ -85,5 +85,8 @@ mkdir dmgsrc
 cp ../doc/*.pdf dmgsrc/
 cp ../ChangeLog.txt dmgsrc/
 cp -r ${Progname}".app" dmgsrc/
+# hdiutil: create failed - error -5341
+# http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil
+touch dmgsrc/.Trash
 hdiutil create ${DMGname} -srcfolder dmgsrc/ -ov
 popd
