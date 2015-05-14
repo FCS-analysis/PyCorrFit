@@ -1,13 +1,15 @@
 0.8.8
-- If you install with pip, you now need to include
+- If you install the GUI with pip, you now need to include
   the `GUI` requirement: `pip install pycorrfit[GUI]`.
+  The GUI depends on matplotlib and wxPython which is not
+  required for scripting with the pycorrfit module.
 - Bugfix: missing version string on SuSe linux (#101)
 - Under the hood:
    - Python entry point script replaces "bin/" script
    - Windows build system hosted by appveyor.com
    - MacOS X build system hosted by travis-ci.org
    - New builds use wxPython3 (#85)
-   - Unicode without `reload(sys)`
+   - Unicode support without `reload(sys)`
 0.8.7
 - Removed unused fitting parameter d_eva from model 6022 and
   secured backwards compatibility.
@@ -25,14 +27,14 @@
 - Fixed bug that made it impossible to load data (#88)
 - Exceptions are now handled by wxPython
 - Under the hood:
-   - pythonic repository structure
+   - Pythonic repository structure
    - Relative imports
    - Windows build machine is now Windows 7
    - Removed strict dependency on matplotlib
 0.8.4
 - Support for PicoQuant data file format
   Many thanks to Dominic Waithe (@dwaithe)
-- Improved comaptibility with Zeiss .fcs file format
+- Improved compatibility with Zeiss .fcs file format
 - PyCorrFit is now dependent on Cython
 - The module 'openfile' is now available from within Python
 - Installer for Windows
@@ -42,7 +44,7 @@
 - Improvements
    - Massive speed-up when working with large data sets (#77)
    - Plot export: legend position and displayed parameters (#54)
-   - Average tool: traces may now start at timepoints != 0
+   - Average tool: traces may now start at time points != 0
    - Statistics tool: display on smaller screens
    - ALV data files: updated parser to identify curve types and segment traces
    - Zeiss ConfoCor3 data files: some files could not be opened due to dummy AC curves
@@ -50,9 +52,9 @@
    - Software: notification dialogs for missing modules or other software
 - Bugfixes
    - User could accidently clear a session (#65)
-   - wxPython plotting problen on MacOSx (#64)
+   - wxPython plotting problem on MacOSx (#64)
    - Statistics view: some parameters were duplicated (#76)
-   - Catched zero-division warnings (models with triplet component)
+   - Caught zero-division warnings (models with triplet component)
    - Corrected x-axis scaling of statistics view and trace view
 0.8.2
 - The documentation has been thoroughly reworked
@@ -70,7 +72,7 @@
    - Some ConfoCor files were not imported
    - The cpp was not calculated correctly in case of background correction (#45)
    - Enabled averaging of single pages (#58)
-   - Background correction for cross-correlation data is now copmuted (#46)
+   - Background correction for cross-correlation data is now computed (#46)
 - Improvements of the user interface
    - The menus have been reordered (#47, #50)
    - The fitting panel has been optimized (#49)
@@ -78,7 +80,7 @@
    - The Help menu contains documentation and wiki (#56)
    - Model functions that are somehow redundant have been removed from the menu,
      but are still supported
-   - The model doc strings were fully converted to unicode
+   - The model doc strings were fully converted to Unicode
    - Several text messages were modified for better coherence
    - The background correction tool is more intuitive
    - Statistics panel improvements (#43)
