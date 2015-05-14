@@ -1,0 +1,7 @@
+Cython==0.22
+matplotlib==1.4.3
+numpy==1.9.2
+PyYAML==3.11
+scipy==0.14.0
+sympy==0.7.6
+wheel

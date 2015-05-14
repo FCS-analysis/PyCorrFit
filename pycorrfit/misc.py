@@ -46,7 +46,7 @@ class UpdateDlg(wx.Frame):
         pos = parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update", 
-                          size=(250,180), pos=pos)
+                          size=(230,240), pos=pos)
         self.changelog = changelog
         # Fill html content
         html = wxHTML(self)

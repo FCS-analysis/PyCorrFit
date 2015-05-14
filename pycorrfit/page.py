@@ -1076,8 +1076,6 @@ class FittingPanel(wx.Panel):
         # Disable Fitting since no data has been loaded yet
         for element in self.Fitbox:
             element.Disable()
-        x = self.panelsettings.GetSize()[0]
-        y = self.parent.GetSize()[1] - 33
-        self.parent.SetSize((x,y))
+        self.panelsettings.sizer.Fit(self.panelsettings)
         self.parent.Layout()
 

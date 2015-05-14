@@ -96,7 +96,7 @@ class InfoClass(object):
         Fitting = "\nFitting:\n"
         try:
             for item in InfoDict["fitting"]:
-                Fitting = Fitting + "  "+item[0]+"\t"+str(item[1])+"\n"
+                Fitting = Fitting + "  "+item[0]+"\t"+unicode(item[1])+"\n"
         except KeyError:
             Fitting = ""
         # Background
