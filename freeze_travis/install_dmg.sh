@@ -19,7 +19,7 @@ install_dmg() {
     find "$TMPMOUNT" -name '*.pkg' -exec installer -target "$target" -pkg "{}" \;
     hdiutil detach "$TMPMOUNT"
     rm -rf "$TMPMOUNT"
-    rm -f "$dmg"
+    #rm -f "$dmg"
 }
 
 install_dmg_url() {

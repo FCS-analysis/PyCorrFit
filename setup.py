@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # To just compile the cython part in-place:
 #  python setup.py build_ext --inplace
 # To create a distribution package for pip or easy-install:
@@ -7,7 +8,7 @@
 #  pip install wheel twine
 #  python setup.py bdist wheel
 from __future__ import print_function
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, Extension
 import sys
 
 from os.path import join, dirname, realpath, exists
@@ -20,7 +21,8 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 
-# Cython only where available
+# We don't need cython if a .whl package is available.
+# Try to import cython and throw a warning if it does not work.
 try:
     from Cython.Distutils import build_ext
     import numpy as np
@@ -28,6 +30,7 @@ except ImportError:
     print("Cython or NumPy not available. Building extensions "+
           "with this setup script will not work:", sys.exc_info())
     EXTENSIONS = []
+    build_ext = None
 else:
     EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
                         ["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
@@ -35,7 +38,6 @@ else:
                         include_dirs=[np.get_include()]
                         )
               ]
-
 
 # Download documentation if it was not compiled
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
@@ -57,40 +59,50 @@ except:
     warn("Could not find 'ChangeLog.txt'. PyCorrFit version is unknown.")
     version = "0.0.0-unknown"
 
-
-
-
+# Parameters
+author = u"Paul Müller"
+authors = [author]
+description = 'Scientific tool for fitting correlation curves on a logarithmic plot.'
 name = 'pycorrfit'
+year = "2014"
 
 setup(
-    name=name,
-    author='Paul Mueller',
+    
+    author=author,
     author_email='paul.mueller@biotec.tu-dresden.de',
+    classifiers= [
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Intended Audience :: Science/Research'
+        ],
+    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
+    description=description,
+    include_package_data=True,
+    keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
+              "tir", "fitting"
+              ],
+    license="GPL v2",
+    long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
+    name=name,
+    platforms=['ALL'],
     url='https://github.com/paulmueller/PyCorrFit',
     version=version,
+    # data files
     packages=['pycorrfit',
               'pycorrfit.models',
               'pycorrfit.readfiles',
-              'pycorrfit.tools'],
+              'pycorrfit.tools'
+              ],
     package_dir={'pycorrfit': 'pycorrfit',
                  'pycorrfit.models': 'pycorrfit/models',
                  'pycorrfit.readfiles': 'pycorrfit/readfiles',
-                 'pycorrfit.tools': 'pycorrfit/tools'},
-    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
-    license="GPL v2",
-    description='Scientific tool for fitting correlation curves on a logarithmic plot.',
-    long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
-    include_package_data=True,
-    cmdclass={"build_ext": build_ext},
+                 'pycorrfit.tools': 'pycorrfit/tools'
+                 },
+    # cython
     ext_modules=EXTENSIONS,
-    setup_requires=[
-        "cython",
-        ],
-    install_requires=[
-        "NumPy >= 1.5.1",
-        "SciPy >= 0.8.0",
-        "PyYAML >= 3.09",
-        ],
+    cmdclass={"build_ext": build_ext},
+    # requirements
     extras_require = {
         # If you need the GUI of this project in your project, add
         # "thisproject[GUI]" to your install_requires
@@ -99,20 +111,15 @@ setup(
         # User Model Checks
         'UMC': ["sympy >= 0.7.2"],
         },
-    keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
-              "tir", "fitting"
+    install_requires=[
+        "NumPy >= 1.5.1",
+        "SciPy >= 0.8.0",
+        "PyYAML >= 3.09",
         ],
-    classifiers= [
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Topic :: Scientific/Engineering :: Visualization',
-        'Intended Audience :: Science/Research'
-        ],
-    platforms=['ALL'],
+    setup_requires=["cython"],
+    # scripts
     entry_points={
        "gui_scripts": ["{name:s}={name:s}:Main [GUI]".format(
                                                        **{"name":name})]
        }
     )
-
-
