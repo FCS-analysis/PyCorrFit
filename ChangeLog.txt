@@ -1,3 +1,13 @@
+0.8.8
+- If you install with pip, you now need to include
+  the `GUI` requirement: `pip install pycorrfit[GUI]`.
+- Bugfix: missing version string on SuSe linux (#101)
+- Under the hood:
+   - Python entry point script replaces "bin/" script
+   - Windows build system hosted by appveyor.com
+   - MacOS X build system hosted by travis-ci.org
+   - New builds use wxPython3 (#85)
+   - Unicode without `reload(sys)`
 0.8.7
 - Removed unused fitting parameter d_eva from model 6022 and
   secured backwards compatibility.
