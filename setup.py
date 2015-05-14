@@ -117,7 +117,7 @@ setup(
     setup_requires=["cython"],
     # scripts
     entry_points={
-       "gui_scripts": ["{name:s}={name:s}:Main [GUI]".format(
+       "gui_scripts": ["{name:s}={name:s}:Main".format(
                                                        **{"name":name})]
        }
     )

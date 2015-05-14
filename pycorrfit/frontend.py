@@ -1450,8 +1450,12 @@ class MyFrame(wx.Frame):
         verbose = self.MenuVerbose.IsChecked()
         show_weights = self.MenuShowWeights.IsChecked()
         Page = self.notebook.GetCurrentPage()
-        plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
+        try:
+            plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
                                      verbose, show_weights)
+        except NameError as inst:
+            raise NameError("Please make sure matplotlib is installed: "+\
+                            str(inst))
 
 
     def OnSavePlotTrace(self, e=None):
@@ -1460,7 +1464,11 @@ class MyFrame(wx.Frame):
         uselatex = 1*self.MenuUseLatex.IsChecked()
         verbose = 1*self.MenuVerbose.IsChecked()
         Page = self.notebook.GetCurrentPage()
-        plotting.savePlotTrace(self, self.dirname, Page, uselatex, verbose)
+        try:
+            plotting.savePlotTrace(self, self.dirname, Page, uselatex, verbose)
+        except NameError as inst:
+            raise NameError("Please make sure matplotlib is installed: "+\
+                            str(inst))
 
 
     def OnSaveSession(self,e=None):
