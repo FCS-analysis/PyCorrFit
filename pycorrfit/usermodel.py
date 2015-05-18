@@ -1,35 +1,13 @@
 # -*- coding: utf-8 -*-
-""" PyCorrFit
+"""
+PyCorrFit
 
-    Module: user model:
-    When the user wants to use his own functions.
-    We are using sympy as function parser instead of writing our own,
-    which might be safer.
-    We only parse the function with sympy and test it once during
-    import. After that, the function is evaluated using eval()!
-
-    Dimensionless representation:
-    unit of time        : 1 ms
-    unit of inverse time: 10³ /s
-    unit of distance    : 100 nm
-    unit of Diff.coeff  : 10 µm²/s
-    unit of inverse area: 100 /µm²
-    unit of inv. volume : 1000 /µm³
-
-    Copyright (C) 2011-2012  Paul Müller
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+Module: user model:
+When the user wants to use his own functions.
+We are using sympy as function parser instead of writing our own,
+which might be safer.
+We only parse the function with sympy and test it once during
+import. After that, the function is evaluated using eval()!
 """
 
 
