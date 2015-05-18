@@ -1029,6 +1029,7 @@ class MyFrame(wx.Frame):
         ## which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
         BadFiles = list()
+        Exceptions = list()
         # Lists for correlation, trace, type and names
         Correlation = list()
         Trace = list()
@@ -1052,11 +1053,15 @@ class MyFrame(wx.Frame):
             #Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
-            except:
+            except Exception as excpt:
                 # The file does not seem to be what it seems to be.
                 BadFiles.append(afile)
+                Exceptions.append(excpt)
+                # Print exception
+                trb = traceback.format_exc(excpt)
+                trb = "..." + trb.replace("\n", "\n...")
                 warnings.warn("Problem processing a file."+\
-                  " Reason: {}.".format(sys.exc_info()[1].message))
+                  " Reason:\n{}".format(trb))
             else:
                 for i in np.arange(len(Stuff["Type"])):
                     Correlation.append(Stuff["Correlation"][i])
@@ -1082,8 +1087,10 @@ class MyFrame(wx.Frame):
         if len(BadFiles) > 0:
             # The file does not seem to be what it seems to be.
             errstr = "The following files could not be processed:\n"
-            for item in BadFiles:
-                errstr += " "+item
+            for item, excpt in zip(BadFiles, Exceptions):
+                trb = traceback.format_exc(excpt)
+                trb = "   " + trb.replace("\n", "\n   ")
+                errstr += " " + item + "\n" + trb 
             dlg = wx.MessageDialog(self, errstr, "Error", 
                 style=wx.ICON_WARNING|wx.OK|wx.CANCEL|wx.STAY_ON_TOP)
             if dlg.ShowModal() == wx.ID_CANCEL:
@@ -1453,9 +1460,10 @@ class MyFrame(wx.Frame):
         try:
             plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
                                      verbose, show_weights)
-        except NameError as inst:
-            raise NameError("Please make sure matplotlib is installed: "+\
-                            str(inst))
+        except NameError as excpt:
+            trb = traceback.format_exc(excpt)
+            trb = "   " + trb.replace("\n", "\n   ")
+            raise NameError("Please make sure matplotlib is installed:\n"+trb)
 
 
     def OnSavePlotTrace(self, e=None):
@@ -1466,9 +1474,10 @@ class MyFrame(wx.Frame):
         Page = self.notebook.GetCurrentPage()
         try:
             plotting.savePlotTrace(self, self.dirname, Page, uselatex, verbose)
-        except NameError as inst:
-            raise NameError("Please make sure matplotlib is installed: "+\
-                            str(inst))
+        except NameError as excpt:
+            trb = traceback.format_exc(excpt)
+            trb = "   " + trb.replace("\n", "\n   ")
+            raise NameError("Please make sure matplotlib is installed:\n"+trb)
 
 
     def OnSaveSession(self,e=None):

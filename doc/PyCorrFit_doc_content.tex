@@ -49,22 +49,24 @@ This documentation addresses the processing of correlation curves with \textit{P
 The latest version of \textit{PyCorrFit} can be obtained from the internet at \url{http://pycorrfit.craban.de}.
 \begin{itemize}
 \item \textbf{MacOSx.}
-Binary files for Mac OSx 10.6.8 and later are available from the download page.
+Binary files for Mac OSx 10.9.5 and later are available from the download page.
 \item \textbf{Windows.}
 For Windows XP and later, stand-alone binary executables are available from the download page. 
 \item \textbf{Ubuntu/Debian.}
-PyCorrFit is available from the Debian repositories and can be installed via the operating systems packaging tool (e.g. \texttt{apt-get install pycorrfit}). There are also binaries for Ubuntu at the PyCorrFit download page.
-\item\textbf{Pypi.} The program was written in Python, keeping the concept of cross-platform programming in mind. To run \textit{PyCorrFit} on any other operating system, the installation of Python v.2.7 is required. \textit{PyCorrFit} is included in the package index of \texttt{python-pip} (\url{http://pypi.python.org/pypi/pip}) and can be installed via
-\texttt{pip~install~pycorrfit}\footnote{See also the wiki article at \url{https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip}}.
+PyCorrFit is available from the Debian repositories and can be installed via the operating systems packaging tool (e.g. \texttt{apt-get install pycorrfit}).
+\item\textbf{PyPI.} To run \textit{PyCorrFit} on any other operating system, the installation of Python v.2.7 is required. \textit{PyCorrFit} is included in the Python package index (PyPI, \url{http://pypi.python.org/pypi/pip}) and can be installed via\footnote{See also the wiki article at \url{https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip}}
+\texttt{pip~install~pycorrfit$\!$[GUI]}.
 \item \textbf{Sources.}
-You can also directly download the source code at any developmental stage\footnote{See also the wiki article at \url{https://github.com/paulmueller/PyCorrFit/wiki/Running-from-source}}. \textit{PyCorrFit} depends on the following python modules:\\
-\texttt{\\
-python-matplotlib ($\geq$ 1.0.1) \\
-python-numpy ($\geq$ 1.5.1) \\
-python-scipy ($\geq$ 0.8.0) \\
-python-sympy ($\geq$ 0.7.2) \\
-python-yaml \\
-python-wxgtk2.8 \\
+You can also directly download the source code at any developmental stage\footnote{See also the wiki article at \url{https://github.com/paulmueller/PyCorrFit/wiki/Running-from-source}}. \textit{PyCorrFit} depends on the following python modules:
+\texttt{
+\begin{itemize}
+\item matplotlib ($\geq$ 1.0.1)
+\item NumPy ($\geq$ 1.5.1)
+\item PyYAML
+\item SciPy ($\geq$ 0.8.0)
+\item sympy ($\geq$ 0.7.2)
+\item wxPython3
+\end{itemize}
 }
 \end{itemize}
 
@@ -72,16 +74,6 @@ python-wxgtk2.8 \\
 \vspace{1em}
 \noindent \textbf{\LaTeX .} \textit{PyCorrFit} can save correlation curves as images using matplotlib. It is also possible to utilize \LaTeX to generate these plots. On Windows, installing MiKTeX  with ``automatic package download'' will enable this feature. On MacOSx, the MacTeX distribution can be used. On other systems, a latex distribution, Ghostscript, \texttt{dvipng} and the latex packages \texttt{texlive-latex-base} and \texttt{texlive-math-extra} need to be installed.
 
-\subsubsection{Running \textit{PyCorrFit}}
-\label{sec:intro.runni}
-\paragraph*{Windows.}
-Download the executable file and double-click on the \texttt{PyCorrFit.exe} icon.
-\paragraph*{Ubuntu/Debian.}
-\texttt{PyCorrFit} is integrated into Debian and thus behaves like any other application.
-\paragraph*{Mac OSx.}
-When downloading the archive \texttt{PyCorrFit.zip}, the binary should be extracted automatically (if not, extract the archive) and you can double-click it to run \textit{PyCorrFit}.If prompted, select \textit{Terminal.app} from the \textit{utilities} folder. Drag the \textit{PyCorrFit} icon onto the Terminal, then MAcOS will assign Terminal.app as the standard application for opening this file (can be checked under properties).
-\paragraph*{from source.}
-Invoke \texttt{python PyCorrFit.py} from the command line.
 
 \subsection{Workflow}
 \label{sec:intro.workf}
@@ -109,7 +101,7 @@ The fitting itself is usually explored with a representative data set. Here, the
 \includegraphics[width=\linewidth]{PyCorrFit_Screenshot_Main.png}
  \mycaption{user interface of PyCorrFit}{Confocal measurement of nanomolar Alexa488 in aqueous solution. To avoid after-pulsing, the autocorrelation curve was measured by cross-correlating signals from two detection channels using a 50 \% beamsplitter. Fitting reveals the average number of observed particles ($n \approx 6$) and their residence time in the detection volume ($\tau_{\rm diff} = \SI{28}{\mu s})$. \label{fig:mainwin} }
 \end{figure}
-Together with a system's terminal of the platform on which \textit{PyCorrFit} was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program as described in \hyref{Section}{sec:intro.runni}. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
+Together with a system's terminal of the platform on which \textit{PyCorrFit} was installed (Windows, Linux, MacOS), the \textit{main window} opens when starting the program. The window title bar contains the version of \textit{PyCorrFit} and, if a session was re-opened or saved, the name of the fitting session. A menu bar provides access to many supporting tools and additional information as thoroughly described in \hyref{Chapter}{sec:menub}. 
 
 There are three gateways for experimental data into a pre-existing or a new \textit{PyCorrFit} session (\textit{File/Load data}, \textit{File/Open session}, and \textit{Current page/Import data}). When a session has been opened or correlation data have been loaded, each correlation curve is displayed on a separate page of a notebook. For quick identification of the active data set, a tab specifies the page number, the correlated channels (AC/CC), and the run number in cases where  multiple correlation runs are combined in a single file. When clicking a little triangle to the far-right, one can use a drop-down list of all page titles to directly access a particular data set. Alternatively, the pages can be toggled by tapping the arrow keys (left/right). There can be only one activated page for which the tab appears highlighted.
 

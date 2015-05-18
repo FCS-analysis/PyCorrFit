@@ -114,7 +114,9 @@ def openASC(dirname, filename):
     for i in np.arange(len(Alldata)):
         if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
-            if mode.lower().count('single'):
+            if (mode.lower().count('single') or
+                mode.lower().strip() == "a-ch0" or 
+                mode.lower().strip() == "a-ch1"):
                 single = True
                 channel = mode.split(" ")[-1]
             else:
@@ -212,7 +214,6 @@ def openASC(dirname, filename):
     corrlist = list()
     tracelist = list()
     typelist = list()
-    
         
     if single:
         # We only have several runs and one average
@@ -365,6 +366,6 @@ def mysplit(a, n):
     data[:,0] = x + newstep
     # make sure that the average stays the same:
     data[:,1] = y - np.average(y) + np.average(yp)
-    
+
     return np.split(data,n)
     
