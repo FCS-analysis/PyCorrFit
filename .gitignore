@@ -64,3 +64,8 @@ nosetests.xml
 # ~
 *.py~
 *.md~
+*.yml~
+*.sh~
+*.spec~
+*.c
+*.txt~
