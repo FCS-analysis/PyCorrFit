@@ -5,9 +5,10 @@
 #  author: /.*/
 
 # Only build master branch
-branches:
-  only:
-  - master
+## seems to prevent building tags
+#branches:
+#  only:
+#  - master
 
 environment:
 
