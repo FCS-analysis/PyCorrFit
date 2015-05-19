@@ -87,8 +87,10 @@ cp ../ChangeLog.txt dmgsrc/
 cp -r ${Progname}".app" dmgsrc/
 # hdiutil: create failed - error -5341
 # http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil
+# https://discussions.apple.com/thread/4712306
 touch dmgsrc/.Trash
+rm -rf dmgsrc/.DStore
 ls -la dmgsrc/
 # hdiutil create ${DMGname} -srcfolder dmgsrc/ -ov
-hdiutil create -volname "PyCorrFit_image" -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc/ -ov ${DMGname}
+hdiutil create -volname "PyCorrFit_image" -megabytes 130 -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc -ov ${DMGname}
 popd
