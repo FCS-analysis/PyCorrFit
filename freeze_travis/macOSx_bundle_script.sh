@@ -88,6 +88,7 @@ cp -r ${Progname}".app" dmgsrc/
 # hdiutil: create failed - error -5341
 # http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil
 touch dmgsrc/.Trash
+ls -la dmgsrc/
 # hdiutil create ${DMGname} -srcfolder dmgsrc/ -ov
 hdiutil create -volname "PyCorrFit_image" -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc/ -ov ${DMGname}
 popd
