@@ -68,13 +68,13 @@ fi
 if [ -e $Zipname ]; then rm $Zipname; fi
 
 
-echo "############"
-echo "Creating Zip"
-echo "############"
-pushd dist
-zip -r ${Zipname} ${Progname}".app"
-popd
-zip -j "./dist/"${Zipname} ${Docname} ${Changelogname}
+#echo "############"
+#echo "Creating Zip"
+#echo "############"
+#pushd dist
+#zip -r ${Zipname} ${Progname}".app"
+#popd
+#zip -j "./dist/"${Zipname} ${Docname} ${Changelogname}
 
 
 echo "############"
@@ -92,5 +92,5 @@ touch dmgsrc/.Trash
 rm -rf dmgsrc/.DStore
 ls -la dmgsrc/
 # hdiutil create ${DMGname} -srcfolder dmgsrc/ -ov
-hdiutil create -volname "PyCorrFit_image" -megabytes 130 -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc -ov ${DMGname}
+hdiutil create -volname "PyCorrFit_image" -megabytes 314 -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc -ov ${DMGname}
 popd
