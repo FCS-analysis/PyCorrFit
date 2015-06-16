@@ -29,7 +29,8 @@ from . import models as mdls
 
 def greek2tex(char):
     """ Converts greek UTF-8 letters to latex """
-    decchar = codecs.decode(char, "UTF-8")
+    #decchar = codecs.decode(char, "UTF-8")
+    decchar = char
     repres = unicodedata.name(decchar).split(" ")
     # GREEK SMALL LETTER ALPHA
     if repres[0] == "GREEK" and len(repres) == 4:
@@ -43,7 +44,7 @@ def greek2tex(char):
 
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
-    string = codecs.decode(string, "UTF-8")
+    #string = codecs.decode(string, "UTF-8")
     escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"] 
     retstr = ur""
     for char in string:
@@ -65,7 +66,7 @@ def latexmath(string):
         return r"\mathrm{offset}"
     elif string == "SP":
         return r"\mathrm{SP}"
-    string = codecs.decode(string, "UTF-8")
+    #string = codecs.decode(string, "UTF-8")
     unicodechars = dict()
     #unicodechars[codecs.decode("τ", "UTF-8")] = r"\tau"
     #unicodechars[codecs.decode("µ", "UTF-8")] = r"\mu"
@@ -195,7 +196,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey",
                  label=tabtitle)
     else:
-        plt.xlabel(r'lag time $\tau$ [ms]')
+        plt.xlabel(ur'lag time $\tau$ [ms]')
     # Plotting with error bars is very ugly if you have a lot of
     # data points.
     # We will use fill_between instead.
@@ -230,7 +231,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r'\begin{split}' # ...but they are all concatenated
         #                          by the interpreter :-)
         for i in np.arange(len(parms)):
-            text += r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
+            text += ur' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
@@ -242,7 +243,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     else:
         text = ur""
         for i in np.arange(len(parms)):
-            text += "{} = {:.3g}\n".format(labels[i], parms[i])
+            text += u"{} = {:.3g}\n".format(labels[i], parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
