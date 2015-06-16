@@ -395,8 +395,9 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
     plt.legend(loc='upper center', 
-               bbox_to_anchor=(0.5, -0.15),
-               prop={'size':9})
+               bbox_to_anchor=(0.5, -0.35),
+               prop={'size':9},
+               )
     
     ## Hack
     # We need this for hacking. See edclasses.
@@ -405,7 +406,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = "_trace"
 
-    plt.tight_layout(rect=(.03,.28,.98,.99))
+    plt.tight_layout(rect=(.001,.34,.999,1.0))
 
     if verbose == True:
         plt.show()

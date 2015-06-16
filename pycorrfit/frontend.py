@@ -69,6 +69,12 @@ class FlatNotebookDemo(fnb.FlatNotebook):
 
 
 class MyApp(wx.App):
+    def __init__(self, args):
+        wx.App.__init__(self, args)
+        # Suppress WXDEBUG assertions, as happens by default with wx2.8.
+        # http://anonscm.debian.org/cgit/collab-maint/wx-migration-tools.git/tree/README#n30
+        self.SetAssertMode(wx.PYAPP_ASSERT_SUPPRESS)
+        
     def MacOpenFile(self,filename):
         """
         """
