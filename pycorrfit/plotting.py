@@ -293,10 +293,13 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     # Legend outside of plot
     # Decrease size of plot to fit legend
     box = ax.get_position()
-    box2 = ax2.get_position()
+    
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
-    ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
+    
+    if resid is not None:
+        box2 = ax2.get_position()
+        ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
                      box2.width, box2.height])
     
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.55),
