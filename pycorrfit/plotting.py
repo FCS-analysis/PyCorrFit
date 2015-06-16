@@ -376,7 +376,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         rcParams['text.usetex']=False
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
-    fig=plt.figure()
+    fig=plt.figure(figsize=(10,3))
     ax = plt.subplot(111)
     for i in np.arange(len(traces)):
         # Columns
@@ -404,6 +404,8 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = "_trace"
+
+    plt.tight_layout(rect=(.03,.28,.98,.99))
 
     if verbose == True:
         plt.show()
