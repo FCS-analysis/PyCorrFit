@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" PyScanFCS loader
+""" PyCorrFit loader
 """
 from os.path import dirname, abspath, split
 

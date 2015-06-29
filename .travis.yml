@@ -78,10 +78,10 @@ script:
 #- hdiutil create dist/hw.dmg -srcfolder dist/ -ov
 
 before_deploy:
-  - export RELEASE_PKG_FILEA=$(ls ./dist/*.zip)
+#  - export RELEASE_PKG_FILEA=$(ls ./dist/*.zip)
   - export RELEASE_PKG_FILEB=$(ls ./dist/*.dmg)
   - export RELEASE_PKG_FILEC=$(ls ./dist/*.whl)
-  - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
+#  - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEB to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEC to GitHub releases"
 
