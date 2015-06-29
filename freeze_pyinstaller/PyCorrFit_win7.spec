@@ -40,7 +40,7 @@ for i in range(len(iss)):
     if iss[i].strip().startswith("#define MyAppPlatform"):
         # sys.maxint returns the same for windows 64bit verions
         iss[i] = '#define MyAppPlatform "win_{}"\n'.format(platform.architecture()[0])
-        nissfile = codecs.open("win7_innosetup.iss", 'wb', "utf-8")
+nissfile = codecs.open("win7_innosetup.iss", 'wb', "utf-8")
 nissfile.write(u"\ufeff")
 nissfile.writelines(iss)
 nissfile.close()
