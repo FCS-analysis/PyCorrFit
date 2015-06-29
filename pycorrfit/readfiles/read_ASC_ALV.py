@@ -1,23 +1,6 @@
 # -*- coding: utf-8 -*-
-""" 
-    PyCorrFit
-    
-    functions in this file: *openASC*
-
-    Copyright (C) 2011-2012  Paul Müller
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""
+methods to open ALV .ASC files
 """
 from __future__ import division
 
@@ -114,7 +97,9 @@ def openASC(dirname, filename):
     for i in np.arange(len(Alldata)):
         if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
-            if mode.lower().count('single'):
+            if (mode.lower().count('single') or
+                mode.lower().strip() == "a-ch0" or 
+                mode.lower().strip() == "a-ch1"):
                 single = True
                 channel = mode.split(" ")[-1]
             else:
@@ -212,7 +197,6 @@ def openASC(dirname, filename):
     corrlist = list()
     tracelist = list()
     typelist = list()
-    
         
     if single:
         # We only have several runs and one average
@@ -365,6 +349,6 @@ def mysplit(a, n):
     data[:,0] = x + newstep
     # make sure that the average stays the same:
     data[:,1] = y - np.average(y) + np.average(yp)
-    
+
     return np.split(data,n)
     

@@ -1,31 +1,9 @@
 # -*- coding: utf-8 -*-
-u""" PyCorrFit - Module "frontend"
+"""
+PyCorrFit - Module "frontend"
 
 The frontend displays the GUI (Graphic User Interface). All necessary 
 functions and modules are called from here.
-
-Dimensionless representation:
-unit of time        : 1 ms
-unit of inverse time: 10³ /s
-unit of distance    : 100 nm
-unit of Diff.coeff  : 10 µm²/s
-unit of inverse area: 100 /µm²
-unit of inv. volume : 1000 /µm³
-
-Copyright (C) 2011-2012  Paul Müller
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License 
-along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from distutils.version import LooseVersion # For version checking
@@ -91,6 +69,12 @@ class FlatNotebookDemo(fnb.FlatNotebook):
 
 
 class MyApp(wx.App):
+    def __init__(self, args):
+        wx.App.__init__(self, args)
+        # Suppress WXDEBUG assertions, as happens by default with wx2.8.
+        # http://anonscm.debian.org/cgit/collab-maint/wx-migration-tools.git/tree/README#n30
+        self.SetAssertMode(wx.PYAPP_ASSERT_SUPPRESS)
+        
     def MacOpenFile(self,filename):
         """
         """
@@ -1029,6 +1013,7 @@ class MyFrame(wx.Frame):
         ## which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
         BadFiles = list()
+        Exceptions = list()
         # Lists for correlation, trace, type and names
         Correlation = list()
         Trace = list()
@@ -1052,11 +1037,15 @@ class MyFrame(wx.Frame):
             #Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.openAny(self.dirname, afile)
-            except:
+            except Exception as excpt:
                 # The file does not seem to be what it seems to be.
                 BadFiles.append(afile)
+                Exceptions.append(excpt)
+                # Print exception
+                trb = traceback.format_exc(excpt)
+                trb = "..." + trb.replace("\n", "\n...")
                 warnings.warn("Problem processing a file."+\
-                  " Reason: {}.".format(sys.exc_info()[1].message))
+                  " Reason:\n{}".format(trb))
             else:
                 for i in np.arange(len(Stuff["Type"])):
                     Correlation.append(Stuff["Correlation"][i])
@@ -1082,8 +1071,10 @@ class MyFrame(wx.Frame):
         if len(BadFiles) > 0:
             # The file does not seem to be what it seems to be.
             errstr = "The following files could not be processed:\n"
-            for item in BadFiles:
-                errstr += " "+item
+            for item, excpt in zip(BadFiles, Exceptions):
+                trb = traceback.format_exc(excpt)
+                trb = "   " + trb.replace("\n", "\n   ")
+                errstr += " " + item + "\n" + trb 
             dlg = wx.MessageDialog(self, errstr, "Error", 
                 style=wx.ICON_WARNING|wx.OK|wx.CANCEL|wx.STAY_ON_TOP)
             if dlg.ShowModal() == wx.ID_CANCEL:
@@ -1450,8 +1441,13 @@ class MyFrame(wx.Frame):
         verbose = self.MenuVerbose.IsChecked()
         show_weights = self.MenuShowWeights.IsChecked()
         Page = self.notebook.GetCurrentPage()
-        plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
+        try:
+            plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
                                      verbose, show_weights)
+        except NameError as excpt:
+            trb = traceback.format_exc(excpt)
+            trb = "   " + trb.replace("\n", "\n   ")
+            raise NameError("Please make sure matplotlib is installed:\n"+trb)
 
 
     def OnSavePlotTrace(self, e=None):
@@ -1460,7 +1456,12 @@ class MyFrame(wx.Frame):
         uselatex = 1*self.MenuUseLatex.IsChecked()
         verbose = 1*self.MenuVerbose.IsChecked()
         Page = self.notebook.GetCurrentPage()
-        plotting.savePlotTrace(self, self.dirname, Page, uselatex, verbose)
+        try:
+            plotting.savePlotTrace(self, self.dirname, Page, uselatex, verbose)
+        except NameError as excpt:
+            trb = traceback.format_exc(excpt)
+            trb = "   " + trb.replace("\n", "\n   ")
+            raise NameError("Please make sure matplotlib is installed:\n"+trb)
 
 
     def OnSaveSession(self,e=None):

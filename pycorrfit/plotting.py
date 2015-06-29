@@ -1,32 +1,10 @@
 # -*- coding: utf-8 -*-
-""" PyCorrFit
+"""
+PyCorrFit
 
-    Module plotting
-    Everything about plotting with matplotlib is located here.
-    Be sure to install texlive-science and texlive-math-extra
-
-    Dimensionless representation:
-    unit of time        : 1 ms
-    unit of inverse time: 10³ /s
-    unit of distance    : 100 nm
-    unit of Diff.coeff  : 10 µm²/s
-    unit of inverse area: 100 /µm²
-    unit of inv. volume : 1000 /µm³
-    
-    Copyright (C) 2011-2012  Paul Müller
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+Module plotting
+Everything about plotting with matplotlib is located here.
+Be sure to install texlive-science and texlive-math-extra
 """
 
 
@@ -51,7 +29,8 @@ from . import models as mdls
 
 def greek2tex(char):
     """ Converts greek UTF-8 letters to latex """
-    decchar = codecs.decode(char, "UTF-8")
+    #decchar = codecs.decode(char, "UTF-8")
+    decchar = char
     repres = unicodedata.name(decchar).split(" ")
     # GREEK SMALL LETTER ALPHA
     if repres[0] == "GREEK" and len(repres) == 4:
@@ -65,7 +44,7 @@ def greek2tex(char):
 
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
-    string = codecs.decode(string, "UTF-8")
+    #string = codecs.decode(string, "UTF-8")
     escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"] 
     retstr = ur""
     for char in string:
@@ -87,7 +66,7 @@ def latexmath(string):
         return r"\mathrm{offset}"
     elif string == "SP":
         return r"\mathrm{SP}"
-    string = codecs.decode(string, "UTF-8")
+    #string = codecs.decode(string, "UTF-8")
     unicodechars = dict()
     #unicodechars[codecs.decode("τ", "UTF-8")] = r"\tau"
     #unicodechars[codecs.decode("µ", "UTF-8")] = r"\mu"
@@ -217,7 +196,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey",
                  label=tabtitle)
     else:
-        plt.xlabel(r'lag time $\tau$ [ms]')
+        plt.xlabel(ur'lag time $\tau$ [ms]')
     # Plotting with error bars is very ugly if you have a lot of
     # data points.
     # We will use fill_between instead.
@@ -252,7 +231,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r'\begin{split}' # ...but they are all concatenated
         #                          by the interpreter :-)
         for i in np.arange(len(parms)):
-            text += r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
+            text += ur' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
@@ -264,7 +243,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     else:
         text = ur""
         for i in np.arange(len(parms)):
-            text += "{} = {:.3g}\n".format(labels[i], parms[i])
+            text += u"{} = {:.3g}\n".format(labels[i], parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
@@ -315,10 +294,13 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     # Legend outside of plot
     # Decrease size of plot to fit legend
     box = ax.get_position()
-    box2 = ax2.get_position()
+    
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
-    ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
+    
+    if resid is not None:
+        box2 = ax2.get_position()
+        ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
                      box2.width, box2.height])
     
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.55),
@@ -394,7 +376,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         rcParams['text.usetex']=False
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
-    fig=plt.figure()
+    fig=plt.figure(figsize=(10,3))
     ax = plt.subplot(111)
     for i in np.arange(len(traces)):
         # Columns
@@ -413,8 +395,9 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
     plt.legend(loc='upper center', 
-               bbox_to_anchor=(0.5, -0.15),
-               prop={'size':9})
+               bbox_to_anchor=(0.5, -0.35),
+               prop={'size':9},
+               )
     
     ## Hack
     # We need this for hacking. See edclasses.
@@ -422,6 +405,8 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = "_trace"
+
+    plt.tight_layout(rect=(.001,.34,.999,1.0))
 
     if verbose == True:
         plt.show()
