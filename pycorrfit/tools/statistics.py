@@ -597,17 +597,17 @@ class Stat(wx.Frame):
             # This creates self.SaveInfo:
             self.GetWantedParameters()
             # Write header
-            linestring = ""
+            linestring = u""
             for atuple in self.SaveInfo[0]:
-                linestring += str(atuple[0])+"\t"
+                linestring += str(atuple[0])+u"\t"
             # remove trailing "\t"
-            openedfile.write(linestring.strip()+"\r\n")
+            openedfile.write(linestring.strip()+u"\r\n")
             # Write data         
             for item in self.SaveInfo:
                 linestring = ""
                 for btuple in item:
-                    linestring += str(btuple[1])+"\t"
-                openedfile.write(linestring.strip()+"\r\n")
+                    linestring += str(btuple[1])+u"\t"
+                openedfile.write(linestring.strip()+u"\r\n")
             openedfile.close()
         else:
             dirname = dlg.GetDirectory()
