@@ -109,7 +109,7 @@ class Correlation(object):
                  filename=None, fit_algorithm="Lev-Mar",
                  fit_model=6000, fit_ival=(0,0),
                  fit_weight_data=None, fit_weight_type="none", 
-                 normparm=None, title=None, traces=[]):
+                 normparm=None, title=None, traces=[], verbose=1):
         """
         Parameters
         ----------
@@ -135,8 +135,10 @@ class Correlation(object):
             user-editable title of this correlation
         traces: list of instances of Trace
             traces of the current correlation
+        verbose : int
+            increment to increase verbosity
         """
-        # Todo:
+        # TODO:
         # - use fit parameters range for fitting
         # - set default values for fit_weight_memory
         # - implement shared data sets for global fit
@@ -156,6 +158,8 @@ class Correlation(object):
         self._fit_weight_memory = dict()
         self._model_memory = dict()
         self._uid = None
+
+        self.verbose = verbose
 
         self.backgrounds = backgrounds
         self.bg_correction_enabled = True
@@ -202,8 +206,9 @@ class Correlation(object):
                 B = self.backgrounds[0].countrate
                 bgfactor = (S/(S-B))**2
             else:
-                warnings.warn("Correlation {}: no bg-correction".
-                              format(self.uid))
+                if self.verbose >= 1:
+                    warnings.warn("Correlation {}: no bg-correction".
+                                  format(self.uid))
                 bgfactor = 1
         else:
             # Crosscorrelation
@@ -457,9 +462,12 @@ class Fit(object):
         
         if len(global_fit_variables) == 0:
             for corr in self.correlations:
+                # Get the data required for fitting
                 self.x = corr.correlation_fit[:,0]
                 self.y = corr.correlation_fit[:,1]
+                # Set fitting options
                 self.fit_algorithm = corr.fit_algorithm
+                # fit_bool: True for variable
                 self.fit_bool = corr.fit_parameters_variable
                 self.fit_parm = corr.fit_parameters
                 self.check_parms = corr.fit_model.func_verification
@@ -467,6 +475,7 @@ class Fit(object):
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
                                                    uselatex=uselatex)
+                # Directly perform the fit and set the "fit" attribute
                 self.minimize()
                 # save fit instance in correlation class
                 corr.fit = self
@@ -474,6 +483,10 @@ class Fit(object):
                 corr.fit_parameters = self.fit_parm
                 
         else:
+            # TODO:
+            #  - support for global fitting
+            #
+            
             x_values = list()
             y_values = list()
             raise NotImplementedError("No global fit supported yet.")
@@ -486,7 +499,7 @@ class Fit(object):
             Calculate Chi² for the current class.
         """
         # Calculate degrees of freedom
-        dof = len(self.x) - len(self.fit_parm) - 1
+        dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
         chi2 = self.fit_function_scalar(self.fit_parm, self.x)
         return chi2 / dof
