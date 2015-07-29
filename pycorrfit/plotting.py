@@ -86,6 +86,7 @@ def latexmath(string):
     if len(items) > 1:
         b = items[1]
         if b.count(u"µ"):
+            # Use siunitx with the upright µ
             bnew = ur"[\SI{}{"
             for char in b.strip("[]"):
                 if char in unitchars.keys():
@@ -93,7 +94,6 @@ def latexmath(string):
                 else:
                     bnew += char
             b = bnew+ur"}]"
-            
     else:
         b = ""
     anew = ur""
