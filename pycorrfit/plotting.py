@@ -79,13 +79,24 @@ def latexmath(string):
     # We need lambda in here, because unicode names it lamda sometimes.
     unicodechars[codecs.decode("λ", "UTF-8")] = r"\lambda"
     #unicodechars[codecs.decode("η", "UTF-8")] = r'\eta'
+    unitchars = dict()
+    unitchars[codecs.decode("µ", "UTF-8")] = r"\micro "
     items = string.split(" ", 1)
     a = items[0]
     if len(items) > 1:
         b = items[1]
+        if b.count(u"µ"):
+            # Use siunitx with the upright µ
+            bnew = ur"[\SI{}{"
+            for char in b.strip("[]"):
+                if char in unitchars.keys():
+                    bnew += unitchars[char]
+                else:
+                    bnew += char
+            b = bnew+ur"}]"
     else:
         b = ""
-    anew = r""
+    anew = ur""
     for char in a:
         if char in unicodechars.keys():
             anew += unicodechars[char]
@@ -176,7 +187,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         rcParams['font.family']='serif'
         rcParams['text.latex.preamble']=[r"""\usepackage{amsmath}
                                             \usepackage[utf8x]{inputenc}
-                                            \usepackage{amssymb}"""] 
+                                            \usepackage{amssymb}
+                                            \usepackage{siunitx}"""] 
         fitlabel = ur"{\normalsize "+escapechars(fitlabel)+r"}"
         tabtitle = ur"{\normalsize "+escapechars(tabtitle)+r"}"
         labelweights = ur"{\normalsize "+escapechars(labelweights)+r"}"
