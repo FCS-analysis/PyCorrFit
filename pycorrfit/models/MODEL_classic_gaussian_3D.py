@@ -248,7 +248,7 @@ parms_6012 = [labels_6012, values_6012, valuestofit_6012]
 
 # 3D + 3D + T model gauss
 m_gauss_3d_3d_t_mix_6030 = [6030, "T+3D+3D",
-                            "Separate 3D diffusion + triplet, Gauß",
+                            u"Separate 3D diffusion + triplet, Gauß",
                             CF_Gxyz_gauss_3D3DT]
 labels_6030  = [u"n",
                 u"τ"+u"\u2081"+" [ms]",
