@@ -54,31 +54,31 @@ class InfoClass(object):
         """ Get a nice string representation of the Info """
         InfoDict = self.GetPageInfo(Page)
         # Version
-        Version = "PyCorrFit v."+InfoDict["version"][0]+"\n"
+        Version = u"PyCorrFit v."+InfoDict["version"][0]+"\n"
         # Title
-        Title = "\n"
+        Title = u"\n"
         for item in InfoDict["title"]:
             Title = Title + item[0]+"\t"+ item[1]+"\n"
         # Parameters
-        Parameters = "\nParameters:\n"
+        Parameters = u"\nParameters:\n"
         for item in InfoDict["parameters"]:
-            Parameters = Parameters + "  "+item[0]+"\t"+ str(item[1])+"\n"
+            Parameters = Parameters + u"  "+item[0]+"\t"+ str(item[1])+"\n"
         # Supplementary parameters
-        Supplement = "\nSupplementary parameters:\n"
+        Supplement = u"\nSupplementary parameters:\n"
         try:
             for item in InfoDict["supplement"]:
                 Supplement = Supplement + "  "+item[0]+"\t"+ str(item[1])+"\n"
         except KeyError:
             Supplement = ""
         # Fitting
-        Fitting = "\nFitting:\n"
+        Fitting = u"\nFitting:\n"
         try:
             for item in InfoDict["fitting"]:
                 Fitting = Fitting + "  "+item[0]+"\t"+unicode(item[1])+"\n"
         except KeyError:
             Fitting = ""
         # Background
-        Background = "\nBackground:\n"
+        Background = u"\nBackground:\n"
         try:
             for item in InfoDict["background"]:
                 Background = Background + "  "+item[0]+"\t"+str(item[1])+"\n"
@@ -86,12 +86,12 @@ class InfoClass(object):
             Background = ""
 
         # Function doc string
-        ModelDoc = "\n\nModel doc string:\n       " + InfoDict["modeldoc"][0]
+        ModelDoc = u"\n\nModel doc string:\n       " + InfoDict["modeldoc"][0]
         # Supplementary variables
         try:
-            SupDoc = "\n"+8*" "+InfoDict["modelsupdoc"][0]
+            SupDoc = u"\n"+8*" "+InfoDict["modelsupdoc"][0]
         except:
-            SupDoc = ""
+            SupDoc = u""
         PageInfo = Version+Title+Parameters+Supplement+Fitting+Background+\
                    ModelDoc+SupDoc
         return PageInfo

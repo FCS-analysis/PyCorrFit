@@ -122,8 +122,8 @@ def MoreInfo(parms, countrate):
 
 # 3D + 3D + T model gauss
 m_gauss_3d_2d_t = [6032, u"T+3D+2D",
-                            "Separate 3D and 2D diffusion + triplet, Gauß",
-                            CF_Gxyz_3d2dT_gauss]
+                   u"Separate 3D and 2D diffusion + triplet, Gauß",
+                   CF_Gxyz_3d2dT_gauss]
 labels  = [ u"n",
             u"τ_2D [ms]",
             u"τ_3D [ms]",
