@@ -6,7 +6,7 @@ This file contains definitions for opening PyCorrFit sessions and
 saving PyCorrFit correlation curves.
 """
 
-
+import codecs
 import csv
 import numpy as np
 import os
@@ -526,15 +526,19 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
         Append the trace to the file
     """
 
-    openedfile = open(exportfile, 'wb')
+    openedfile = codecs.open(exportfile, 'w', encoding="utf-8")
     ## First, some doc text
     openedfile.write(ReadmeCSV.replace('\n', '\r\n'))
     # The infos
     InfoMan = info.InfoClass(CurPage=Page)
     PageInfo = InfoMan.GetCurFancyInfo()
     for line in PageInfo.splitlines():
-        openedfile.write("# "+line+"\r\n")
-    openedfile.write("#\r\n#\r\n")
+        try:
+            openedfile.write(u"# "+line+"\r\n")
+        except:
+            import IPython
+            IPython.embed()
+    openedfile.write(u"#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
     # Since 0.7.8 the user may normalize the curves. The normalization
