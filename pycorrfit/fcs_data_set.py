@@ -129,6 +129,15 @@ class Correlation(object):
             the model used for fitting
         fit_weight_data: any
             data for the certain fit_weight_type
+        fit_weight_type: str
+            Reserved keywords or user-defined strings:
+             - "none" : no weights are used
+             - "splineX" : compute weights from spline with X knots
+                   and a spread of `fit_weight_data` bins.
+             - "model function" : compute weights from difference
+                   to model function
+             - user-defined : other weights (e.g. previously computed 
+                   averages given in fit_weight_data)
         normparm: int
             identifier of normalization parameter
         title: str
@@ -139,13 +148,7 @@ class Correlation(object):
             increment to increase verbosity
         """
         # TODO:
-        # - use fit parameters range for fitting
-        # - set default values for fit_weight_memory
         # - implement shared data sets for global fit
-        # - fit algorithm property setter: check for valid values with Algorithms.keys()
-        # - self._fit_weight_memory: external weights
-        # - Use existing Fit class below
-        #   - change it to only accept one or more Correlation instances
         
         
         # must be created before setting properties
@@ -156,6 +159,7 @@ class Correlation(object):
         self._fit_parameters_range = None
         self._fit_parameters_variable = None
         self._fit_weight_memory = dict()
+        self._lag_time = None
         self._model_memory = dict()
         self._uid = None
 
@@ -223,7 +227,25 @@ class Correlation(object):
                               format(self.uis))
                 bgfactor = 1
         return bgfactor
-    
+
+    def check_parms(self, parms):
+        """ Check parameters using self.fit_model.func_verification and the user defined
+            boundaries self.fit_parameters_range for each parameter.
+        """
+        p = 1.*np.array(parms)
+        p = self.fit_model.func_verification(p)
+        r = self.fit_parameters_range
+        # TODO:
+        # - add potentials such that parameters don't stick to boundaries
+        for i in range(len(p)):
+            if r[i][0] == r[i][1]:
+                pass
+            elif p[i] < r[i][0]:
+                p[i] = r[i][0]
+            elif p[i] > r[i][1]:
+                p[i] = r[i][1]
+        return p
+
     @property
     def correlation(self):
         """the correlation data, shape (N,2) with (time, correlation) """
@@ -253,6 +275,18 @@ class Correlation(object):
     def is_ac(self):
         """True if instance contains autocorrelation"""
         return self.corr_type.lower().count("ac") > 0
+
+    @property
+    def fit_algorithm(self):
+        """The string representing the fitting algorithm"""
+        return self._fit_algorithm
+
+    @fit_algorithm.setter
+    def fit_algorithm(self, value):
+        # TODO:
+        # - allow lower-case fitting algorithm
+        assert value in list(Algorithms.keys()), "Invalid fit algorithm: "+value
+        self._fit_algorithm = value
 
     @property
     def fit_is_weighted(self):
@@ -313,7 +347,11 @@ class Correlation(object):
         try:
             data = self._fit_weight_memory[self.fit_weight_type]
         except KeyError:
-            data = None
+            # Standard variables for weights
+            if self.fit_weight_type.count("spline"):
+                data = 3
+            else:
+                data = None
         return data
 
     @fit_weight_data.setter
@@ -328,6 +366,7 @@ class Correlation(object):
     @fit_parameters.setter
     def fit_parameters(self, value):
         # must unlock parameters, if change is required
+        value = np.array(value)
         if self.lock_parameters == False:
             self._fit_parameters = value
         else:
@@ -354,17 +393,27 @@ class Correlation(object):
 
     @fit_parameters_variable.setter
     def fit_parameters_variable(self, value):
+        value = np.array(value, dtype=bool)
         assert value.shape[0] == self.fit_parameters.shape[0]
-        self._fit_parameters_variable = np.array(value, dtype=bool)
+        self._fit_parameters_variable = value
 
     @property
     def lag_time(self):
         """logarithmic lag time axis"""
         if self.correlation is not None:
             return self._correlation[:,0]
+        elif self._lag_time is not None:
+            return self._lag_time
         else:
             # some default lag time
             return np.exp(np.linspace(np.log(1e-8),np.log(100), 200))
+
+    @lag_time.setter
+    def lag_time(self, value):
+        if self.correlation is not None:
+            warnings.warn("Setting lag time not possible, because of existing correlation")
+        else:
+            self._lag_time = value
 
     @property
     def lag_time_fit(self):
@@ -462,19 +511,19 @@ class Fit(object):
         
         if len(global_fit_variables) == 0:
             for corr in self.correlations:
+                # Set fitting options
+                self.fit_algorithm = corr.fit_algorithm
                 # Get the data required for fitting
                 self.x = corr.correlation_fit[:,0]
                 self.y = corr.correlation_fit[:,1]
-                # Set fitting options
-                self.fit_algorithm = corr.fit_algorithm
                 # fit_bool: True for variable
-                self.fit_bool = corr.fit_parameters_variable
-                self.fit_parm = corr.fit_parameters
-                self.check_parms = corr.fit_model.func_verification
-                self.func = corr.fit_model.function
+                self.fit_bool = corr.fit_parameters_variable.copy()
+                self.fit_parm = corr.fit_parameters.copy()
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
                                                    uselatex=uselatex)
+                self.func = corr.fit_model.function
+                self.check_parms = corr.check_parms
                 # Directly perform the fit and set the "fit" attribute
                 self.minimize()
                 # save fit instance in correlation class
@@ -484,15 +533,118 @@ class Fit(object):
                 
         else:
             # TODO:
-            #  - support for global fitting
-            #
-            
-            x_values = list()
-            y_values = list()
-            raise NotImplementedError("No global fit supported yet.")
-        
+            # - allow detaching of parameters,
+            #   i.e. fitting "n" separately for two models
+            # Initiate all arrays
+            self.fit_algorithm = self.correlations[0].fit_algorithm
+            xtemp = list()      # x
+            ytemp = list()      # y
+            weights = list()    # weights
+            ids = [0]           # ids in big fitting array
+            cmodels = list()    # correlation model info
+            initpar = list()    # initial parameters
+            varin = list()      # names of variable fitting parameters
+            variv = list()      # values of variable fitting parameters
+            varmap = list()     # list of indices of fitted parameters
+            for corr in self.correlations:
+                xtemp.append(corr.correlation_fit[:,0])
+                ytemp.append(corr.correlation_fit[:,1])
+                weights.append(Fit.compute_weights(corr))
+                ids.append(len(xtemp[-1])+ids[-1])
+                cmodels.append(corr.fit_model)
+                initpar.append(corr.fit_parameters)
+                # Create list of variable parameters
+                varthis = list()
+                for ipm, par in enumerate(corr.fit_model.parameters[0]):
+                    if corr.fit_parameters_variable[ipm]:
+                        varthis.append(ipm)
+                        varin.append(par)
+                        variv.append(corr.fit_parameters[ipm])
+                varmap.append(varthis)
 
-                   
+            # These are the variable fitting parameters
+            __, varidx = np.unique(varin, return_index=True)
+            varidx.sort()
+            varin = np.array(varin)[varidx]
+            variv = np.array(variv)[varidx]
+            
+            self.x = np.array(xtemp).flatten()
+            self.y = np.array(ytemp).flatten()
+            self.fit_bool = np.ones(len(variv), dtype=bool)
+            self.fit_parm = variv
+            self.fit_weights = np.array(weights).flatten()
+            
+            def parameters_global_to_local(parameters, iicorr, varin=varin,
+                                          initpar=initpar,
+                                          correlations=correlations):
+                """
+                With global `parameters` and an id `iicorr` pointing at
+                the correlation in `self.correlations`, return the
+                updated parameters of the corresponding model.
+                """
+                fit_parm = initpar[iicorr].copy()
+                corr = correlations[iicorr]
+                mod = corr.fit_model
+                for kk, pn in enumerate(mod.parameters[0]):
+                    if pn in varin:
+                        # edit that parameter
+                        fit_parm[kk] = parameters[np.where(np.array(varin)==pn)[0]]
+                return fit_parm
+            
+            def parameters_local_to_global(parameters, iicorr, fit_parm,
+                                           varin=varin,
+                                           correlations=correlations):
+                """
+                inverse of parameters_global_to_local
+                """
+                corr = correlations[iicorr]
+                mod = corr.fit_model
+                for kk, pn in enumerate(mod.parameters[0]):
+                    if pn in varin:
+                        # edit that parameter
+                        parameters[np.where(np.array(varin)==pn)[0]] = fit_parm[kk]
+                return parameters
+            
+            # Create function for fitting using ids
+            def global_func(parameters, tau,
+                            glob2loc=parameters_global_to_local):
+                out = list()
+                # ids start at 0
+                for ii, mod in enumerate(cmodels):
+                    # Update parameters
+                    fit_parm = glob2loc(parameters, ii)
+                    # return function
+                    out.append(mod.function(fit_parm, tau[ids[ii]:ids[ii+1]]))
+                return np.array(out).flatten()
+
+            self.func = global_func
+            
+            # Create function for checking
+            def global_check_parms(parameters,
+                                   glob2loc=parameters_global_to_local,
+                                   loc2glob=parameters_local_to_global):
+
+                for ii, corr in enumerate(self.correlations):
+                    # create new initpar
+                    fit_parm = glob2loc(parameters, ii)
+                    fit_parm = corr.check_parms(fit_parm)
+                    # update parameters
+                    parameters = loc2glob(parameters, ii, fit_parm)
+
+                return parameters
+            
+            self.check_parms = global_check_parms
+
+            # Directly perform the fit and set the "fit" attribute
+            self.minimize()
+            # Update correlations
+            for ii, corr in enumerate(self.correlations):
+                # save fit instance in correlation class
+                corr.fit = self
+                # write new model parameters
+                corr.fit_parameters = parameters_global_to_local(self.fit_parm,
+                                                                 ii)
+
     @property
     def chi_squared(self):
         """
@@ -506,9 +658,10 @@ class Fit(object):
 
     @staticmethod
     def compute_weights(correlation, verbose=0, uselatex=False):
-        """ computes and returns weights
+        """ computes and returns weights of the same length as 
+        `correlation.correlation_fit`
         
-        correlation is instance of Correlation
+        `correlation` is an instance of Correlation
         """
         corr = correlation
         model = corr.fit_model
@@ -528,17 +681,22 @@ class Fit(object):
         #y_fit = cdatfit[:,1]
         
         dataweights = np.ones_like(x_fit)
-        
 
         if weight_type[:6] == "spline":
             # Number of knots to use for spline
-            weight_spread = weight_data
             try:
                 knotnumber = int(weight_type[6:])
             except:
                 if verbose > 1:
                     print("Could not get knot number. Setting it to 5.")
                 knotnumber = 5
+            
+            try:
+                weight_spread = int(weight_data)
+            except:
+                if verbose > 1:
+                    print("Could not get weight spread for spline. Setting it to 3.")
+                weight_spread = 3
 
             # Compute borders for spline fit.
             if ival[0] < weight_spread:
@@ -678,11 +836,13 @@ class Fit(object):
                     reference = 2*weight_spread + 1
                     dividor = reference - backset
                     dataweights[i] *= reference/dividor
-        elif weight_type == "other":
+        elif weight_type == "none":
+            pass
+        else:
             # This means that the user knows the dataweights and already
             # gave it to us.
             weights = weight_data
-            assert weights is not None
+            assert weights is not None, "User defined weights not given: "+weight_type
             
             # Check if these other weights have length of the cropped
             # or the full array.
@@ -693,8 +853,7 @@ class Fit(object):
             else:
                 raise ValueError, \
                   "`weights` must have length of full or cropped array."
-        else:
-            dataweights  = 1
+
         
         return dataweights
         
