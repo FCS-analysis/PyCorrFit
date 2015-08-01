@@ -53,7 +53,7 @@ def create_corr():
 def test_globalfit():
     corrs, initparms = create_corr()
     # commence global fit
-    globalfit = Fit( correlations=corrs, global_fit_variables=[2])
+    globalfit = Fit(correlations=corrs, global_fit=True)
     assert np.allclose(globalfit.fit_parm, initparms), "Global fit failed"
     
 
