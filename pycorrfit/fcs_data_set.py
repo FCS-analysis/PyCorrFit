@@ -483,7 +483,8 @@ class Correlation(object):
 class Fit(object):
     """ Used for fitting FCS data to models.
     """
-    def __init__(self, correlations=[], global_fit_variables=[],
+    def __init__(self, correlations=[], global_fit=False,
+                 global_fit_variables=[],
                  uselatex=False, verbose=0):
         """ Using an FCS model, fit the data of shape (N,2).
 
@@ -492,15 +493,24 @@ class Fit(object):
         ----------
         correlations: list of instances of Correlation
             Correlations to fit.
+        global fit : bool
+            Perform global fit. The default behavior is
+            to fit all parameters that are selected for
+            fitting in each correlation. Parameters with
+            the same name in different models are treated
+            as one global parameter. 
         global_fit_variables: list of list of strings
             Each item contains a list of strings that are names
             of parameters which will be treated as a common
-            parameter.
+            parameter. This breaks the defaul behavior.
+            NOT IMPLEMENTED YET!
         verbose: int
             Increase verbosity by incrementing this number.
         uselatex: bool
             If verbose > 0, plotting will be performed with LaTeX.
         """
+        assert len(global_fit_variables)==0, "not implemented"
+        
         if isinstance(correlations, Correlation):
             correlations = [correlations]
         
@@ -509,7 +519,8 @@ class Fit(object):
         self.verbose = verbose
         self.uselatex = uselatex
         
-        if len(global_fit_variables) == 0:
+        if not global_fit:
+            # Fit each correlation separately
             for corr in self.correlations:
                 # Set fitting options
                 self.fit_algorithm = corr.fit_algorithm
