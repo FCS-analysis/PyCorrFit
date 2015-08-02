@@ -100,6 +100,7 @@ class Trace(object):
         assert isinstance(value, np.ndarray), "value must be array!"
         assert value.shape[1] == 2, "shape of array must be (N,2)!"
         self._trace = value
+        self.countrate = np.average(value[:,1])
 
 
 class Correlation(object):
@@ -250,7 +251,7 @@ class Correlation(object):
     def correlation(self):
         """the correlation data, shape (N,2) with (time, correlation) """
         if self._correlation is not None:
-            corr = self._correlation
+            corr = self._correlation.copy()
             # perform background correction
             corr[:,1] *= self.bg_correction_factor
             return corr
@@ -264,17 +265,36 @@ class Correlation(object):
 
     @property
     def correlation_fit(self):
-        """ returns correlation data for plotting (normalized, fit_ivald) """
+        """ returns correlation data for fitting (fit_ivald) """
         corr = self.correlation
         if corr is not None:
             # perform parameter normalization
-            corr[:,1] *= self.normalize_factor
             return corr[:, self.fit_ival[0]:self.fit_ival[1]]
+    
+    @property
+    def correlation_plot(self):
+        """ returns correlation data for plotting (normalized, fit_ivald) """
+        corr = self.correlation_fit
+        if corr is not None:
+            # perform parameter normalization
+            corr[:,1] *= self.normalize_factor
+            return corr
+    
     
     @property
     def is_ac(self):
         """True if instance contains autocorrelation"""
         return self.corr_type.lower().count("ac") > 0
+
+    @property
+    def is_cc(self):
+        """True if instance contains crosscorrelation"""
+        return not self.is_ac
+
+    @property
+    def is_weighted_fit(self):
+        """True if a weighted fit was performed"""
+        return self.fit_weight_type != "none"
 
     @property
     def fit_algorithm(self):
@@ -287,14 +307,6 @@ class Correlation(object):
         # - allow lower-case fitting algorithm
         assert value in list(Algorithms.keys()), "Invalid fit algorithm: "+value
         self._fit_algorithm = value
-
-    @property
-    def fit_is_weighted(self):
-        """True if the current fit has weights"""
-        if self.fit_weight_type == "none":
-            return True
-        else:
-            return False
 
     @property
     def fit_model(self):
@@ -349,6 +361,7 @@ class Correlation(object):
         except KeyError:
             # Standard variables for weights
             if self.fit_weight_type.count("spline"):
+                # Default area for weighting with spline fit
                 data = 3
             else:
                 data = None
@@ -368,7 +381,7 @@ class Correlation(object):
         # must unlock parameters, if change is required
         value = np.array(value)
         if self.lock_parameters == False:
-            self._fit_parameters = value
+            self._fit_parameters = self.check_parms(value)
         else:
             warnings.warn("Correlation {}: fixed parameters unchanged.".
                           format(self.uid))
@@ -428,12 +441,18 @@ class Correlation(object):
         modeled = np.zeros((lag.shape[0], 2))
         modeled[:,0] = lag
         modeled[:,1] = self.fit_model(self.fit_parameters, lag)
-        return modeled
+        return modeled.copy()
 
     @property
     def modeled_fit(self):
         """fitted data values, same shape as self.correlation_fit"""
-        toplot = self.modeled[:, self.fit_ival[0]:self.fit_ival[1]].copy()
+        toplot = self.modeled[:, self.fit_ival[0]:self.fit_ival[1]]
+        return toplot
+
+    @property
+    def modeled_plot(self):
+        """fitted data values, same shape as self.correlation_fit"""
+        toplot = self.modeled_fit
         toplot[:,1] *= self.normalize_factor
         return toplot
 
@@ -466,6 +485,13 @@ class Correlation(object):
         residuals_fit = self.correlation_fit.copy()
         residuals_fit[:,1] -= self.modeled_fit[:,1]
         return residuals_fit
+
+    @property
+    def residuals_plot(self):
+        """fit residuals, same shape as self.correlation_fit"""
+        residuals_plot = self.correlation_plot.copy()
+        residuals_plot[:,1] -= self.modeled_plot[:,1]
+        return residuals_plot
 
     @property
     def uid(self):
@@ -538,7 +564,7 @@ class Fit(object):
                 # Directly perform the fit and set the "fit" attribute
                 self.minimize()
                 # save fit instance in correlation class
-                corr.fit = self
+                corr.fit_results = self.get_fit_results(corr)
                 # update correlation model parameters
                 corr.fit_parameters = self.fit_parm
                 
@@ -651,10 +677,34 @@ class Fit(object):
             # Update correlations
             for ii, corr in enumerate(self.correlations):
                 # save fit instance in correlation class
-                corr.fit = self
+                corr.fit_results = self.get_fit_results(corr)
                 # write new model parameters
                 corr.fit_parameters = parameters_global_to_local(self.fit_parm,
                                                                  ii)
+
+    def get_fit_results(self, correlation):
+        """
+        Return a dictionary with all information about the performed fit.
+        
+        This function must be called immediately after `self.minimize`.
+        """
+        c = correlation
+        d = {
+             "chi2" : self.chi_squared,
+             "weighted fit" : c.is_weighted_fit,
+             "fit algorithm" : c.fit_algorithm,
+             "fit result" : c.fit_parameters.copy(),
+             "fit parameters" : np.where(c.fit_parameters_variable)
+             }
+        
+        if c.is_weighted_fit:
+            d["weighted fit type"] = c.fit_weight_type
+
+        if d["fit algorithm"] == "Lev-Mar":
+            d["fit error estimation"] = self.parmoptim_error
+        
+        return d
+        
 
     @property
     def chi_squared(self):
