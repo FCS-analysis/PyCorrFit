@@ -302,7 +302,6 @@ def GetModelParametersFromId(modelid):
 def GetModelFitBoolFromId(modelid):
     return valuedict[modelid][2]
 
-
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated
         some stuff or wants to know more about the model he is looking at.
