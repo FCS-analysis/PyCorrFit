@@ -236,7 +236,7 @@ class Correlation(object):
     @property
     def bg_correction_factor(self):
         """
-        Returns background corrected version of
+        Returns background correction factor for
         self._correlation
         
         Notes
@@ -769,7 +769,8 @@ class Fit(object):
              "weighted fit" : c.is_weighted_fit,
              "fit algorithm" : c.fit_algorithm,
              "fit result" : c.fit_parameters.copy(),
-             "fit parameters" : np.where(c.fit_parameters_variable)
+             "fit parameters" : np.where(c.fit_parameters_variable),
+             "fit weights" : self.compute_weights(c)
              }
         
         if c.is_weighted_fit:
@@ -818,6 +819,13 @@ class Fit(object):
         
         dataweights = np.ones_like(x_fit)
 
+        try:
+            weight_spread = int(weight_data)
+        except:
+            if verbose > 1:
+                warnings.warn("Could not get weight spread for spline. Setting it to 3.")
+            weight_spread = 3
+
         if weight_type[:6] == "spline":
             # Number of knots to use for spline
             try:
@@ -827,13 +835,6 @@ class Fit(object):
                     print("Could not get knot number. Setting it to 5.")
                 knotnumber = 5
             
-            try:
-                weight_spread = int(weight_data)
-            except:
-                if verbose > 1:
-                    print("Could not get weight spread for spline. Setting it to 3.")
-                weight_spread = 3
-
             # Compute borders for spline fit.
             if ival[0] < weight_spread:
                 # optimal case

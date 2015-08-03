@@ -66,6 +66,12 @@ class Model(object):
         """Emulate old list behavior of models"""
         return self._definitions[key]
 
+    def __repr__(self):
+        text = "Model {} - {}".format(
+                self.id,
+                self.description_short)
+        return text
+
     def apply(self, parameters, tau):
         """ 
         Apply the model with `parameters` and lag
