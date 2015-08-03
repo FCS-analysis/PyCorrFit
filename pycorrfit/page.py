@@ -160,23 +160,43 @@ class FittingPanel(wx.Panel):
         self.weighted_nuvar = self.Fitbox[5].GetValue()
         
         self.weighted_fittype_id = self.Fitbox[1].GetSelection()
-        if self.Fitbox[1].GetSelection() == -1:
+
+        fitbox_value = self.Fitbox[1].GetValue()
+        
+        if self.weighted_fittype_id == -1:
             # User edited knot number
-            Knots = self.Fitbox[1].GetValue()
+            Knots = fitbox_value
             Knots = filter(lambda x: x.isdigit(), Knots)
             if Knots == "":
                 Knots = "5"
             self.weighted_fittype_id = 1
             self.FitKnots = str(Knots)
-        elif self.Fitbox[1].GetSelection() == 1:
-            Knots = self.Fitbox[1].GetValue()
+            fit_weight_type = "spline{}".format(self.FitKnots)
+            fit_weight_data = self.weighted_nuvar
+        elif self.weighted_fittype_id == 1:
+            Knots = fitbox_value
             Knots = filter(lambda x: x.isdigit(), Knots)
             self.FitKnots = int(Knots)
+            fit_weight_type = "spline{}".format(self.FitKnots)
+            fit_weight_data = self.weighted_nuvar
+        elif self.weighted_fittype_id == 0:
+            fit_weight_type = "none"
+            fit_weight_data = None
+        elif self.weighted_fittype_id == 2:
+            fit_weight_type = "model function"
+            fit_weight_data = self.weighted_nuvar
+        else: # fitbox_selection > 2:
+            fit_weight_type = fitbox_value.lower()
+            raise NotImplementedError("Need to set fit_weight_data.")
+        
         # Fitting algorithm
         keys = fit.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
         
         self.corr.fit_algorithm = keys[idalg]
+        self.corr.fit_weight_type = fit_weight_type
+        self.corr.fit_weight_data = fit_weight_data
+        
         # TODO:
         # - write fit_type and fit character to self.corr
         #   (weighted nuvar and knots)
@@ -263,7 +283,7 @@ class FittingPanel(wx.Panel):
         # This also applies the background correction, if present
         self.apply_parameters()
         # Create instance of fitting class
-       
+        
         # TODO:
         # 
         self.GlobalParameterShare = list()
@@ -553,21 +573,22 @@ class FittingPanel(wx.Panel):
 
         if self.corr.correlation is not None:
             if self.corr.is_weighted_fit and \
-               self.parent.MenuShowWeights.IsChecked() and \
-               self.corr.fit_weight_data is not None:
+               self.parent.MenuShowWeights.IsChecked():
+                
+                weights = self.corr.fit_results["fit weights"]
                 # Add the weights to the graph.
                 # This is done by drawing two lines.
                 w = 1*self.corr.correlation_fit
                 w1 = 1*w
                 w2 = 1*w
-                w1[:, 1] = w[:, 1] + self.corr.fit_weight_data 
-                w2[:, 1] = w[:, 1] - self.corr.fit_weight_data 
-                wend = 1*self.weights_used_for_fitting 
+                w1[:, 1] = w[:, 1] + weights
+                w2[:, 1] = w[:, 1] - weights
                 # crop w1 and w2 if self.dataexp does not include all
                 # data points.
-                if np.all(w[:,0] == self.dataexp[:,0]):
+                if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
                     pass
                 else:
+                    raise NotImplementedError("Remove this case. It should not be here.")
                     start = np.min(self.dataexp[:,0])
                     end = np.max(self.dataexp[:,0])
                     idstart = np.argwhere(w[:,0]==start)
@@ -578,18 +599,15 @@ class FittingPanel(wx.Panel):
                     else:
                         w1 = w1[:idend[0][0]+1]
                         w2 = w2[:idend[0][0]+1]
-                        wend = wend[:idend[0][0]+1]
                     if len(idstart) == 0:
                         # dataexp starts earlier, do not change anything
                         pass
                     else:
                         w1 = w1[idstart[0][0]:]
                         w2 = w2[idstart[0][0]:]
-                        wend = wend[idstart[0][0]:]
                 ## Normalization with self.normfactor
-                w1[:,1] *= self.normfactor
-                w2[:,1] *= self.normfactor
-                self.weights_used_for_plotting = wend
+                w1[:,1] *= self.corr.normalize_factor
+                w2[:,1] *= self.corr.normalize_factor
                 self.weights_plot_fill_area = [w1,w2]
                 lineweight1 = plot.PolyLine(w1, legend='',
                                           colour=colweight, width=width)
