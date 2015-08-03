@@ -27,7 +27,7 @@ def wixi(x):
 
 # Lateral correlation function
 def CF_gxy_square(parms, tau):
-    """ 2D free diffusion measured with a square pinhole.
+    u""" 2D free diffusion measured with a square pinhole.
         For the square pinhole, the correlation function can readily be
         calculated for a TIR-FCS setup.
         This function is called by other functions within this module.
@@ -61,7 +61,7 @@ def CF_gxy_square(parms, tau):
 
 
 def CF_gz_CC(parms, tau, wixi=wixi):
-    """ Axial (1D) diffusion in a TIR-FCS setup.
+    u""" Axial (1D) diffusion in a TIR-FCS setup.
         From Two species (bound/unbound) this is the bound part.
         This function is called by other functions within this module.
 
@@ -114,7 +114,7 @@ def CF_gz_CC(parms, tau, wixi=wixi):
 
 
 def CF_gz_AC(parms, tau, wixi=wixi):
-    """ Axial (1D) diffusion in a TIR-FCS setup.
+    u""" Axial (1D) diffusion in a TIR-FCS setup.
         From Two species (bound/unbound) this is the cross correlation part.
         This function is called by other functions within this module.
 
@@ -173,7 +173,7 @@ def CF_gz_AC(parms, tau, wixi=wixi):
 
 
 def CF_gz_AA(parms, tau, wixi=wixi):
-    """ Axial (1D) diffusion in a TIR-FCS setup.
+    u""" Axial (1D) diffusion in a TIR-FCS setup.
         From Two species (bound/unbound) this is the unbound part.
         This function is called by other functions within this module.
 

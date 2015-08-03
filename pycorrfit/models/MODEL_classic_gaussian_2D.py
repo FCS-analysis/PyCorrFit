@@ -173,7 +173,7 @@ def Check_6031(parms):
     return parms
 
 
-def MoreInfo_6001(parms, countrate):
+def MoreInfo_6001(parms, countrate=None):
     # We can only give you the effective particle number
     n = parms[0]
     Info = list()
@@ -184,7 +184,7 @@ def MoreInfo_6001(parms, countrate):
     return Info
     
     
-def MoreInfo_6031(parms, countrate):
+def MoreInfo_6031(parms, countrate=None):
     u"""Supplementary parameters:
         [8] n₁ = n*F₁     Particle number of species 1
         [9] n₂ = n*(1-F₁) Particle number of species 2
