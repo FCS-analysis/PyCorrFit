@@ -114,7 +114,7 @@ class Model(object):
     def func_verification(self):
         return self._verification
     
-    def get_supplementary_parameters(self, values, countrate):
+    def get_supplementary_parameters(self, values, countrate=None):
         """
         Compute additional information for the model
         
@@ -123,11 +123,11 @@ class Model(object):
         values: list-like of same length as `self.default_values`
             parameters for the model
         countrate: float
-            count rate in Hz
+            countrate in kHz
         """
-        return self.func_supplements(values, countrate*1e-3)
+        return self.func_supplements(values, countrate)
 
-    def get_supplementary_values(self, values, countrate):
+    def get_supplementary_values(self, values, countrate=None):
         """
         Returns only the values of
         self.get_supplementary_parameters
