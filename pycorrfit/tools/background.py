@@ -18,6 +18,7 @@ import wx.lib.plot as plot
 from .. import misc
 from .. import openfile as opf                  # How to treat an opened file
 from .. import readfiles
+from ..fcs_data_set import Trace
 
 # Menu entry name
 MENUINFO = ["&Background correction", "Open a file for background correction."]
@@ -550,7 +551,7 @@ def ApplyAutomaticBackground(page, bg, parent):
     bglist = 1*np.atleast_1d(bg)
     # minus 1 to identify non-set background id
     bgid = np.zeros(bglist.shape, dtype=int) - 1
-    for b in xrange(len(bglist)):
+    for b in range(len(bglist)):
         # Check if exists:
         for i in xrange(len(parent.Background)):
             if parent.Background[i][0] == bglist[b]:
@@ -561,17 +562,21 @@ def ApplyAutomaticBackground(page, bg, parent):
             trace = np.array([[0,bglist[b]],[1,bglist[b]]])
             parent.Background.append([bglist[b], bgname, trace])
             bgid[b] = len(parent.Background) - 1
+    
     # Apply background to page
     # Last item is id of background
+    page_bgs = list()
+    for b in bglist:
+        page_bgs.append(Trace(countrate=b, duration=1))
+
+    page.corr.backgrounds = page_bgs
+
     page.bgselected = bgid[0]
-    if page.IsCrossCorrelation:
-        if len(bgid) != 2:
-            raise NotImplementedError("Cross-correlation data needs"+
-                "exactly two signals for background-correction!")
-        # Apply second background
+    if len(page_bgs) == 2:
         page.bg2selected = bgid[1]
     else:
         page.bg2selected = None
+
     CleanupAutomaticBackground(parent)
     page.OnAmplitudeCheck("init")
     page.PlotAll()

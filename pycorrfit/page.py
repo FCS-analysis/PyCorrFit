@@ -124,6 +124,13 @@ class FittingPanel(wx.Panel):
     def traceavg(self):
         warnings.warn("Trace average always set to none!")
         return None
+    
+    @property
+    def tracecc(self):
+        if self.corr.is_cc:
+            return self.corr.traces
+        else:
+            return None
 
     def apply_parameters(self, event=None):
         """ Read the values from the form and write it to the
@@ -438,7 +445,7 @@ class FittingPanel(wx.Panel):
         #self.AmplitudeInfo = [ [intlabel1, intlabel2],
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
-        if self.IsCrossCorrelation:
+        if self.corr.is_cc:
             # update both self.bgselected and self.bg2selected
             bg = [self.AmplitudeInfo[1][0].GetValue(),
                   self.AmplitudeInfo[1][1].GetValue()]

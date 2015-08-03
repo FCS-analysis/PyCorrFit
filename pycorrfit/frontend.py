@@ -882,30 +882,16 @@ class MyFrame(wx.Frame):
             submodule `tools`.
         """
         CurPage = Page
+        # Set name of correlation
+        CurPage.corr.filename = filename
         # Import traces. Traces are usually put into a list, even if there
         # is only one trace. The reason is, that for cross correlation, we 
         # have two traces and thus we have to import both.
-        # In case of cross correlation, save that list of (two) traces
-        # in the page.tracecc variable. Else, save the trace for auto-
-        # correlations directly into the page.trace variable. We are
-        # doing this in order to keep data types clean.
-        if curvetype[0:2] == "CC":
-            # For cross correlation, the trace has two components
-            CurPage.SetCorrelationType(True, init=True)
-            CurPage.tracecc = trace
-            CurPage.trace = None
-        else:
-            CurPage.SetCorrelationType(False, init=True)
-            CurPage.tracecc = None
-            if trace is not None:
-                CurPage.trace = trace
-                CurPage.traceavg = trace[:,1].mean()
+        CurPage.corr.traces = trace
         # Import correlation function
-        CurPage.dataexpfull = dataexp
-        # We need this to be able to work with the data.
-        # It actually does nothing to the data right now.
-        CurPage.startcrop = None
-        CurPage.endcrop = None
+        CurPage.corr.correlation = dataexp
+        CurPage.corr.corr_type = curvetype
+        CurPage.OnAmplitudeCheck()
         # It might be possible, that we want the channels to be
         # fixed to some interval. This is the case if the 
         # checkbox on the "Channel selection" dialog is checked.
