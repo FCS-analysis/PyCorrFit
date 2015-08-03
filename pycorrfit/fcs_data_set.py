@@ -1026,7 +1026,7 @@ class Fit(object):
             Returns the sum of squares of the input data.
             (Methods that are not "Lev-Mar")
         """
-        e = self.func(parms, x)
+        e = self.fit_function(parms, x)
         return np.sum(e*e)
 
     def minimize(self):
@@ -1039,10 +1039,11 @@ class Fit(object):
         # Begin fitting
         if self.fit_algorithm == "Lev-Mar":
             res = algorithm(self.fit_function, self.fit_parm[self.fit_bool],
-                            args=(self.x), full_output=1)
+                            args=(self.x,), full_output=1)
         else:
+            disp = self.verbose > 0 # print convergence message
             res = algorithm(self.fit_function_scalar, self.fit_parm[self.fit_bool],
-                            args=([self.x]), full_output=1)
+                            args=(self.x,), full_output=1, disp=disp)
 
         # The optimal parameters
         parmoptim = res[0]
