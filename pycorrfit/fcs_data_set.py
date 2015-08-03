@@ -27,10 +27,10 @@ class Trace(object):
             The array contains time [s] and count rate [Hz].
         coutrate : float
             Average count rate [Hz].
-            Mandatory if data is None. 
+            Mandatory if trace is None. 
         duration : float
             Duration of measurement in seconds.
-            Mandatory if data is None.
+            Mandatory if trace is None.
         name : str
             The name of the trace.
         """
@@ -49,11 +49,19 @@ class Trace(object):
             name = "{:.2f}kHz, {:.0f}s".format(self.countrate/1000,
                                                self.duration)
         self.name = name
-        
+    
+    def __getitem__(self, idx):
+        return self._trace[idx]
+    
+    def __repr__(self):
+        text = "Trace of length {}s and countrate {}kHz".format(
+                self.duration, self.countrate)
+        return text
+    
     @property
     def countrate(self):
         if self._countrate is None:
-            self._countrate = self._trace[0,-1] - self._trace[0,0]
+            self._countrate = np.average(self._trace[:,1])
         return self._countrate
     
     @countrate.setter
@@ -65,8 +73,8 @@ class Trace(object):
 
     @property
     def duration(self):
-        if not hasattr(self, "_duration"):
-            self._duration = self._trace[0,-1] - self._trace[0,0]
+        if not hasattr(self, "_duration") or self._duration is None:
+            self._duration = self._trace[-1,0] - self._trace[0,0]
         return self._duration
     
     @duration.setter
@@ -100,7 +108,7 @@ class Trace(object):
         assert isinstance(value, np.ndarray), "value must be array!"
         assert value.shape[1] == 2, "shape of array must be (N,2)!"
         self._trace = value
-        self.countrate = np.average(value[:,1])
+        # self.countrate is set automagically
 
 
 class Correlation(object):
@@ -153,6 +161,7 @@ class Correlation(object):
         
         
         # must be created before setting properties
+        self._backgrounds = []
         self._correlation = None
         self._fit_algorithm = None   
         self._fit_model = None
@@ -162,6 +171,7 @@ class Correlation(object):
         self._fit_weight_memory = dict()
         self._lag_time = None
         self._model_memory = dict()
+        self._traces = []
         self._uid = None
 
         self.verbose = verbose
@@ -185,6 +195,43 @@ class Correlation(object):
         self.normparm = normparm
         self.title = title
         self.traces = traces
+
+    def __repr__(self):
+        if self.is_ac:
+            c = "AC"
+        else:
+            c = "CC"
+        text = "{} correlation '{}' with {} traces".format(
+                c, self.title, len(self._traces))
+        return text
+
+
+    @property
+    def backgrounds(self):
+        """
+        The background trace(s) of this correlation in a list.
+        """
+        return self._backgrounds
+    
+    @backgrounds.setter
+    def backgrounds(self, value):
+        """
+        Set the backgrounds. The value can either be a list of traces or
+        instances of traces or a single trace in an array.
+        """
+        backgrounds = list()
+        if not isinstance(value, list):
+            value = [value]
+        assert len(value) in [0,1,2], "Backgrounds must be list with up to two elements."
+        for v in value:
+            if isinstance(v, np.ndarray):
+                backgrounds.append(Trace(trace=v))
+            elif isinstance(v, Trace):
+                backgrounds.append(v)
+            else:
+                raise ValueError("Each background must be instance of Trace or ndarray")
+        self._backgrounds = backgrounds
+
 
     @property
     def bg_correction_factor(self):
@@ -225,7 +272,7 @@ class Correlation(object):
                 bgfactor = (S/(S-B)) * (S2/(S2-B2))
             else:
                 warnings.warn("Correlation {}: no bg-correction".
-                              format(self.uis))
+                              format(self))
                 bgfactor = 1
         return bgfactor
 
@@ -492,6 +539,34 @@ class Correlation(object):
         residuals_plot = self.correlation_plot.copy()
         residuals_plot[:,1] -= self.modeled_plot[:,1]
         return residuals_plot
+
+    @property
+    def traces(self):
+        """
+        The trace(s) of this correlation in a list.
+        """
+        return self._traces
+    
+    @traces.setter
+    def traces(self, value):
+        """
+        Set the traces. The value can either be a list of traces or
+        instances of traces or a single trace in an array.
+        """
+        traces = list()
+        if not isinstance(value, list):
+            value = [value]
+        assert len(value) in [0,1,2], "Traces must be list with up to two elements."
+        for v in value:
+            if isinstance(v, np.ndarray):
+                traces.append(Trace(trace=v))
+            elif isinstance(v, Trace):
+                traces.append(v)
+            else:
+                raise ValueError("Each trace must be instance of Trace or ndarray")
+        self._traces = traces
+            
+        
 
     @property
     def uid(self):
