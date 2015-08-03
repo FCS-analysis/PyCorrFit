@@ -142,7 +142,7 @@ def CF_Gxyz_TIR_gauss_trip(parms, tau):
 
 
 
-def MoreInfo_6013(parms, countrate):
+def MoreInfo_6013(parms, countrate=None):
     u"""Supplementary variables:
         Beware that the effective volume is chosen arbitrarily.
         Correlation function at lag time τ=0:
@@ -172,7 +172,7 @@ def MoreInfo_6013(parms, countrate):
     return Info
 
 
-def MoreInfo_6014(parms, countrate):
+def MoreInfo_6014(parms, countrate=None):
     u"""Supplementary variables:
         Beware that the effective volume is chosen arbitrarily.
         Correlation function at lag time τ=0:

@@ -25,7 +25,7 @@ def wixi(x):
 
 # 3D + 2D + T
 def CF_Gxyz_3d2dT_gauss(parms, tau):
-    """ Two-component, two- and three-dimensional diffusion
+    u""" Two-component, two- and three-dimensional diffusion
         with a Gaussian lateral detection profile and
         an exponentially decaying profile in axial direction,
         including a triplet component.
@@ -136,7 +136,7 @@ def Checkme(parms):
     return parms
 
 
-def MoreInfo(parms, countrate):
+def MoreInfo(parms, countrate=None):
     u"""Supplementary parameters:
         Effective number of freely diffusing particles in 3D:
         [10] n3D = n*F
