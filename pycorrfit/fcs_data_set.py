@@ -24,13 +24,13 @@ class Trace(object):
         Parameters
         ----------
         trace : ndarray of shape (N, 2)
-            The array contains time [s] and count rate [Hz].
+            The array contains time [ms] and count rate [kHz].
         coutrate : float
-            Average count rate [Hz].
-            Mandatory if trace is None. 
+            Average count rate [kHz].
+            Mandatory if `trace` is None. 
         duration : float
-            Duration of measurement in seconds.
-            Mandatory if trace is None.
+            Duration of measurement in milliseconds.
+            Mandatory if `trace` is None.
         name : str
             The name of the trace.
         """
@@ -54,8 +54,8 @@ class Trace(object):
         return self._trace[idx]
     
     def __repr__(self):
-        text = "Trace of length {}s and countrate {}kHz".format(
-                self.duration, self.countrate)
+        text = "Trace of length {:.3f}s and countrate {:.3f}kHz".format(
+                self.duration/1000, self.countrate)
         return text
     
     @property
@@ -515,7 +515,7 @@ class Correlation(object):
         else:
             # get supplementary parameters
             alt = self.fit_model.get_supplementary_values(self.fit_parameters)
-            nfactor = alt[self.normparm - self.fit_parameters.shape[0]:]
+            nfactor = alt[self.normparm - self.fit_parameters.shape[0]]
         
         return nfactor
 
