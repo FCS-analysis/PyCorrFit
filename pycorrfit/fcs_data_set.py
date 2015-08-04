@@ -769,12 +769,14 @@ class Fit(object):
              "weighted fit" : c.is_weighted_fit,
              "fit algorithm" : c.fit_algorithm,
              "fit result" : c.fit_parameters.copy(),
-             "fit parameters" : np.where(c.fit_parameters_variable),
+             "fit parameters" : np.where(c.fit_parameters_variable)[0],
              "fit weights" : self.compute_weights(c)
              }
         
         if c.is_weighted_fit:
             d["weighted fit type"] = c.fit_weight_type
+            if isinstance(c.fit_weight_data, (int, float)):
+                d["weighted fit bins"] = c.fit_weight_data
 
         if d["fit algorithm"] == "Lev-Mar":
             d["fit error estimation"] = self.parmoptim_error
