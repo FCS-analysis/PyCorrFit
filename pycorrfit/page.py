@@ -197,10 +197,6 @@ class FittingPanel(wx.Panel):
         self.corr.fit_weight_type = fit_weight_type
         self.corr.fit_weight_data = fit_weight_data
         
-        # TODO:
-        # - write fit_type and fit character to self.corr
-        #   (weighted nuvar and knots)
-        
         # If parameters have been changed because of the check_parms
         # function, write them back.
         self.apply_parameters_reverse()
