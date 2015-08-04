@@ -440,7 +440,7 @@ class Correlation(object):
 
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):
-        assert self.value.shape[1] == 2
+        assert value.shape[1] == 2
         assert value.shape[0] == self.fit_parameters.shape[0]
         self._fit_parameters_range = value
 
@@ -778,7 +778,7 @@ class Fit(object):
             if isinstance(c.fit_weight_data, (int, float)):
                 d["weighted fit bins"] = c.fit_weight_data
 
-        if d["fit algorithm"] == "Lev-Mar":
+        if d["fit algorithm"] == "Lev-Mar" and self.parmoptim_error is not None:
             d["fit error estimation"] = self.parmoptim_error
         
         return d

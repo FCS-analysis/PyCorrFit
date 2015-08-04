@@ -10,7 +10,6 @@ Open a text window with lots of information.
 import wx
 import numpy as np
 
-from .. import fitting
 from .. import fcs_data_set
 from .. import models as mdls
 
@@ -176,19 +175,18 @@ class InfoClass(object):
                 # Fitting range:
                 t1 = 1.*corr.lag_time[corr.fit_ival[0]]
                 t2 = 1.*corr.lag_time[corr.fit_ival[1]-1]
-                Fitting.append([ "Interval start [ms]", "%.4e" % t1 ])
-                Fitting.append([ "Interval end [ms]", "%.4e" % t2 ])
+                Fitting.append([ "Ival start [ms]", "%.4e" % t1 ])
+                Fitting.append([ "Ival end [ms]", "%.4e" % t2 ])
                 # Fittet parameters
                 fitparmsid = corr.fit_results["fit parameters"]
                 fitparms = np.array(corr.fit_model.parameters[0])[fitparmsid]
                 fitparms_short = [ f.split()[0] for f in fitparms ]
                 fitparms_short = u", ".join(fitparms_short)
-                Fitting.append(["fit par.", fitparms_short])
+                Fitting.append(["Fit parm.", fitparms_short])
                 # Fit errors
                 if corr.fit_results.has_key("fit error estimation"):
                     errors = corr.fit_results["fit error estimation"]
                     for err, par in zip(errors, fitparms):
-                        
                         nam, val = mdls.GetHumanReadableParameterDict( 
                                                 model[2], [par], [err])
                         Fitting.append(["Err "+nam[0], val[0]])
