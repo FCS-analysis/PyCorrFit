@@ -790,7 +790,7 @@ class Fit(object):
         # Calculate degrees of freedom
         dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
-        chi2 = self.fit_function_scalar(self.fit_parm, self.x)
+        chi2 = self.fit_function_scalar(self.fit_parm[self.fit_bool], self.x)
         return chi2 / dof
 
     @staticmethod
@@ -1037,6 +1037,7 @@ class Fit(object):
         algorithm = Algorithms[self.fit_algorithm][0]
 
         # Begin fitting
+        
         if self.fit_algorithm == "Lev-Mar":
             res = algorithm(self.fit_function, self.fit_parm[self.fit_bool],
                             args=(self.x,), full_output=1)
@@ -1047,7 +1048,6 @@ class Fit(object):
 
         # The optimal parameters
         parmoptim = res[0]
-
         # Now write the optimal parameters to our values:
         index = 0
         for i in range(len(self.fit_parm)):
@@ -1057,7 +1057,6 @@ class Fit(object):
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
         # Write optimal parameters back to this class.
-
         chi = self.chi_squared
         # Compute error estimates for fit (Only "Lev-Mar")
         if self.fit_algorithm == "Lev-Mar":
@@ -1080,7 +1079,6 @@ class Fit(object):
                     self.parmoptim_error = np.diag(self.covar)
         else:
             self.parmoptim_error = None
-
 
 
 def GetAlgorithmStringList():
