@@ -382,21 +382,21 @@ class Correlation(object):
     @property
     def fit_ival(self):
         """lag time interval for fitting"""
-        corr = self._correlation
-        if corr is not None:
-            if self._fit_ival[1] <= 0 or self._fit_ival[1] > corr.shape[0]:
-                self._fit_ival[1] = corr.shape[0]
+        lag = self.lag_time
+        if lag is not None:
+            if self._fit_ival[1] <= 0 or self._fit_ival[1] > lag.shape[0]:
+                self._fit_ival[1] = lag.shape[0]
         return self._fit_ival
     
     @fit_ival.setter
     def fit_ival(self, value):
-        corr = self.correlation
         value = list(value)
         if value[1] <= 0:
-            if corr is not None:
-                value[1] = corr.shape[0]
+            if self.lag_time is not None:
+                value[1] = self.lag_time.shape[0]
             else:
                 # just to be sure
+                warnings.warn("No data available.")
                 value[1] = 10000000000000000
         self._fit_ival = value
 
