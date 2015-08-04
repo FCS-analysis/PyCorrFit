@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import abspath, dirname, split
+from os.path import abspath, dirname
 
 import matplotlib.pylab as plt
 import numpy as np
 # Add parent directory to beginning of path variable
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-import pycorrfit
 
 from pycorrfit.fcs_data_set import Correlation, Fit
 
@@ -39,7 +38,6 @@ def test_simple_corr():
     
 
 if __name__ == "__main__":
-    test_simple_corr()
     corr = create_corr()
 
     fig, (ax1, ax2) = plt.subplots(2,1)
