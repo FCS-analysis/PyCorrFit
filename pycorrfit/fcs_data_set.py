@@ -560,6 +560,15 @@ class Correlation(object):
         residuals_plot[:,1] -= self.modeled_plot[:,1]
         return residuals_plot
 
+    def set_weights(self, type_name, data):
+        """
+        Add weights for fitting.
+        example:
+        type_name : "Average"
+        data : 1d ndarray with length self.lag_time 
+        """
+        self._fit_weight_memory[type_name] = data
+
     @property
     def traces(self):
         """
