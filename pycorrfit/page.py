@@ -38,8 +38,8 @@ class FittingPanel(wx.Panel):
         self.corr.fit_parameters_variable = active_parms[2]
         self.corr.lag_time = tau
 
-        self.bgselected = None
-        self.bg2selected = None
+        self._bgselected = None
+        self._bg2selected = None
 
         self.FitKnots = 5 # number of knots for spline fit or similiars
 
@@ -131,6 +131,33 @@ class FittingPanel(wx.Panel):
             return self.corr.traces
         else:
             return None
+
+    @property
+    def bgselected(self):
+        return self._bgselected
+    
+    @bgselected.setter
+    def bgselected(self, value):
+        if value is None:
+            self.corr.backgrounds=[]
+            return
+        # check paren.Background and get id
+        background = self.parent.Background[value]
+        self.corr.background_replace(0, background)
+
+    @property
+    def bg2selected(self):
+        return self._bgselected
+    
+    @bg2selected.setter
+    def bg2selected(self, value):
+        if value is None:
+            if self.corr.is_cc:
+                self.corr.backgrounds=[]
+            return
+        # check paren.Background and get id
+        background = self.parent.Background[value]
+        self.corr.background_replace(1, background)
 
     def apply_parameters(self, event=None):
         """ Read the values from the form and write it to the
@@ -436,14 +463,16 @@ class FittingPanel(wx.Panel):
         ## [0] average signal [kHz]
         ## [1] signal name (edited by user)
         ## [2] signal trace (tuple) ([ms], [kHz])
-        if self.bgselected is not None:
+        if len(self.corr.backgrounds) >= 1:
             self.AmplitudeInfo[1][0].SetValue(
-                        self.parent.Background[self.bgselected][0])
+                        self.corr.backgrounds[0].countrate)
         else:
             self.AmplitudeInfo[1][0].SetValue(0)
-        if self.bg2selected is not None and self.corr.is_cc:
+            self.AmplitudeInfo[1][1].SetValue(0)
+        
+        if len(self.corr.backgrounds) == 2:
             self.AmplitudeInfo[1][1].SetValue(
-                        self.parent.Background[self.bg2selected][0])
+                        self.corr.backgrounds[1].countrate)
         else:
             self.AmplitudeInfo[1][1].SetValue(0)
         # Disable the second line in amplitude correction, if we have

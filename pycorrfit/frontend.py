@@ -134,10 +134,7 @@ class MyFrame(wx.Frame):
         self.tabcounter = 1
 
         # Background Correction List
-        # Here, each item is a list containing three elements:
-        # [0] average signal [kHz]
-        # [1] signal name (edited by user)
-        # [2] signal trace (tuple) ([ms], [kHz])
+        # Contains instances of `Trace`
         self.Background = list()
 
         # A dictionary for all the opened tool windows

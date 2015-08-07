@@ -206,6 +206,26 @@ class Correlation(object):
         return text
 
 
+    def background_replace(self, channel, background):
+        """
+        Replace a background.
+        Channel must be 0 or 1.
+        background must be instance of `Trace`
+        """
+        assert channel in [0, 1]
+        assert isinstance(background, Trace)
+        
+        if self.is_ac:
+            if channel == 1:
+                raise ValueError("Cannot set second background for AC.")
+            self._backgrounds = [background]
+        else:
+            if len(self._backgrounds) == 0:
+                self._backgrounds = [Trace(countrate=0, duration=0), Trace(countrate=0, duration=0)]
+            elif len(self._backgrounds) == 1:
+                self._backgrounds.append(Trace(countrate=0, duration=0))
+            self._backgrounds[channel] = background
+
     @property
     def backgrounds(self):
         """
@@ -565,6 +585,12 @@ class Correlation(object):
             else:
                 raise ValueError("Each trace must be instance of Trace or ndarray")
         self._traces = traces
+        
+        if len(self._traces) == 2:
+            if self._traces[0].duration != self._traces[1].duration:
+                warnings.warn("Unequal lenght of traces: {} and {}".format(
+                              self._traces[0].duration,
+                              self._traces[1].duration))
             
         
 

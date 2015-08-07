@@ -180,6 +180,16 @@ class BackgroundCorrection(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
 
 
+    def Apply(self, Page, backgroundid):
+        if self.rbtnCh1.GetValue() == True:
+            Page.bgselected = backgroundid
+        else:
+            Page.bg2selected = backgroundid
+        if Page.IsCrossCorrelation is False:
+            # Autocorrelation only has one background!
+            Page.bg2selected = None
+
+
     def OnApply(self, event):
         strFull = self.WXTextPages.GetValue()
         PageNumbers = misc.parseString2Pagenum(self, strFull)
@@ -194,13 +204,7 @@ class BackgroundCorrection(wx.Frame):
             Page = self.parent.notebook.GetPage(i)
             j = filter(lambda x: x.isdigit(), Page.counter)
             if int(j) in PageNumbers:
-                if self.rbtnCh1.GetValue() == True:
-                    Page.bgselected = item
-                else:
-                    Page.bg2selected = item
-                if Page.IsCrossCorrelation is False:
-                    # Autocorrelation only has one background!
-                    Page.bg2selected = None
+                self.Apply(Page, item)
                 Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
         # Clean up unused backgrounds
@@ -215,12 +219,8 @@ class BackgroundCorrection(wx.Frame):
         for i in np.arange(N):
             # Set Page 
             Page = self.parent.notebook.GetPage(i)
-            Page.bgselected = item
-            if Page.IsCrossCorrelation:
-                Page.bg2selected = item
-            else:
-                Page.bg2selected = None
             try:
+                self.Apply(Page, item)
                 Page.OnAmplitudeCheck("init")
                 Page.PlotAll()
             except OverflowError:
@@ -366,9 +366,7 @@ class BackgroundCorrection(wx.Frame):
             self.btnapply.Enable(True)
             self.btnapplyall.Enable(True)
             # Draw a trace from the list
-            self.activetrace = self.parent.Background[item-1][2]
-            #self.textafterdropdown.SetLabel(" Avg:  "+
-            #                    str(self.parent.Background[item-1][0]))
+            self.activetrace = self.parent.Background[item-1].trace
         # We want to have the trace in [s] here.
         trace = 1.*self.activetrace
         trace[:,0] = trace[:,0]/1000
@@ -379,8 +377,7 @@ class BackgroundCorrection(wx.Frame):
 
 
     def OnImport(self, event):
-        self.parent.Background.append([self.average, self.bgname.GetValue(), 
-                                      self.trace])
+        self.parent.Background.append(Trace(trace=self.trace, name=self.bgname.GetValue()))
         # Next two lines are taken care of by UpdateDropdown
         #name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
         #self.BGlist.append(name)
@@ -527,8 +524,7 @@ class BackgroundCorrection(wx.Frame):
         self.BGlist = list()
         #self.BGlist.append("File/User")
         for item in self.parent.Background:
-            bgname = "{} ({:.2f} kHz)".format(item[1],item[0])
-            self.BGlist.append(bgname)
+            self.BGlist.append(item.name)
         self.dropdown.SetItems(self.BGlist)
         # Show the last item
         self.dropdown.SetSelection(len(self.BGlist)-1)
@@ -552,15 +548,15 @@ def ApplyAutomaticBackground(page, bg, parent):
     # minus 1 to identify non-set background id
     bgid = np.zeros(bglist.shape, dtype=int) - 1
     for b in range(len(bglist)):
+        bgname = "AUTO: {:e} kHz \t".format(bglist[b])
         # Check if exists:
         for i in xrange(len(parent.Background)):
-            if parent.Background[i][0] == bglist[b]:
+            if (parent.Background[i].countrate == bglist[b] and 
+                parent.Background[i].name == bgname):
                 bgid[b] = i
         if bgid[b] == -1:
             # Add new background
-            bgname = "AUTO: {:e} kHz \t".format(bglist[b])
-            trace = np.array([[0,bglist[b]],[1,bglist[b]]])
-            parent.Background.append([bglist[b], bgname, trace])
+            parent.Background.append(Trace(countrate=bglist[b], name=bgname, duration=1))
             bgid[b] = len(parent.Background) - 1
     
     # Apply background to page
@@ -611,8 +607,8 @@ def CleanupAutomaticBackground(parent):
     keys.sort()
     for key in keys:
         # Do not delete user-generated backgrounds
-        if len(BGdict[key]) == 0 and parent.Background[key][1][-1]=="\t":
-            # This discrads auto-generated backgrounds that have no
+        if len(BGdict[key]) == 0 and parent.Background[key].name[-1]=="\t":
+            # This discards auto-generated backgrounds that have no
             # pages assigned to them
             pass
         else:
@@ -626,11 +622,11 @@ def CleanupAutomaticBackground(parent):
     keys.sort()
     for key in keys:
         # Do not delete user-generated backgrounds
-        if len(BG2dict[key]) == 0 and parent.Background[key][1][-1]=="\t":
+        if len(BG2dict[key]) == 0 and parent.Background[key].name[-1]=="\t":
             # This discrads auto-generated backgrounds that have no
             # pages assigned to them
             pass
-        elif parent.Background[key][1][-1]=="\t":
+        elif parent.Background[key].name[-1]=="\t":
             # We already added the user-defined backgrounds
             # Therefore, we only check for aut-generated backgrounds
             # ("\t")
