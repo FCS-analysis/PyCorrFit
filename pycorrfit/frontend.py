@@ -884,7 +884,8 @@ class MyFrame(wx.Frame):
         # Import traces. Traces are usually put into a list, even if there
         # is only one trace. The reason is, that for cross correlation, we 
         # have two traces and thus we have to import both.
-        CurPage.corr.traces = trace
+        if trace is not None:
+            CurPage.corr.traces = trace
         # Import correlation function
         CurPage.corr.correlation = dataexp
         CurPage.corr.corr_type = curvetype

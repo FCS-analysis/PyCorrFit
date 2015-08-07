@@ -213,8 +213,9 @@ class FittingPanel(wx.Panel):
             fit_weight_type = "model function"
             fit_weight_data = self.weighted_nuvar
         else: # fitbox_selection > 2:
-            fit_weight_type = fitbox_value.lower()
-            raise NotImplementedError("Need to set fit_weight_data.")
+            fit_weight_type = fitbox_value
+            self.corr.fit_weight_type = fitbox_value
+            fit_weight_data = self.corr.fit_weight_data
         
         # Fitting algorithm
         keys = fit.GetAlgorithmStringList()[0]
@@ -600,7 +601,23 @@ class FittingPanel(wx.Panel):
             if self.corr.is_weighted_fit and \
                self.parent.MenuShowWeights.IsChecked():
                 
-                weights = self.corr.fit_results["fit weights"]
+                try:
+                    weights = self.corr.fit_results["fit weights"]
+                except AttributeError:
+                    weights = self.corr.fit_weight_data
+
+                # if weights are from average or other, make sure that the 
+                # dimensions are correct
+                if weights.shape[0] == self.corr.correlation.shape[0]:
+                    weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
+                    
+                    
+                if np.allclose(weights, np.ones_like(weights)):
+                    weights = 0
+                    
+ 
+                
+
                 # Add the weights to the graph.
                 # This is done by drawing two lines.
                 w = 1*self.corr.correlation_fit
