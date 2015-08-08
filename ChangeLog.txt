@@ -2,6 +2,7 @@
 # this will become release 0.8.9
 - Improved support for "ALV-7004" files.
 - Tool 'Overlay Curves': show cropped correlation curves
+- Tool 'Trace view': increase size of window
 - Bugfix: fitting algorithms did not work
 - Under the hood:
    - Introduce new classes: Correlation, Fit, Trace
