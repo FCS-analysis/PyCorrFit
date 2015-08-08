@@ -674,11 +674,10 @@ class Fit(object):
                 self.check_parms = corr.check_parms
                 # Directly perform the fit and set the "fit" attribute
                 self.minimize()
-                # save fit instance in correlation class
-                corr.fit_results = self.get_fit_results(corr)
                 # update correlation model parameters
                 corr.fit_parameters = self.fit_parm
-                
+                # save fit instance in correlation class
+                corr.fit_results = self.get_fit_results(corr)
         else:
             # TODO:
             # - allow detaching of parameters,
@@ -721,6 +720,7 @@ class Fit(object):
             self.fit_bool = np.ones(len(variv), dtype=bool)
             self.fit_parm = variv
             self.fit_weights = np.array(weights).flatten()
+            self.fit_parm_names = varin
             
             def parameters_global_to_local(parameters, iicorr, varin=varin,
                                           initpar=initpar,
@@ -787,11 +787,12 @@ class Fit(object):
             self.minimize()
             # Update correlations
             for ii, corr in enumerate(self.correlations):
-                # save fit instance in correlation class
-                corr.fit_results = self.get_fit_results(corr)
                 # write new model parameters
                 corr.fit_parameters = parameters_global_to_local(self.fit_parm,
                                                                  ii)
+                # save fit instance in correlation class
+                corr.fit_results = self.get_fit_results(corr)
+
 
     def get_fit_results(self, correlation):
         """

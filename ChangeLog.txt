@@ -3,6 +3,7 @@
 - Improved support for "ALV-7004" files.
 - Tool 'Overlay Curves': show cropped correlation curves
 - Tool 'Trace view': increase size of window
+- Tool 'Global fitting': remove forced, joint weights
 - Bugfix: fitting algorithms did not work
 - Under the hood:
    - Introduce new classes: Correlation, Fit, Trace
