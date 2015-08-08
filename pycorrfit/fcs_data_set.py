@@ -764,7 +764,7 @@ class Fit(object):
                     fit_parm = glob2loc(parameters, ii)
                     # return function
                     out.append(mod.function(fit_parm, tau[ids[ii]:ids[ii+1]]))
-                return np.array(out).flatten()
+                return np.concatenate(out)
 
             self.func = global_func
             
