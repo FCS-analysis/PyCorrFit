@@ -183,6 +183,10 @@ class InfoClass(object):
                 fitparms_short = [ f.split()[0] for f in fitparms ]
                 fitparms_short = u", ".join(fitparms_short)
                 Fitting.append(["Fit parm.", fitparms_short])
+                # global fitting
+                for key in corr.fit_results.keys():
+                    if key.startswith("global"):
+                        Fitting.append([key.capitalize(), corr.fit_results[key]])
                 # Fit errors
                 if corr.fit_results.has_key("fit error estimation"):
                     errors = corr.fit_results["fit error estimation"]
@@ -190,6 +194,7 @@ class InfoClass(object):
                         nam, val = mdls.GetHumanReadableParameterDict( 
                                                 model[2], [par], [err])
                         Fitting.append(["Err "+nam[0], val[0]])
+
                 InfoDict["fitting"] = Fitting
 
         ## Normalization parameter id to name

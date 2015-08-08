@@ -606,58 +606,62 @@ class FittingPanel(wx.Panel):
                     weights = self.corr.fit_results["fit weights"]
                 except AttributeError:
                     weights = self.corr.fit_weight_data
-
-                # if weights are from average or other, make sure that the 
-                # dimensions are correct
-                if weights.shape[0] == self.corr.correlation.shape[0]:
-                    weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
-                    
-                    
-                if np.allclose(weights, np.ones_like(weights)):
-                    weights = 0
-                    
- 
                 
+                if isinstance(weights, np.ndarray):
+                    # user might have selected a new weight type and
+                    # presses apply, do not try to display weights
 
-                # Add the weights to the graph.
-                # This is done by drawing two lines.
-                w = 1*self.corr.correlation_fit
-                w1 = 1*w
-                w2 = 1*w
-                w1[:, 1] = w[:, 1] + weights
-                w2[:, 1] = w[:, 1] - weights
-                # crop w1 and w2 if self.dataexp does not include all
-                # data points.
-                if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
-                    pass
-                else:
-                    raise NotImplementedError("Remove this case. It should not be here.")
-                    start = np.min(self.dataexp[:,0])
-                    end = np.max(self.dataexp[:,0])
-                    idstart = np.argwhere(w[:,0]==start)
-                    idend = np.argwhere(w[:,0]==end)
-                    if len(idend) == 0:
-                        # dataexp is longer, do not change anything
+                    # if weights are from average or other, make sure that the 
+                    # dimensions are correct
+                    if weights.shape[0] == self.corr.correlation.shape[0]:
+                        weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
+                        
+                        
+                    if np.allclose(weights, np.ones_like(weights)):
+                        weights = 0
+                        
+     
+                    
+    
+                    # Add the weights to the graph.
+                    # This is done by drawing two lines.
+                    w = 1*self.corr.modeled_fit
+                    w1 = 1*w
+                    w2 = 1*w
+                    w1[:, 1] = w[:, 1] + weights
+                    w2[:, 1] = w[:, 1] - weights
+                    # crop w1 and w2 if self.dataexp does not include all
+                    # data points.
+                    if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
                         pass
                     else:
-                        w1 = w1[:idend[0][0]+1]
-                        w2 = w2[:idend[0][0]+1]
-                    if len(idstart) == 0:
-                        # dataexp starts earlier, do not change anything
-                        pass
-                    else:
-                        w1 = w1[idstart[0][0]:]
-                        w2 = w2[idstart[0][0]:]
-                ## Normalization with self.normfactor
-                w1[:,1] *= self.corr.normalize_factor
-                w2[:,1] *= self.corr.normalize_factor
-                self.weights_plot_fill_area = [w1,w2]
-                lineweight1 = plot.PolyLine(w1, legend='',
-                                          colour=colweight, width=width)
-                lines.append(lineweight1)
-                lineweight2 = plot.PolyLine(w2, legend='',
-                                          colour=colweight, width=width)
-                lines.append(lineweight2)
+                        raise NotImplementedError("Remove this case. It should not be here.")
+                        start = np.min(self.dataexp[:,0])
+                        end = np.max(self.dataexp[:,0])
+                        idstart = np.argwhere(w[:,0]==start)
+                        idend = np.argwhere(w[:,0]==end)
+                        if len(idend) == 0:
+                            # dataexp is longer, do not change anything
+                            pass
+                        else:
+                            w1 = w1[:idend[0][0]+1]
+                            w2 = w2[:idend[0][0]+1]
+                        if len(idstart) == 0:
+                            # dataexp starts earlier, do not change anything
+                            pass
+                        else:
+                            w1 = w1[idstart[0][0]:]
+                            w2 = w2[idstart[0][0]:]
+                    ## Normalization with self.normfactor
+                    w1[:,1] *= self.corr.normalize_factor
+                    w2[:,1] *= self.corr.normalize_factor
+                    self.weights_plot_fill_area = [w1,w2]
+                    lineweight1 = plot.PolyLine(w1, legend='',
+                                              colour=colweight, width=width)
+                    lines.append(lineweight1)
+                    lineweight2 = plot.PolyLine(w2, legend='',
+                                              colour=colweight, width=width)
+                    lines.append(lineweight2)
                 
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
