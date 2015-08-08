@@ -10,7 +10,7 @@ We only parse the function with sympy and test it once during
 import. After that, the function is evaluated using eval()!
 """
 
-
+import codecs
 import numpy as np
 import scipy.special as sps
 import sys
@@ -170,12 +170,12 @@ class UserModel(object):
                     # Add whitespaces in model string (looks nicer)
                     for olin in code[1:]:
                         doc = doc + "\n       "+olin.strip()
-                    func.func_doc = doc
+                    func.func_doc = codecs.decode(doc, "utf-8")
                 elif var[0] == "g":
                     substitutes[var] = val.strip()
                 else:
                     # Add value and variable to our lists
-                    labels.append(var)
+                    labels.append(codecs.decode(var, "utf-8"))
                     values.append(float(val))
         # Active Parameters we are using for the fitting
         # [0] labels

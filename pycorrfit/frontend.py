@@ -1302,8 +1302,7 @@ class MyFrame(wx.Frame):
             dataexp = Infodict["Correlations"][pageid][1]
             if dataexp is not None:
                 # Write experimental data
-                Newtab.dataexpfull = dataexp
-                Newtab.dataexp = True # not None
+                Newtab.corr.correlation = dataexp
             # As of 0.7.3: Add external weights to page
             try:
                 Newtab.external_std_weights = \
@@ -1321,26 +1320,34 @@ class MyFrame(wx.Frame):
                 Newtab.Fitbox[1].SetItems(WeightKinds)
             self.UnpackParameters(Infodict["Parameters"][i], Newtab,
                                   init=True)
+            
+            if Infodict["Parameters"][0][7]:
+                Newtab.corr.corr_type = "cc"
+            else:
+                Newtab.corr.corr_type = "ac"
             # Supplementary data
+            fit_results = dict()
+            fit_results["weighted fit"] = Infodict["Parameters"][0][5][0] > 0
             try:
                 Sups = Infodict["Supplements"][pageid]
             except KeyError:
                 pass
             else:
-                errdict = dict()
-                for errInfo in Sups["FitErr"]:
-                    errkey = mdls.valuedict[modelid][0][int(errInfo[0])]
-                    errval = float(errInfo[1])
-                    errdict[errkey] = errval
-                Newtab.parmoptim_error = errdict
+                if Sups.has_key("FitErr"):
+                    ervals = list()
+                    for errInfo in Sups["FitErr"]:
+                        ervals.append(float(errInfo[1]))
+                    fit_results["fit error estimation"] = ervals
                 try:
-                    Newtab.GlobalParameterShare = Sups["Global Share"]
-                except:
+                    if len(Sups["Global Share"]) > 0: 
+                        fit_results["global pages"] = Sups["Global Share"]
+                except KeyError:
                     pass
                 try:
-                    Newtab.chi2 = Sups["Chi sq"]
+                    fit_results["chi2"] = Sups["Chi sq"]
                 except:
                     pass
+            Newtab.corr.fit_results = fit_results
             # Set Title of the Page
             try:
                 Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
@@ -1348,15 +1355,12 @@ class MyFrame(wx.Frame):
                 pass # no page title
             # Import the intensity trace
             try:
-                trace = Infodict["Traces"][pageid]
+                traces = Infodict["Traces"][pageid]
             except:
-                trace = None
-            if trace is not None:
-                if Newtab.IsCrossCorrelation is False:
-                    Newtab.trace = trace[0]
-                    Newtab.traceavg = trace[0][:,1].mean()
-                else:
-                    Newtab.tracecc = trace
+                pass
+            else:
+                if traces is not None:
+                    Newtab.corr.traces = traces
             # Plot everything
             Newtab.PlotAll(trigger="page_add_batch")
         # Set Session Comment
