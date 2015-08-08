@@ -336,7 +336,7 @@ class Correlation(object):
         corr = self.correlation
         if corr is not None:
             # perform parameter normalization
-            return corr[:, self.fit_ival[0]:self.fit_ival[1]]
+            return corr[self.fit_ival[0]:self.fit_ival[1],:]
     
     @property
     def correlation_plot(self):
@@ -513,7 +513,7 @@ class Correlation(object):
     @property
     def modeled_fit(self):
         """fitted data values, same shape as self.correlation_fit"""
-        toplot = self.modeled[:, self.fit_ival[0]:self.fit_ival[1]]
+        toplot = self.modeled[self.fit_ival[0]:self.fit_ival[1], :]
         return toplot
 
     @property
@@ -815,6 +815,7 @@ class Fit(object):
 
         if d["fit algorithm"] == "Lev-Mar" and self.parmoptim_error is not None:
             d["fit error estimation"] = self.parmoptim_error
+        
         
         return d
         
