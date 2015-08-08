@@ -571,8 +571,7 @@ class FittingPanel(wx.Panel):
             # We use this to have the page plotted at least once before
             # readout of parameters (e.g. startcrop, endcrop)
             # This is a performence tweak.
-            #self.crop_data()
-            if self.InitialPlot is True:
+            if self.InitialPlot:
                 return
             else:
                 self.InitialPlot = True
