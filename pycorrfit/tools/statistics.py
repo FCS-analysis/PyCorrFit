@@ -293,7 +293,7 @@ class Stat(wx.Frame):
         pages = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            if Page.modelid == self.Page.modelid:
+            if Page.modelid == self.Page.corr.fit_model.id:
                 # Only pages with same modelid
                 if int(Page.counter.strip("#: ")) in PageNumbers:
                     # Only pages selected in self.WXTextPages
@@ -436,7 +436,7 @@ class Stat(wx.Frame):
         pages = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            if Page.modelid == self.Page.modelid:
+            if Page.corr.fit_model.id == self.Page.corr.fit_model.id:
                 # Only pages with same modelid
                 if int(Page.counter.strip("#: ")) in PageNumbers:
                     # Only pages selected in self.WXTextPages
@@ -516,7 +516,7 @@ class Stat(wx.Frame):
             return
         elif trigger in ["tab_init"] and page is not None:
             # Check if we have to replot for a new model
-            if self.Page.modelid == page.modelid:
+            if self.Page.corr.fit_model.id == page.corr.fit_model.id:
                 return
         if (trigger in ["page_add_finalize"] and 
             self.WXTextPages.GetValue() == "1"):
