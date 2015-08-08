@@ -599,7 +599,7 @@ def CleanupAutomaticBackground(parent):
     parent.Background = list()
     bgcounter = 0
     for key in BGdict.keys():
-        if len(BGdict[key]) != 0:
+        if len(BGdict[key]) != 0 or not oldBackground[key].name.endswith("\t"):
             parent.Background.append(oldBackground[key])
             for page, bgid in BGdict[key]:
                 if bgid == 1:
