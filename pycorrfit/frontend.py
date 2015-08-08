@@ -824,7 +824,7 @@ class MyFrame(wx.Frame):
                         # Create new page.
                         # (Add n-1 pages while importing.)
                         CurPage = self.add_fitting_tab(event=None, 
-                                             modelid=CurPage.modelid,
+                                             modelid=CurPage.corr.fit_model.id,
                                              counter=None)
                 # We are finished here:
                 return
@@ -1493,7 +1493,7 @@ class MyFrame(wx.Frame):
             # Set parameters
             Infodict["Parameters"][counter] = self.PackParameters(Page)
             # Set supplementary information, such as errors of fit
-            if Page.parmoptim_error is not None: # == if Page.chi2 is not None
+            if Page.corr.parmoptim_error is not None: # == if Page.chi2 is not None
                 Infodict["Supplements"][counter] = dict()
                 Infodict["Supplements"][counter]["Chi sq"] = float(Page.chi2)
                 PageList = list()
@@ -1593,12 +1593,12 @@ class MyFrame(wx.Frame):
         """
         Page.apply_parameters()
         # Get Model ID
-        modelid = Page.modelid
+        modelid = Page.corr.fit_model.id
         # Get Page number
         counter = Page.counter
-        active_numbers = Page.active_parms[1]       # Array, Parameters
-        active_fitting = Page.active_parms[2]
-        crop = [Page.startcrop, Page.endcrop]
+        active_numbers = Page.corr.fit_parameters   # Array, Parameters
+        active_fitting = Page.corr.fit_parameters_variable
+        crop = Page.corr.fit_ival
         Parms = [counter, modelid, active_numbers, active_fitting, crop]
         # Weighting:
         # Additional parameters as of v.0.2.0
@@ -1618,7 +1618,7 @@ class MyFrame(wx.Frame):
             knots = int(knots)
         weighted = Page.weighted_fittype_id
         weights = Page.weighted_nuvar
-        algorithm = Page.fit_algorithm
+        algorithm = Page.corr.fit_algorithm
         Parms.append([weighted, weights, knots, algorithm])
         # Additional parameters as of v.0.2.9
         # Which Background signal is selected?
@@ -1629,13 +1629,9 @@ class MyFrame(wx.Frame):
         Parms.append(Page.IsCrossCorrelation)
         # Additional parameter as of v.0.7.8
         # The selection of a normalization parameter (None or integer)
-        if Page.normparm is not None:
-            # We need to do this because yaml export would not work
-            # in safe mode.
-            Page.normparm=int(Page.normparm)
-        Parms.append(Page.normparm)
+        Parms.append(Page.corr.normparm)
         # Parameter ranges
-        Parms.append(Page.parameter_range)
+        Parms.append(Page.corr.fit_parameters_range)
         return Parms
 
 
@@ -1649,8 +1645,8 @@ class MyFrame(wx.Frame):
             (Autocorrelation/Cross-Correlation) of the page.
         """
         modelid = Parms[1]
-        if Page.modelid != modelid:
-            print "Wrong model: "+str(Page.modelid)+" vs. "+str(modelid)
+        if Page.corr.fit_model.id != modelid:
+            print "Wrong model: "+str(Page.corr.fit_model.id)+" vs. "+str(modelid)
             return
         active_values = Parms[2]
         active_fitting = Parms[3]
@@ -1681,16 +1677,12 @@ class MyFrame(wx.Frame):
             active_values = np.delete(active_values,lindex+1)
             active_fitting = np.delete(active_fitting, lindex+1)
         # Cropping: What part of dataexp should be displayed.
-        [cropstart, cropend] = Parms[4]
+        Page.corr.fit_ival = Parms[4]
         # Add parameters and fitting to the created page.
         # We need to run Newtab.apply_parameters_reverse() in order
         # for the data to be displayed in the user interface.
-        Page.active_parms[1] = active_values
-        Page.active_parms[2] = active_fitting
-        # Cropping
-        Page.startcrop = cropstart
-        Page.endcrop = cropend
-        Page.crop_data()
+        Page.corr.fit_parameters = active_values
+        Page.corr.fit_parameters_variable = active_fitting
         # Weighted fitting
         if len(Parms) >= 6:
             if len(Parms[5]) == 2:
@@ -1702,7 +1694,7 @@ class MyFrame(wx.Frame):
             else:
                 # We have different fitting algorithms as of v. 0.8.3
                 [weighted, weights, knots, algorithm] = Parms[5]
-                Page.fit_algorithm = algorithm
+                Page.corr.fit_algorithm = algorithm
             if knots is not None:
                 # This is done with apply_paramters_reverse:
                 #       text = Page.Fitbox[1].GetValue()
@@ -1721,14 +1713,9 @@ class MyFrame(wx.Frame):
             Page.weighted_nuvar = weights
         Page.apply_parameters_reverse()
 
-        if Page.dataexp is not None:
+        if Page.corr.correlation is not None:
             Page.Fit_enable_fitting()
             Page.Fit_WeightedFitCheck()
-            Page.Fit_create_instance()
-        if Page.weighted_fit_was_performed:
-            # We need this to plot std-dev
-            Page.calculate_corr()
-            Page.data4weight = 1.*Page.datacorr
         # Set which background correction the Page uses:
         if len(Parms) >= 7:
             # causality check:
@@ -1741,14 +1728,15 @@ class MyFrame(wx.Frame):
                 Page.OnAmplitudeCheck("init")
         # Set if Newtab is of type cross-correlation:
         if len(Parms) >= 8:
-            Page.SetCorrelationType(Parms[7], init)
+            Page.corr.corrtype = Parms[7]
+            Page.OnAmplitudeCheck()
         if len(Parms) >= 9:
             # New feature in 0.7.8 includes normalization to a fitting
             # parameter.
-            Page.normparm = Parms[8]
+            Page.corr.normparm = Parms[8]
             Page.OnAmplitudeCheck("init")
         if len(Parms) >= 10:
-            Page.parameter_range = np.array(Parms[9])
+            Page.corr.fit_parameters_range = np.array(Parms[9])
         ## If we want to add more stuff, we should do something like:
         ##   if len(Parms) >= 11:
         ##       nextvalue = Parms[10]

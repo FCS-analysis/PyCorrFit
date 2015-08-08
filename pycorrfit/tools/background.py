@@ -561,14 +561,10 @@ def ApplyAutomaticBackground(page, bg, parent):
     
     # Apply background to page
     # Last item is id of background
-    page_bgs = list()
-    for b in bglist:
-        page_bgs.append(Trace(countrate=b, duration=1))
-
-    page.corr.backgrounds = page_bgs
 
     page.bgselected = bgid[0]
-    if len(page_bgs) == 2:
+    
+    if len(bgid) == 2:
         page.bg2selected = bgid[1]
     else:
         page.bg2selected = None
@@ -589,53 +585,28 @@ def CleanupAutomaticBackground(parent):
     # Create a dictionary with keys: indices of old background list -
     # and elements: list of pages having this background
     BGdict = dict()
-    BG2dict = dict() # cross-correlation
     for i in xrange(len(parent.Background)):
         BGdict[i] = list()
-        BG2dict[i] = list()
     # Append pages to the lists inside the dictionary
     for i in xrange(parent.notebook.GetPageCount()):
         Page = parent.notebook.GetPage(i)
         if Page.bgselected is not None:
-            BGdict[Page.bgselected].append(Page)
+            BGdict[Page.bgselected].append([Page, 1])
         if Page.bg2selected is not None:
-            BG2dict[Page.bg2selected].append(Page)
-    # Sort the keys and create a new background list
-    NewBGlist = list()
-    keyID = 0
-    keys = BGdict.keys()
-    keys.sort()
-    for key in keys:
-        # Do not delete user-generated backgrounds
-        if len(BGdict[key]) == 0 and parent.Background[key].name[-1]=="\t":
-            # This discards auto-generated backgrounds that have no
-            # pages assigned to them
-            pass
-        else:
-            for page in BGdict[key]:
-                page.bgselected = keyID
-            NewBGlist.append(parent.Background[key])
-            keyID += 1
-    # Same thing for cross-correlation (two bg signals)
-    #keyID = 0
-    keys = BG2dict.keys()
-    keys.sort()
-    for key in keys:
-        # Do not delete user-generated backgrounds
-        if len(BG2dict[key]) == 0 and parent.Background[key].name[-1]=="\t":
-            # This discrads auto-generated backgrounds that have no
-            # pages assigned to them
-            pass
-        elif parent.Background[key].name[-1]=="\t":
-            # We already added the user-defined backgrounds
-            # Therefore, we only check for aut-generated backgrounds
-            # ("\t")
-            for page in BG2dict[key]:
-                page.bg2selected = keyID
-            NewBGlist.append(parent.Background[key])
-            keyID += 1
-    # Finally, write back background list
-    parent.Background = NewBGlist
+            BGdict[Page.bg2selected].append([Page, 2])
+    
+    oldBackground = parent.Background
+    parent.Background = list()
+    bgcounter = 0
+    for key in BGdict.keys():
+        if len(BGdict[key]) != 0:
+            parent.Background.append(oldBackground[key])
+            for page, bgid in BGdict[key]:
+                if bgid == 1:
+                    Page.bgselected = bgcounter
+                else:
+                    Page.bg2selected = bgcounter
+            bgcounter += 1
     # If the background correction tool is open, update the list
     # of backgrounds.
     # (self.MyName="BACKGROUND")

@@ -144,10 +144,11 @@ class FittingPanel(wx.Panel):
         # check paren.Background and get id
         background = self.parent.Background[value]
         self.corr.background_replace(0, background)
+        self._bgselected = value
 
     @property
     def bg2selected(self):
-        return self._bgselected
+        return self._bg2selected
     
     @bg2selected.setter
     def bg2selected(self, value):
@@ -158,6 +159,7 @@ class FittingPanel(wx.Panel):
         # check paren.Background and get id
         background = self.parent.Background[value]
         self.corr.background_replace(1, background)
+        self._bg2selected = value
 
     def apply_parameters(self, event=None):
         """ Read the values from the form and write it to the
