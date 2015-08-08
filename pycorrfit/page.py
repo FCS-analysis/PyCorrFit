@@ -18,7 +18,7 @@ from . import edclasses                    # Cool stuff like better floatspin
 from . import fitting as fit       # For fitting
 from . import models as mdls
 from . import tools
-from .fcs_data_set import Correlation, Fit, Trace
+from .fcs_data_set import Correlation, Fit
 
 class FittingPanel(wx.Panel):
     """
@@ -322,7 +322,7 @@ class FittingPanel(wx.Panel):
             print "There was an Error fitting. Please make sure that you\n"+\
                   "are fitting in a proper channel domain."
             wx.EndBusyCursor()
-            return
+            raise
 
         # Update spin-control values
         self.apply_parameters_reverse()
@@ -616,13 +616,9 @@ class FittingPanel(wx.Panel):
                     if weights.shape[0] == self.corr.correlation.shape[0]:
                         weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
                         
-                        
                     if np.allclose(weights, np.ones_like(weights)):
                         weights = 0
-                        
-     
-                    
-    
+
                     # Add the weights to the graph.
                     # This is done by drawing two lines.
                     w = 1*self.corr.modeled_fit
