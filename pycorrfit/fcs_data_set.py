@@ -156,10 +156,6 @@ class Correlation(object):
         verbose : int
             increment to increase verbosity
         """
-        # TODO:
-        # - implement shared data sets for global fit
-        
-        
         # must be created before setting properties
         self._backgrounds = []
         self._correlation = None
@@ -487,7 +483,7 @@ class Correlation(object):
             return self._lag_time
         else:
             # some default lag time
-            return np.exp(np.linspace(np.log(1e-8),np.log(100), 200))
+            return 10**np.linspace(-6,8,1001)
 
     @lag_time.setter
     def lag_time(self, value):
@@ -601,12 +597,14 @@ class Correlation(object):
                 warnings.warn("Unequal lenght of traces: {} and {}".format(
                               self._traces[0].duration,
                               self._traces[1].duration))
-            
-        
 
     @property
     def uid(self):
-        """unique identifier of this instance"""
+        """
+        unique identifier of this instance
+        This might change when title or filename
+        are updated.
+        """
         if self._uid is None:
             hasher = hashlib.sha256()
             hasher.update(str(np.random.random()))

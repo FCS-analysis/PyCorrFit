@@ -24,19 +24,20 @@ class FittingPanel(wx.Panel):
     """
     Those are the Panels that show the fitting dialogs with the Plots.
     """
-    def __init__(self, parent, counter, modelid, active_parms, tau):
+    def __init__(self, parent, counter, modelid, active_parms, tau=None):
         """ Initialize with given parameters. """
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
         self.parent = parent
         
         self.corr = Correlation(fit_model=modelid)
+        if tau is not None:
+            self.corr.lag_time = tau
         # active_parameters:
         # [0] labels
         # [1] values
         # [2] bool values to fit
         self.corr.fit_parameters = active_parms[1]
         self.corr.fit_parameters_variable = active_parms[2]
-        self.corr.lag_time = tau
 
         self._bgselected = None
         self._bg2selected = None
@@ -119,6 +120,19 @@ class FittingPanel(wx.Panel):
     @property
     def IsCrossCorrelation(self):
         return self.corr.is_cc
+    
+    @property
+    def modelid(self):
+        return self.corr.fit_model.id
+    
+    @property
+    def title(self):
+        return self.tabtitle.GetValue()
+
+    @title.setter
+    def title(self, title):
+        self.tabtitle.SetValue(title.strip())
+        self.corr.title = title.strip()
     
     @property
     def traceavg(self):

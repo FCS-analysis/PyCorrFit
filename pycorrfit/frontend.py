@@ -94,8 +94,6 @@ class MyFrame(wx.Frame):
 
         sys.excepthook = MyExceptionHook
         ## Set initial variables that make sense
-        tau = 10**np.linspace(-6,8,1001)
-
         self.version = version
         wx.Frame.__init__(self, parent, anid, "PyCorrFit " + self.version)
         self.CreateStatusBar() # A Statusbar in the bottom of the window
@@ -125,10 +123,6 @@ class MyFrame(wx.Frame):
         # and modified by this program (e.g. adding new function)
         self.value_set = mdls.values
         self.valuedict = mdls.valuedict
-
-        # Some standard time scale
-        # We need this for the functions inside the "FittingPanel"s
-        self.tau = tau 
 
         # Tab Counter
         self.tabcounter = 1
@@ -228,8 +222,7 @@ class MyFrame(wx.Frame):
         active_parms = [active_labels, active_values, active_fitting]
         model = mdls.modeldict[modelid][1]
         # Create New Tab
-        Newtab = page.FittingPanel(self, counter, modelid, active_parms,
-                                   self.tau)
+        Newtab = page.FittingPanel(self, counter, modelid, active_parms)
         #self.Freeze()
         self.notebook.AddPage(Newtab, counter+model, select=select)
         if select:
@@ -902,7 +895,7 @@ class MyFrame(wx.Frame):
             title = "{} r{:03d}-{}".format(filename, int(run), curvetype)
         else:
             title = "{} id{:03d}-{}".format(filename, int(curveid), curvetype)
-        CurPage.tabtitle.SetValue(title.strip())
+        CurPage.title = title
         # Plot everything
         CurPage.PlotAll(trigger=trigger)
         # Call this function to allow the "Channel Selection" window that
