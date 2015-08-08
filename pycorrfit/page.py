@@ -618,7 +618,7 @@ class FittingPanel(wx.Panel):
                 
                 try:
                     weights = self.corr.fit_results["fit weights"]
-                except AttributeError:
+                except KeyError:
                     weights = self.corr.fit_weight_data
                 
                 if isinstance(weights, np.ndarray):

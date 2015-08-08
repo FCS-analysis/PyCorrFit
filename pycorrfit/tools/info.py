@@ -159,7 +159,10 @@ class InfoClass(object):
                     Title.append(["Type AC/CC", "Autocorrelation" ]) 
                 Fitting.append([ u"χ²", corr.fit_results["chi2"]])
                 if weightedfit:
-                    Fitting.append([ "Weighted fit", corr.fit_results["weighted fit type"]])
+                    try:
+                        Fitting.append(["Weighted fit", corr.fit_results["weighted fit type"]])
+                    except KeyError:
+                        Fitting.append(["Weighted fit", u""+Page.Fitbox[1].GetValue()])
                     Chi2type = u"Weighted sum of squares"
                 else:
                     Chi2type = u"Sum of squares"
@@ -178,7 +181,10 @@ class InfoClass(object):
                 Fitting.append([ "Ival start [ms]", "%.4e" % t1 ])
                 Fitting.append([ "Ival end [ms]", "%.4e" % t2 ])
                 # Fittet parameters
-                fitparmsid = corr.fit_results["fit parameters"]
+                try:
+                    fitparmsid = corr.fit_results["fit parameters"]
+                except:
+                    fitparmsid = corr.fit_parameters_variable
                 fitparms = np.array(corr.fit_model.parameters[0])[fitparmsid]
                 fitparms_short = [ f.split()[0] for f in fitparms ]
                 fitparms_short = u", ".join(fitparms_short)
