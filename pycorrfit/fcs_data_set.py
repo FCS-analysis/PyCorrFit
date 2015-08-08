@@ -460,6 +460,7 @@ class Correlation(object):
 
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):
+        value = np.array(value)
         assert value.shape[1] == 2
         assert value.shape[0] == self.fit_parameters.shape[0]
         self._fit_parameters_range = value

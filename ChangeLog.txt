@@ -1,4 +1,12 @@
 0.8.8
+# this will become release 0.8.9
+- Improved support for "ALV-7004" files.
+- Tool 'Overlay Curves': show cropped correlation curves
+- Bugfix: fitting algorithms did not work
+- Under the hood:
+   - Introduce new classes: Correlation, Fit, Trace
+   - Code cleanup and rewrite to support planned features
+0.8.8
 - Improved support for "ALV-7004" files.
 - If you install the GUI with pip, you now need to include
   the `GUI` requirement: `pip install pycorrfit[GUI]`.
