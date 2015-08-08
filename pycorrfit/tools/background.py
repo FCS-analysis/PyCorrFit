@@ -585,14 +585,18 @@ def CleanupAutomaticBackground(parent):
     # Create a dictionary with keys: indices of old background list -
     # and elements: list of pages having this background
     BGdict = dict()
-    for i in xrange(len(parent.Background)):
+    for i in range(len(parent.Background)):
         BGdict[i] = list()
     # Append pages to the lists inside the dictionary
-    for i in xrange(parent.notebook.GetPageCount()):
+    for i in range(parent.notebook.GetPageCount()):
         Page = parent.notebook.GetPage(i)
         if Page.bgselected is not None:
+            if not BGdict.has_key(Page.bgselected):
+                BGdict[Page.bgselected] = list()
             BGdict[Page.bgselected].append([Page, 1])
         if Page.bg2selected is not None:
+            if not BGdict.has_key(Page.bg2selected):
+                BGdict[Page.bg2selected] = list()
             BGdict[Page.bg2selected].append([Page, 2])
     
     oldBackground = parent.Background
@@ -601,7 +605,7 @@ def CleanupAutomaticBackground(parent):
     for key in BGdict.keys():
         if len(BGdict[key]) != 0 or not oldBackground[key].name.endswith("\t"):
             parent.Background.append(oldBackground[key])
-            for page, bgid in BGdict[key]:
+            for Page, bgid in BGdict[key]:
                 if bgid == 1:
                     Page.bgselected = bgcounter
                 else:

@@ -715,12 +715,13 @@ class Fit(object):
             varin = np.array(varin)[varidx]
             variv = np.array(variv)[varidx]
             
-            self.x = np.array(xtemp).flatten()
-            self.y = np.array(ytemp).flatten()
+            self.x = np.concatenate(xtemp)
+            self.y = np.concatenate(ytemp)
             self.fit_bool = np.ones(len(variv), dtype=bool)
             self.fit_parm = variv
-            self.fit_weights = np.array(weights).flatten()
+            self.fit_weights = np.concatenate(weights)
             self.fit_parm_names = varin
+            
             
             def parameters_global_to_local(parameters, iicorr, varin=varin,
                                           initpar=initpar,
