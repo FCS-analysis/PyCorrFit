@@ -541,27 +541,37 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     openedfile.write(u"#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
-    # Since 0.7.8 the user may normalize the curves. The normalization
-    # factor is set in *Page.normfactor*.
-    corr = Page.datacorr[:,1]*Page.normfactor
-    if Page.dataexp is not None:
+    corr = Page.corr
+    mod = corr.modeled_plot[:,1]
+    if corr.correlation is not None:
         # Experimental data
-        tau = Page.dataexp[:,0]
-        exp = Page.dataexp[:,1]*Page.normfactor
-        res = Page.resid[:,1]*Page.normfactor
+        tau = corr.correlation_fit[:,0]
+        exp = corr.correlation_fit[:,1]
+        res = corr.residuals_fit[:,1]
         # Plotting! Because we only export plotted area.
-        weight = Page.weights_used_for_plotting
-        if weight is None:
-            pass
-        elif len(weight) != len(exp):
-            text = "Weights have not been calculated for the "+\
-                   "area you want to export. Pressing 'Fit' "+\
-                   "again should solve this issue. Weights will "+\
-                   "not be saved."
-            warnings.warn(text)
+        
+        if corr.is_weighted_fit:
+            weightname = corr.fit_weight_type
+            try:
+                weight = corr.fit_results["fit weights"]
+            except KeyError:
+                weight = corr.fit_weight_data
+    
+            if weight is None:
+                pass
+            
+            elif len(weight) != len(exp):
+                text = "Weights have not been calculated for the "+\
+                       "area you want to export. Pressing 'Fit' "+\
+                       "again should solve this issue. Weights will "+\
+                       "not be saved."
+                warnings.warn(text)
+                weight = None
+        else:
             weight = None
+            weightname = None
     else:
-        tau = Page.datacorr[:,0]
+        tau = corr.lag_time_fit
         exp = None
         res = None
     # Include weights in data saving:
@@ -573,19 +583,19 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     ## Correlation curve
     dataWriter = csv.writer(openedfile, delimiter='\t')
     if exp is not None:
-        header = '# Channel (tau [s])'+"\t"+ \
+        header = '# Lag time [s]'+"\t"+ \
                  'Experimental correlation'+"\t"+ \
                  'Fitted correlation'+ "\t"+ \
                  'Residuals'+"\r\n"
-        data = [tau, exp, corr, res]
-        if Page.weighted_fit_was_performed is True \
-        and weight is not None:
-            header = header.strip() + "\t"+'Weights (fit)'+"\r\n"
+        data = [tau, exp, mod, res]
+        if corr.is_weighted_fit and weight is not None:
+            header = "{} \t Weights [{}] \r\n".format(
+                      header.strip(), weightname)
             data.append(weight)
     else:
-        header = '# Channel (tau [s])'+"\t"+ \
+        header = '# Lag time [s]'+"\t"+ \
                  'Correlation function'+"\r\n"
-        data = [tau, corr]
+        data = [tau, mod]
     # Write header
     openedfile.write(header)
     # Write data
@@ -593,7 +603,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
         # row-wise, data may have more than two elements per row
         datarow = list()
         for j in np.arange(len(data)):
-            rowcoli = str("%.10e") % data[j][i]
+            rowcoli = "{:.10e}".format(data[j][i])
             datarow.append(rowcoli)
         dataWriter.writerow(datarow)
     ## Trace
@@ -601,42 +611,31 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     if savetrace:
         # We will also save the trace in [s]
         # Intensity trace in kHz may stay the same
-        if Page.trace is not None:
+        if len(corr.traces) > 0:
             # Mark beginning of Trace
             openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
             # Columns
-            time = Page.trace[:,0]*timefactor
-            intensity = Page.trace[:,1]
+            time = corr.traces[0][:,0]*timefactor
+            intensity = corr.traces[0][:,1]
             # Write
             openedfile.write('# Time [s]'+"\t" 
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
-        elif Page.tracecc is not None:
+                dataWriter.writerow(["{:.10e}".format(time[i]),
+                                     "{:.10e}".format(intensity[i])])
+        if len(corr.traces) > 1:
             # We have some cross-correlation here:
-            # Mark beginning of Trace A
-            openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
-            # Columns
-            time = Page.tracecc[0][:,0]*timefactor
-            intensity = Page.tracecc[0][:,1]
-            # Write
-            openedfile.write('# Time [s]'+"\t" 
-                                 'Intensity trace [kHz]'+" \r\n")
-            for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
             # Mark beginning of Trace B
             openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
             # Columns
-            time = Page.tracecc[1][:,0]*timefactor
-            intensity = Page.tracecc[1][:,1]
+            time = corr.traces[1][:,0]*timefactor
+            intensity = corr.traces[1][:,1]
             # Write
             openedfile.write('# Time [s]'+"\t" 
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
+                dataWriter.writerow(["{:.10e}".format(time[i]),
+                                     "{:.10e}".format(intensity[i])])
 
         openedfile.close()
 
