@@ -49,6 +49,11 @@ class FittingPanel(wx.Panel):
 
         # dictionary for alternative variances from e.g. averaging
         self.external_std_weights = dict()
+        
+        # The weights that are plotted in the page
+        # This is set by the PlotAll function
+        self.weights_plot_fill_area = None
+        
         # A list containing page numbers that share parameters with this page.
         # This parameter is defined by the global fitting tool and is saved in
         # sessions.
@@ -672,6 +677,8 @@ class FittingPanel(wx.Panel):
                     lineweight2 = plot.PolyLine(w2, legend='',
                                               colour=colweight, width=width)
                     lines.append(lineweight2)
+            else:
+                self.weights_plot_fill_area = None
                 
             ## Plot Correlation curves
             # Plot both, experimental and calculated data

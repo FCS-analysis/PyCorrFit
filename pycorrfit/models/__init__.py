@@ -151,6 +151,10 @@ class Model(object):
         return out
 
     @property
+    def name(self):
+        return self.description_short
+
+    @property
     def parameters(self):
         return self._parameters
 

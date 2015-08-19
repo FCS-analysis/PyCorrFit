@@ -46,8 +46,8 @@ class Trace(object):
             self.trace = trace
         
         if name is None:
-            name = "{:.2f}kHz, {:.0f}s".format(self.countrate/1000,
-                                               self.duration)
+            name = "{:.2f}kHz, {:.0f}s".format(self.countrate,
+                                               self.duration/1000)
         self.name = name
     
     def __getitem__(self, idx):
@@ -553,9 +553,11 @@ class Correlation(object):
     @property
     def residuals_plot(self):
         """fit residuals, same shape as self.correlation_fit"""
-        residuals_plot = self.correlation_plot.copy()
-        residuals_plot[:,1] -= self.modeled_plot[:,1]
-        return residuals_plot
+        cp = self.correlation_plot
+        if cp is not None:
+            residuals_plot = self.correlation_plot.copy()
+            residuals_plot[:,1] -= self.modeled_plot[:,1]
+            return residuals_plot
 
     def set_weights(self, type_name, data):
         """

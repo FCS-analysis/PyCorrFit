@@ -1,6 +1,7 @@
 0.8.8
 # this will become release 0.8.9
 - Improved support for "ALV-7004" files.
+- Increase resolution for image export
 - Tool 'Overlay Curves': show cropped correlation curves
 - Tool 'Trace view': increase size of window
 - Tool 'Global fitting': remove forced, joint weights
