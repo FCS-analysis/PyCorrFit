@@ -2,6 +2,7 @@
 # this will become release 0.8.9
 - Improved support for "ALV-7004" files.
 - Increase resolution for image export
+- Load weights from PyCorrFit csv files 
 - Tool 'Overlay Curves': show cropped correlation curves
 - Tool 'Trace view': increase size of window
 - Tool 'Global fitting': remove forced, joint weights
