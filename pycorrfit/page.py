@@ -623,7 +623,7 @@ class FittingPanel(wx.Panel):
                 
                 try:
                     weights = self.corr.fit_results["fit weights"]
-                except KeyError:
+                except:
                     weights = self.corr.fit_weight_data
                 
                 if isinstance(weights, np.ndarray):
@@ -637,12 +637,17 @@ class FittingPanel(wx.Panel):
                         
                     if np.allclose(weights, np.ones_like(weights)):
                         weights = 0
+                    if weights.shape[0] != self.corr.modeled_fit.shape[0]:
+                        # non-matching weigths
+                        warnings.warn("Unmatching weights found. Probably from previous data set.")
+                        weights = 0
 
                     # Add the weights to the graph.
                     # This is done by drawing two lines.
                     w = 1*self.corr.modeled_fit
                     w1 = 1*w
                     w2 = 1*w
+                    
                     w1[:, 1] = w[:, 1] + weights
                     w2[:, 1] = w[:, 1] - weights
                     # crop w1 and w2 if self.dataexp does not include all

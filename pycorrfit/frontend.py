@@ -701,7 +701,7 @@ class MyFrame(wx.Frame):
 
 
     def OnImportData(self,e=None):
-        """Import experimental data from a all filetypes specified in 
+        """Import experimental data from all filetypes specified in 
            *opf.Filetypes*.
            Is called by the curmenu and applies to currently opened model.
            Calls self.ImportData.
@@ -745,6 +745,12 @@ class MyFrame(wx.Frame):
                 trace = Stuff["Trace"]
                 curvelist = Stuff["Type"]
                 filename = Stuff["Filename"]
+                if "Weight" in Stuff:
+                    Weight = Stuff["Weight"]
+                    WeightName = Stuff["Weight Name"]
+                else:
+                    Weight = [None] * len(Stuff["Type"])
+                    WeightName = [None] * len(Stuff["Type"])
                 # If curvelist is a list with more than one item, we are
                 # importing more than one curve per file. Therefore, we
                 # need to create more pages for this file.
@@ -771,6 +777,8 @@ class MyFrame(wx.Frame):
                     newfilename = list()
                     newdataexp = list()
                     newtrace = list()
+                    newWeight = list()
+                    newWeightName = list()
                     if Chosen.ShowModal() == wx.ID_OK:
                         keys = Chosen.keys
                         if len(keys) == 0:
@@ -783,10 +791,14 @@ class MyFrame(wx.Frame):
                                 newfilename.append(filename[index])
                                 newdataexp.append(dataexp[index])
                                 newtrace.append(trace[index])
+                                newWeight.append(Weight[index])
+                                newWeightName.append(WeightName[index])
                         curvelist = newcurvelist
                         filename = newfilename
                         dataexp = newdataexp
                         trace = newtrace
+                        Weight = newWeight
+                        WeightName = newWeightName
                     else:
                         return
                     Chosen.Destroy()
@@ -806,6 +818,7 @@ class MyFrame(wx.Frame):
                     # Fill Page with data
                     self.ImportData(CurPage, dataexp[i], trace[i],
                                    curvetype=curvelist[i], filename=filename[i],
+                                   weights=Weight[i], weight_type=WeightName[i],
                                    curveid=i)
                     # Let the user abort, if he wants to:
                     # We want to do this here before an empty page is added
@@ -864,7 +877,8 @@ class MyFrame(wx.Frame):
 
 
     def ImportData(self, Page, dataexp, trace, curvetype="",
-                   filename="", curveid="", run="", trigger=None):
+                   filename="", curveid="", run="", 
+                   weights=None, weight_type=None, trigger=None):
         """
             Import data into the current page.
             
@@ -896,6 +910,14 @@ class MyFrame(wx.Frame):
         else:
             title = "{} id{:03d}-{}".format(filename, int(curveid), curvetype)
         CurPage.title = title
+        # set weights
+        if weights is not None:
+            CurPage.corr.set_weights(weight_type, weights)
+            List = CurPage.Fitbox[1].GetItems()
+            List.append(weight_type)
+            CurPage.Fitbox[1].SetItems(List)
+            CurPage.Fitbox[1].SetSelection(len(List)-1)
+            
         # Plot everything
         CurPage.PlotAll(trigger=trigger)
         # Call this function to allow the "Channel Selection" window that
@@ -998,6 +1020,8 @@ class MyFrame(wx.Frame):
         Filename = list()   # there might be zipfiles with additional name info
         #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
+        Weight = list()
+        WeightName = list()
         
         # Display a progress dialog for file import
         N = len(Datafiles)
@@ -1029,7 +1053,13 @@ class MyFrame(wx.Frame):
                     Trace.append(Stuff["Trace"][i])
                     Type.append(Stuff["Type"][i])
                     Filename.append(Stuff["Filename"][i])
-                    #Curveid.append(str(i+1))
+                    if "Weight" in Stuff:
+                        Weight.append(Stuff["Weight"][i])
+                        WeightName.append(Stuff["Weight Name"][i])
+                    else:
+                        Weight.append(None)
+                        WeightName.append(None)
+                        #Curveid.append(str(i+1))                    
         dlgi.Destroy()
         
         # Add number of the curve within a file.
@@ -1133,6 +1163,8 @@ class MyFrame(wx.Frame):
         modelList = list()
         newCurveid = list()
         newRun = list()
+        newWeight = list()
+        newWeightName = list()
         if Chosen.ShowModal() == wx.ID_OK:
             keys = Chosen.typekeys
             # Keepdict is a list of indices pointing to Type or Correlation
@@ -1155,12 +1187,16 @@ class MyFrame(wx.Frame):
                         modelList.append(modelids[index])
                         newCurveid.append(Curveid[index])
                         newRun.append(Run[index])
+                        newWeight.append(Weight[index])
+                        newWeightName.append(WeightName[index])
             Correlation = newCorrelation
             Trace = newTrace
             Type = newType
             Filename = newFilename
             Curveid = newCurveid
             Run = newRun
+            Weight = newWeight
+            WeightName = newWeightName
         else:
             return
         Chosen.Destroy()
@@ -1184,6 +1220,7 @@ class MyFrame(wx.Frame):
             self.ImportData(CurPage, Correlation[i], Trace[i],
                             curvetype=Type[i], filename=Filename[i],
                             curveid=str(Curveid[i]), run=str(Run[i]),
+                            weights=Weight[i], weight_type=WeightName[i],
                             trigger="page_add_batch")
             # Let the user abort, if he wants to:
             # We want to do this here before an empty page is added

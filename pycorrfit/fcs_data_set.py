@@ -566,7 +566,8 @@ class Correlation(object):
         type_name : "Average"
         data : 1d ndarray with length self.lag_time 
         """
-        self._fit_weight_memory[type_name] = data
+        if data is not None:
+            self._fit_weight_memory[type_name] = data
 
     @property
     def traces(self):
