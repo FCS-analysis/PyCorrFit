@@ -412,8 +412,8 @@ def SaveSessionData(sessionfile, Infodict):
                 tracefilename = "trace"+number+".csv"
                 tracefile = open(tracefilename, 'wb')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = Infodict["Traces"][pageid][:,0]
-                rate = Infodict["Traces"][pageid][:,1]
+                time = Infodict["Traces"][pageid][0][:,0]
+                rate = Infodict["Traces"][pageid][0][:,1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data

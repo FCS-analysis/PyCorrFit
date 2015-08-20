@@ -297,6 +297,7 @@ class Average(wx.Frame):
         self.AvgPage.tabtitle.SetValue(newtabti)
         # Set the addition information about the variance from averaging
         Listname = "Average"
+        listname = Listname.lower()
         standarddev = exparray.std(axis=0)[:,1]
         if np.sum(np.abs(standarddev)) == 0:
             # The average sd is zero. We probably made an average
@@ -307,7 +308,7 @@ class Average(wx.Frame):
             # TODO:
             # kind of hackish to repeat this three times:
             #   self.AvgPage.corr.set_weights(Listname,  standarddev)
-            self.AvgPage.corr.set_weights(Listname,  standarddev)
+            self.AvgPage.corr.set_weights(listname,  standarddev)
             WeightKinds = self.AvgPage.Fitbox[1].GetItems()
             # Attention! Average weights and other external weights should
             # be sorted (for session saving).
@@ -322,15 +323,15 @@ class Average(wx.Frame):
                 except:
                     pass
             LenInternal = len(WeightKinds)
-            IndexAverag = extTypes.index(Listname)
+            IndexAverag = extTypes.index(listname)
             IndexInList = LenInternal + IndexAverag
             for key in extTypes:
                 WeightKinds += [key]
             self.AvgPage.Fitbox[1].SetItems(WeightKinds)
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
-            self.AvgPage.corr.set_weights(Listname,  standarddev)
+            self.AvgPage.corr.set_weights(listname,  standarddev)
             self.AvgPage.apply_parameters()
-            self.AvgPage.corr.set_weights(Listname,  standarddev)
+            self.AvgPage.corr.set_weights(listname,  standarddev)
         self.AvgPage.PlotAll()
         # Keep the average tool open.
         # self.OnClose()
