@@ -51,7 +51,7 @@ class Trace(object):
         self.name = name
     
     def __getitem__(self, idx):
-        return self._trace[idx]
+        return self.trace[idx]
     
     def __repr__(self):
         text = "Trace of length {:.3f}s and countrate {:.3f}kHz".format(
@@ -315,8 +315,6 @@ class Correlation(object):
         """the correlation data, shape (N,2) with (time, correlation) """
         if self._correlation is not None:
             corr = self._correlation.copy()
-            # perform background correction
-            corr[:,1] *= self.bg_correction_factor
             return corr
     
     @correlation.setter
@@ -328,15 +326,24 @@ class Correlation(object):
 
     @property
     def correlation_fit(self):
-        """ returns correlation data for fitting (fit_ivald) """
+        """ returns correlation data for fitting (fit_ivald)
+        - background correction
+        - fitting interval cropping
+        """
         corr = self.correlation
         if corr is not None:
+            # perform background correction
+            corr[:,1] *= self.bg_correction_factor
             # perform parameter normalization
             return corr[self.fit_ival[0]:self.fit_ival[1],:]
     
     @property
     def correlation_plot(self):
-        """ returns correlation data for plotting (normalized, fit_ivald) """
+        """ returns correlation data for plotting (normalized, fit_ivald)
+        - background correction
+        - fitting interval cropping
+        - parameter normalization
+        """
         corr = self.correlation_fit
         if corr is not None:
             # perform parameter normalization
@@ -928,7 +935,7 @@ class Fit(object):
             # In some cases, the actual cropping interval from ival[0]
             # ro ival[1] is chosen, such that the dataweights must be
             # calculated from unknown datapoints.
-            # (e.g. points+endcrop > len(dataexpfull)
+            # (e.g. points+endcrop > len(correlation)
             # We deal with this by multiplying dataweights with a factor
             # corresponding to the missed points.
             for i in range(x_fit.shape[0]):
@@ -945,7 +952,7 @@ class Fit(object):
                 else:
                     offsetstart = 0
                     offsetcrop = 0
-                # i: counter on dataexp array
+                # i: counter on correlation array
                 # start: counter on y array
                 start = i - weight_spread + offsetstart + ival[0] - offsetcrop
                 end = start + 2*weight_spread + 1 - offsetstart
@@ -992,8 +999,8 @@ class Fit(object):
                 else:
                     offsetstart = 0
                     offsetcrop = 0
-                # i: counter on dataexp array
-                # start: counter on dataexpfull array
+                # i: counter on correlation array
+                # start: counter on correlation array
                 start = i - weight_spread + offsetstart + ival[0] - offsetcrop
                 end = start + 2*weight_spread + 1 - offsetstart
                 #start = ival[0] - weight_spread + i

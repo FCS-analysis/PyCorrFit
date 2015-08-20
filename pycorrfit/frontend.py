@@ -16,6 +16,7 @@ import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
 import warnings
+from curses.has_key import has_key
 
 try:
     # contains e.g. update and icon, but no vital things.
@@ -877,7 +878,7 @@ class MyFrame(wx.Frame):
 
 
     def ImportData(self, Page, dataexp, trace, curvetype="",
-                   filename="", curveid="", run="", 
+                   filename="", curveid="", run="0", 
                    weights=None, weight_type=None, trigger=None):
         """
             Import data into the current page.
@@ -914,9 +915,13 @@ class MyFrame(wx.Frame):
         if weights is not None:
             CurPage.corr.set_weights(weight_type, weights)
             List = CurPage.Fitbox[1].GetItems()
-            List.append(weight_type)
-            CurPage.Fitbox[1].SetItems(List)
-            CurPage.Fitbox[1].SetSelection(len(List)-1)
+            if not weight_type in List:
+                List.append(weight_type)
+                CurPage.Fitbox[1].SetItems(List)
+                CurPage.Fitbox[1].SetSelection(len(List)-1)
+            else:
+                listid = List.index(weight_type)
+                CurPage.Fitbox[1].SetSelection(listid)
             
         # Plot everything
         CurPage.PlotAll(trigger=trigger)
@@ -1337,31 +1342,34 @@ class MyFrame(wx.Frame):
             number = counter.strip().strip(":").strip("#")
             pageid = int(number)
             dataexp = Infodict["Correlations"][pageid][1]
-            if dataexp is not None:
-                # Write experimental data
-                Newtab.corr.correlation = dataexp
+
+            if Infodict["Parameters"][0][7]:
+                curvetype = "cc"
+            else:
+                curvetype = "ac"
+
             # As of 0.7.3: Add external weights to page
             try:
-                Newtab.external_std_weights = \
-                               Infodict["External Weights"][pageid]
+                for key in Infodict["External Weights"][pageid].keys():
+                    Newtab.corr.set_weights(key, Infodict["External Weights"][pageid][key])
             except KeyError:
-                # No data
                 pass
-            else:
-                # Add external weights to fitbox
-                WeightKinds = Newtab.Fitbox[1].GetItems()
-                wkeys = Newtab.external_std_weights.keys()
-                wkeys.sort()
-                for wkey in wkeys:
-                    WeightKinds += [wkey]
-                Newtab.Fitbox[1].SetItems(WeightKinds)
+                
+
+            self.ImportData(Newtab, 
+                            dataexp, 
+                            trace=Infodict["Traces"][pageid],
+                            curvetype=curvetype)
+           
+            # Set Title of the Page
+            try:
+                Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
+            except:
+                pass # no page title
+
+            # Parameters
             self.UnpackParameters(Infodict["Parameters"][i], Newtab,
                                   init=True)
-            
-            if Infodict["Parameters"][0][7]:
-                Newtab.corr.corr_type = "cc"
-            else:
-                Newtab.corr.corr_type = "ac"
             # Supplementary data
             fit_results = dict()
             fit_results["weighted fit"] = Infodict["Parameters"][0][5][0] > 0
@@ -1384,20 +1392,20 @@ class MyFrame(wx.Frame):
                     fit_results["chi2"] = Sups["Chi sq"]
                 except:
                     pass
+                # also set fit parameters
+                fit_results["fit parameters"] = np.where(Infodict["Parameters"][0][3])[0]
+                # set fit weights for plotting
+                if fit_results["weighted fit"]:
+                    # these were already imported:
+                    try:
+                        weights = Infodict["External Weights"][pageid]
+                        for w in weights.keys():
+                            fit_results["weighted fit type"] = w
+                            fit_results["fit weights"] = weights[w]
+                    except KeyError:
+                        pass
             Newtab.corr.fit_results = fit_results
-            # Set Title of the Page
-            try:
-                Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
-            except:
-                pass # no page title
-            # Import the intensity trace
-            try:
-                traces = Infodict["Traces"][pageid]
-            except:
-                pass
-            else:
-                if traces is not None:
-                    Newtab.corr.traces = traces
+
             # Plot everything
             Newtab.PlotAll(trigger="page_add_batch")
         # Set Session Comment
@@ -1526,36 +1534,43 @@ class MyFrame(wx.Frame):
             Page.apply_parameters()
             # Set parameters
             Infodict["Parameters"][counter] = self.PackParameters(Page)
+            corr = Page.corr
             # Set supplementary information, such as errors of fit
-            if Page.corr.parmoptim_error is not None: # == if Page.chi2 is not None
+            if hasattr(corr, "fit_results"):
                 Infodict["Supplements"][counter] = dict()
-                Infodict["Supplements"][counter]["Chi sq"] = float(Page.chi2)
+                if corr.fit_results.has_key("chi2"):
+                    Infodict["Supplements"][counter]["Chi sq"] = float(corr.fit_results["chi2"])
                 PageList = list()
                 for pagei in Page.GlobalParameterShare:
                     PageList.append(int(pagei))
                 Infodict["Supplements"][counter]["Global Share"] = PageList
-                                                
-                Alist = list()
-                for key in Page.parmoptim_error.keys():
-                    position = mdls.GetPositionOfParameter(Page.modelid, key)
-                    Alist.append([ int(position),
-                                   float(Page.parmoptim_error[key]) ])
+
+                # optimization error
+                if corr.fit_results.has_key("fit error estimation"):
+                    Alist = list()
+                    for ii, fitpid in enumerate(corr.fit_results["fit parameters"]):
+                        Alist.append([ int(fitpid),
+                                       float(corr.fit_results["fit error estimation"][ii]) ])
                     Infodict["Supplements"][counter]["FitErr"] = Alist
             # Set exp data
-            Infodict["Correlations"][counter] = [Page.tau, Page.dataexpfull]
+            Infodict["Correlations"][counter] = [corr.lag_time, corr.correlation]
             # Also save the trace
-            if Page.IsCrossCorrelation is False:
-                Infodict["Traces"][counter] = Page.trace
-                # #Function_trace.append(Page.trace)
-            else:
-                # #Function_trace.append(Page.tracecc)
-                Infodict["Traces"][counter] = Page.tracecc
+            Infodict["Traces"][counter] = corr.traces
             # Append title to Comments
             # #Comments.append(Page.tabtitle.GetValue())
             Infodict["Comments"][counter] = Page.tabtitle.GetValue()
             # Add additional weights to Info["External Weights"]
-            if len(Page.external_std_weights) != 0:
-                Infodict["External Weights"][counter] = Page.external_std_weights
+            external_weights = dict()
+            for key in corr._fit_weight_memory.keys():
+                if isinstance(corr._fit_weight_memory[key], np.ndarray):
+                    external_weights[key] = corr._fit_weight_memory[key]
+            # also save current weights
+            if hasattr(corr, "fit_results"):
+                if corr.fit_results.has_key("weighted fit type"):
+                    fittype = corr.fit_results["weighted fit type"]
+                    fitweight = corr.fit_results["fit weights"]
+                    external_weights[fittype] = fitweight
+            Infodict["External Weights"][counter] = external_weights
         # Append Session Comment:
         Infodict["Comments"]["Session"] = self.SessionComment
         # File dialog
@@ -1710,7 +1725,7 @@ class MyFrame(wx.Frame):
             active_values[lindex] = sigma
             active_values = np.delete(active_values,lindex+1)
             active_fitting = np.delete(active_fitting, lindex+1)
-        # Cropping: What part of dataexp should be displayed.
+        # Cropping: What part of the correlation should be displayed.
         Page.corr.fit_ival = Parms[4]
         # Add parameters and fitting to the created page.
         # We need to run Newtab.apply_parameters_reverse() in order
@@ -1762,7 +1777,10 @@ class MyFrame(wx.Frame):
                 Page.OnAmplitudeCheck("init")
         # Set if Newtab is of type cross-correlation:
         if len(Parms) >= 8:
-            Page.corr.corrtype = Parms[7]
+            if Parms[7]:
+                Page.corr.corr_type = "cc"
+            else:
+                Page.corr.corr_type = "ac"
             Page.OnAmplitudeCheck()
         if len(Parms) >= 9:
             # New feature in 0.7.8 includes normalization to a fitting

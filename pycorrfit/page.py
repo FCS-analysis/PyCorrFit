@@ -15,9 +15,9 @@ import numpy as np                      # NumPy
 import warnings
 
 from . import edclasses                    # Cool stuff like better floatspin
-from . import fitting as fit       # For fitting
 from . import models as mdls
 from . import tools
+from . import fcs_data_set as pcfbase
 from .fcs_data_set import Correlation, Fit
 
 class FittingPanel(wx.Panel):
@@ -47,8 +47,6 @@ class FittingPanel(wx.Panel):
         self.weighted_fittype_id = 0 # integer (drop down item)
         self.weighted_nuvar = 3 # bins for std-dev. (left and rigth)
 
-        # dictionary for alternative variances from e.g. averaging
-        self.external_std_weights = dict()
         
         # The weights that are plotted in the page
         # This is set by the PlotAll function
@@ -146,7 +144,7 @@ class FittingPanel(wx.Panel):
     
     @property
     def tracecc(self):
-        if self.corr.is_cc:
+        if self.corr.is_cc and len(self.corr.traces) != 0:
             return self.corr.traces
         else:
             return None
@@ -239,7 +237,7 @@ class FittingPanel(wx.Panel):
             fit_weight_data = self.corr.fit_weight_data
         
         # Fitting algorithm
-        keys = fit.GetAlgorithmStringList()[0]
+        keys = pcfbase.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
         
         self.corr.fit_algorithm = keys[idalg]
@@ -274,28 +272,18 @@ class FittingPanel(wx.Panel):
         self.Fitbox[5].SetValue(self.weighted_nuvar)
         idf = self.weighted_fittype_id
         List = self.Fitbox[1].GetItems()
-        List[1] = "Spline ("+str(self.FitKnots)+" knots)"
+        List[1] = "spline ("+str(self.FitKnots)+" knots)"
         self.Fitbox[1].SetItems(List)
         self.Fitbox[1].SetSelection(idf)
         # Fitting algorithm
-        keys = fit.GetAlgorithmStringList()[0]
+        keys = pcfbase.GetAlgorithmStringList()[0]
         idalg = keys.index(self.corr.fit_algorithm)
         self.AlgorithmDropdown.SetSelection(idalg)
 
 
     def calculate_corr(self):
-        """ Calculate correlation function
-            Returns an array of tuples (tau, correlation)
-            *self.active_f*: A function that is being calculated using
-            *self.active_parms*: A list of parameters
-    
-            Uses variables:
-            *self.datacorr*: Plotting data (tuples) of the correlation curve
-            *self.dataexp*: Plotting data (tuples) of the experimental curve
-            *self.tau*: "tau"-values for plotting (included) in dataexp.
-    
-            Returns:
-            Nothing. Recalculation of the mentioned global variables is done.
+        """ 
+        Calculate model correlation function
         """
         return self.corr.modeled
 
@@ -602,7 +590,7 @@ class FittingPanel(wx.Panel):
         self.apply_parameters()
         # Calculate correlation function from parameters
         ## Drawing of correlation plot
-        # Plots self.dataexp and the calcualted correlation function 
+        # Plots corr.correlation_fit and the calcualted correlation function 
         # self.datacorr into the upper canvas.
         # Create a line @ y=zero:
         zerostart = self.corr.lag_time_fit[0]
@@ -616,11 +604,9 @@ class FittingPanel(wx.Panel):
         lines = list()
         linezero = plot.PolyLine(datazero, colour='orange', width=width)
         lines.append(linezero)
-
         if self.corr.correlation is not None:
             if self.corr.is_weighted_fit and \
                self.parent.MenuShowWeights.IsChecked():
-                
                 try:
                     weights = self.corr.fit_results["fit weights"]
                 except:
@@ -650,28 +636,12 @@ class FittingPanel(wx.Panel):
                     
                     w1[:, 1] = w[:, 1] + weights
                     w2[:, 1] = w[:, 1] - weights
-                    # crop w1 and w2 if self.dataexp does not include all
+                    # crop w1 and w2 if corr.correlation_fit does not include all
                     # data points.
                     if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
                         pass
                     else:
-                        raise NotImplementedError("Remove this case. It should not be here.")
-                        start = np.min(self.dataexp[:,0])
-                        end = np.max(self.dataexp[:,0])
-                        idstart = np.argwhere(w[:,0]==start)
-                        idend = np.argwhere(w[:,0]==end)
-                        if len(idend) == 0:
-                            # dataexp is longer, do not change anything
-                            pass
-                        else:
-                            w1 = w1[:idend[0][0]+1]
-                            w2 = w2[:idend[0][0]+1]
-                        if len(idstart) == 0:
-                            # dataexp starts earlier, do not change anything
-                            pass
-                        else:
-                            w1 = w1[idstart[0][0]:]
-                            w2 = w2[idstart[0][0]:]
+                        raise ValueError("This should not have happened: size of weights is wrong.")
                     ## Normalization with self.normfactor
                     w1[:,1] *= self.corr.normalize_factor
                     w2[:,1] *= self.corr.normalize_factor
@@ -704,7 +674,6 @@ class FittingPanel(wx.Panel):
             resid_norm = self.corr.residuals_plot
             lineres = plot.PolyLine(resid_norm, legend='', colour=colfit,
                                     width=width)
-            
             
             # residuals or weighted residuals?
             if self.corr.is_weighted_fit:
@@ -826,7 +795,7 @@ class FittingPanel(wx.Panel):
         fitsizer.SetMinSize((horizontalsize, -1))
         # Add a checkbox for weighted fitting
         weightedfitdrop = wx.ComboBox(self.panelsettings)
-        self.weightlist = ["No weights", "Spline (5 knots)", "Model function"]
+        self.weightlist = ["no weights", "spline (5 knots)", "model function"]
         weightedfitdrop.SetItems(self.weightlist)
         weightedfitdrop.SetSelection(0)
         fitsizer.Add(weightedfitdrop)
@@ -854,7 +823,7 @@ class FittingPanel(wx.Panel):
         textalg = wx.StaticText(self.panelsettings, label="Algorithm")
         fitsizer.Add(textalg)
         self.AlgorithmDropdown = wx.ComboBox(self.panelsettings)
-        items = fit.GetAlgorithmStringList()[1]
+        items = pcfbase.GetAlgorithmStringList()[1]
         self.AlgorithmDropdown.SetItems(items)
         self.Bind(wx.EVT_COMBOBOX, self.apply_parameters,
                   self.AlgorithmDropdown)

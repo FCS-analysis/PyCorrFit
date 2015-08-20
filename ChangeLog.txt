@@ -6,7 +6,10 @@
 - Tool 'Overlay Curves': show cropped correlation curves
 - Tool 'Trace view': increase size of window
 - Tool 'Global fitting': remove forced, joint weights
-- Bugfix: fitting algorithms did not work
+- Bugfixes:
+   - fitting algorithms did not work (#94)
+   - creating averages did not work (#123)
+   - ascii errors in statistics tool (#112)
 - Under the hood:
    - Introduce new classes: Correlation, Fit, Trace
    - Code cleanup and rewrite to support planned features
