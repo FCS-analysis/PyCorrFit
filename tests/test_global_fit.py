@@ -7,6 +7,7 @@ import numpy as np
 # Add parent directory to beginning of path variable
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
+import pycorrfit  # @UnusedImport
 from pycorrfit.fcs_data_set import Correlation, Fit
 
 
