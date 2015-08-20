@@ -3,7 +3,7 @@
 - Increase resolution for image export
 - Load weights from PyCorrFit csv files 
 - Tool 'Overlay Curves': show cropped correlation curves
-- Tool 'Trace view': increase size of window
+- Tool 'Trace view': increase size of window (#93)
 - Tool 'Global fitting': remove forced, joint weights
 - Bugfixes:
    - fitting algorithms did not work (#94)
@@ -12,6 +12,7 @@
 - Under the hood:
    - Introduce new classes: Correlation, Fit, Trace
    - Code cleanup and rewrite to support planned features
+   - In some cases support older versions of NumPy
 0.8.8
 - Improved support for "ALV-7004" files.
 - If you install the GUI with pip, you now need to include
