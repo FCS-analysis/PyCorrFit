@@ -10,7 +10,7 @@ Open a text window with lots of information.
 import wx
 import numpy as np
 
-from .. import fitting
+from .. import fcs_data_set
 from .. import models as mdls
 
 # Menu entry name
@@ -103,10 +103,13 @@ class InfoClass(object):
         # A dictionary with headings as keys and lists of singletts/tuples as 
         # values. If it is a tuple, it might me interesting for a table.
         InfoDict = dict()
+        # Get Correlation
+        corr = Page.corr
+        
         # Get model information
-        model = [Page.model, Page.tabtitle.GetValue(), Page.modelid]
-        parms = Page.active_parms[1]
-        fct = Page.active_fct.__name__
+        model = [corr.fit_model.description_short, Page.tabtitle.GetValue(), corr.fit_model.id]
+        parms = corr.fit_parameters
+        fct = corr.fit_model.function.__name__
         InfoDict["version"] = [Page.parent.version]
         Title = list()
         # The tool statistics relys on the string "filename/title".
@@ -143,104 +146,98 @@ class InfoClass(object):
             else:
                 InfoDict["modelsupdoc"] = [func_info.func_doc]
         ## Fitting
-        alg = fitting.Algorithms[Page.fit_algorithm][1]
-        weightedfit = Page.weighted_fit_was_performed
-        weightedfit_type = Page.weighted_fittype
-        fittingbins = Page.weighted_nuvar  # from left and right
-        Fitting = list()
-        if Page.dataexp is not None:
-            # Mode AC vs CC
-            if Page.IsCrossCorrelation is True:
-                Title.append(["Type AC/CC", "Cross-correlation" ]) 
-            else:
-                Title.append(["Type AC/CC", "Autocorrelation" ]) 
-            Fitting.append([ u"χ²", Page.chi2 ])
-            if Page.weighted_fit_was_performed:
-                Chi2type = u"Weighted sum of squares"
-            else:
-                Chi2type = u"Sum of squares"
-            Fitting.append([ u"χ²-type", Chi2type ])
-            Fitting.append([ "Weighted fit", weightedfit_type ])
-            Fitting.append([ "Algorithm", alg ])
-            if len(Page.GlobalParameterShare) != 0:
-                shared = str(Page.GlobalParameterShare[0])
-                for item in Page.GlobalParameterShare[1:]:
-                    shared += ", "+str(item)
-                Fitting.append(["Shared parameters with Pages", shared])
-            if weightedfit is True:
-                Fitting.append([ "Std. channels", 2*fittingbins+1 ])
-            # Fitting range:
-            t1 = 1.*Page.taufull[Page.startcrop]
-            t2 = 1.*Page.taufull[Page.endcrop-1]
-            Fitting.append([ "Interval start [ms]", "%.4e" % t1 ])
-            Fitting.append([ "Interval end [ms]", "%.4e" % t2 ])
-            # Fittet parameters and errors
-            somuch = sum(Page.active_parms[2])
-            if somuch >= 1:
-                fitted = ""
-                for i in np.arange(len(Page.active_parms[2])):
-                    if np.bool(Page.active_parms[2][i]) is True:
-                        errorvar = Page.active_parms[0][i] # variable name
-                        fitted=fitted+errorvar+ ", "
-                fitted = fitted.strip().strip(",") # remove trailing comma
-                Fitting.append(["fit par.", fitted])
-                # Fitting error included in v.0.7.3
-                Errors_fit = Page.parmoptim_error
-                if Errors_fit is not None:
-                    errkeys = Errors_fit.keys()
-                    errkeys.sort()
-                    for key in errkeys:
-                        savekey, saveval = \
-                            mdls.GetHumanReadableParameterDict(model[2],
-                                                [key], [Errors_fit[key]])
-                        # The tool statistics relys on the string "Err ".
-                        # Do not change it!
-                        Fitting.append(["Err "+savekey[0], saveval[0]])
-            InfoDict["fitting"] = Fitting
-        ## Normalization
-        if Page.normparm is None:
+        
+        
+        if hasattr(corr, "fit_results"):
+            Fitting = list()
+            weightedfit = corr.fit_results["weighted fit"]
+            if corr.correlation is not None:
+                # Mode AC vs CC
+                if corr.is_cc:
+                    Title.append(["Type AC/CC", "Cross-correlation" ]) 
+                else:
+                    Title.append(["Type AC/CC", "Autocorrelation" ]) 
+                Fitting.append([ u"χ²", corr.fit_results["chi2"]])
+                if weightedfit:
+                    try:
+                        Fitting.append(["Weighted fit", corr.fit_results["weighted fit type"]])
+                    except KeyError:
+                        Fitting.append(["Weighted fit", u""+Page.Fitbox[1].GetValue()])
+                    Chi2type = u"Weighted sum of squares"
+                else:
+                    Chi2type = u"Sum of squares"
+                Fitting.append([ u"χ²-type", Chi2type ])
+                Fitting.append([ "Algorithm", fcs_data_set.Algorithms[corr.fit_algorithm][1]])
+                if len(Page.GlobalParameterShare) != 0:
+                    shared = str(Page.GlobalParameterShare[0])
+                    for item in Page.GlobalParameterShare[1:]:
+                        shared += ", "+str(item)
+                    Fitting.append(["Shared parameters with Pages", shared])
+                if corr.fit_results.has_key("weighted fit bins"):
+                    Fitting.append(["Std. channels", 2*corr.fit_results["weighted fit bins"]+1])
+                # Fitting range:
+                t1 = 1.*corr.lag_time[corr.fit_ival[0]]
+                t2 = 1.*corr.lag_time[corr.fit_ival[1]-1]
+                Fitting.append([ "Ival start [ms]", "%.4e" % t1 ])
+                Fitting.append([ "Ival end [ms]", "%.4e" % t2 ])
+                # Fittet parameters
+                try:
+                    fitparmsid = corr.fit_results["fit parameters"]
+                except:
+                    fitparmsid = corr.fit_parameters_variable
+                fitparms = np.array(corr.fit_model.parameters[0])[fitparmsid]
+                fitparms_short = [ f.split()[0] for f in fitparms ]
+                fitparms_short = u", ".join(fitparms_short)
+                Fitting.append(["Fit parm.", fitparms_short])
+                # global fitting
+                for key in corr.fit_results.keys():
+                    if key.startswith("global"):
+                        Fitting.append([key.capitalize(), corr.fit_results[key]])
+                # Fit errors
+                if corr.fit_results.has_key("fit error estimation"):
+                    errors = corr.fit_results["fit error estimation"]
+                    for err, par in zip(errors, fitparms):
+                        nam, val = mdls.GetHumanReadableParameterDict( 
+                                                model[2], [par], [err])
+                        Fitting.append(["Err "+nam[0], val[0]])
+
+                InfoDict["fitting"] = Fitting
+
+        ## Normalization parameter id to name
+        if corr.normalize_parm is None:
             normparmtext = "None"
-        elif Page.normparm < len(Page.active_parms[0]):
-            normparmtext = Page.active_parms[0][Page.normparm]
+        elif Page.normparm < len(corr.fit_parameters):
+            normparmtext = corr.fit_model.parameters[0][corr.normalize_parm] 
         else:
             # supplementary parameters
-            supnum = Page.normparm - len(Page.active_parms[1])
-            normparmtext =  MoreInfo[supnum][0]
-        Title.append(["Normalization", normparmtext ]) 
+            supnum = corr.normalize_parm - len(corr.fit_parameters)
+            normparmtext = MoreInfo[supnum][0]
+        Title.append(["Normalization", normparmtext]) 
+        
         ## Background
         Background = list()
-        if Page.IsCrossCorrelation:
-            if ( Page.bgselected is not None and
-                 Page.bg2selected is not None     ):
+        if corr.is_cc:
+            if len(corr.backgrounds) == 2:
                 # Channel 1
-                bgname = Page.parent.Background[Page.bgselected][1]
-                if len(bgname) == 0:
-                    # Prevent saving no name
-                    bgname = "NoName"
-                Background.append([ "bg name Ch1", bgname])
+                Background.append([ "bg name Ch1", 
+                                    corr.backgrounds[0].name])
                 Background.append([ "bg rate Ch1 [kHz]", 
-                           Page.parent.Background[Page.bgselected][0] ])
+                                    corr.backgrounds[0].countrate])
                 # Channel 2
-                bg2name = Page.parent.Background[Page.bg2selected][1]
-                if len(bg2name) == 0:
-                    # Prevent saving no name
-                    bg2name = "NoName"
-                Background.append([ "bg name Ch2", bg2name])
+                Background.append([ "bg name Ch2", 
+                                    corr.backgrounds[1].name])
                 Background.append([ "bg rate Ch2 [kHz]", 
-                          Page.parent.Background[Page.bg2selected][0] ])
+                                    corr.backgrounds[1].countrate])
                 InfoDict["background"] = Background
         else:
-            if Page.bgselected is not None:
-                bgname = Page.parent.Background[Page.bgselected][1]
-                if len(bgname) == 0:
-                    # Prevent saving no name
-                    bgname = "NoName"
-                bgrate = Page.parent.Background[Page.bgselected][0]
-                Background.append([ "bg name", bgname ])
-                Background.append([ "bg rate [kHz]", bgrate ])
+            if len(corr.backgrounds) == 1:
+                Background.append([ "bg name", 
+                                    corr.backgrounds[0].name])
+                Background.append([ "bg rate [kHz]", 
+                                    corr.backgrounds[0].countrate])
                 InfoDict["background"] = Background
         ## Function doc string
-        InfoDict["modeldoc"] = [Page.active_fct.func_doc]
+        InfoDict["modeldoc"] = [corr.fit_model.description_long]
         InfoDict["title"] = Title
 
         return InfoDict

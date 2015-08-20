@@ -8,7 +8,8 @@ import numpy as np
 
 
 def openCSV(dirname, filename):
-    """ Read relevant data from a file looking like this:
+    """ 
+    Read relevant data from a file looking like this:
         [...]
         # Comment
         # Data type: Autocorrelation
@@ -31,26 +32,39 @@ def openCSV(dirname, filename):
         18.087936   31.21335
         [...]
 
-        Data type:
-        If Data type is "Cross-correlation", we will try to import
-        two traces after "# BEGIN SECOND TRACE"
+    The correlation part could also look like this:
+        # Channel (tau [s])    Experimental correlation    Fitted correlation    Residuals      Weights [model function]
+        2.0000000000e-07    1.5649271000e-01    1.5380094370e-01    2.6917663029e-03    7.3158300646e-03
+        4.0000000000e-07    1.4751239000e-01    1.5257959602e-01    -5.0672060199e-03    5.8123579098e-03
+        6.0000000000e-07    1.5145113000e-01    1.5137624642e-01    7.4883584881e-05    8.5622019656e-03
+        8.0000000000e-07    1.5661088000e-01    1.5019053433e-01    6.4203456659e-03    6.8098486549e-03
+        1.0000000000e-06    1.5456273000e-01    1.4902210818e-01    5.5406218229e-03    7.2476381023e-03
+        1.2000000000e-06    1.3293905000e-01    1.4787062503e-01    -1.4931575028e-02    6.9861494246e-03
+        1.4000000000e-06    1.4715790000e-01    1.4673575040e-01    4.2214960494e-04    6.9810206017e-03
+        1.6000000000e-06    1.5247520000e-01    1.4561715797e-01    6.8580420325e-03    6.6680066656e-03
+        1.8000000000e-06    1.4703974000e-01    1.4451452937e-01    2.5252106284e-03    6.3299717550e-03
+    In that case we are also importing the weights.
 
-        1st section:
-         First column denotes tau in seconds and the second row the
-         correlation signal.
-        2nd section:
-         First column denotes tau in seconds and the second row the
-         intensity trace in kHz.
+    Data type:
+    If Data type is "Cross-correlation", we will try to import
+    two traces after "# BEGIN SECOND TRACE"
+
+    1st section:
+     First column denotes tau in seconds and the second row the
+     correlation signal.
+    2nd section:
+     First column denotes tau in seconds and the second row the
+     intensity trace in kHz.
 
 
-        Returns:
-        1. A list with tuples containing two elements:
-           1st: tau in ms
-           2nd: corresponding correlation signal
-        2. None - usually is the trace, but the trace is not saved in
-                  the PyCorrFit .csv format.
-        3. A list with one element, indicating, that we are opening only
-           one correlation curve.
+    Returns:
+    1. A list with tuples containing two elements:
+       1st: tau in ms
+       2nd: corresponding correlation signal
+    2. None - usually is the trace, but the trace is not saved in
+              the PyCorrFit .csv format.
+    3. A list with one element, indicating, that we are opening only
+       one correlation curve.
     """
     # Check if the file is correlation data
     csvfile = open(os.path.join(dirname, filename), 'r')
@@ -65,10 +79,13 @@ def openCSV(dirname, filename):
     csvfile = open(os.path.join(dirname, filename), 'r')
     readdata = csv.reader(csvfile, delimiter=',')
     data = list()
+    weights = list()
+    weightname = "external"
     trace = None
     traceA = None
     DataType="AC" # May be changed
     numtraces = 0
+    prev_row = None
     for row in readdata:
         if len(row) == 0 or len(str(row[0]).strip()) == 0:
             # Do nothing with empty/whitespace lines
@@ -106,6 +123,15 @@ def openCSV(dirname, filename):
                 row = row[0].split()
             data.append((np.float(row[0].strip())*timefactor, 
                          np.float(row[1].strip())))
+            if len(row) == 5:
+                # this has to be correlation with weights
+                weights.append(np.float(row[4].strip()))
+                if weightname == "external":
+                    try:
+                        weightname = "ext. "+prev_row[0].split("Weights")[1].split("[")[1].split("]")[0]
+                    except:
+                        pass
+        prev_row = row
     # Collect the rest of the trace, if there is any:
     rest = np.array(data)
     if numtraces == 0:
@@ -142,4 +168,7 @@ def openCSV(dirname, filename):
     dictionary["Trace"] = Traces
     dictionary["Type"] = [DataType]
     dictionary["Filename"] = [filename]
+    if len(weights) != 0:
+        dictionary["Weight"] = [ np.array(weights)]
+        dictionary["Weight Name"] = [weightname]
     return dictionary

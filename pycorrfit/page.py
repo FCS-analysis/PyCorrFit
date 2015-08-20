@@ -12,63 +12,46 @@ import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np                      # NumPy
 
+import warnings
+
 from . import edclasses                    # Cool stuff like better floatspin
-from . import fitting as fit       # For fitting
 from . import models as mdls
 from . import tools
-
+from . import fcs_data_set as pcfbase
+from .fcs_data_set import Correlation, Fit
 
 class FittingPanel(wx.Panel):
     """
     Those are the Panels that show the fitting dialogs with the Plots.
     """
-    def __init__(self, parent, counter, modelid, active_parms, tau):
+    def __init__(self, parent, counter, modelid, active_parms, tau=None):
         """ Initialize with given parameters. """
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
         self.parent = parent
-        self.filename = "None"
-        ## If IsCrossCorrelation is set to True, the trace and traceavg 
-        ## variables will not be used. Instead tracecc a list, of traces
-        ## will be used.
-        self.IsCrossCorrelation = False
-        ## Setting up variables for plotting
-        self.trace = None        # The intensity trace, tuple
-        self.traceavg = None     # Average trace intensity
-        self.tracecc = None      # List of traces (in CC mode only)
-        self.bgselected = None   # integer, index for parent.Background
-        self.bg2selected = None  # integer, index for parent.Background
-        #                          -> for cross-correlation
-        self.bgcorrect = 1.      # Background correction factor for dataexp
-        self.normparm = None     # Parameter number used for graph normalization
-        #                          if greater than number of fitting parms,
-        #                          then supplementary parm is used.
-        self.normfactor = 1.     # Graph normalization factor (e.g. value of n)
-        self.startcrop = None    # Where cropping of dataexp starts
-        self.endcrop = None      # Where cropping of dataexp ends
-        self.dataexp = None      # Experimental data (cropped)
-        self.dataexpfull = None  # Experimental data (not cropped)
-        self.datacorr = None     # Calculated data
-        self.resid = None        # Residuals
-        self.data4weight = None  # Data used for weight calculation 
-        # Fitting:
-        #self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
-        #                fittextvar, fitspin, buttonfit, textalg,
-        #                self.AlgorithmDropdown]
-        # chi squared - is also an indicator, if something had been fitted
+        
+        self.corr = Correlation(fit_model=modelid)
+        if tau is not None:
+            self.corr.lag_time = tau
+        # active_parameters:
+        # [0] labels
+        # [1] values
+        # [2] bool values to fit
+        self.corr.fit_parameters = active_parms[1]
+        self.corr.fit_parameters_variable = active_parms[2]
+
+        self._bgselected = None
+        self._bg2selected = None
+
         self.FitKnots = 5 # number of knots for spline fit or similiars
-        self.chi2 = None
-        self.weighted_fit_was_performed = False # default is no weighting
-        self.weights_used_for_fitting = None # weights used for fitting
-        self.weights_used_for_plotting = None # weights used for plotting
-        self.weights_plot_fill_area = None # weight area in plot
+
         self.weighted_fittype_id = 0 # integer (drop down item)
-        self.weighted_fittype = "Unknown" # type of fit used
         self.weighted_nuvar = 3 # bins for std-dev. (left and rigth)
-        self.fit_algorithm ="Lev-Mar" # Least squares min. is standard
-        # dictionary for alternative variances from e.g. averaging
-        self.external_std_weights = dict()
-        # Errors of fit dictionary
-        self.parmoptim_error = None
+
+        
+        # The weights that are plotted in the page
+        # This is set by the PlotAll function
+        self.weights_plot_fill_area = None
+        
         # A list containing page numbers that share parameters with this page.
         # This parameter is defined by the global fitting tool and is saved in
         # sessions.
@@ -80,33 +63,7 @@ class FittingPanel(wx.Panel):
         # nothing will be plotted if called with "init"
         self.InitialPlot = False
         # Model we are using
-        self.modelid = modelid
-        # modelpack:
-        # [0] labels
-        # [1] values
-        # [2] bool values to fit
-        # [3] labels human readable (optional)
-        # [4] factors human readable (optional)
-        modelpack = mdls.modeldict[modelid]
-        # The string of the model in the menu
-        self.model = modelpack[1]
-        # Some more useless text about the model
-        self.modelname = modelpack[2]
-        # Function for fitting
-        self.active_fct = modelpack[3]
-        # Parameter verification function.
-        # This checks parameters concerning their physical meaningfullness :)
-        self.check_parms_model = mdls.verification[modelid]
-        # active_parameters:
-        # [0] labels
-        # [1] values
-        # [2] bool values to fit
-        self.active_parms = active_parms
-        # Parameter range for fitting (defaults to zero)
-        self.parameter_range = np.zeros((len(active_parms[0]),2))
-        # Some timescale
-        self.taufull = tau
-        self.tau = 1*self.taufull
+
         # Tool statistics uses this list:
         self.StatisticsCheckboxes = None
         ### Splitter window
@@ -156,44 +113,137 @@ class FittingPanel(wx.Panel):
         # Bind resizing to resizing function.
         wx.EVT_SIZE(self, self.OnSize)
 
+    @property
+    def active_parms(self):
+        names = self.corr.fit_model.parameters[0]
+        parms = self.corr.fit_parameters
+        bool = self.corr.fit_parameters_variable
+        return [names, parms, bool]
+
+    @property
+    def IsCrossCorrelation(self):
+        return self.corr.is_cc
+    
+    @property
+    def modelid(self):
+        return self.corr.fit_model.id
+    
+    @property
+    def title(self):
+        return self.tabtitle.GetValue()
+
+    @title.setter
+    def title(self, title):
+        self.tabtitle.SetValue(title.strip())
+        self.corr.title = title.strip()
+    
+    @property
+    def traceavg(self):
+        warnings.warn("Trace average always set to none!")
+        return None
+    
+    @property
+    def tracecc(self):
+        if self.corr.is_cc and len(self.corr.traces) != 0:
+            return self.corr.traces
+        else:
+            return None
+
+    @property
+    def bgselected(self):
+        return self._bgselected
+    
+    @bgselected.setter
+    def bgselected(self, value):
+        if value is None:
+            self.corr.backgrounds=[]
+            return
+        # check paren.Background and get id
+        background = self.parent.Background[value]
+        self.corr.background_replace(0, background)
+        self._bgselected = value
+
+    @property
+    def bg2selected(self):
+        return self._bg2selected
+    
+    @bg2selected.setter
+    def bg2selected(self, value):
+        if value is None:
+            if self.corr.is_cc:
+                self.corr.backgrounds=[]
+            return
+        # check paren.Background and get id
+        background = self.parent.Background[value]
+        self.corr.background_replace(1, background)
+        self._bg2selected = value
 
     def apply_parameters(self, event=None):
         """ Read the values from the form and write it to the
             pages parameters.
             This function is called when the "Apply" button is hit.
         """
+        modelid = self.corr.fit_model.id
         parameters = list()
+        parameters_variable = list()
         # Read parameters from form and update self.active_parms[1]
-        for i in np.arange(len(self.active_parms[1])):
+        for i in np.arange(len(self.spincontrol)):
             parameters.append(1*self.spincontrol[i].GetValue())
-            self.active_parms[2][i] = self.checkboxes[i].GetValue()
+            parameters_variable.append(self.checkboxes[i].GetValue())
+
+        self.corr.fit_parameters_variable = np.array(parameters_variable,
+                                                     dtype=bool)
         # As of version 0.7.5: we want the units to be displayed
         # human readable - the way they are displayed 
         # in the Page info tool.
         # Here: Convert human readable units to program internal
         # units
-        self.active_parms[1] = mdls.GetInternalFromHumanReadableParm(
-                                  self.modelid, np.array(parameters))[1]
-        self.active_parms[1] = self.check_parms(1*self.active_parms[1])
+        parmsconv = mdls.GetInternalFromHumanReadableParm(
+                        modelid, np.array(parameters))[1]
+        self.corr.fit_parameters = parmsconv
+
         # Fitting parameters
         self.weighted_nuvar = self.Fitbox[5].GetValue()
+        
         self.weighted_fittype_id = self.Fitbox[1].GetSelection()
-        if self.Fitbox[1].GetSelection() == -1:
+
+        fitbox_value = self.Fitbox[1].GetValue()
+        
+        if self.weighted_fittype_id == -1:
             # User edited knot number
-            Knots = self.Fitbox[1].GetValue()
+            Knots = fitbox_value
             Knots = filter(lambda x: x.isdigit(), Knots)
             if Knots == "":
                 Knots = "5"
             self.weighted_fittype_id = 1
             self.FitKnots = str(Knots)
-        elif self.Fitbox[1].GetSelection() == 1:
-            Knots = self.Fitbox[1].GetValue()
+            fit_weight_type = "spline{}".format(self.FitKnots)
+            fit_weight_data = self.weighted_nuvar
+        elif self.weighted_fittype_id == 1:
+            Knots = fitbox_value
             Knots = filter(lambda x: x.isdigit(), Knots)
             self.FitKnots = int(Knots)
+            fit_weight_type = "spline{}".format(self.FitKnots)
+            fit_weight_data = self.weighted_nuvar
+        elif self.weighted_fittype_id == 0:
+            fit_weight_type = "none"
+            fit_weight_data = None
+        elif self.weighted_fittype_id == 2:
+            fit_weight_type = "model function"
+            fit_weight_data = self.weighted_nuvar
+        else: # fitbox_selection > 2:
+            fit_weight_type = fitbox_value
+            self.corr.fit_weight_type = fitbox_value
+            fit_weight_data = self.corr.fit_weight_data
+        
         # Fitting algorithm
-        keys = fit.GetAlgorithmStringList()[0]
+        keys = pcfbase.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
-        self.fit_algorithm = keys[idalg]
+        
+        self.corr.fit_algorithm = keys[idalg]
+        self.corr.fit_weight_type = fit_weight_type
+        self.corr.fit_weight_data = fit_weight_data
+        
         # If parameters have been changed because of the check_parms
         # function, write them back.
         self.apply_parameters_reverse()
@@ -203,8 +253,7 @@ class FittingPanel(wx.Panel):
         """ Read the values from the pages parameters and write
             it to the form.
         """
-        # check parameters
-        self.active_parms[1] = self.check_parms(self.active_parms[1])
+        modelid = self.corr.fit_model.id
         #
         # As of version 0.7.5: we want the units to be displayed
         # human readable - the way they are displayed 
@@ -212,158 +261,31 @@ class FittingPanel(wx.Panel):
         # 
         # Here: Convert program internal units to
         # human readable units
-        parameters = \
-                     mdls.GetHumanReadableParms(self.modelid,
-                                        self.active_parms[1])[1]
+        parameters = mdls.GetHumanReadableParms(modelid,
+                                        self.corr.fit_parameters)[1]
+        parameters_variable = self.corr.fit_parameters_variable
         # Write parameters to the form on the Page
         for i in np.arange(len(self.active_parms[1])):
             self.spincontrol[i].SetValue(parameters[i])
-            self.checkboxes[i].SetValue(self.active_parms[2][i])
+            self.checkboxes[i].SetValue(parameters_variable[i])
         # Fitting parameters
         self.Fitbox[5].SetValue(self.weighted_nuvar)
         idf = self.weighted_fittype_id
         List = self.Fitbox[1].GetItems()
-        List[1] = "Spline ("+str(self.FitKnots)+" knots)"
+        List[1] = "spline ("+str(self.FitKnots)+" knots)"
         self.Fitbox[1].SetItems(List)
         self.Fitbox[1].SetSelection(idf)
         # Fitting algorithm
-        keys = fit.GetAlgorithmStringList()[0]
-        idalg = keys.index(self.fit_algorithm)
+        keys = pcfbase.GetAlgorithmStringList()[0]
+        idalg = keys.index(self.corr.fit_algorithm)
         self.AlgorithmDropdown.SetSelection(idalg)
 
 
     def calculate_corr(self):
-        """ Calculate correlation function
-            Returns an array of tuples (tau, correlation)
-            *self.active_f*: A function that is being calculated using
-            *self.active_parms*: A list of parameters
-    
-            Uses variables:
-            *self.datacorr*: Plotting data (tuples) of the correlation curve
-            *self.dataexp*: Plotting data (tuples) of the experimental curve
-            *self.tau*: "tau"-values for plotting (included) in dataexp.
-    
-            Returns:
-            Nothing. Recalculation of the mentioned global variables is done.
-        """
-        parameters = self.active_parms[1]
-        # calculate correlation values
-        y = self.active_fct(parameters, self.tau)
-        # Create new plotting data
-        self.datacorr = np.zeros((len(self.tau), 2))
-        self.datacorr[:, 0] = self.tau
-        self.datacorr[:, 1] = y
-
-
-    def check_parms(self, parms):
-        """ Check parameters using self.check_parms_model and the user defined
-            borders for each parameter.
-        """
-        p = 1.*np.array(parms)
-        p = self.check_parms_model(p)
-        r = self.parameter_range
-        for i in range(len(p)):
-            if r[i][0] == r[i][1]:
-                pass
-            elif p[i] < r[i][0]:
-                p[i] = r[i][0]
-            elif p[i] > r[i][1]:
-                p[i] = r[i][1]
-        return p
-            
-        
-    def crop_data(self):
-        """ Crop the pages data for plotting
-            This will create slices from
-            *self.taufull* and *self.dataexpfull* using the values from
-            *self.startcrop* and *self.endcrop*, creating
-            *self.tau* and *self.dataexp*.
-        """
-        if self.dataexpfull is not None:
-            if self.startcrop == self.endcrop:
-                # self.bgcorrect is background correction
-                self.dataexp = 1*self.dataexpfull
-                self.taufull = self.dataexpfull[:,0]
-                self.tau = 1*self.taufull
-                self.startcrop = 0
-                self.endcrop = len(self.taufull)
-            else:
-                self.dataexp = 1*self.dataexpfull[self.startcrop:self.endcrop]
-                self.taufull = self.dataexpfull[:,0]
-                self.tau = 1*self.dataexp[:,0]
-                # If startcrop is larger than the lenght of dataexp,
-                # We will not have an array. Prevent that.
-                if len(self.tau) == 0:
-                    self.tau = 1*self.taufull
-                    self.dataexp = 1*self.dataexpfull
-            try:
-                self.taufull[self.startcrop]
-                self.taufull[self.endcrop-1]
-            except:
-                self.startcrop = 0
-                self.endcrop = len(self.taufull)
-                self.tau = 1*self.taufull
-                self.dataexp = 1*self.dataexpfull
-        else:
-            # We have to check if the startcrop and endcrop parameters are
-            # inside the taufull array.
-            try:
-                # Raises IndexError if index out of bounds
-                self.taufull[self.startcrop]
-                # Raises TypeError if self.endcrop is not an int.
-                self.taufull[self.endcrop-1]
-            except (IndexError, TypeError):
-                self.tau = 1*self.taufull
-                self.endcrop = len(self.taufull)
-                self.startcrop = 0
-            else:
-                self.tau = 1*self.taufull[self.startcrop:self.endcrop]
-
-
-    def CorrectDataexp(self, dataexp):
         """ 
-            Background correction
-            Changes *self.bgcorrect*.
-            Overwrites *self.dataexp*.
-            For details see:
-            
-                Thompson, N. Lakowicz, J.;
-                Geddes, C. D. & Lakowicz, J. R. (ed.)
-                Fluorescence Correlation Spectroscopy
-                Topics in Fluorescence Spectroscopy,
-                Springer US, 2002, 1, 337-378
-            
-            The cross-correlation background correction can be derived in the
-            same manner.
+        Calculate model correlation function
         """
-        # Make a copy. Do not overwrite the original.
-        if dataexp is not None:
-            modified = 1 * dataexp
-            if self.IsCrossCorrelation:
-                # Cross-Correlation
-                if (self.bgselected is not None and
-                    self.bg2selected is not None    ):
-                    if self.tracecc is not None:
-                        S = self.tracecc[0][:,1].mean()
-                        S2 = self.tracecc[1][:,1].mean()
-                        B = self.parent.Background[self.bgselected][0]
-                        B2 = self.parent.Background[self.bg2selected][0]
-                        self.bgcorrect = (S/(S-B)) * (S2/(S2-B2))
-                        modified[:,1] *= self.bgcorrect
-            else:
-                # Autocorrelation
-                if self.bgselected is not None:
-                    # self.bgselected 
-                    if self.traceavg is not None:
-                        S = self.traceavg
-                        B = self.parent.Background[self.bgselected][0]
-                        # Calculate correction factor
-                        self.bgcorrect = (S/(S-B))**2
-                        # self.dataexp should be set, since we have self.trace
-                        modified[:,1] *= self.bgcorrect
-            return modified
-        else:
-            return None
+        return self.corr.modeled
 
 
     def Fit_enable_fitting(self):
@@ -377,67 +299,6 @@ class FittingPanel(wx.Panel):
         self.Fitbox[7].Enable()
         self.Fitbox[8].Enable()
 
-
-    def Fit_create_instance(self, noplots=False):
-        """ *noplots* prohibits plotting (e.g. splines) """
-        ### If you change anything here, make sure you
-        ### take a look at the global fit tool!
-        ## Start fitting class and fill with information.
-        self.apply_parameters()
-        Fitting = fit.Fit()
-        # Verbose mode?
-        if noplots is False:
-            Fitting.verbose = self.parent.MenuVerbose.IsChecked()
-        Fitting.uselatex = self.parent.MenuUseLatex.IsChecked()
-        Fitting.check_parms = self.check_parms
-        Fitting.dataexpfull = self.CorrectDataexp(self.dataexpfull)
-        if self.Fitbox[1].GetSelection() == 1:
-            # Knots = self.Fitbox[1].GetValue()
-            # Knots = filter(lambda x: x.isdigit(), Knots)
-            # self.FitKnots = Knots
-            Fitting.fittype = "spline"+str(self.FitKnots)
-            self.parent.StatusBar.SetStatusText("You can change the number"+
-               " of knots. Check 'Preference>Verbose Mode' to view the spline.")
-        elif self.Fitbox[1].GetSelection() == 2:
-            Fitting.fittype = "model function"
-            if self is self.parent.notebook.GetCurrentPage():
-                self.parent.StatusBar.SetStatusText("This is iterative. Press"+
-                 " 'Fit' multiple times. If it does not converge, use splines.")
-        elif self.Fitbox[1].GetSelection() > 2:
-            # This means we have some user defined std, for example from
-            # averaging. This std is stored in self.external_std_weights
-            # list, which looks like this:
-            # self.external_std_weights["from average"] = 1D np.array std
-            Fitting.fittype = "other"
-            Fitlist = self.Fitbox[1].GetItems()
-            FitValue = Fitlist[self.Fitbox[1].GetSelection()]
-            Fitting.external_deviations = self.external_std_weights[FitValue]
-            # Fitting will crop the variances according to
-            # the Fitting.interval that we set below.
-            if self is self.parent.notebook.GetCurrentPage():
-                self.parent.StatusBar.SetStatusText("")
-        else:
-            self.parent.StatusBar.SetStatusText("")
-        Fitting.function = self.active_fct
-        Fitting.interval = [self.startcrop, self.endcrop]
-        Fitting.values = 1*self.active_parms[1]
-        Fitting.valuestofit = 1*self.active_parms[2]
-        Fitting.weights = self.Fitbox[5].GetValue()
-        Fitting.ApplyParameters()
-        # Set weighted_fit_was_performed variables
-        if self.Fitbox[1].GetSelection() == 0:
-            self.weighted_fit_was_performed = False
-            self.weights_used_for_fitting = None
-            self.tauweight = None
-        else:
-            self.weighted_fit_was_performed = True
-            self.weights_used_for_fitting = Fitting.dataweights
-        self.weighted_fittype_id = idf = self.Fitbox[1].GetSelection()
-        self.weighted_fittype = self.Fitbox[1].GetItems()[idf]
-        # Set fitting algorithm
-        Fitting.fit_algorithm = self.fit_algorithm
-        return Fitting
-
         
     def Fit_function(self, event=None, noplots=False, trigger=None):
         """ Calls the fit function.
@@ -449,45 +310,27 @@ class FittingPanel(wx.Panel):
                       to `True`.
         
         """
-        if trigger in ["fit_batch"]:
-            noplots = True
         # Make a busy cursor
         wx.BeginBusyCursor()
         # Apply parameters
         # This also applies the background correction, if present
         self.apply_parameters()
         # Create instance of fitting class
-        Fitting = self.Fit_create_instance(noplots)
-        # Reset page counter
+        
+        # TODO:
+        # 
         self.GlobalParameterShare = list()
-        Fitting.minimize()
+
         try:
-            Fitting.minimize()
+            Fit(self.corr)
         except ValueError:
             # I sometimes had this on Windows. It is caused by fitting to
             # a .SIN file without selection proper channels first.
             print "There was an Error fitting. Please make sure that you\n"+\
                   "are fitting in a proper channel domain."
             wx.EndBusyCursor()
-            return
-        parms = Fitting.valuesoptim
-        # create an error dictionary
-        p_error = Fitting.parmoptim_error
-        if p_error is None:
-            self.parmoptim_error = None
-        else:
-            self.parmoptim_error = dict()
-            errcount = 0
-            for i in np.arange(len(parms)):
-                if self.active_parms[2][i]:
-                    self.parmoptim_error[self.active_parms[0][i]] =p_error[errcount]
-                    errcount += 1
-        self.chi2 = Fitting.chi
-        for i in np.arange(len(parms)):
-            self.active_parms[1][i] = parms[i]
-        # We need this for plotting
-        self.calculate_corr()
-        self.data4weight = 1.*self.datacorr
+            raise
+
         # Update spin-control values
         self.apply_parameters_reverse()
         # Plot everthing
@@ -530,6 +373,7 @@ class FittingPanel(wx.Panel):
             *check*: The (un)set checkboxes
             *spin*: The spin text fields
         """
+        modelid = self.corr.fit_model.id
         box = wx.StaticBox(self.panelsettings, label=boxlabel)
         sizer = wx.StaticBoxSizer(box, wx.VERTICAL)
         check = list()
@@ -539,8 +383,8 @@ class FittingPanel(wx.Panel):
         # human readable - the way they are displayed 
         # in the Page info tool.
         # 
-        labels = mdls.GetHumanReadableParms(self.modelid,
-                                            self.active_parms[1])[0]
+        labels = mdls.GetHumanReadableParms(modelid,
+                                            self.corr.fit_parameters)[0]
         for label in labels:
             sizerh = wx.BoxSizer(wx.HORIZONTAL)
             checkbox = wx.CheckBox(self.panelsettings, label=label)
@@ -560,6 +404,7 @@ class FittingPanel(wx.Panel):
         """ Enable/Disable BG rate text line.
             New feature introduced in 0.7.8
         """
+        modelid = self.corr.fit_model.id
         ## Normalization to a certain parameter in plots
         # Find all parameters that start with an "N"
         # ? and "C" ?
@@ -570,64 +415,28 @@ class FittingPanel(wx.Panel):
         parameterlist = list()
         for i in np.arange(len(self.active_parms[0])):
             label = self.active_parms[0][i]
-            if label[0] == "n" or label[0] == "N":
+            if label[0].lower() == "n":
                 normlist.append("*"+label)
                 parameterlist.append(i)
         ## Add supplementary parameters
         # Get them from models
-        supplement = mdls.GetMoreInfo(self.modelid, self)
+        supplement = mdls.GetMoreInfo(modelid, self)
         if supplement is not None:
             for i in np.arange(len(supplement)):
                 label = supplement[i][0]
-                if label[0] == "n" or label[0] == "N":
+                if label[0].lower() == "n":
                     normlist.append("*"+label)
                     # Add the id of the supplement starting at the
                     # number of fitting parameters of current page.
                     parameterlist.append(i+len(self.active_parms[0]))
         normsel = self.AmplitudeInfo[2].GetSelection()
-        if event == "init":
-            # Read everything from the page not from the panel
-            # self.normparm was set and we need to set
-            #  self.normfactor
-            #  self.AmplitudeInfo[2]
-            if self.normparm is not None:
-                if self.normparm < len(self.active_parms[1]):
-                    # use fitting parameter from page
-                    self.normfactor =  self.active_parms[1][self.normparm]
-                else:
-                    # use supplementary parameter
-                    supnum = self.normparm - len(self.active_parms[1])
-                    self.normfactor =  supplement[supnum][1]
-                # Set initial selection
-                for j in np.arange(len(parameterlist)):
-                    if parameterlist[j] == self.normparm:
-                        normsel = j+1
-            else:
-                self.normfactor = 1.
-                normsel = 0
+        if normsel in [0, -1]:
+            # init or no normalization selected
+            self.corr.normparm = None
+            normsel = 0 
         else:
-            if normsel > 0:
-                # Make sure we are not normalizing with a background
-                # Use the parameter id from the internal parameterlist
-                parameterid = parameterlist[normsel-1]
-                if parameterid < len(self.active_parms[1]):
-                    # fitting parameter
-                    self.normfactor = self.active_parms[1][parameterid]
-                else:
-                    # supplementary parameter
-                    supnum = parameterid - len(self.active_parms[1])
-                    self.normfactor =  supplement[supnum][1]
-                
-                #### supplement are somehow sorted !!!!
-                # For parameter export:
-                self.normparm = parameterid
-                # No internal parameters will be changed
-                # Only the plotting
-            else:
-                self.normfactor = 1.
-                normsel = 0
-                # For parameter export
-                self.normparm = None
+            self.corr.normparm = parameterlist[normsel-1]
+
         if len(parameterlist) > 0:
             self.AmplitudeInfo[2].Enable()
             self.AmplitudeInfo[3].Enable()
@@ -643,40 +452,35 @@ class FittingPanel(wx.Panel):
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
         # Signal
-        if self.IsCrossCorrelation:
-            if self.tracecc is not None:
-                S1 = self.tracecc[0][:,1].mean()
-                S2 = self.tracecc[1][:,1].mean()
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(S1))
-                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(S2))
-            else:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
-                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+        self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
+        self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+        for i in range(len(self.corr.traces)):
+            S = self.corr.traces[i].countrate
+            self.AmplitudeInfo[0][i].SetValue("{:.4f}".format(S))
+        if self.corr.is_cc:
+            self.AmplitudeInfo[0][1].Enable()
         else:
-            if self.traceavg is not None:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(
-                                                self.traceavg))
-            else:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
-            self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+            self.AmplitudeInfo[0][1].Disable()
         # Background
         ## self.parent.Background[self.bgselected][i]
         ## [0] average signal [kHz]
         ## [1] signal name (edited by user)
         ## [2] signal trace (tuple) ([ms], [kHz])
-        if self.bgselected is not None:
+        if len(self.corr.backgrounds) >= 1:
             self.AmplitudeInfo[1][0].SetValue(
-                        self.parent.Background[self.bgselected][0])
+                        self.corr.backgrounds[0].countrate)
         else:
             self.AmplitudeInfo[1][0].SetValue(0)
-        if self.bg2selected is not None and self.IsCrossCorrelation:
+            self.AmplitudeInfo[1][1].SetValue(0)
+        
+        if len(self.corr.backgrounds) == 2:
             self.AmplitudeInfo[1][1].SetValue(
-                        self.parent.Background[self.bg2selected][0])
+                        self.corr.backgrounds[1].countrate)
         else:
             self.AmplitudeInfo[1][1].SetValue(0)
         # Disable the second line in amplitude correction, if we have
         # autocorrelation only.
-        boolval = self.IsCrossCorrelation
+        boolval = self.corr.is_cc
         for item in self.WXAmplitudeCCOnlyStuff:
             item.Enable(boolval)
 
@@ -689,7 +493,7 @@ class FittingPanel(wx.Panel):
         #self.AmplitudeInfo = [ [intlabel1, intlabel2],
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
-        if self.IsCrossCorrelation:
+        if self.corr.is_cc:
             # update both self.bgselected and self.bg2selected
             bg = [self.AmplitudeInfo[1][0].GetValue(),
                   self.AmplitudeInfo[1][1].GetValue()]
@@ -701,11 +505,14 @@ class FittingPanel(wx.Panel):
             tools.background.ApplyAutomaticBackground(self, bg,
                                                       self.parent)
 
+    ## TODO
+    # continue here
     
     def OnTitleChanged(self, e):
+        modelid = self.corr.fit_model.id
         pid = self.parent.notebook.GetPageIndex(self)
         if self.tabtitle.GetValue() == "":
-            text = self.counter + mdls.modeldict[self.modelid][1]
+            text = self.counter + mdls.modeldict[modelid][1]
         else:
             # How many characters of the the page title should be displayed
             # in the tab? We choose 9: AC1-012 plus 2 whitespaces
@@ -719,6 +526,9 @@ class FittingPanel(wx.Panel):
             Parameter ranges are treated like parameters: They are saved in
             sessions and applied in batch mode.
         """
+        # TODO:
+        # - make range selector work with new class
+        
         # We write a separate tool for that.
         # This tool does not show up in the Tools menu.
         if self.parent.RangeSelector is None:
@@ -763,30 +573,21 @@ class FittingPanel(wx.Panel):
             # We use this to have the page plotted at least once before
             # readout of parameters (e.g. startcrop, endcrop)
             # This is a performence tweak.
-            self.crop_data()
-            if self.InitialPlot is True:
+            if self.InitialPlot:
                 return
             else:
                 self.InitialPlot = True
         ## Enable/Disable, set values frontend normalization
         self.OnAmplitudeCheck()
-        self.crop_data()
-        ## Calculate trace average
-        if self.trace is not None:
-            # Average of the current pages trace
-            self.traceavg = self.trace[:,1].mean()
-        # Perform Background correction
-        self.dataexp = self.CorrectDataexp(self.dataexp)
         ## Apply parameters
         self.apply_parameters()
         # Calculate correlation function from parameters
-        self.calculate_corr()
         ## Drawing of correlation plot
-        # Plots self.dataexp and the calcualted correlation function 
+        # Plots corr.correlation_fit and the calcualted correlation function 
         # self.datacorr into the upper canvas.
         # Create a line @ y=zero:
-        zerostart = self.tau[0]
-        zeroend = self.tau[-1]
+        zerostart = self.corr.lag_time_fit[0]
+        zeroend = self.corr.lag_time_fit[-1]
         datazero = [[zerostart, 0], [zeroend,0]]
         # Set plot colors
         width = 1   
@@ -796,64 +597,64 @@ class FittingPanel(wx.Panel):
         lines = list()
         linezero = plot.PolyLine(datazero, colour='orange', width=width)
         lines.append(linezero)
+        if self.corr.correlation is not None:
+            if self.corr.is_weighted_fit and \
+               self.parent.MenuShowWeights.IsChecked():
+                try:
+                    weights = self.corr.fit_results["fit weights"]
+                except:
+                    weights = self.corr.fit_weight_data
                 
-        if self.dataexp is not None:
-            if self.weighted_fit_was_performed == True and \
-               self.weights_used_for_fitting is not None and \
-               self.parent.MenuShowWeights.IsChecked() and \
-               self.data4weight is not None:
-                # Add the weights to the graph.
-                # This is done by drawing two lines.
-                w = 1*self.data4weight
-                w1 = 1*w
-                w2 = 1*w
-                w1[:, 1] = w[:, 1] + self.weights_used_for_fitting 
-                w2[:, 1] = w[:, 1] - self.weights_used_for_fitting 
-                wend = 1*self.weights_used_for_fitting 
-                # crop w1 and w2 if self.dataexp does not include all
-                # data points.
-                if np.all(w[:,0] == self.dataexp[:,0]):
-                    pass
-                else:
-                    start = np.min(self.dataexp[:,0])
-                    end = np.max(self.dataexp[:,0])
-                    idstart = np.argwhere(w[:,0]==start)
-                    idend = np.argwhere(w[:,0]==end)
-                    if len(idend) == 0:
-                        # dataexp is longer, do not change anything
+                if isinstance(weights, np.ndarray):
+                    # user might have selected a new weight type and
+                    # presses apply, do not try to display weights
+
+                    # if weights are from average or other, make sure that the 
+                    # dimensions are correct
+                    if weights.shape[0] == self.corr.correlation.shape[0]:
+                        weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
+                        
+                    if np.allclose(weights, np.ones_like(weights)):
+                        weights = 0
+                    if weights.shape[0] != self.corr.modeled_fit.shape[0]:
+                        # non-matching weigths
+                        warnings.warn("Unmatching weights found. Probably from previous data set.")
+                        weights = 0
+
+                    # Add the weights to the graph.
+                    # This is done by drawing two lines.
+                    w = 1*self.corr.modeled_fit
+                    w1 = 1*w
+                    w2 = 1*w
+                    
+                    w1[:, 1] = w[:, 1] + weights
+                    w2[:, 1] = w[:, 1] - weights
+                    # crop w1 and w2 if corr.correlation_fit does not include all
+                    # data points.
+                    if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
                         pass
                     else:
-                        w1 = w1[:idend[0][0]+1]
-                        w2 = w2[:idend[0][0]+1]
-                        wend = wend[:idend[0][0]+1]
-                    if len(idstart) == 0:
-                        # dataexp starts earlier, do not change anything
-                        pass
-                    else:
-                        w1 = w1[idstart[0][0]:]
-                        w2 = w2[idstart[0][0]:]
-                        wend = wend[idstart[0][0]:]
-                ## Normalization with self.normfactor
-                w1[:,1] *= self.normfactor
-                w2[:,1] *= self.normfactor
-                self.weights_used_for_plotting = wend
-                self.weights_plot_fill_area = [w1,w2]
-                lineweight1 = plot.PolyLine(w1, legend='',
-                                          colour=colweight, width=width)
-                lines.append(lineweight1)
-                lineweight2 = plot.PolyLine(w2, legend='',
-                                          colour=colweight, width=width)
-                lines.append(lineweight2)
+                        raise ValueError("This should not have happened: size of weights is wrong.")
+                    ## Normalization with self.normfactor
+                    w1[:,1] *= self.corr.normalize_factor
+                    w2[:,1] *= self.corr.normalize_factor
+                    self.weights_plot_fill_area = [w1,w2]
+                    lineweight1 = plot.PolyLine(w1, legend='',
+                                              colour=colweight, width=width)
+                    lines.append(lineweight1)
+                    lineweight2 = plot.PolyLine(w2, legend='',
+                                              colour=colweight, width=width)
+                    lines.append(lineweight2)
+            else:
+                self.weights_plot_fill_area = None
                 
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
             # Normalization with self.normfactor, new feature in 0.7.8
-            datacorr_norm = 1*self.datacorr
-            datacorr_norm[:,1] *= self.normfactor
-            dataexp_norm = 1*self.dataexp
-            dataexp_norm[:,1] *= self.normfactor
+            datacorr_norm = self.corr.modeled_plot
             linecorr = plot.PolyLine(datacorr_norm, legend='', colour=colfit,
                                      width=width)
+            dataexp_norm = self.corr.correlation_plot
             lineexp = plot.PolyLine(dataexp_norm, legend='', colour=colexp,
                                     width=width)
             # Draw linezero first, so it is in the background
@@ -863,18 +664,12 @@ class FittingPanel(wx.Panel):
                                 xLabel=u'lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
             ## Calculate residuals
-            self.resid = np.zeros((len(self.tau), 2))
-            self.resid[:, 0] = self.tau
-            self.resid[:, 1] = self.dataexp[:, 1] - self.datacorr[:, 1]
-            # Plot residuals
-            # Normalization with self.normfactor, new feature in 0.7.8
-            resid_norm = np.zeros((len(self.tau), 2))
-            resid_norm[:, 0] = self.tau
-            resid_norm[:, 1] = dataexp_norm[:, 1] - datacorr_norm[:, 1]
+            resid_norm = self.corr.residuals_plot
             lineres = plot.PolyLine(resid_norm, legend='', colour=colfit,
                                     width=width)
+            
             # residuals or weighted residuals?
-            if self.weighted_fit_was_performed:
+            if self.corr.is_weighted_fit:
                 yLabelRes = "weighted \nresiduals"
             else:
                 yLabelRes = "residuals"
@@ -884,8 +679,7 @@ class FittingPanel(wx.Panel):
             self.canvaserr.Draw(PlotRes)
         else:
             # Amplitude normalization, new feature in 0.7.8
-            datacorr_norm = 1*self.datacorr
-            datacorr_norm[:,1] *= self.normfactor
+            datacorr_norm = self.corr.modeled_plot
             linecorr = plot.PolyLine(datacorr_norm, legend='', colour='blue',
                                      width=1)
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
@@ -894,26 +688,17 @@ class FittingPanel(wx.Panel):
         self.parent.OnFNBPageChanged(trigger=trigger)
 
 
-    def SetCorrelationType(self, iscc, init=False):
-        """
-            The correlation type (AC or CC) of the page is set if data
-            is imported to the page (parent.ImportData).
-            In this case, init is `True`, else `False`.
-        """
-        if init:
-            self.IsCrossCorrelation = iscc
-
-
     def settings(self):
         """ Here we define, what should be displayed at the left side
             of the fitting page/tab.
             Parameters:
         """
+        modelid = self.corr.fit_model.id
         horizontalsize = self.sizepanelx-10
         # Title
         # Create empty tab title
-        mddat = mdls.modeldict[self.modelid]
-        modelshort = mdls.GetModelType(self.modelid)
+        mddat = mdls.modeldict[modelid]
+        modelshort = mdls.GetModelType(modelid)
         titlelabel = u"Data set ({} {})".format(modelshort, mddat[1])
         boxti = wx.StaticBox(self.panelsettings, label=titlelabel)
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
@@ -932,7 +717,7 @@ class FittingPanel(wx.Panel):
         # human readable - the way they are displayed 
         # in the Page info tool.
         # 
-        labels, parameters = mdls.GetHumanReadableParms(self.modelid,
+        labels, parameters = mdls.GetHumanReadableParms(modelid,
                                                 self.active_parms[1])
         parameterstofit = self.active_parms[2]
         # Set initial values given by user/programmer for Diffusion Model
@@ -1003,7 +788,7 @@ class FittingPanel(wx.Panel):
         fitsizer.SetMinSize((horizontalsize, -1))
         # Add a checkbox for weighted fitting
         weightedfitdrop = wx.ComboBox(self.panelsettings)
-        self.weightlist = ["No weights", "Spline (5 knots)", "Model function"]
+        self.weightlist = ["no weights", "spline (5 knots)", "model function"]
         weightedfitdrop.SetItems(self.weightlist)
         weightedfitdrop.SetSelection(0)
         fitsizer.Add(weightedfitdrop)
@@ -1031,7 +816,7 @@ class FittingPanel(wx.Panel):
         textalg = wx.StaticText(self.panelsettings, label="Algorithm")
         fitsizer.Add(textalg)
         self.AlgorithmDropdown = wx.ComboBox(self.panelsettings)
-        items = fit.GetAlgorithmStringList()[1]
+        items = pcfbase.GetAlgorithmStringList()[1]
         self.AlgorithmDropdown.SetItems(items)
         self.Bind(wx.EVT_COMBOBOX, self.apply_parameters,
                   self.AlgorithmDropdown)

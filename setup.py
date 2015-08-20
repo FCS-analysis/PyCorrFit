@@ -8,8 +8,9 @@
 #  pip install wheel twine
 #  python setup.py bdist wheel
 from __future__ import print_function
-from setuptools import setup, Extension
+from setuptools import setup, Extension, Command
 import sys
+import subprocess
 
 from os.path import join, dirname, realpath, exists
 from warnings import warn
@@ -38,6 +39,21 @@ else:
                         include_dirs=[np.get_include()]
                         )
               ]
+
+
+class PyTest(Command):
+    """ Perform pytests
+    """
+    user_options = []
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        errno = subprocess.call([sys.executable, 'tests/runtests.py'])
+        raise SystemExit(errno)
 
 # Download documentation if it was not compiled
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
@@ -101,7 +117,9 @@ setup(
                  },
     # cython
     ext_modules=EXTENSIONS,
-    cmdclass={"build_ext": build_ext},
+    cmdclass={'build_ext': build_ext,
+              'test': PyTest,
+             },
     # requirements
     extras_require = {
         # If you need the GUI of this project in your project, add

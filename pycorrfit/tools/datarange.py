@@ -111,20 +111,16 @@ class SelectChannels(wx.Frame):
             self.left = self.right = None
             self.panel.Disable()
         else:
-            self.left = self.Page.startcrop     # starting position
-            self.right = self.Page.endcrop      # ending position
-            if self.Page.dataexpfull is not None:
-                taufull = self.Page.dataexpfull[:,0]
-            else:
-                # then we only have tau
-                taufull = self.Page.taufull
+            self.left = self.Page.corr.fit_ival[0]     # starting position
+            self.right = self.Page.corr.fit_ival[1]      # ending position
+            taufull = self.Page.corr.lag_time
         self.lentau = len(taufull)
         self.start0 = 0                     # left border of interval
         # The interval starts at 0!
         self.end0 = self.lentau - 1         # right border of interval 
         if self.left is None or self.left > self.end0:
             # This means, that either left = right = None
-            # or the dataexp-array is too small
+            # or the correlation-array is too small
             self.left = self.start0
         if self.right is None:
             # set the maximum possible value
@@ -139,26 +135,12 @@ class SelectChannels(wx.Frame):
 
 
     def OnApplyAll(self, event=None):
-        start = self.spinstart.GetValue()
-        end = self.spinend.GetValue() + 1 # +1, [sic]
-        if start > end:
-            # swap the variables, we are not angry at the user
-            start, end = end, start
-        # Get all the Pages
         N = self.parent.notebook.GetPageCount()
         for i in np.arange(N):
             # Set Page 
             Page = self.parent.notebook.GetPage(i)
             # Find out maximal length
-            if Page.dataexpfull is not None:
-                maxlen = len(Page.dataexpfull[:,0])
-            else:
-                # then we only have tau
-                maxlen = len(Page.taufull)
-            # Use the smaller one of both, so we do not get an
-            # index out of bounds error
-            Page.endcrop = min(end, maxlen)
-            Page.startcrop = start*(start < maxlen - 1 )
+            self.SetValues(page=Page)
             Page.PlotAll()
         # Page.PlorAll() calls this function. This results in the wrong data
         # being displayed in an open "View Info" Window. We call it again.
@@ -179,15 +161,15 @@ class SelectChannels(wx.Frame):
         """
         if self.Page == None:
             return
-        N = len(self.Page.taufull)
+        N = len(self.Page.corr.lag_time)
         start = self.spinstart.Value
         end = self.spinend.Value
         # If the initial boundaries are outside of the experimental
         # data array of length N, change the start and end variables.
         start = start*(start < N-2)
         end = min(end, N-1)
-        t1 = 1.*self.Page.taufull[start]
-        t2 = 1.*self.Page.taufull[end]
+        t1 = 1.*self.Page.corr.lag_time[start]
+        t2 = 1.*self.Page.corr.lag_time[end]
         self.TextTimesStart.SetLabel("%.4e" % t1)
         self.TextTimesEnd.SetLabel("%.4e" % t2)
         self.OnCheckbox()
@@ -228,11 +210,10 @@ class SelectChannels(wx.Frame):
             self.panel.Enable()
             # There is a page. We may continue.
             state = self.fixcheck.GetValue()
-            if state == True:
+            if state:
                 # We do not need to run Calc_init
-                self.Page = page
-                self.SetValues()
-                self.Page.PlotAll(event="init")
+                self.SetValues(page=page)
+                page.PlotAll(event="init")
             else:
                 # We will run it
                 self.Calc_init(page)
@@ -245,11 +226,19 @@ class SelectChannels(wx.Frame):
 
 
 
-    def SetValues(self):
+    def SetValues(self, page=None):
+        if page is None:
+            page = self.Page
+        # Get interval
         start = self.spinstart.GetValue()
-        end = self.spinend.GetValue()
+        end = self.spinend.GetValue() + 1 # +1, [sic]
         if start > end:
             # swap the variables, we are not angry at the user
             start, end = end, start
-        self.Page.startcrop = start
-        self.Page.endcrop = end + 1 # +1, because arrays are accessed like this
+        # Find out maximal length
+        maxlen = len(page.corr.lag_time)
+        # Use the smaller one of both, so we do not get an
+        # index out of bounds error
+        page.corr.fit_ival = [ start*(start < maxlen - 1 ),
+                               min(end, maxlen)
+                             ]

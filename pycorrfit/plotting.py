@@ -128,25 +128,19 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         plt.close()
     except:
         pass
-    # As of version 0.7.8 the user may export data normalized to a certain
-    # parameter.
-    if Page.dataexp is not None:
-        dataexp = 1*Page.dataexp
-        resid = 1*Page.resid
-        dataexp[:,1] *= Page.normfactor
-        resid[:,1] *= Page.normfactor
-    else:
-        dataexp = Page.dataexp
-        resid = Page.resid
-    fit = 1*Page.datacorr
-    fit[:,1] *= Page.normfactor
+    # get data
+    corr = Page.corr
+    dataexp = corr.correlation_plot
+    resid = corr.residuals_plot
+    fit = corr.modeled_plot
+
     weights = Page.weights_plot_fill_area
     tabtitle = Page.tabtitle.GetValue()
     #fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
-    fitlabel = Page.modelname
+    fitlabel = Page.corr.fit_model.name
     labelweights = ur"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
-                                               Page.active_parms[1])
+                                               corr.fit_parameters)
     ## According to issue #54, we remove fitting errors from plots
     ## Error parameters with nice look
     #errparmsblank = Page.parmoptim_error
@@ -163,14 +157,14 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     #parms = np.array(parms)[parmids]
     if dataexp is None:
         if tabtitle.strip() == "":
-            fitlabel = Page.modelname
+            fitlabel = Page.corr.fit_model.name
         else:
             fitlabel = tabtitle
     else:
         if tabtitle.strip() == "":
             tabtitle = "page"+str(Page.counter).strip().strip(":")
-    if Page.normparm is not None:
-        fitlabel += ur", normalized to "+Page.active_parms[0][Page.normparm]
+    if Page.corr.normparm is not None:
+        fitlabel += ur", normalized to "+Page.corr.fit_model.parameters[0][Page.corr.normparm]
 
     ## Check if we can use latex for plotting:
     r1 = findprogram("latex")[0]
@@ -197,6 +191,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure()
+    fig.canvas.set_window_title("Correlation - "+Page.title)
     if resid is not None:
         gs = gridspec.GridSpec(2, 1, height_ratios=[5,1])
         ax = plt.subplot(gs[0])
@@ -275,7 +270,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         ax2 = plt.subplot(gs[1])
         #ax2 = plt.axes()
         ax2.semilogx()
-        if Page.weighted_fit_was_performed:
+        if Page.corr.is_weighted_fit:
             if uselatex == True:
                 lb = r"\newline \indent "
             else:
@@ -357,17 +352,14 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     if tabtitle.strip() == "":
         tabtitle = "page"+str(Page.counter).strip().strip(":")
     # Intensity trace in kHz may stay the same
-    if Page.trace is not None:
-        # Set trace
-        traces = [Page.trace]
-        labels = ["{} ({:.2f} kHz)".format(tabtitle, np.average(traces[0][:,1]))]
-    elif Page.tracecc is not None:
-        # We have some cross-correlation here. Two traces.
-        traces = Page.tracecc
-        labels = ["{} A ({:.4g} kHz)".format(tabtitle, np.average(traces[0][:,1])),
-                  "{} B ({:.4g} kHz)".format(tabtitle, np.average(traces[1][:,1]))]
-    else:
+    if len(Page.corr.traces) == 0:
         return
+    
+    traces = Page.corr.traces
+    labels = list()
+    for ii, tr in enumerate(traces):
+        labels.append("Channel {}: {}".format(ii+1, tr.name))
+
     ## Check if we can use latex for plotting:
     r1 = findprogram("latex")[0]
     r2 = findprogram("dvipng")[0]
@@ -389,6 +381,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure(figsize=(10,3))
+    fig.canvas.set_window_title("Trace - "+Page.title)
     ax = plt.subplot(111)
     for i in np.arange(len(traces)):
         # Columns
@@ -397,7 +390,14 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         plt.plot(time, intensity, '-', 
                  label = labels[i],
                  lw=1)
-                 
+    # set plot boundaries
+    maxy = -np.infty
+    miny = np.infty
+    for tr in traces:
+        maxy = max(np.max(tr[:,1]), maxy)
+        miny = min(np.min(tr[:,1]), miny)
+    ax.set_ylim(miny, maxy)
+
     plt.ylabel('count rate [kHz]')
     plt.xlabel('time [s]')
     
@@ -495,3 +495,6 @@ def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
     #text = Auswert(parmname, parmoptim, text, savename)
     plt.legend()
     plt.show()
+
+# set dpi to 300
+matplotlib.rcParams['savefig.dpi'] = 300

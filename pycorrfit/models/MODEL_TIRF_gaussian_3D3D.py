@@ -153,7 +153,7 @@ def Checkme(parms):
     return parms
 
 
-def MoreInfo(parms, countrate):
+def MoreInfo(parms, countrate=None):
     u"""Supplementary parameters:
         Effective number of particle species 1:
         [10] n₁ = n*F₁
