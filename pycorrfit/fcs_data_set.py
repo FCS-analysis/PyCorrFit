@@ -916,7 +916,7 @@ class Fit(object):
             if verbose > 0:
                 try:
                     # If plotting module is available:
-                    name = "Spline fit: "+str(knotnumber)+" knots"
+                    name = "spline fit: "+str(knotnumber)+" knots"
                     plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
                                              dirname=".",
                                              uselatex=uselatex)
@@ -1032,10 +1032,10 @@ class Fit(object):
             
             # Check if these other weights have length of the cropped
             # or the full array.
-            if weights.shape[0] == x_full.shape[0]:
+            if weights.shape[0] == x_fit.shape[0]:
                 dataweights = weights
             elif weights.shape[0] == x_full.shape[0]:
-                dataweights = weights[ival[0], ival[1]]
+                dataweights = weights[ival[0]:ival[1]]
             else:
                 raise ValueError, \
                   "`weights` must have length of full or cropped array."

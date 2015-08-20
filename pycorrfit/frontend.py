@@ -924,6 +924,7 @@ class MyFrame(wx.Frame):
                 CurPage.Fitbox[1].SetSelection(listid)
             
         # Plot everything
+        CurPage.OnAmplitudeCheck()
         CurPage.PlotAll(trigger=trigger)
         # Call this function to allow the "Channel Selection" window that
         # might be open to update itself.
@@ -1354,12 +1355,27 @@ class MyFrame(wx.Frame):
                     Newtab.corr.set_weights(key, Infodict["External Weights"][pageid][key])
             except KeyError:
                 pass
-                
+
+            if len(Infodict["Parameters"][i]) >= 6:
+                if Infodict["Parameters"][i][5][0] >= 3:
+                    # we have a weighted fit with external weights
+                    # these are usually averages.
+                    keys = Infodict["External Weights"][pageid].keys()
+                    keys = list(keys)
+                    keys.sort()
+                    key = keys[Infodict["Parameters"][i][5][0]-3]
+                    weights = Infodict["External Weights"][pageid][key]
+                    weight_type = key
+                else:
+                    weight_type = None
+                    weights = None
 
             self.ImportData(Newtab, 
                             dataexp, 
                             trace=Infodict["Traces"][pageid],
-                            curvetype=curvetype)
+                            curvetype=curvetype,
+                            weights=weights,
+                            weight_type=weight_type)
            
             # Set Title of the Page
             try:
@@ -1372,7 +1388,7 @@ class MyFrame(wx.Frame):
                                   init=True)
             # Supplementary data
             fit_results = dict()
-            fit_results["weighted fit"] = Infodict["Parameters"][0][5][0] > 0
+            fit_results["weighted fit"] = Infodict["Parameters"][i][5][0] > 0
             try:
                 Sups = Infodict["Supplements"][pageid]
             except KeyError:
@@ -1393,7 +1409,7 @@ class MyFrame(wx.Frame):
                 except:
                     pass
                 # also set fit parameters
-                fit_results["fit parameters"] = np.where(Infodict["Parameters"][0][3])[0]
+                fit_results["fit parameters"] = np.where(Infodict["Parameters"][i][3])[0]
                 # set fit weights for plotting
                 if fit_results["weighted fit"]:
                     # these were already imported:
@@ -1540,18 +1556,22 @@ class MyFrame(wx.Frame):
                 Infodict["Supplements"][counter] = dict()
                 if corr.fit_results.has_key("chi2"):
                     Infodict["Supplements"][counter]["Chi sq"] = float(corr.fit_results["chi2"])
+                else:
+                    Infodict["Supplements"][counter]["Chi sq"] = 0
                 PageList = list()
                 for pagei in Page.GlobalParameterShare:
                     PageList.append(int(pagei))
                 Infodict["Supplements"][counter]["Global Share"] = PageList
 
                 # optimization error
-                if corr.fit_results.has_key("fit error estimation"):
-                    Alist = list()
+                Alist = list()
+                if (corr.fit_results.has_key("fit error estimation") and 
+                    len(corr.fit_results["fit error estimation"]) != 0):
                     for ii, fitpid in enumerate(corr.fit_results["fit parameters"]):
                         Alist.append([ int(fitpid),
-                                       float(corr.fit_results["fit error estimation"][ii]) ])
-                    Infodict["Supplements"][counter]["FitErr"] = Alist
+                                   float(corr.fit_results["fit error estimation"][ii]) ])
+                Infodict["Supplements"][counter]["FitErr"] = Alist
+                
             # Set exp data
             Infodict["Correlations"][counter] = [corr.lag_time, corr.correlation]
             # Also save the trace

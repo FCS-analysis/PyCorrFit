@@ -452,22 +452,15 @@ class FittingPanel(wx.Panel):
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
         # Signal
+        self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
+        self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+        for i in range(len(self.corr.traces)):
+            S = self.corr.traces[i].countrate
+            self.AmplitudeInfo[0][i].SetValue("{:.4f}".format(S))
         if self.corr.is_cc:
-            if self.tracecc is not None:
-                S1 = self.corr.traces[0].countrate
-                S2 = self.corr.traces[1].countrate
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(S1))
-                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(S2))
-            else:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
-                self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+            self.AmplitudeInfo[0][1].Enable()
         else:
-            if self.traceavg is not None:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(
-                                                self.traceavg))
-            else:
-                self.AmplitudeInfo[0][0].SetValue("{:.4f}".format(0))
-            self.AmplitudeInfo[0][1].SetValue("{:.4f}".format(0))
+            self.AmplitudeInfo[0][1].Disable()
         # Background
         ## self.parent.Background[self.bgselected][i]
         ## [0] average signal [kHz]
