@@ -21,7 +21,7 @@ from . import doc
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport
 from .readfiles import BGFiletypes  # @UnusedImport
-
+from .fcs_data_set import Trace
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
@@ -224,7 +224,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 if (str(row[0])[0:1] != '#'):
                     bgtrace.append((np.float(row[0]), np.float(row[1])))
             bgtrace = np.array(bgtrace)
-            Infodict["Backgrounds"].append([np.float(bgrow[0]), str(bgrow[1]), bgtrace])
+            newbackground = Trace(trace=bgtrace, name=str(bgrow[1]), countrate=np.float(bgrow[0]))
+            Infodict["Backgrounds"].append(newbackground)
             i = i + 1
         bgfile.close()
     # Get external weights if they exist
@@ -330,7 +331,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Save external functions
     for key in Infodict["External Functions"].keys():
         funcfilename = "model_"+str(key)+".txt"
-        funcfile =  open(funcfilename, 'wb')
+        funcfile =  codecs.open(funcfilename, 'w', encoding="utf-8")
         funcfile.write(Infodict["External Functions"][key])
         funcfile.close()
         Arc.write(funcfilename)
@@ -371,7 +372,7 @@ def SaveSessionData(sessionfile, Infodict):
         # Since *Trace* and *Parms* are in the same order, which is the
         # Page order, we will identify the filename by the Page title 
         # number.
-        if Infodict["Traces"][pageid] is not None:
+        if Infodict["Traces"][pageid] is not None and len(Infodict["Traces"][pageid]) != 0:
             if Parms[pageid][7] is True:
                 # We have cross correlation: save two traces
                 ## A
@@ -445,15 +446,15 @@ def SaveSessionData(sessionfile, Infodict):
         bgfile = open(bgfilename, 'wb')
         bgwriter = csv.writer(bgfile, delimiter='\t')
         for i in np.arange(len(Background)):
-            bgwriter.writerow([str(Background[i][0]), Background[i][1]])
+            bgwriter.writerow([str(Background[i].countrate), Background[i].name])
             # Traces
             bgtracefilename = "bg_trace"+str(i)+".csv"
             bgtracefile = open(bgtracefilename, 'wb')
             bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
             bgtraceWriter.writerow(['# time', 'count rate'])
             # Actual Data
-            time = Background[i][2][:,0]
-            rate = Background[i][2][:,1]
+            time = Background[i][:,0]
+            rate = Background[i][:,1]
             for j in np.arange(len(time)):
                 bgtraceWriter.writerow(["%.20e" % time[j],
                                         "%.20e" % rate[j]])
@@ -533,11 +534,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     InfoMan = info.InfoClass(CurPage=Page)
     PageInfo = InfoMan.GetCurFancyInfo()
     for line in PageInfo.splitlines():
-        try:
-            openedfile.write(u"# "+line+"\r\n")
-        except:
-            import IPython
-            IPython.embed()
+        openedfile.write(u"# "+line+"\r\n")
     openedfile.write(u"#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data

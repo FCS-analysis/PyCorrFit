@@ -120,7 +120,7 @@ class SelectChannels(wx.Frame):
         self.end0 = self.lentau - 1         # right border of interval 
         if self.left is None or self.left > self.end0:
             # This means, that either left = right = None
-            # or the dataexp-array is too small
+            # or the correlation-array is too small
             self.left = self.start0
         if self.right is None:
             # set the maximum possible value
