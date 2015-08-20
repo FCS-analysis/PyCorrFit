@@ -1,5 +1,4 @@
-0.8.8
-# this will become release 0.8.9
+0.8.8-beta1
 - Improved support for "ALV-7004" files.
 - Increase resolution for image export
 - Load weights from PyCorrFit csv files 
