@@ -80,6 +80,8 @@ shallow_clone: true
 build: off
 
 test_script:
+#  - "pip freeze"
+# Disable pytest, because appveyor has problems with relative imports ??!
   - "%WITH_COMPILER% %PYTHON%/python setup.py test"
 
 after_test:

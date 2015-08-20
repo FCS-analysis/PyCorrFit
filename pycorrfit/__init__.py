@@ -8,6 +8,7 @@ from . import doc
 from . import models
 from . import openfile
 from . import readfiles
+from . import fcs_data_set
 
 from .main import Main
 

@@ -16,7 +16,6 @@ import platform
 import sys                              # System stuff
 import traceback                        # for Error handling
 import warnings
-from curses.has_key import has_key
 
 try:
     # contains e.g. update and icon, but no vital things.

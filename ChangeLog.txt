@@ -1,5 +1,5 @@
 0.8.8-beta1
-- Improved support for "ALV-7004" files.
+- Improved support for "ALV-7004" files (#104)
 - Increase resolution for image export
 - Load weights from PyCorrFit csv files 
 - Tool 'Overlay Curves': show cropped correlation curves
@@ -14,7 +14,7 @@
    - Code cleanup and rewrite to support planned features
    - In some cases support older versions of NumPy
 0.8.8
-- Improved support for "ALV-7004" files.
+- Improved support for "ALV-7004" files
 - If you install the GUI with pip, you now need to include
   the `GUI` requirement: `pip install pycorrfit[GUI]`.
   The GUI depends on matplotlib and wxPython which is not

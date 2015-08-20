@@ -31,8 +31,6 @@ import os
 import platform
 import scipy
 
-
-
 try:
     import sympy
 except ImportError:
