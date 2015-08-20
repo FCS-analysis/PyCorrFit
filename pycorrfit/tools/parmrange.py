@@ -42,12 +42,12 @@ class RangeSelector(wx.Frame):
     def FillPanel(self):
         """ Fill the panel with parameters from the page
         """
-        
-        self.parameter_range = np.zeros(self.Page.parameter_range.shape)
-        labels, parmleft = mdls.GetHumanReadableParms(self.Page.modelid,  # @UnusedVariable
-                                                 self.Page.parameter_range[:,0])
-        labels, parmright = mdls.GetHumanReadableParms(self.Page.modelid,
-                                                 self.Page.parameter_range[:,1])
+        corr = self.Page.corr
+        self.parameter_range = np.zeros_like(corr.fit_parameters_range)
+        labels, parmleft = mdls.GetHumanReadableParms(corr.fit_model.id,  # @UnusedVariable
+                                                 corr.fit_parameters_range[:,0])
+        labels, parmright = mdls.GetHumanReadableParms(corr.fit_model.id,
+                                                 corr.fit_parameters_range[:,1])
         self.parameter_range[:,0] = np.array(parmleft)
         self.parameter_range[:,1] = np.array(parmright)
         # create line
@@ -126,6 +126,7 @@ class RangeSelector(wx.Frame):
         """ Called whenever something is edited in this frame.
             Writes back parameter ranges to the page
         """
+        corr = self.Page.corr
         # Read out parameters from all controls
         for i in range(len(self.WXparmlist)):
             self.parameter_range[i][0] = self.WXparmlist[i][0].GetValue()
@@ -134,12 +135,11 @@ class RangeSelector(wx.Frame):
                 self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
                 self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
         # Set parameters
-        parm0 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+        parm0 = mdls.GetInternalFromHumanReadableParm(corr.fit_model.id,
                                                      self.parameter_range[:,0])[1]
-        parm1 = mdls.GetInternalFromHumanReadableParm(self.Page.modelid,
+        parm1 = mdls.GetInternalFromHumanReadableParm(corr.fit_model.id,
                                                      self.parameter_range[:,1])[1]
-        self.Page.parameter_range[:,0] = np.array(parm0)
-        self.Page.parameter_range[:,1] = np.array(parm1)
+        corr.fit_parameters_range = np.dstack((parm0, parm1))[0]
         #self.Page.PlotAll()
         
 

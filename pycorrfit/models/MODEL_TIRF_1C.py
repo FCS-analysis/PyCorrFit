@@ -110,7 +110,7 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
     return G
 
 
-def MoreInfo_6000(parms, countrate):
+def MoreInfo_6000(parms, countrate=None):
     u"""Supplementary parameters:
         For a>>sigma, the correlation function at tau=0 corresponds to:
         [4] G(τ=0) = 1/(N_eff) * ( 1-2*σ/(sqrt(π)*a) )²

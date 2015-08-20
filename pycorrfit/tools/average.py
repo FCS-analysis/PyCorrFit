@@ -131,7 +131,8 @@ class Average(wx.Frame):
             if Page.counter.strip(" :#") == str(PageNumbers[0]):
                 referencePage = Page
                 break
-        if referencePage is not None:
+
+        if referencePage is None:
             # If that did not work, we have to raise an error.
             raise IndexError("PyCorrFit could not find the first"+
 							 " page for averaging.")
@@ -139,21 +140,23 @@ class Average(wx.Frame):
         
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
+            corr = Page.corr
+            model = Page.corr.fit_model
             j = filter(lambda x: x.isdigit(), Page.counter)
             if int(j) in PageNumbers:
                 # Get all pages with the same model?
                 if self.WXCheckMono.GetValue() == True:
-                    if (Page.modelid == referencePage.modelid and
-                       Page.IsCrossCorrelation == referencePage.IsCrossCorrelation):
+                    if (model.id == referencePage.corr.fit_model.id and
+                       corr.is_cc == referencePage.corr.is_cc):
                         ## Check if the page has experimental data:
                         # If there is an empty page somewhere, don't bother
-                        if Page.dataexpfull is not None:
+                        if corr.correlation is not None:
                             pages.append(Page)
                             UsedPagenumbers.append(int(j))
                 else:
-                    if Page.IsCrossCorrelation == referencePage.IsCrossCorrelation:
+                    if corr.is_cc == referencePage.corr.is_cc:
                         # If there is an empty page somewhere, don't bother
-                        if Page.dataexpfull is not None:
+                        if corr.correlation is not None:
                             pages.append(Page)
                             UsedPagenumbers.append(int(j))
         # If there are no pages in the list, exit gracefully
@@ -175,21 +178,16 @@ class Average(wx.Frame):
         TraceNumber = 0
         TraceAvailable = False # turns True, if pages contain traces
         for page in pages:
+            corr = page.corr
             # experimental correlation curve
             # (at least 1d, because it might be None)
-            explist.append(np.atleast_1d(1*page.dataexpfull))
+            explist.append(np.atleast_1d(1*corr.correlation))
             # trace
             # We will put together a trace from all possible traces
             # Stitch together all the traces.
-            if page.IsCrossCorrelation is False:
-                trace = [page.trace]
-                # trace has one element
-                TraceNumber = 1
-            else:
-                trace = page.tracecc
-                # trace has two elements
-                TraceNumber = 2
-            if trace is not None and trace[0] is not None:
+            trace = corr.traces
+            TraceNumber = len(trace)
+            if TraceNumber > 0:
                 TraceAvailable = True
                 # Works with one or two traces. j = 0 or 1.
                 for j in np.arange(TraceNumber):
@@ -223,7 +221,7 @@ class Average(wx.Frame):
         # Now shorten the trace, because we want as little memory usage as
         # possible. I used this algorithm in read_FCS_Confocor3.py as well.
         newtraces = list()
-        if TraceAvailable is True:
+        if TraceAvailable:
             for j in np.arange(TraceNumber):
                 tracej = np.zeros((len(tracetime[j]),2))
                 tracej[:,0] = tracetime[j]
@@ -267,29 +265,28 @@ class Average(wx.Frame):
         # Set average data
         average[:,1] = averagedata
         # create new page
-        self.IsCrossCorrelation = self.Page.IsCrossCorrelation
-        interval = (self.Page.startcrop, self.Page.endcrop)
+        self.IsCrossCorrelation = self.Page.corr.is_cc
+        interval = self.Page.corr.fit_ival
         # Obtain the model ID from the dropdown selection.
         idsel = self.WXDropSelMod.GetSelection()
         modelid = self.DropdownIndex[idsel]
         self.AvgPage = self.parent.add_fitting_tab(modelid = modelid,
                                                    select = True)
-        (self.AvgPage.startcrop, self.AvgPage.endcrop) = interval
-        self.AvgPage.dataexpfull = average
-        self.AvgPage.IsCrossCorrelation = self.IsCrossCorrelation
+        self.AvgPage.corr.fit_ival = interval
+        self.AvgPage.corr.correlation = average
         if self.IsCrossCorrelation is False:
+            self.AvgPage.corr.corr_type = "AC average"
             newtrace = newtraces[0]
             if newtrace is not None and len(newtrace) != 0:
-                self.AvgPage.trace = newtrace
-                self.AvgPage.traceavg = newtrace[:,1].mean()
+                self.AvgPage.corr.traces = [newtrace]
             else:
-                self.AvgPage.trace = None
-                self.AvgPage.traceavg = None
+                self.AvgPage.corr.traces = []
         else:
+            self.AvgPage.corr.corr_type = "CC average"
             if newtraces[0] is not None and len(newtraces[0][0]) != 0:
-                self.AvgPage.tracecc = newtraces
+                self.AvgPage.corr.traces = newtraces
             else:
-                self.AvgPage.tracecc = None
+                self.AvgPage.corr.traces = []
         self.AvgPage.Fit_enable_fitting()
         if len(pages) == 1:
             # Use the same title as the first page
@@ -300,6 +297,7 @@ class Average(wx.Frame):
         self.AvgPage.tabtitle.SetValue(newtabti)
         # Set the addition information about the variance from averaging
         Listname = "Average"
+        listname = Listname.lower()
         standarddev = exparray.std(axis=0)[:,1]
         if np.sum(np.abs(standarddev)) == 0:
             # The average sd is zero. We probably made an average
@@ -307,11 +305,17 @@ class Average(wx.Frame):
             # average weighted fitting
             pass
         else:
-            self.AvgPage.external_std_weights[Listname] = standarddev
+            # TODO:
+            # kind of hackish to repeat this three times:
+            #   self.AvgPage.corr.set_weights(Listname,  standarddev)
+            self.AvgPage.corr.set_weights(listname,  standarddev)
             WeightKinds = self.AvgPage.Fitbox[1].GetItems()
             # Attention! Average weights and other external weights should
             # be sorted (for session saving).
-            extTypes = self.AvgPage.external_std_weights.keys()
+            extTypes = self.AvgPage.corr._fit_weight_memory.keys()
+            # TODO:
+            # find acleaner solution
+            extTypes.remove("none")
             extTypes.sort() # sorting
             for key in extTypes:
                 try:
@@ -319,12 +323,15 @@ class Average(wx.Frame):
                 except:
                     pass
             LenInternal = len(WeightKinds)
-            IndexAverag = extTypes.index(Listname)
+            IndexAverag = extTypes.index(listname)
             IndexInList = LenInternal + IndexAverag
             for key in extTypes:
                 WeightKinds += [key]
             self.AvgPage.Fitbox[1].SetItems(WeightKinds)
             self.AvgPage.Fitbox[1].SetSelection(IndexInList)
+            self.AvgPage.corr.set_weights(listname,  standarddev)
+            self.AvgPage.apply_parameters()
+            self.AvgPage.corr.set_weights(listname,  standarddev)
         self.AvgPage.PlotAll()
         # Keep the average tool open.
         # self.OnClose()
@@ -344,7 +351,7 @@ class Average(wx.Frame):
         modelkeys = mdls.modeltypes.keys()
         modelkeys.sort()
         try:
-            current_model = self.parent.notebook.GetCurrentPage().modelid
+            current_model = self.parent.notebook.GetCurrentPage().corr.fit_model.id
         except:
             current_model = -1
         i = 0

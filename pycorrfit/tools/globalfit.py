@@ -9,10 +9,9 @@ Perform global fitting on pages which share parameters.
 
 import wx
 import numpy as np
-from scipy import optimize as spopt
 
 from .. import misc
-from .. import models as mdls
+from ..fcs_data_set import Fit
 
 # Menu entry name
 MENUINFO = ["&Global fitting",
@@ -55,12 +54,6 @@ check parameters on each page and start 'Global fit'.
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         self.topSizer.Add(self.WXTextPages)
-        ## Weighted fitting
-        # The weighted fit of the current page will be applied to
-        # all other pages.
-        self.weightedfitdrop = wx.ComboBox(self.panel)
-        ## Bins from left and right: We also don't edit that.
-        self.topSizer.Add(self.weightedfitdrop)
         ## Button
         btnfit = wx.Button(self.panel, wx.ID_ANY, 'Global fit')
         # Binds the button to the function - close the tool
@@ -75,50 +68,6 @@ check parameters on each page and start 'Global fit'.
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
-    
-    def fit_function(self, parms):
-        """
-            *parms*: Parameters to fit, array
-            needs: 
-             self.parmstofit - list (strings) of parameters to fit
-                               (corresponding to *parms*)
-             self.PageData (dict with dict item = self.PageData["PageNumber"]):
-                item["x"]
-                item["data"]
-                item["modelid"]
-                item["values"]
-        """
-        # The list containing arrays to be minimized
-        minimize = list()
-        for key in self.PageData.keys():
-            # Get the function
-            item = self.PageData[key]
-            modelid = item["modelid"]
-            function = mdls.modeldict[modelid][3]
-            values = self.PageData[key]["values"]
-            # Set parameters for each function (Page)
-            for i in np.arange(len(self.parmstofit)):
-                p = self.parmstofit[i]
-                labels = mdls.valuedict[modelid][0]
-                if p in labels:
-                    index = labels.index(p)
-                    values[index] = parms[i]
-            # Check parameters, if there is such a function
-            check_parms = mdls.verification[modelid]
-            values = check_parms(values)
-            # Write parameters back?
-            # self.PageData[key]["values"] = values
-            # Calculate resulting correlation function
-            # corr = function(item.values, item.x)
-            # Subtract data. This is the function we want to minimize
-            minimize.append(
-              (function(values, item["x"]) - item["data"]) / item["dataweights"]
-                           )
-
-        # Flatten the list and make an array out of it.
-        return np.array([it for sublist in minimize for it in sublist])
-
-
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
@@ -130,129 +79,44 @@ check parameters on each page and start 'Global fit'.
         # process a string like this: "1,2,4-9,10"
         strFull = self.WXTextPages.GetValue()
         PageNumbers = misc.parseString2Pagenum(self, strFull)
+        global_pages = list()
         if PageNumbers is None:
             # Something went wrong and parseString2Pagenum already displayed
             # an error message.
             return
-        ## Get the corresponding pages, if they exist:
-        self.PageData = dict()
-        self.parmstofit = list()
-        fitparms = list()
+        ## Get the correlations
+        corrs = list()
+        for i in np.arange(self.parent.notebook.GetPageCount()):
+            Page = self.parent.notebook.GetPage(i)
+            corr = Page.corr
+            j = filter(lambda x: x.isdigit(), Page.counter)
+            if int(j) in PageNumbers:
+                if corr.correlation is not None:
+                    Page.apply_parameters()
+                    corrs.append(corr)
+                    global_pages.append(int(j))
+                else:
+                    print "No experimental data in page #"+j+"!"
+
+        if len(corrs) == 0:
+            return
+        
+        # Perform fit
+        fitter = Fit(corrs, global_fit=True)
+        fit_parm_names = [f.split()[0] for f in fitter.fit_parm_names]
+
+        # update fit results
+        for corr in corrs:
+            corr.fit_results["global parms"] = u", ".join(fit_parm_names)
+            corr.fit_results["global pages"] = u", ".join([str(g) for g in global_pages])
+        
+        # Plot resutls
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             j = filter(lambda x: x.isdigit(), Page.counter)
-            if int(j) in PageNumbers:
-                dataset = dict()
-                try:
-                    dataset["x"] = Page.dataexp[:,0]
-                    dataset["data"] = Page.dataexp[:,1]
-                except:
-                    print "No experimental data in page #"+j+"!"
-                else:
-                    dataset["modelid"] = Page.modelid
-                    Page.apply_parameters()
-                    dataset["values"] = Page.active_parms[1]
-                    # Get weights
-                    weighttype = self.weightedfitdrop.GetSelection()
-                    Page.Fitbox[1].SetSelection(weighttype)
-                    weightname = self.weightedfitdrop.GetValue()
-                    setweightname = Page.Fitbox[1].GetValue()
-                    if setweightname.count(weightname) == 0:
-                        print "Page "+Page.counter+" has no fitting type '"+ \
-                              weightname+"'!"
-                    Page.Fit_WeightedFitCheck()
-                    Fitting = Page.Fit_create_instance(noplots=True)
-                    if Fitting.dataweights is None:
-                        dataset["dataweights"] = 1.
-                    else:
-                        dataset["dataweights"] = Fitting.dataweights
-                    self.PageData[int(j)] = dataset
-                    # Get the parameters to fit from that page
-                    labels = Page.active_parms[0]
-                    parms = 1*Page.active_parms[1]
-                    tofit = 1*Page.active_parms[2]
-                    for i in np.arange(len(labels)):
-                        if tofit[i]:
-                            if self.parmstofit.count(labels[i]) == 0:
-                                self.parmstofit.append(labels[i])
-                                fitparms.append(parms[i])
-        fitparms = np.array(fitparms)
-        # Now we can perform the least squares fit
-        if len(fitparms) == 0:
-            return
-        res = spopt.leastsq(self.fit_function, fitparms[:], full_output=1)
-        pcov = res[1]
-        #self.parmoptim, self.mesg = spopt.leastsq(self.fit_function, 
-        #                                          fitparms[:])
-        self.parmoptim = res[0]
-        # So we have the optimal parameters.
-        # We would like to give each page a chi**2 and its parameters back:
-        # Create a clean list of PageNumbers
-        # UsedPages = dict.fromkeys(PageNumbers).keys()
-        UsedPages = self.PageData.keys()
-        UsedPages.sort()
-        for key in UsedPages:
-            # Get the Page:
-            for i in np.arange(self.parent.notebook.GetPageCount()):
-                aPage = self.parent.notebook.GetPage(i)
-                j = filter(lambda x: x.isdigit(), aPage.counter)
-                if int(j) == int(key):
-                    Page = aPage
-            Page.GlobalParameterShare = UsedPages
-            # Get the function
-            item = self.PageData[key]
-            modelid = item["modelid"]
-            #function = mdls.modeldict[modelid][3]
-            values = 1*Page.active_parms[1]
-            # Set parameters for each Page)
-            for i in np.arange(len(self.parmstofit)):
-                p = self.parmstofit[i]
-                labels = mdls.valuedict[modelid][0]
-                if p in labels:
-                    index = labels.index(p)
-                    values[index] = self.parmoptim[i]
-                    Page.active_parms[2][index] = True
-            # Check parameters, if there is such a function
-            check_parms = mdls.verification[modelid]
-            values = check_parms(values)
-            # Write parameters back?
-            Page.active_parms[1] = 1*values
-            # Calculate resulting correlation function
-            # corr = function(item.values, item.x)
-            # Subtract data. This is the function we want to minimize
-            #residual = function(values, item["x"]) - item["data"]
-            # Calculate chi**2
-            # Set the parameter error estimates for all pages
-            minimized = self.fit_function(self.parmoptim)
-            degrees_of_freedom = len(minimized) - len(self.parmoptim) - 1
-            self.chi = Page.chi2 = np.sum((minimized)**2) / degrees_of_freedom
-            try:
-                self.covar = pcov * self.chi
-            except:
-                self.parmoptim_error = None
-            else:
-                if self.covar is not None:
-                    self.parmoptim_error = np.diag(self.covar)
-            p_error = self.parmoptim_error
-            if p_error is None:
-                Page.parmoptim_error = None
-            else:
-                Page.parmoptim_error = dict()
-                for i in np.arange(len(p_error)):
-                    Page.parmoptim_error[self.parmstofit[i]] = p_error[i]
-            Page.apply_parameters_reverse()
-            # Because we are plotting the weights, we need to update
-            # the corresponfing info in each page:
-            weightid = self.weightedfitdrop.GetSelection()
-            if weightid != 0:
-                # We have weights.
-                # We need the following information for correct plotting.
-                Page.weighted_fit_was_performed = True
-                Page.weights_used_for_fitting = Fitting.dataweights
-                Page.calculate_corr()
-                Page.data4weight = 1.*Page.datacorr
-            Page.PlotAll()
-
+            if int(j) in global_pages:
+                Page.apply_parameters_reverse()
+                Page.PlotAll()
 
     def OnPageChanged(self, page, trigger=None):
         """
@@ -273,28 +137,7 @@ check parameters on each page and start 'Global fit'.
             return
         self.panel.Enable()
         self.Page = page
-        if self.Page is not None:
-            weightlist = self.Page.Fitbox[1].GetItems()
-            # Do not display knot number for spline. May be different for each page.
-            # Remove everything after a "(" in the weightlist string.
-            # This way, e.g. the list does not show the knotnumber, which
-            # we don't use anyhow.
-            # We are doing this for all elements, because in the future, other (?)
-            # weighting methods might be implemented.
-            #for i in np.arange(len(weightlist)):
-            #    weightlist[i] = weightlist[i].split("(")[0].strip()
-            weightlist[1] = weightlist[1].split("(")[0].strip()
-            self.weightedfitdrop.SetItems(weightlist)
-            try:
-                # if there is no data, this could go wrong
-                self.Page.Fit_create_instance(noplots=True)
-                FitTypeSelection = self.Page.Fitbox[1].GetSelection()
-            except:
-                FitTypeSelection = 0
-            self.weightedfitdrop.SetSelection(FitTypeSelection)
-            ## Knotnumber: we don't want to interfere
-            # The user might want to edit the knotnumbers.
-            # self.FitKnots = Page.FitKnots   # 5 by default
+
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)

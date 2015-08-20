@@ -36,7 +36,7 @@ class ShowTrace(wx.Frame):
             pass
         else:
             self.OnDraw()
-        initial_size = (350,150)
+        initial_size = (780,250)
         self.SetSize(initial_size)
         self.SetMinSize(initial_size)
         ## Icon
@@ -52,8 +52,9 @@ class ShowTrace(wx.Frame):
 
 
     def OnDraw(self):
-        if self.Page.trace is not None:
-            self.trace = 1*self.Page.trace
+        traces = self.Page.corr.traces
+        if len(traces) == 1:
+            self.trace = 1*traces[0].trace
             # We want to have the trace in [s] here.
             self.trace[:,0] = self.trace[:,0]/1000
             line = plot.PolyLine(self.trace, legend='', colour='blue',
@@ -62,11 +63,13 @@ class ShowTrace(wx.Frame):
             self.canvas.SetEnableLegend(False)
             xmax = np.max(self.trace[:,0])
             xmin = np.min(self.trace[:,0])
-        elif self.Page.tracecc is not None:
+            ymax = np.max(self.trace[:,1])
+            ymin = np.min(self.trace[:,1])
+        elif len(traces) == 2:
             # This means that we have two (CC) traces to plot
-            self.tracea = 1*self.Page.tracecc[0]
+            self.tracea = 1*traces[0].trace
             self.tracea[:,0] = self.tracea[:,0]/1000
-            self.traceb = 1*self.Page.tracecc[1]
+            self.traceb = 1*traces[1].trace
             self.traceb[:,0] = self.traceb[:,0]/1000
             linea = plot.PolyLine(self.tracea, legend='channel 1', 
                                   colour='blue', width=1)
@@ -76,15 +79,18 @@ class ShowTrace(wx.Frame):
             self.canvas.SetEnableLegend(True)
             xmax = max(np.max(self.tracea[:,0]), np.max(self.traceb[:,0]))
             xmin = min(np.min(self.tracea[:,0]), np.min(self.traceb[:,0]))
+            ymax = max(np.max(self.tracea[:,1]), np.max(self.traceb[:,1]))
+            ymin = min(np.min(self.tracea[:,1]), np.min(self.traceb[:,1]))
+
         else: 
             self.canvas.Clear()
             return
         # Plot lines
-        
         self.canvas.Draw(plot.PlotGraphics(lines, 
                                            xLabel='time [s]', 
                                            yLabel='count rate [kHz]'),
-                                           xAxis=(xmin,xmax))
+                                           xAxis=(xmin,xmax),
+                                           yAxis=(ymin,ymax))
 
 
     def OnPageChanged(self, page=None, trigger=None):

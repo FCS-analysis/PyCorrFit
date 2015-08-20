@@ -97,9 +97,8 @@ class Wrapper_Tools(object):
         for i in np.arange(N):
             Page = self.parent.notebook.GetPage(i)
             key = Page.counter
-            if Page.dataexp is not None:
-                curve = 1*Page.dataexp
-                curve[:,1] *= Page.normfactor
+            if Page.corr.correlation is not None:
+                curve = 1*Page.corr.correlation_plot
                 curvedict[key] = curve
                 labels[key] = Page.tabtitle.GetValue()
         return curvedict, labels

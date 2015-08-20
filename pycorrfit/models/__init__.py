@@ -66,6 +66,12 @@ class Model(object):
         """Emulate old list behavior of models"""
         return self._definitions[key]
 
+    def __repr__(self):
+        text = "Model {} - {}".format(
+                self.id,
+                self.description_short)
+        return text
+
     def apply(self, parameters, tau):
         """ 
         Apply the model with `parameters` and lag
@@ -114,7 +120,7 @@ class Model(object):
     def func_verification(self):
         return self._verification
     
-    def get_supplementary_parameters(self, values, countrate):
+    def get_supplementary_parameters(self, values, countrate=None):
         """
         Compute additional information for the model
         
@@ -123,11 +129,11 @@ class Model(object):
         values: list-like of same length as `self.default_values`
             parameters for the model
         countrate: float
-            count rate in Hz
+            countrate in kHz
         """
-        return self.func_supplements(values, countrate*1e-3)
+        return self.func_supplements(values, countrate)
 
-    def get_supplementary_values(self, values, countrate):
+    def get_supplementary_values(self, values, countrate=None):
         """
         Returns only the values of
         self.get_supplementary_parameters
@@ -143,6 +149,10 @@ class Model(object):
         for item in  self.get_supplementary_parameters(values, countrate):
             out.append(item[1])
         return out
+
+    @property
+    def name(self):
+        return self.description_short
 
     @property
     def parameters(self):
@@ -302,7 +312,6 @@ def GetModelParametersFromId(modelid):
 def GetModelFitBoolFromId(modelid):
     return valuedict[modelid][2]
 
-
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated
         some stuff or wants to know more about the model he is looking at.
@@ -313,48 +322,49 @@ def GetMoreInfo(modelid, Page):
     """
     # Background signal average
     bgaverage = None
-    # Signal countrate/average:
-    # might become countrate - bgaverage
-    countrate = Page.traceavg
     # Get the parameters from the current page.
     parms = Page.active_parms[1]
     Info = list()
-    if Page.IsCrossCorrelation is False:
+    corr = Page.corr
+    if corr.is_ac:
+        if len(corr.traces)==1:
+            countrate = corr.traces[0].countrate
+        else:
+            countrate = None
         ## First import the supplementary parameters of the model
         ## The order is important for plot normalization and session
         ## saving as of version 0.7.8
         # Try to get the dictionary entry of a model
         # Background information
-        if Page.bgselected is not None:
-            # Background list consists of items with
-            #  [0] average
-            #  [1] name
-            #  [2] trace
-            bgaverage = Page.parent.Background[Page.bgselected][0]
+        if len(corr.backgrounds)==1:
+            bgaverage = corr.backgrounds[0].countrate
             # Now set the correct countrate
             # We already printed the countrate, so there's no harm done.
-            if countrate is not None:
-                # might be that there is no countrate.
-                countrate = countrate - bgaverage
+        if countrate is not None and bgaverage is not None:
+            # might be that there is no countrate.
+            relativecountrate = countrate - bgaverage
+        else:
+            relativecountrate = countrate
+        # In case of cross correlation, we don't show this kind of
+        # information.
         try:
             # This function should return all important information
             # that can be calculated from the given parameters.
+            # We need the relativecountrate to compute the CPP.
             func_info = supplement[modelid]
-            data = func_info(parms, countrate)
+            data = func_info(parms, relativecountrate)
             for item in data:
                 Info.append([item[0], item[1]])
         except KeyError:
             # No information available
             pass
-        # In case of cross correlation, we don't show this kind of
-        # information.
-        if Page.traceavg is not None:
+        if countrate is not None:
             # Measurement time
-            duration = Page.trace[-1,0]/1000
+            duration = corr.traces[0].duration/1000
             Info.append(["duration [s]", duration])
             # countrate has to be printed before background.
             # Background might overwrite countrate.
-            Info.append(["avg. signal [kHz]", Page.traceavg])
+            Info.append(["avg. signal [kHz]", corr.traces[0].countrate])
     else:
         ## Cross correlation curves usually have two traces. Since we
         ## do not know how to compute the cpp, we will pass the argument
@@ -373,17 +383,14 @@ def GetMoreInfo(modelid, Page):
         except KeyError:
             # No information available
             pass
-        if Page.tracecc is not None:
+        if len(corr.traces)==2:
             # Measurement time
-            duration = Page.tracecc[0][-1,0]/1000
+            duration = corr.traces[0].duration/1000
             Info.append(["duration [s]", duration])
             # countrate has to be printed before background.
             # Background might overwrite countrate.
-            avg0 = Page.tracecc[0][:,1].mean()
-            avg1 = Page.tracecc[1][:,1].mean()
-            Info.append(["avg. signal A [kHz]", avg0])
-            Info.append(["avg. signal B [kHz]", avg1])
-
+            Info.append(["avg. signal A [kHz]", corr.traces[0].countrate])
+            Info.append(["avg. signal B [kHz]", corr.traces[1].countrate])
 
     if len(Info) == 0:
         # If nothing matched until now:

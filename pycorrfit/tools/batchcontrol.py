@@ -95,7 +95,7 @@ class BatchCtrl(wx.Frame):
         # Set all parameters for all pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
-            if OtherPage.modelid == modelid and OtherPage.dataexp is not None:
+            if OtherPage.corr.fit_model.id == modelid and OtherPage.corr.correlation is not None:
                 self.parent.UnpackParameters(Parms, OtherPage)
                 OtherPage.PlotAll(trigger="parm_batch")
         # Update all other tools fit the finalize trigger.
@@ -114,17 +114,17 @@ class BatchCtrl(wx.Frame):
             if item <= 0:
                 Page = self.parent.notebook.GetCurrentPage()
             else:
-                Page = self.parent.notebook.GetPage(item)
+                Page = self.parent.notebook.GetPage(item-1)
             # Get internal ID
-            modelid = Page.modelid
+            modelid = Page.corr.fit_model.id
         else:
             # Get external ID
             modelid = self.YamlParms[item][1]
         # Fit all pages with right modelid
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
-            if (OtherPage.modelid == modelid and
-                OtherPage.dataexpfull is not None):
+            if (OtherPage.corr.fit_model.id == modelid and
+                OtherPage.corr.correlation is not None):
                 #Fit
                 OtherPage.Fit_function(noplots=True,trigger="fit_batch")
         # Update all other tools fit the finalize trigger.
@@ -154,7 +154,7 @@ class BatchCtrl(wx.Frame):
             DDlist.append("Current page")
             for i in np.arange(self.parent.notebook.GetPageCount()):
                 aPage = self.parent.notebook.GetPage(i)
-                DDlist.append(aPage.counter+aPage.model)
+                DDlist.append(aPage.counter+aPage.tabtitle.GetValue())
             self.dropdown.SetItems(DDlist)
             self.dropdown.SetSelection(0)
 

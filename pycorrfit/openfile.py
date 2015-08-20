@@ -21,7 +21,7 @@ from . import doc
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport
 from .readfiles import BGFiletypes  # @UnusedImport
-
+from .fcs_data_set import Trace
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
@@ -224,7 +224,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 if (str(row[0])[0:1] != '#'):
                     bgtrace.append((np.float(row[0]), np.float(row[1])))
             bgtrace = np.array(bgtrace)
-            Infodict["Backgrounds"].append([np.float(bgrow[0]), str(bgrow[1]), bgtrace])
+            newbackground = Trace(trace=bgtrace, name=str(bgrow[1]), countrate=np.float(bgrow[0]))
+            Infodict["Backgrounds"].append(newbackground)
             i = i + 1
         bgfile.close()
     # Get external weights if they exist
@@ -330,7 +331,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Save external functions
     for key in Infodict["External Functions"].keys():
         funcfilename = "model_"+str(key)+".txt"
-        funcfile =  open(funcfilename, 'wb')
+        funcfile =  codecs.open(funcfilename, 'w', encoding="utf-8")
         funcfile.write(Infodict["External Functions"][key])
         funcfile.close()
         Arc.write(funcfilename)
@@ -371,7 +372,7 @@ def SaveSessionData(sessionfile, Infodict):
         # Since *Trace* and *Parms* are in the same order, which is the
         # Page order, we will identify the filename by the Page title 
         # number.
-        if Infodict["Traces"][pageid] is not None:
+        if Infodict["Traces"][pageid] is not None and len(Infodict["Traces"][pageid]) != 0:
             if Parms[pageid][7] is True:
                 # We have cross correlation: save two traces
                 ## A
@@ -411,8 +412,8 @@ def SaveSessionData(sessionfile, Infodict):
                 tracefilename = "trace"+number+".csv"
                 tracefile = open(tracefilename, 'wb')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = Infodict["Traces"][pageid][:,0]
-                rate = Infodict["Traces"][pageid][:,1]
+                time = Infodict["Traces"][pageid][0][:,0]
+                rate = Infodict["Traces"][pageid][0][:,1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
@@ -445,15 +446,15 @@ def SaveSessionData(sessionfile, Infodict):
         bgfile = open(bgfilename, 'wb')
         bgwriter = csv.writer(bgfile, delimiter='\t')
         for i in np.arange(len(Background)):
-            bgwriter.writerow([str(Background[i][0]), Background[i][1]])
+            bgwriter.writerow([str(Background[i].countrate), Background[i].name])
             # Traces
             bgtracefilename = "bg_trace"+str(i)+".csv"
             bgtracefile = open(bgtracefilename, 'wb')
             bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
             bgtraceWriter.writerow(['# time', 'count rate'])
             # Actual Data
-            time = Background[i][2][:,0]
-            rate = Background[i][2][:,1]
+            time = Background[i][:,0]
+            rate = Background[i][:,1]
             for j in np.arange(len(time)):
                 bgtraceWriter.writerow(["%.20e" % time[j],
                                         "%.20e" % rate[j]])
@@ -533,35 +534,41 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     InfoMan = info.InfoClass(CurPage=Page)
     PageInfo = InfoMan.GetCurFancyInfo()
     for line in PageInfo.splitlines():
-        try:
-            openedfile.write(u"# "+line+"\r\n")
-        except:
-            import IPython
-            IPython.embed()
+        openedfile.write(u"# "+line+"\r\n")
     openedfile.write(u"#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
-    # Since 0.7.8 the user may normalize the curves. The normalization
-    # factor is set in *Page.normfactor*.
-    corr = Page.datacorr[:,1]*Page.normfactor
-    if Page.dataexp is not None:
+    corr = Page.corr
+    mod = corr.modeled_plot[:,1]
+    if corr.correlation is not None:
         # Experimental data
-        tau = Page.dataexp[:,0]
-        exp = Page.dataexp[:,1]*Page.normfactor
-        res = Page.resid[:,1]*Page.normfactor
+        tau = corr.correlation_fit[:,0]
+        exp = corr.correlation_fit[:,1]
+        res = corr.residuals_fit[:,1]
         # Plotting! Because we only export plotted area.
-        weight = Page.weights_used_for_plotting
-        if weight is None:
-            pass
-        elif len(weight) != len(exp):
-            text = "Weights have not been calculated for the "+\
-                   "area you want to export. Pressing 'Fit' "+\
-                   "again should solve this issue. Weights will "+\
-                   "not be saved."
-            warnings.warn(text)
+        
+        if corr.is_weighted_fit:
+            weightname = corr.fit_weight_type
+            try:
+                weight = corr.fit_results["fit weights"]
+            except KeyError:
+                weight = corr.fit_weight_data
+    
+            if weight is None:
+                pass
+            
+            elif len(weight) != len(exp):
+                text = "Weights have not been calculated for the "+\
+                       "area you want to export. Pressing 'Fit' "+\
+                       "again should solve this issue. Weights will "+\
+                       "not be saved."
+                warnings.warn(text)
+                weight = None
+        else:
             weight = None
+            weightname = None
     else:
-        tau = Page.datacorr[:,0]
+        tau = corr.lag_time_fit
         exp = None
         res = None
     # Include weights in data saving:
@@ -573,19 +580,19 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     ## Correlation curve
     dataWriter = csv.writer(openedfile, delimiter='\t')
     if exp is not None:
-        header = '# Channel (tau [s])'+"\t"+ \
+        header = '# Lag time [s]'+"\t"+ \
                  'Experimental correlation'+"\t"+ \
                  'Fitted correlation'+ "\t"+ \
                  'Residuals'+"\r\n"
-        data = [tau, exp, corr, res]
-        if Page.weighted_fit_was_performed is True \
-        and weight is not None:
-            header = header.strip() + "\t"+'Weights (fit)'+"\r\n"
+        data = [tau, exp, mod, res]
+        if corr.is_weighted_fit and weight is not None:
+            header = "{} \t Weights [{}] \r\n".format(
+                      header.strip(), weightname)
             data.append(weight)
     else:
-        header = '# Channel (tau [s])'+"\t"+ \
+        header = '# Lag time [s]'+"\t"+ \
                  'Correlation function'+"\r\n"
-        data = [tau, corr]
+        data = [tau, mod]
     # Write header
     openedfile.write(header)
     # Write data
@@ -593,7 +600,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
         # row-wise, data may have more than two elements per row
         datarow = list()
         for j in np.arange(len(data)):
-            rowcoli = str("%.10e") % data[j][i]
+            rowcoli = "{:.10e}".format(data[j][i])
             datarow.append(rowcoli)
         dataWriter.writerow(datarow)
     ## Trace
@@ -601,42 +608,31 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
     if savetrace:
         # We will also save the trace in [s]
         # Intensity trace in kHz may stay the same
-        if Page.trace is not None:
+        if len(corr.traces) > 0:
             # Mark beginning of Trace
             openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
             # Columns
-            time = Page.trace[:,0]*timefactor
-            intensity = Page.trace[:,1]
+            time = corr.traces[0][:,0]*timefactor
+            intensity = corr.traces[0][:,1]
             # Write
             openedfile.write('# Time [s]'+"\t" 
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
-        elif Page.tracecc is not None:
+                dataWriter.writerow(["{:.10e}".format(time[i]),
+                                     "{:.10e}".format(intensity[i])])
+        if len(corr.traces) > 1:
             # We have some cross-correlation here:
-            # Mark beginning of Trace A
-            openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
-            # Columns
-            time = Page.tracecc[0][:,0]*timefactor
-            intensity = Page.tracecc[0][:,1]
-            # Write
-            openedfile.write('# Time [s]'+"\t" 
-                                 'Intensity trace [kHz]'+" \r\n")
-            for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
             # Mark beginning of Trace B
             openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
             # Columns
-            time = Page.tracecc[1][:,0]*timefactor
-            intensity = Page.tracecc[1][:,1]
+            time = corr.traces[1][:,0]*timefactor
+            intensity = corr.traces[1][:,1]
             # Write
             openedfile.write('# Time [s]'+"\t" 
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
-                dataWriter.writerow([str("%.10e") % time[i],
-                                     str("%.10e") % intensity[i]])
+                dataWriter.writerow(["{:.10e}".format(time[i]),
+                                     "{:.10e}".format(intensity[i])])
 
         openedfile.close()
 

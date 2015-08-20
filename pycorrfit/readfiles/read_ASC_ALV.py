@@ -97,9 +97,10 @@ def openASC(dirname, filename):
     for i in np.arange(len(Alldata)):
         if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
+            single_strings = ["a-ch0", "a-ch1", "auto ch0", "auto ch1",
+                              "fast auto ch0", "fast auto ch1" ]
             if (mode.lower().count('single') or
-                mode.lower().strip() == "a-ch0" or 
-                mode.lower().strip() == "a-ch1"):
+                mode.lower().strip() in single_strings):
                 single = True
                 channel = mode.split(" ")[-1]
             else:
