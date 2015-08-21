@@ -98,7 +98,10 @@ def openASC(dirname, filename):
         if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
             single_strings = ["a-ch0", "a-ch1", "auto ch0", "auto ch1",
-                              "fast auto ch0", "fast auto ch1" ]
+                              "fast auto ch0", "fast auto ch1",
+                              "a-ch0+1  c-ch0/1+1/0",
+                              "a-ch1+0  c-ch0/1+0/1",
+                               ]
             if (mode.lower().count('single') or
                 mode.lower().strip() in single_strings):
                 single = True
@@ -324,7 +327,7 @@ def mysplit(a, n):
        The signal average is preserved, but the signal variance will
        decrease.
     """
-    if n == 1:
+    if n <= 1:
         return [np.array(a)]
     a = np.array(a)
     N = len(a)
@@ -350,6 +353,5 @@ def mysplit(a, n):
     data[:,0] = x + newstep
     # make sure that the average stays the same:
     data[:,1] = y - np.average(y) + np.average(yp)
-
     return np.split(data,n)
     
