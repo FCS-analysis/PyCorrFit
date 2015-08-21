@@ -174,8 +174,7 @@ class Correlation(object):
 
         self.backgrounds = backgrounds
         self.bg_correction_enabled = True
-        if correlation is not None:
-            self.correlation = correlation
+        self.correlation = correlation
         self.corr_type = corr_type
         self.filename = filename
         
@@ -319,9 +318,12 @@ class Correlation(object):
     
     @correlation.setter
     def correlation(self, value):
-        assert value is not None, "Setting value with None forbidden!"
-        assert isinstance(value, np.ndarray), "value must be array!"
-        assert value.shape[1] == 2, "shape of array must be (N,2)!"
+        if value is None:
+            warnings.warn("Setting correlation to `None`.")
+        elif not isinstance(value, np.ndarray):
+            raise ValueError("Correlation must be 2d array!")
+        elif not value.shape[1] == 2:
+            raise ValueError("Correlation array must have shape (N,2)!")
         self._correlation = value
 
     @property
@@ -546,6 +548,8 @@ class Correlation(object):
     @property
     def residuals(self):
         """fit residuals, same shape as self.correlation"""
+        if self.correlation is None:
+            raise ValueError("Cannot compute residuals; No correlation given!") 
         residuals = self.correlation.copy()
         residuals[:,1] -= self.modeled[:,1]
         return residuals 
@@ -860,6 +864,8 @@ class Fit(object):
         #parameters_variable = corr.fit_parameters_variable
         
         cdat = corr.correlation
+        if cdat is None:
+            raise ValueError("Cannot compute weights; No correlation given!")
         cdatfit = corr.correlation_fit
         x_full = cdat[:,0]
         y_full = cdat[:,1]
