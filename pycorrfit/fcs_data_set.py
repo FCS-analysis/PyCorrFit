@@ -1045,7 +1045,6 @@ class Fit(object):
             else:
                 raise ValueError, \
                   "`weights` must have length of full or cropped array."
-
         
         return dataweights
         
@@ -1073,7 +1072,6 @@ class Fit(object):
                                   tominimize/self.fit_weights, 0)
         ## There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
-        print(self.fit_weights)
         return tominimize
 
     def fit_function_scalar(self, parms, x):

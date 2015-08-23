@@ -141,20 +141,6 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     labelweights = ur"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                corr.fit_parameters)
-    ## According to issue #54, we remove fitting errors from plots
-    ## Error parameters with nice look
-    #errparmsblank = Page.parmoptim_error
-    #if errparmsblank is None:
-    #    errparms = None
-    #else:
-    #    errparms = dict()
-    #    for key in errparmsblank.keys():
-    #        newkey, newparm = mdls.GetHumanReadableParameterDict(Page.modelid,
-    #                                                    key, errparmsblank[key])
-    #        errparms[newkey] = newparm
-    #parmids = np.where(Page.active_parms[2])[0]
-    #labels = np.array(labels)[parmids]
-    #parms = np.array(parms)[parmids]
     if dataexp is None:
         if tabtitle.strip() == "":
             fitlabel = Page.corr.fit_model.name
@@ -199,18 +185,15 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         ax = plt.subplot(111)
         #    ax = plt.axes()
     ax.semilogx()
+    # plot fit first
+    plt.plot(fit[:,0], fit[:,1], '-', label=fitlabel, lw=1.5,
+             color="blue")
     if dataexp is not None:
-        plt.plot(dataexp[:,0], dataexp[:,1], '-', color="darkgrey",
-                 label=tabtitle)
+        plt.plot(dataexp[:,0], dataexp[:,1], '-', color="black",
+                 alpha=.7, label=tabtitle, lw=1)
     else:
         plt.xlabel(ur'lag time $\tau$ [ms]')
-    # Plotting with error bars is very ugly if you have a lot of
-    # data points.
-    # We will use fill_between instead.
-    #plt.errorbar(fit[:,0], fit[:,1], yerr=weights, fmt='-',
-    #             label = fitlabel, lw=2.5, color="blue")
-    plt.plot(fit[:,0], fit[:,1], '-', label = fitlabel, lw=2.5,
-             color="blue")    
+    
     if weights is not None and show_weights is True:
         plt.fill_between(weights[0][:,0],weights[0][:,1],weights[1][:,1],
                          color='cyan')
@@ -278,13 +261,16 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
             yLabelRes = "weighted "+ lb +"residuals"
         else:
             yLabelRes = "residuals"
-        plt.plot(resid[:,0], resid[:,1], '-', color="darkgrey", label=yLabelRes)
-        plt.xlabel(r'lag time $\tau$ [ms]')
-        plt.ylabel(yLabelRes, multialignment='center')
         minx = np.min(resid[:,0])
         maxx = np.max(resid[:,0])
         miny = np.min(resid[:,1])
         maxy = np.max(resid[:,1])
+        plt.hlines(0, minx, maxx, colors="orange")
+        plt.plot(resid[:,0], resid[:,1], '-', color="black",
+                 alpha=.85, label=yLabelRes, lw=1)
+        plt.xlabel(r'lag time $\tau$ [ms]')
+        plt.ylabel(yLabelRes, multialignment='center')
+
         ax2.set_xlim(minx, maxx)
         maxy = max(abs(maxy), abs(miny))
         ax2.set_ylim(-maxy, maxy)
