@@ -939,7 +939,7 @@ class Fit(object):
 
             ## Calculation of variance
             # In some cases, the actual cropping interval from ival[0]
-            # ro ival[1] is chosen, such that the dataweights must be
+            # to ival[1] is chosen, such that the dataweights must be
             # calculated from unknown datapoints.
             # (e.g. points+endcrop > len(correlation)
             # We deal with this by multiplying dataweights with a factor
@@ -1073,6 +1073,7 @@ class Fit(object):
                                   tominimize/self.fit_weights, 0)
         ## There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
+        print(self.fit_weights)
         return tominimize
 
     def fit_function_scalar(self, parms, x):
