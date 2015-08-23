@@ -6,6 +6,7 @@
 - Tool 'Trace view': increase size of window (#93)
 - Tool 'Global fitting': remove forced, joint weights
 - Session comment dialog: more intuitive behavior (#116)
+- Improve plot export (#95)
 - Bugfixes:
    - Weighted fits at borders of fit interval were
      computed incorrectly due to integer division
