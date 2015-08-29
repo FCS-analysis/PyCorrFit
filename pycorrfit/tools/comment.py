@@ -5,8 +5,7 @@ PyCorrFit
 Module tools - comment
 Edit the sessions' comment.
 """
-
-
+from __future__ import print_function
 import wx
 
 
@@ -29,21 +28,17 @@ class EditComment(wx.Frame):
         self.panel = wx.Panel(self)
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE, 
                         size=initial_sizec, value=self.parent.SessionComment)
+        self.Bind(wx.EVT_TEXT, self.OnTextChanged, self.control)
         text = wx.StaticText(self.panel, 
                    label="Session comments will be saved in the  session file.")
         # buttons
-        btnclose = wx.Button(self.panel, wx.ID_ANY, 'Close')
-        btnokay = wx.Button(self.panel, wx.ID_ANY, 'OK')
-        self.Bind(wx.EVT_BUTTON, self.OnClose, btnclose)
-        self.Bind(wx.EVT_BUTTON, self.OnOkay, btnokay)
+        btnsave = wx.Button(self.panel, wx.ID_SAVE, 'Save Comment')
+        self.Bind(wx.EVT_BUTTON, self.OnSave, btnsave)
         #sizers
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
-        buttonsizer = wx.BoxSizer(wx.HORIZONTAL)
-        buttonsizer.Add(btnclose, 1)
-        buttonsizer.Add(btnokay, 1)
         self.topSizer.Add(text)
-        self.topSizer.Add(buttonsizer)
         self.topSizer.Add(self.control)
+        self.topSizer.Add(btnsave, 1, wx.RIGHT | wx.EXPAND)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         #Icon
@@ -51,6 +46,7 @@ class EditComment(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
+        self.text_changed = False
 
 
     def OnSize(self, event):
@@ -60,12 +56,24 @@ class EditComment(wx.Frame):
         self.control.SetSize(sizec)
 
 
-    def OnClose(self, event=None):
+    def OnClose(self, e=None):
         self.parent.filemenu.Check(self.parent.menuComm.GetId(), False)
+        if self.text_changed:
+            # ask the user to save or discard.
+            dlg = wx.MessageDialog(self, "Save comment?",
+                                   "Do you want to save the current changes?",
+                                   style=wx.YES_NO)
+            if dlg.ShowModal() == wx.ID_YES:
+                self.OnSave()
         self.Destroy()
 
+    def OnTextChanged(self, e=None):
+        """ When the user changes the text
+        """
+        self.text_changed = True
 
-    def OnOkay(self, event):
+    def OnSave(self, e=None):
         self.parent.SessionComment = self.control.GetValue()
+        self.text_changed = False
         self.OnClose()
 
