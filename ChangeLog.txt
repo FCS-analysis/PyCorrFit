@@ -1,14 +1,18 @@
-0.8.8-beta2
+0.8.9
 - Improved support for "ALV-7004" files (#104)
 - Increase resolution for image export
 - Load weights from PyCorrFit csv files 
 - Tool 'Overlay Curves': show cropped correlation curves
 - Tool 'Trace view': increase size of window (#93)
 - Tool 'Global fitting': remove forced, joint weights
+- Session comment dialog: more intuitive behavior (#116)
+- Improve plot export (#95)
 - Bugfixes:
-   - fitting algorithms did not work (#94)
-   - creating averages did not work (#123)
-   - ascii errors in statistics tool (#112)
+   - Weighted fits at borders of fit interval were
+     computed incorrectly due to integer division
+   - Fitting algorithms did not work (#94)
+   - Creating averages did not work (#123)
+   - ASCII errors in statistics tool (#112)
 - Under the hood:
    - Introduce new classes: Correlation, Fit, Trace
    - Code cleanup and rewrite to support planned features

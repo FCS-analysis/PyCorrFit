@@ -107,7 +107,7 @@ class InfoClass(object):
         corr = Page.corr
         
         # Get model information
-        model = [corr.fit_model.description_short, Page.tabtitle.GetValue(), corr.fit_model.id]
+        model = corr.fit_model
         parms = corr.fit_parameters
         fct = corr.fit_model.function.__name__
         InfoDict["version"] = [Page.parent.version]
@@ -117,29 +117,30 @@ class InfoClass(object):
         if len(model[1]) == 0:
             # Prevent saving no title
             model[1] = "NoName"
-        Title.append(["filename/title", model[1] ]) 
-        Title.append(["Model ID", str(model[2]) ]) 
-        Title.append(["Model name", model[0] ]) 
-        Title.append(["Model function", fct ]) 
-        Title.append(["Page number", Page.counter[1:-2] ]) 
+        Title.append(["filename/title", Page.title])
+        Title.append(["Model species", model.components])
+        Title.append(["Model name", model.name])
+        Title.append(["Model ID", str(model.id)]) 
+        Title.append(["Model function", fct]) 
+        Title.append(["Page number", Page.counter[1:-2]]) 
         ## Parameters
         Parameters = list()
         # Use this function to determine human readable parameters, if possible
-        Units, Newparameters = mdls.GetHumanReadableParms(model[2], parms)
+        Units, Newparameters = mdls.GetHumanReadableParms(model.id, parms)
         # Add Parameters
         for i in np.arange(len(parms)):
             Parameters.append([ Units[i], Newparameters[i] ])
         InfoDict["parameters"] = Parameters
         # Add some more information if available
         # Info is a dictionary or None
-        MoreInfo = mdls.GetMoreInfo(model[2], Page)
+        MoreInfo = mdls.GetMoreInfo(model.id, Page)
         if MoreInfo is not None:
             InfoDict["supplement"] = MoreInfo
             # Try to get the dictionary entry of a model
             try:
                 # This function should return all important information
                 # that can be calculated from the given parameters.
-                func_info = mdls.supplement[model[2]]
+                func_info = mdls.supplement[model.id]
             except KeyError:
                 # No information available
                 pass
@@ -198,7 +199,7 @@ class InfoClass(object):
                     errors = corr.fit_results["fit error estimation"]
                     for err, par in zip(errors, fitparms):
                         nam, val = mdls.GetHumanReadableParameterDict( 
-                                                model[2], [par], [err])
+                                                model.id, [par], [err])
                         Fitting.append(["Err "+nam[0], val[0]])
 
                 InfoDict["fitting"] = Fitting
