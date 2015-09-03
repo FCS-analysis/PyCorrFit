@@ -72,16 +72,18 @@ install:
 script:
 # Create wheel pacakge
 - arch -i386 python setup.py bdist_wheel
+# Create source pacakge
+- arch -i386 python setup.py sdist
 # Create binary
 - ./freeze_travis/macOSx_bundle_script.sh
 - ls dist/
 #- hdiutil create dist/hw.dmg -srcfolder dist/ -ov
 
 before_deploy:
-#  - export RELEASE_PKG_FILEA=$(ls ./dist/*.zip)
+  - export RELEASE_PKG_FILEA=$(ls ./dist/*.tar.gz)
   - export RELEASE_PKG_FILEB=$(ls ./dist/*.dmg)
   - export RELEASE_PKG_FILEC=$(ls ./dist/*.whl)
-#  - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
+  - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEB to GitHub releases"
   - echo "deploying $RELEASE_PKG_FILEC to GitHub releases"
 
@@ -99,8 +101,7 @@ deploy:
   file: 
     - "${RELEASE_PKG_FILEC}"
     - "${RELEASE_PKG_FILEB}"
-# zip file only for debug reasons
-#    - "${RELEASE_PKG_FILEA}"
+    - "${RELEASE_PKG_FILEA}"
   on:
     tags: true
     repo: paulmueller/PyCorrFit
