@@ -31,27 +31,6 @@ from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
 
 
-class FloatSpin(floatspin.FloatSpin):
-    def __init__(self, parent, digits=10, increment=.01):
-        floatspin.FloatSpin.__init__(self, parent, digits=digits,
-                                     increment = increment)
-        self.Bind(wx.EVT_SPINCTRL, self.increment)
-        #self.Bind(wx.EVT_SPIN, self.increment)
-        #self.increment()
-
-
-    def increment(self, event=None):
-        # Find significant digit
-        # and use it as the new increment
-        x = self.GetValue()
-        if x == 0:
-            incre = 0.1
-        else:
-            digit = int(np.ceil(np.log10(abs(x)))) - 2
-            incre = 10**digit
-        self.SetIncrement(incre)
-
-
 class ChoicesDialog(wx.Dialog):
     def __init__(self, parent, dropdownlist, title, text):
         # parent is main frame

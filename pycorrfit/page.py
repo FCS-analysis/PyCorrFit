@@ -6,19 +6,102 @@ Module frontend
 The frontend displays the GUI (Graphic User Interface).
 All functions and modules are called from here.
 """
+import numpy as np                      # NumPy
+import re
+import string
+import warnings
 import wx                               # GUI interface wxPython
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
-import numpy as np                      # NumPy
 
-import warnings
 
-from . import edclasses                    # Cool stuff like better floatspin
 from . import models as mdls
 from . import tools
 from . import fcs_data_set as pcfbase
 from .fcs_data_set import Correlation, Fit
+
+
+class PCFFloatValidator(wx.PyValidator):
+    def __init__(self, flag=None, pyVar=None):
+        wx.PyValidator.__init__(self)
+        self.flag = flag
+        self.Bind(wx.EVT_CHAR, self.OnChar)
+
+    def Clone(self):
+        return PCFFloatValidator(self.flag)
+
+    def Validate(self, win):
+        tc = self.GetWindow()
+        val = tc.GetValue()
+        
+        for x in val:
+            if x not in string.digits:
+                return False
+
+        return True
+
+
+    def OnChar(self, event):
+        key = event.GetKeyCode()
+
+        if key < wx.WXK_SPACE or key == wx.WXK_DELETE or key > 255:
+            event.Skip()
+            return
+
+        if ( chr(key) in string.digits or
+             chr(key) in ["+", "-", ".", ","]):
+            event.Skip()
+            return
+
+        if not wx.Validator_IsSilent():
+            wx.Bell()
+
+        # Returning without calling even.Skip eats the event before it
+        # gets to the text control
+        return
+
+
+class PCFFloatTextCtrl(wx.TextCtrl):
+    def __init__(self, *args, **kwargs):
+        wx.TextCtrl.__init__(self, *args, validator=PCFFloatValidator(), size=(110,-1),
+                             style=wx.TE_PROCESS_ENTER, **kwargs)
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
+
+    def OnMouseEnter(self, e):
+        self.SetFocus()
+        self.SetSelection(-1,0)
+
+    def OnMouseLeave(self, e):
+        self.SetSelection(0,0)
+        self.SetInsertionPoint(0)
+
+    def SetValue(self, value):
+        value = str(value)
+        wx.TextCtrl.SetValue(self, value)
+    
+    def GetValue(self):
+        string = wx.TextCtrl.GetValue(self)
+        return(PCFFloatTextCtrl.string2float(string))
+    
+  
+    @staticmethod
+    def string2float(string):
+        """
+        Remove any characters that are not in
+        [+-{0-9},.] and show a decent float
+        value.
+        """
+        # allow comma
+        string = string.replace(",", ".")
+        # allow only one decimal point
+        string = string[::-1].replace(".", "", string.count(".")-1)[::-1]
+        # remove letters
+        string = re.sub(r'[^\d.-]+', '', string)
+        return float(string)
+
+
 
 class FittingPanel(wx.Panel):
     """
@@ -389,8 +472,7 @@ class FittingPanel(wx.Panel):
             sizerh = wx.BoxSizer(wx.HORIZONTAL)
             checkbox = wx.CheckBox(self.panelsettings, label=label)
             # We needed to "from wx.lib.agw import floatspin" to get this:
-            spinctrl = edclasses.FloatSpin(self.panelsettings, digits=10,
-                                           increment=.01)
+            spinctrl = PCFFloatTextCtrl(self.panelsettings)
             sizerh.Add(spinctrl)
             sizerh.Add(checkbox)
             sizer.Add(sizerh)
@@ -504,9 +586,8 @@ class FittingPanel(wx.Panel):
             bg = self.AmplitudeInfo[1][0].GetValue()
             tools.background.ApplyAutomaticBackground(self, bg,
                                                       self.parent)
+        e.Skip()
 
-    ## TODO
-    # continue here
     
     def OnTitleChanged(self, e):
         modelid = self.corr.fit_model.id
@@ -724,7 +805,6 @@ class FittingPanel(wx.Panel):
         for i in np.arange(len(labels)):
             self.checkboxes[i].SetValue(parameterstofit[i]) 
             self.spincontrol[i].SetValue(parameters[i])
-            self.spincontrol[i].increment()
         # Put everything together
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(sizerti)
@@ -753,10 +833,9 @@ class FittingPanel(wx.Panel):
                     label="Background"))
         sizeint.Add(wx.StaticText(self.panelsettings, label="Ch1"))
         intlabel1 = wx.TextCtrl(self.panelsettings)
-        bgspin1 = floatspin.FloatSpin(self.panelsettings,
-                        increment=0.01, digits=4, min_val=0)
-        self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
-                  bgspin1)
+        bgspin1 = PCFFloatTextCtrl(self.panelsettings)
+        bgspin1.Bind(wx.EVT_KILL_FOCUS, self.OnBGSpinChanged)
+        bgspin1.Bind(wx.EVT_TEXT_ENTER, self.OnBGSpinChanged)
         sizeint.Add(intlabel1)
         intlabel1.SetEditable(False)
         sizeint.Add(bgspin1)
@@ -764,10 +843,8 @@ class FittingPanel(wx.Panel):
         sizeint.Add(chtext2)
         intlabel2 = wx.TextCtrl(self.panelsettings)
         intlabel2.SetEditable(False)
-        bgspin2 = floatspin.FloatSpin(self.panelsettings,
-                        increment=0.01, digits=4, min_val=0)
-        self.Bind(floatspin.EVT_FLOATSPIN, self.OnBGSpinChanged,
-                  bgspin2)
+        bgspin2 = PCFFloatTextCtrl(self.panelsettings)
+        bgspin2.Bind(wx.EVT_KILL_FOCUS, self.OnBGSpinChanged)
         sizeint.Add(intlabel2)
         sizeint.Add(bgspin2)
         miscsizer.Add(sizeint)
