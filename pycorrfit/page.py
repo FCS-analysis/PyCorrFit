@@ -50,7 +50,7 @@ class PCFFloatValidator(wx.PyValidator):
             return
 
         if ( chr(key) in string.digits or
-             chr(key) in ["+", "-", ".", ","]):
+             chr(key) in ["+", "-", ".", ",", "e"]):
             event.Skip()
             return
 
@@ -85,7 +85,6 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         string = wx.TextCtrl.GetValue(self)
         return(PCFFloatTextCtrl.string2float(string))
     
-  
     @staticmethod
     def string2float(string):
         """
@@ -97,8 +96,17 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         string = string.replace(",", ".")
         # allow only one decimal point
         string = string[::-1].replace(".", "", string.count(".")-1)[::-1]
+        # see if we have a string like "2e-4"
+        try:
+            string = "{:.12f}".format(float(string))
+        except:
+            pass
         # remove letters
-        string = re.sub(r'[^\d.-]+', '', string)
+        try:
+            string = re.sub(r'[^\d.-]+', '', string)
+        except:
+            import IPython
+            IPython.embed()
         return float(string)
 
 
