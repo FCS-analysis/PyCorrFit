@@ -696,11 +696,35 @@ The minimum distance $\chi^2$ is used to characterize the success of a fit. Note
 
 \subsubsection{Weighted fitting}
 \label{sec:theor.weigh}
-In certain cases, it is useful to implement weights (standard deviation) $\sigma_i$ for the calculation of $\chi^2$. For example, very noisy parts of a correlation curve can falsify the resulting fit. In \textit{PyCorrFit}, weighting is implemented as follows:
+In certain cases, it is useful to perform weighted fitting with a known variance $\sigma_i^2$ at the data points $\tau_i$. In \textit{PyCorrFit}, weighted fitting is implemented as follows:
 \begin{equation}
 \chi^2_\mathrm{weighted} = \min_{\alpha_1, \dots, \alpha_k} \sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_1, \dots, \alpha_k) - H(\tau_i) \right]^2}{\sigma_i^2}
 \end{equation}
-\textit{PyCorrFit} is able to calculate the weights $\sigma_i$ from the experimental data. The different approaches of this calculation of weights implemented in \textit{PyCorrFit} are explained in \hyref{Section}{sec:intro.graph}.
+
+Besides importing the variance alongside experimental data, \textit{PyCorrFit} is able to estimate the variance from the experimental data via several different approaches. A recommended approach is averaging over several curves. Other approaches such as estimation of the variance from spline fits or from the model function (see \hyref{Section}{sec:intro.graph}) cannot be considered unbiased. 
+Note that when performing global fits (see \hyref{Section}{sec:menub.tools.globa}), different types of weights for different correlation curves can strongly influence the result of the fit. Especially mixing curves with and without weights will most likely result in unphysical fits.
+
+\subsubsection{Displayed $\chi^2$ values}
+The displayed value of $\chi^2$ is defined by the type of the performed fit. This value is commonly normalized by the degrees of freedom $\nu = N - n - 1$, where $N$ is the number of observations (data points) and $n$ is the number of fitting parameters.
+\begin{itemize}
+
+\item \textbf{reduced expected sum of squares}: This value is used when there is no variance available for plot normalization.
+\begin{equation}
+\chi^2_\mathrm{red,exp} = \frac{1}{\nu}\sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_\mathrm{min}) - H(\tau_i) \right]^2}{G(\tau_i,\alpha_\mathrm{min})}
+\end{equation}
+
+\item \textbf{reduced weighted sum of squares}: This  value is used when the fit was performed with variances $\sigma^2$.
+\begin{equation}
+\chi^2_\mathrm{red,weight} = \frac{1}{\nu}\sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_\mathrm{min}) - H(\tau_i) \right]^2}{\sigma^2}
+\end{equation}
+
+\item \textbf{reduced global sum of squares}: This  value is used for global fits. The weights are computed identically to the situation with reduced weights, except that the variance $\sigma_\textrm{glob}^2$ may result in non-physical weighting (hence the emphasis on global).
+\begin{equation}
+\chi^2_\mathrm{red,weight} = \frac{1}{\nu}\sum_{i=1}^n  \frac{\left[ G(\tau_i,\alpha_\mathrm{min}) - H(\tau_i) \right]^2}{\sigma_\textrm{glob}^2}
+\end{equation}
+
+\end{itemize}
+
 
 \subsubsection{Algorithms}
 \label{sec:theor.alg}

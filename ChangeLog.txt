@@ -1,5 +1,8 @@
 0.8.9-dev1
 - Improve parameter display (#114)
+- The displayed Chi2-value for non-weighted fits is now
+  normalized to the expected values of the fit. The
+  documentation has been updated accordingly.
 0.8.9
 - Improved support for "ALV-7004" files (#104)
 - Increase resolution for image export

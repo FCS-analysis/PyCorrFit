@@ -164,10 +164,11 @@ class InfoClass(object):
                         Fitting.append(["Weighted fit", corr.fit_results["weighted fit type"]])
                     except KeyError:
                         Fitting.append(["Weighted fit", u""+Page.Fitbox[1].GetValue()])
-                    Chi2type = u"Weighted sum of squares"
+                if corr.fit_results.has_key("chi2 type"):
+                    ChiSqType = corr.fit_results["chi2 type"]
                 else:
-                    Chi2type = u"Sum of squares"
-                Fitting.append([ u"χ²-type", Chi2type ])
+                    ChiSqType = "unknown"
+                Fitting.append([ u"χ²-type", ChiSqType])
                 Fitting.append([ "Algorithm", fcs_data_set.Algorithms[corr.fit_algorithm][1]])
                 if len(Page.GlobalParameterShare) != 0:
                     shared = str(Page.GlobalParameterShare[0])
