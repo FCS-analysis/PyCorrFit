@@ -23,11 +23,8 @@ with warnings.catch_warnings():
     except:
         pass
 
-
-import numpy as np
 import sys
 import traceback
-from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
 
 
@@ -86,7 +83,7 @@ def save_figure(self, evt=None):
         Page = self.canvas.HACK_Page
         add = self.canvas.HACK_append
         dirname = parent.dirname
-        filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+add
+        filename = self.canvas.get_window_title().replace(" ", "_").lower()+add
         formats = fig.canvas.get_supported_filetypes()
     except:
         dirname = "."
@@ -108,12 +105,8 @@ def save_figure(self, evt=None):
     if dlg.ShowModal() == wx.ID_OK:
         wildcard = keys[dlg.GetFilterIndex()]
         filename = dlg.GetPath()
-        haswc = False
-        for key in keys:
-            if filename.lower().endswith("."+key) is True:
-                haswc = True
-        if haswc == False:
-            filename = filename+"."+wildcard
+        if not filename.endswith(wildcard):
+            filename += "."+wildcard
         dirname = dlg.GetDirectory()
         #savename = os.path.join(dirname, filename)
         savename = filename
