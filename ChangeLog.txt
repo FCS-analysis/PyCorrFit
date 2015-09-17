@@ -1,10 +1,11 @@
-0.8.9-dev1
+0.9.0
 - Improve parameter display (#52, #114)
 - Display Chi2 on each page (#115)
 - The displayed Chi2-value for non-weighted fits is now
   normalized to the expected values of the fit. The
   documentation has been updated accordingly.
 - Add "All files" option in save dialogs (#97)
+- Improved plot export dialog (#99)
 0.8.9
 - Improved support for "ALV-7004" files (#104)
 - Increase resolution for image export
