@@ -281,7 +281,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
-    fig.canvas.HACK_append = ""
+    fig.canvas.HACK_append = ".png"
     
 
     # Legend outside of plot
@@ -402,7 +402,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     fig.canvas.HACK_parent = parent
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
-    fig.canvas.HACK_append = "_trace"
+    fig.canvas.HACK_append = "_trace.png"
 
     plt.tight_layout(rect=(.001,.34,.999,1.0))
 
@@ -420,67 +420,6 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
             plt.close()
         except:
             pass
-
-
-def savePlotSingle(name, x, dataexp, datafit, dirname = ".", uselatex=False):
-    """ CURRENTLY THIS FUNCTION IS NOT USED BY PYCORRFIT
-        Show log plot of correlation function without residuals. 
-        Parameters:
-        *name*      name of curve in legend
-        *x*         tau-values to plot
-        *dataexp*   correlation data to plot
-        *datafit*   fitted curve to correlation data
-        *dirname*   initial directory for dialog (not used here)
-        *uselatex*  use latex for plotting
-        This function uses a hack in misc.py to change the function
-        for saving the final figure. We wanted save in the same directory
-        as PyCorrFit was working and the filename should be the tabtitle.
-    """
-    # This is a dirty hack to make sure no plots are opened
-    try:
-        plt.close()
-    except:
-        pass
-    ## Check if we can use latex for plotting:
-    r1 = findprogram("latex")[0]
-    r2 = findprogram("dvipng")[0]
-    # Ghostscript
-    r31 = findprogram("gs")[0]
-    r32 = findprogram("mgs")[0] # from miktex
-    r3 = max(r31,r32)
-    if r1+r2+r3 < 3:
-        uselatex = False
-    if uselatex == True:
-        rcParams['text.usetex']=True
-        rcParams['text.latex.unicode']=True
-        rcParams['font.family']='serif'
-        rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"] 
-        name = ur"{\normalsize "+escapechars(name)+r"}"
-    else:
-        rcParams['text.usetex']=False
-    # create plot
-    # plt.plot(x, y, '.', label = 'original data', markersize=5)
-    plt.figure()
-    ax = plt.subplot(111)
-    #    ax = plt.axes()
-    ax.semilogx()
-    plt.plot(x, dataexp,'-', color="darkgrey")
-    plt.xlabel(r'lag time $\tau$ [ms]')
-    plt.plot(x, datafit, '-', label = name,
-             lw=2.5, color="blue")
-    plt.ylabel('correlation')
-    mind = np.min([ dataexp, datafit])
-    maxd = np.max([ dataexp, datafit])
-    ymin = mind - (maxd - mind)/20.
-    ymax = maxd + (maxd - mind)/20.
-    ax.set_ylim(bottom=ymin, top=ymax)
-    xmin = np.min(x)
-    xmax = np.max(x)
-    ax.set_xlim(xmin, xmax)
-    # Add some more stuff to the text and append data to a .txt file
-    #text = Auswert(parmname, parmoptim, text, savename)
-    plt.legend()
-    plt.show()
 
 # set dpi to 300
 matplotlib.rcParams['savefig.dpi'] = 300
