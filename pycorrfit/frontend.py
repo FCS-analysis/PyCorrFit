@@ -1454,8 +1454,8 @@ class MyFrame(wx.Frame):
         # Export CSV data
         filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+".csv"
         dlg = wx.FileDialog(self, "Save curve", self.dirname, filename, 
-              "Correlation with trace (*.csv)|*.csv;*.CSV"+\
-              "|Correlation only (*.csv)|*.csv;*.CSV",
+              "Correlation with trace (*.csv)|*.csv;*.*"+\
+              "|Correlation only (*.csv)|*.csv;*.*",
                wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
@@ -1594,7 +1594,7 @@ class MyFrame(wx.Frame):
         Infodict["Comments"]["Session"] = self.SessionComment
         # File dialog
         dlg = wx.FileDialog(self, "Save session file", self.dirname, "",
-                            "PyCorrFit session (*.pcfs)|*.pcfs",
+                            "PyCorrFit session (*.pcfs)|*.pcfs|All files (*.*)|*.*",
                             wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_OK:
             # Save everything

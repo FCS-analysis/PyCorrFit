@@ -23,33 +23,9 @@ with warnings.catch_warnings():
     except:
         pass
 
-
-import numpy as np
 import sys
 import traceback
-from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx 
-
-
-class FloatSpin(floatspin.FloatSpin):
-    def __init__(self, parent, digits=10, increment=.01):
-        floatspin.FloatSpin.__init__(self, parent, digits=digits,
-                                     increment = increment)
-        self.Bind(wx.EVT_SPINCTRL, self.increment)
-        #self.Bind(wx.EVT_SPIN, self.increment)
-        #self.increment()
-
-
-    def increment(self, event=None):
-        # Find significant digit
-        # and use it as the new increment
-        x = self.GetValue()
-        if x == 0:
-            incre = 0.1
-        else:
-            digit = int(np.ceil(np.log10(abs(x)))) - 2
-            incre = 10**digit
-        self.SetIncrement(incre)
 
 
 class ChoicesDialog(wx.Dialog):
@@ -107,7 +83,7 @@ def save_figure(self, evt=None):
         Page = self.canvas.HACK_Page
         add = self.canvas.HACK_append
         dirname = parent.dirname
-        filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+add
+        filename = self.canvas.get_window_title().replace(" ", "_").lower()+add
         formats = fig.canvas.get_supported_filetypes()
     except:
         dirname = "."
@@ -129,12 +105,8 @@ def save_figure(self, evt=None):
     if dlg.ShowModal() == wx.ID_OK:
         wildcard = keys[dlg.GetFilterIndex()]
         filename = dlg.GetPath()
-        haswc = False
-        for key in keys:
-            if filename.lower().endswith("."+key) is True:
-                haswc = True
-        if haswc == False:
-            filename = filename+"."+wildcard
+        if not filename.endswith(wildcard):
+            filename += "."+wildcard
         dirname = dlg.GetDirectory()
         #savename = os.path.join(dirname, filename)
         savename = filename
