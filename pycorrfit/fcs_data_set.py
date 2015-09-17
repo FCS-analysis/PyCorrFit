@@ -667,6 +667,7 @@ class Fit(object):
         self.global_fit_variables = global_fit_variables
         self.verbose = verbose
         self.uselatex = uselatex
+        self.is_weighted_fit = False
         
         if not global_fit:
             # Fit each correlation separately
@@ -679,6 +680,7 @@ class Fit(object):
                 # fit_bool: True for variable
                 self.fit_bool = corr.fit_parameters_variable.copy()
                 self.fit_parm = corr.fit_parameters.copy()
+                self.is_weighted_fit = corr.is_weighted_fit
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
                                                    uselatex=uselatex)
@@ -705,6 +707,7 @@ class Fit(object):
             varin = list()      # names of variable fitting parameters
             variv = list()      # values of variable fitting parameters
             varmap = list()     # list of indices of fitted parameters
+            self.is_weighted_fit = None
             for corr in self.correlations:
                 xtemp.append(corr.correlation_fit[:,0])
                 ytemp.append(corr.correlation_fit[:,1])
@@ -816,12 +819,14 @@ class Fit(object):
         c = correlation
         d = {
              "chi2" : self.chi_squared,
+             "chi2 type" : self.chi_squared_type,
              "weighted fit" : c.is_weighted_fit,
              "fit algorithm" : c.fit_algorithm,
              "fit result" : c.fit_parameters.copy(),
              "fit parameters" : np.where(c.fit_parameters_variable)[0],
              "fit weights" : self.compute_weights(c)
              }
+        
         
         if c.is_weighted_fit:
             d["weighted fit type"] = c.fit_weight_type
@@ -837,14 +842,47 @@ class Fit(object):
 
     @property
     def chi_squared(self):
-        """
-            Calculate Chi² for the current class.
+        """ Calculate displayed Chi²
+        
+            Calculate reduced Chi² for the current class.
         """
         # Calculate degrees of freedom
         dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
         chi2 = self.fit_function_scalar(self.fit_parm[self.fit_bool], self.x)
-        return chi2 / dof
+        if self.chi_squared_type == "reduced expected sum of squares":
+            fitted = self.func(self.fit_parm, self.x)
+            chi2 = np.sum((self.y-fitted)**2/np.abs(fitted)) / dof
+        elif self.chi_squared_type == "reduced weighted sum of squares":
+            fitted = self.func(self.fit_parm, self.x)
+            variance = self.fit_weights**2
+            chi2 = np.sum((self.y-fitted)**2/variance) / dof
+        elif self.chi_squared_type == "reduced global sum of squares":
+            fitted = self.func(self.fit_parm, self.x)
+            variance = self.fit_weights**2
+            chi2 = np.sum((self.y-fitted)**2/variance) / dof
+        return chi2
+
+
+    @property
+    def chi_squared_type(self):
+        """ The type of Chi² that currently applies.
+        
+        Returns
+        -------
+        "reduced" - if variance of data was used for fitting
+        "reduced Pearson" - if variance of data is not available
+        """
+        if self.is_weighted_fit is None:
+            # global fitting
+            return "reduced global sum of squares"
+        elif self.is_weighted_fit == True:
+            return "reduced weighted sum of squares"
+        elif self.is_weighted_fit == False:
+            return "reduced expected sum of squares"
+        else:
+            raise ValueError("Unknown weight type!")
+
 
     @staticmethod
     def compute_weights(correlation, verbose=0, uselatex=False):
@@ -1111,6 +1149,7 @@ class Fit(object):
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
         # Write optimal parameters back to this class.
+        # Must be called after `self.fitparm = ...`
         chi = self.chi_squared
         # Compute error estimates for fit (Only "Lev-Mar")
         if self.fit_algorithm == "Lev-Mar":
