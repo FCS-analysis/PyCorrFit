@@ -1,5 +1,6 @@
 0.8.9-dev1
-- Improve parameter display (#114)
+- Improve parameter display (#52, #114)
+- Display Chi2 on each page (#115)
 - The displayed Chi2-value for non-weighted fits is now
   normalized to the expected values of the fit. The
   documentation has been updated accordingly.
