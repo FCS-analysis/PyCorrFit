@@ -441,6 +441,7 @@ class FittingPanel(wx.Panel):
         keys = pcfbase.GetAlgorithmStringList()[0]
         idalg = keys.index(self.corr.fit_algorithm)
         self.AlgorithmDropdown.SetSelection(idalg)
+        self.updateChi2()
 
 
     def calculate_corr(self):
@@ -497,6 +498,8 @@ class FittingPanel(wx.Panel):
         self.apply_parameters_reverse()
         # Plot everthing
         self.PlotAll(trigger=trigger)
+        # update displayed chi2
+        self.updateChi2()
         # Return cursor to normal
         wx.EndBusyCursor()
 
@@ -978,10 +981,15 @@ class FittingPanel(wx.Panel):
                   self.AlgorithmDropdown)
         fitsizer.Add(self.AlgorithmDropdown)
         self.AlgorithmDropdown.SetMaxSize(weightedfitdrop.GetSize())
-        # Add button "Fit"
+        # Add button "Fit" and chi2 display
+        fitbuttonsizer = wx.BoxSizer(wx.HORIZONTAL)
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
-        fitsizer.Add(buttonfit)
+        fitbuttonsizer.Add(buttonfit)
+        self.WXTextChi2 = wx.StaticText(self.panelsettings)
+        # this StaticText is updated by `self.updateChi2()`
+        fitbuttonsizer.Add(self.WXTextChi2, flag=wx.ALIGN_CENTER)
+        fitsizer.Add(fitbuttonsizer)
         self.panelsettings.sizer.Add(fitsizer)
         # Squeeze everything into the sizer
         self.panelsettings.SetSizer(self.panelsettings.sizer)
@@ -998,3 +1006,22 @@ class FittingPanel(wx.Panel):
         self.panelsettings.sizer.Fit(self.panelsettings)
         self.parent.Layout()
 
+
+    def updateChi2(self):
+        """
+        updates the self.WXTextChi2 text control
+        """
+        if hasattr(self.corr, "fit_results"):
+            chi2 = self.corr.fit_results["chi2"]
+            chi2str = float2string_nsf(chi2, n=3)
+            chi2str = nice_string(chi2str)
+            label = u"  χ²={}".format(chi2str)
+        else:
+            label = u""
+        #self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
+        self.WXTextChi2.SetLabelMarkup(u"{}".format(label))
+
+        
+        
+        
+        
