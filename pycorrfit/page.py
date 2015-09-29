@@ -1018,8 +1018,9 @@ class FittingPanel(wx.Panel):
             label = u"  χ²={}".format(chi2str)
         else:
             label = u""
+        # This does not work with wxPython 2.8.12:
         #self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
-        self.WXTextChi2.SetLabelMarkup(u"{}".format(label))
+        self.WXTextChi2.SetLabel(u"{}".format(label))
 
         
         
