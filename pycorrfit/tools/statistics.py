@@ -8,6 +8,7 @@ Values are sorted according to the page number.
 """
 from __future__ import division
 
+import codecs
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
@@ -591,7 +592,7 @@ class Stat(wx.Frame):
             if filename.lower().endswith(".txt") is not True:
                 filename = filename+".txt"
             dirname = dlg.GetDirectory()
-            openedfile = open(filename, 'wb')
+            openedfile = codecs.open(filename, 'w', encoding="utf-8")
             # Get Parameterlist of all Pages with same model id as
             # Self.Page
             # This creates self.SaveInfo:
@@ -599,12 +600,12 @@ class Stat(wx.Frame):
             # Write header
             linestring = u""
             for atuple in self.SaveInfo[0]:
-                linestring += u"{}\t".fotmat(atuple[0])
+                linestring += u"{}\t".format(atuple[0])
             # remove trailing "\t"
-            openedfile.write(linestring.strip()+u"\r\n")
+            openedfile.write(u"{}\r\n".format(linestring.strip()))
             # Write data         
             for item in self.SaveInfo:
-                linestring = ""
+                linestring = u""
                 for btuple in item:
                     linestring += u"{}\t".format(btuple[1])
                 openedfile.write(linestring.strip()+u"\r\n")
