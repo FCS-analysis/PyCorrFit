@@ -150,6 +150,7 @@ class Stat(wx.Frame):
         
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
+        self.canvas.SetEnableZoom(True)
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
         ## Icon
         if parent.MainIcon is not None:
@@ -190,6 +191,7 @@ class Stat(wx.Frame):
             elif key == "parameters":
                 headparm = list()
                 bodyparm = list()
+                errparms = list()
                 for parm in Infodict[key]:
                     headparm.append(parm)
                     try:
@@ -197,7 +199,7 @@ class Stat(wx.Frame):
                             parmname = parm[0]
                             errname = "Err "+parmname
                             if fitp[0] == errname:
-                                headparm.append(fitp)
+                                errparms.append(fitp)
                     except:
                         # There was not fit, the fit with "Lev-Mar"
                         # was not good, or another fit algorithm was
@@ -220,8 +222,14 @@ class Stat(wx.Frame):
         # Bring lists together
         head = headtitle + headparm
         body = bodyparm + body
+
+        # Separate checkbox for fit errors
+        if len(errparms) > 0:
+            tail.append(("Fit errors", errparms))
         
         Info = head + body + tail
+        
+
 
         # List of default checked parameters:
         checked = np.zeros(len(Info), dtype=np.bool)
@@ -235,12 +243,14 @@ class Stat(wx.Frame):
                 if item[0].count(checkitem):
                     checked[i] = True
         # Alist with strings that should not be checked:
-        checklist = ["Err "]
+        nochecklist = []
         for i in range(len(Info)):
             item = Info[i]
-            for checkitem in checklist:
+            for checkitem in nochecklist:
                 if item[0].count(checkitem):
                     checked[i] = False
+        
+        
         if return_std_checked:
             return Info, checked
         else:
@@ -283,6 +293,10 @@ class Stat(wx.Frame):
 
 
     def GetWantedParameters(self):
+        """
+        Updates self.SaveInfo with all the information that will be
+        saved to the table.
+        """
         strFull = self.WXTextPages.GetValue()
         PageNumbers = misc.parseString2Pagenum(self, strFull)
         # Get the wanted parameters from the selection.
@@ -324,14 +338,17 @@ class Stat(wx.Frame):
         # covers missing values. This means checking for
         #    "label == subitem[0]"
         # and iteration over AllInfo with that consition.
-        for Info in pagekeys:
+        for ii in pagekeys:
             pageinfo = list()
             for label in checked:
                 label_in_there = False
-                for item in AllInfo[Info]:
-                    for subitem in AllInfo[Info][item]:
+                for item in AllInfo[ii]:
+                    for subitem in AllInfo[ii][item]:
                         if subitem is not None and len(subitem) == 2:
                             if label == subitem[0]:
+                                label_in_there = True
+                                pageinfo.append(subitem)
+                            elif label == "Fit errors" and subitem[0].startswith("Err "):
                                 label_in_there = True
                                 pageinfo.append(subitem)
                 if label_in_there == False:
