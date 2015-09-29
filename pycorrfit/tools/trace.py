@@ -57,8 +57,9 @@ class ShowTrace(wx.Frame):
             self.trace = 1*traces[0].trace
             # We want to have the trace in [s] here.
             self.trace[:,0] = self.trace[:,0]/1000
-            line = plot.PolyLine(self.trace, legend='', colour='blue',
-                                 width=1)
+            line = plot.PolyLine(self.trace,
+                    legend='{:.2f}kHz'.format(traces[0].countrate),
+                    colour='blue', width=1)
             lines = [line]
             self.canvas.SetEnableLegend(False)
             xmax = np.max(self.trace[:,0])
@@ -71,10 +72,12 @@ class ShowTrace(wx.Frame):
             self.tracea[:,0] = self.tracea[:,0]/1000
             self.traceb = 1*traces[1].trace
             self.traceb[:,0] = self.traceb[:,0]/1000
-            linea = plot.PolyLine(self.tracea, legend='channel 1', 
-                                  colour='blue', width=1)
-            lineb = plot.PolyLine(self.traceb, legend='channel 2', 
-                                  colour='red', width=1)
+            linea = plot.PolyLine(self.tracea,
+                    legend='channel 1\n{:.2f}kHz'.format(traces[0].countrate), 
+                    colour='blue', width=1)
+            lineb = plot.PolyLine(self.traceb, 
+                    legend='channel 2\n{:.2f}kHz'.format(traces[1].countrate), 
+                    colour='red', width=1)
             lines = [linea, lineb]
             self.canvas.SetEnableLegend(True)
             xmax = max(np.max(self.tracea[:,0]), np.max(self.traceb[:,0]))
