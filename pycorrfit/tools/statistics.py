@@ -599,14 +599,14 @@ class Stat(wx.Frame):
             # Write header
             linestring = u""
             for atuple in self.SaveInfo[0]:
-                linestring += str(atuple[0])+u"\t"
+                linestring += u"{}\t".fotmat(atuple[0])
             # remove trailing "\t"
             openedfile.write(linestring.strip()+u"\r\n")
             # Write data         
             for item in self.SaveInfo:
                 linestring = ""
                 for btuple in item:
-                    linestring += str(btuple[1])+u"\t"
+                    linestring += u"{}\t".format(btuple[1])
                 openedfile.write(linestring.strip()+u"\r\n")
             openedfile.close()
         else:
