@@ -176,8 +176,9 @@ class Wrapper_Tools(object):
             for Page in pagerem:
                 j = self.parent.notebook.GetPageIndex(Page)
                 self.parent.notebook.DeletePage(j)
+            self.OnPageChanged()
         dlg.Destroy()
-        self.OnPageChanged()
+        
 
 
     def OnSelectionChanged(self, keylist, trigger=None):
@@ -239,7 +240,7 @@ class UserSelectCurves(wx.Frame):
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
-        wx.Frame.__init__(self, parent=self.parent, title="Curve selection",
+        wx.Frame.__init__(self, parent=self.parent, title="Overlay curves",
                  pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
                  size=(800,500))
         ## Pre-process
@@ -254,8 +255,7 @@ class UserSelectCurves(wx.Frame):
             ctrl = "Apple"
         else:
             ctrl = "Ctrl"
-        text = "Select the curves to keep. \n" +\
-               "By holding down the '"+ctrl+"' key, single curves can be \n" +\
+        text = "By holding down the '"+ctrl+"' key, single curves can be \n" +\
                "selected or deselected. The 'Shift' key can be used \n" +\
                "to select groups."
         self.upperSizer.Add(wx.StaticText(panel_top, label=text))
@@ -278,15 +278,23 @@ class UserSelectCurves(wx.Frame):
                 if self.selkeys.count(self.curvekeys[i]) == 0:
                     self.SelectBox.Deselect(i)
         self.Bind(wx.EVT_LISTBOX, self.OnUpdatePlot, self.SelectBox)
-        self.boxSizer.Add(self.SelectBox)
-        # Button APPLY
-        btnok = wx.Button(panel_bottom, wx.ID_ANY, 'Apply')
-        self.Bind(wx.EVT_BUTTON, self.OnPushResults, btnok)
-        self.boxSizer.Add(btnok)
+        self.boxSizer.Add(self.SelectBox, wx.EXPAND)
+        minsx = self.boxSizer.GetMinSize()[0]
+        # Button REMOVE
+        btnrem = wx.Button(panel_bottom, wx.ID_ANY, 'Remove selected')
+        self.Bind(wx.EVT_BUTTON, self.OnPushResultsRemove, btnrem)
+        btnrem.SetMinSize((minsx, -1))
+        self.boxSizer.Add(btnrem)
+        # Button KEEP
+        btnkep = wx.Button(panel_bottom, wx.ID_ANY, 'Keep selected')
+        self.Bind(wx.EVT_BUTTON, self.OnPushResultsKeep, btnkep)
+        self.boxSizer.Add(btnkep)
+        btnkep.SetMinSize((minsx, -1))
         # Button CANCEL
         btncancel = wx.Button(panel_bottom, wx.ID_ANY, 'Cancel')
         self.Bind(wx.EVT_BUTTON, self.OnCancel, btncancel)
         self.boxSizer.Add(btncancel)
+        btncancel.SetMinSize((minsx, -1))
         # Finish off sizers
         panel_top.SetSizer(self.upperSizer)
         panel_bottom.SetSizer(self.boxSizer)
@@ -312,6 +320,17 @@ class UserSelectCurves(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
+    
+    def GetSelection(self):
+        keyssel = list()
+        for i in self.SelectBox.GetSelections():
+            keyssel.append(self.curvekeys[i])
+        keysnosel = list()
+        for key in self.curvekeys:
+            if keyssel.count(key) == 0:
+                keysnosel.append(key)
+        return keyssel, keysnosel
+    
     
     def ProcessDict(self, e=None):
         # Define the order of keys used.
@@ -341,15 +360,15 @@ class UserSelectCurves(wx.Frame):
         self.wrapper.OnClose()
         
 
-    def OnPushResults(self, e=None):
+    def OnPushResultsRemove(self, e=None):
         # Get keys from selection
-        keyskeep = list()
-        for i in self.SelectBox.GetSelections():
-            keyskeep.append(self.curvekeys[i])
-        keysrem = list()
-        for key in self.curvekeys:
-            if keyskeep.count(key) == 0:
-                keysrem.append(key)
+        keysrem, keyskeep = self.GetSelection()
+        self.wrapper.OnResults(keyskeep, keysrem)
+
+
+    def OnPushResultsKeep(self, e=None):
+        # Get keys from selection
+        keyskeep, keysrem = self.GetSelection()
         self.wrapper.OnResults(keyskeep, keysrem)
 
 
