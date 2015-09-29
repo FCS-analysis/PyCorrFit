@@ -16,6 +16,8 @@ import numpy as np
 
 from .info import InfoClass
 from .. import misc
+from .. import models as mdls
+
 
 # Menu entry name
 MENUINFO = ["&Statistics view", "Show some session statistics."]
@@ -259,18 +261,15 @@ class Stat(wx.Frame):
         
     def GetListOfPlottableParms(self, e=None, return_values=False,
                                 page=None):
-        """ Returns sorted list of parameters that can be plotted.
-            (This means that the values are convertable to floats)
+        """ Returns list of parameters that can be plotted.
+            (This means that the values are convertible to floats)
             If return_values is True, then a second list with
             the corresponding values is returned.
         """
         if page is None:
             page = self.Page
         if self.parent.notebook.GetPageCount() != 0:
-            #Info = self.InfoClass.GetPageInfo(self.Page)
             Info = self.GetListOfAllParameters(page=page)
-            #keys = Info.keys()
-            #keys.sort()
             parmlist = list()
             parmvals = list()
             for item in Info:
@@ -636,3 +635,103 @@ class Stat(wx.Frame):
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)
 
+    @staticmethod
+    def SortParameters(parms):
+        u"""
+        Sort a list of tuples according to the first item.
+        The sorting convention was met in issue #113:
+        
+        - at the beginning: avg. countrates and particle numbers
+        - fast components go before slow components:
+          e.g. [τ_trip, τ_diff]
+        - model parameters are sorted logically according to their origin:
+          e.g. [T1, τ_trip1], or [F1, τ_diff1], or [T2, τ_trip2]
+        - if the parameter ends with a number, then we sort it to the
+          logical blocks - includes n1, n2, etc.
+        - at end: other fitting parameters and mode information
+
+        fitting parameters
+        
+            intensities
+            n
+            tautrip1
+            T1
+            tautrip2
+            T2
+            tau1
+            F1
+            tau2
+            F2
+            tau3
+            F3
+            alpha
+            SP
+        
+        non-fitting parameter
+        
+            model name
+            chisquare
+            weighted fit
+            interval
+            measurement time
+            ...
+            model id
+        """
+        
+        startswith_sort = [
+                           u"avg. signal",
+                           u"n",
+                           u"T",
+                           u"τ_trip",
+                           u"F",
+                           u"C",
+                           u"τ_diff",
+                           u"alpha",
+                           u"SP",
+                           ]
+
+        # append to this list all parameters that might be in another model.
+        for m in mdls.models:
+            for p in m.parameters[0]:
+                append = list()
+                exists = False
+                for sw in startswith_sort:
+                    if p.startswith(sw):
+                        exists = True
+                if not exists:
+                    startswith_sort.append(p)
+        
+        
+        def rate(x):
+            """
+            rate a parameter for sorting.
+            lower values are at the beginning of the list.
+            """
+            # start at the top
+            r = 0
+            
+            # BLOCK OFFSET
+            try:
+                intx = int(x[-1])
+            except:
+                pass
+            else:
+                # penalty: belongs to block
+                r += 2 + intx
+            
+            # STARTSWITH PENALTY
+            for p in startswith_sort():
+                if x.startswith(p):
+                    r += startswith_sort.index(p)
+        
+            return r
+
+
+        def compare(x,y):
+            """
+            rates x and y.
+            returns -1, 0, 1 required for common list sort
+            """
+            idx = 0
+            idy = 0
+            
