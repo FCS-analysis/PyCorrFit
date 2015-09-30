@@ -9,9 +9,9 @@ Might be useful for better understanding model functions.
 
 
 import wx
+from wx.lib.agw import floatspin
 import numpy as np
 
-from .. import edclasses  # edited floatspin
 from .. import models as mdls
 
 # Menu entry name
@@ -76,45 +76,39 @@ class Slide(wx.Frame):
         slidesizer = wx.FlexGridSizer(rows=3, cols=5, vgap=5, hgap=5)
         self.textstartA = wx.StaticText(self.panel, label=self.labelA)
         slidesizer.Add(self.textstartA)
-        self.startspinA = edclasses.FloatSpin(self.panel, digits=7,
-                                            increment=.1)
+        self.startspinA = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.startspinA)
         self.sliderA = wx.Slider(self.panel, -1, self.slidestart, 0,
                                  self.slidemax, wx.DefaultPosition, (250, -1),
                                  wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderA)
-        self.endspinA = edclasses.FloatSpin(self.panel, digits=7,
-                                            increment=.1)
+        self.endspinA = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinA)
         self.textvalueA = wx.StaticText(self.panel, label= "%.5e" % self.valueA)
         slidesizer.Add(self.textvalueA)
         # Parameter B
         self.textstartB = wx.StaticText(self.panel, label=self.labelB)
         slidesizer.Add(self.textstartB)
-        self.startspinB = edclasses.FloatSpin(self.panel, digits=7,
-                                            increment=.1)
+        self.startspinB = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.startspinB)
         self.sliderB = wx.Slider(self.panel, -1, self.slidestart, 0,
                                  self.slidemax, wx.DefaultPosition, (250, -1),
                                  wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderB)
-        self.endspinB = edclasses.FloatSpin(self.panel, digits=7,
-                                            increment=.1)
+        self.endspinB = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinB)
         self.textvalueB = wx.StaticText(self.panel, label= "%.5e" % self.valueB)
         slidesizer.Add(self.textvalueB)
         # Result of operation
         self.textstartOp = wx.StaticText(self.panel, label=self.labelOp)
         slidesizer.Add(self.textstartOp)
-        self.startspinOp = edclasses.FloatSpin(self.panel, digits=7,
-                                            increment=.1)
+        self.startspinOp = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.startspinOp)
         self.sliderOp = wx.Slider(self.panel, -1, self.slidestart, 0,
                                   self.slidemax, wx.DefaultPosition, (250, -1),
                                   wx.SL_HORIZONTAL)
         slidesizer.Add(self.sliderOp)
-        self.endspinOp = edclasses.FloatSpin(self.panel, digits=7,
-                                        increment=.1)
+        self.endspinOp = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinOp)
         self.textvalueOp = wx.StaticText(self.panel,
                                          label= "%.5e" % self.valueOp)
@@ -180,16 +174,6 @@ class Slide(wx.Frame):
                 pass
             else:
                 return B, C
-
-
-    def Increment(self):
-        # Set the correct increment for each spinctrl
-        self.startspinA.increment()
-        self.startspinB.increment()
-        self.startspinOp.increment()
-        self.endspinA.increment()
-        self.endspinB.increment()
-        self.endspinOp.increment()
 
 
     def FillOpDict(self):
@@ -330,7 +314,6 @@ class Slide(wx.Frame):
                                                  self.valueOp)
         self.textvalueB.SetLabel( "%.5e" % self.valueB)
         self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
-        self.Increment()
         self.SetResult()
         self.OnSize()
 
@@ -442,6 +425,5 @@ class Slide(wx.Frame):
         self.textvalueA.SetLabel( "%.5e" % self.valueA)
         self.textvalueB.SetLabel( "%.5e" % self.valueB)
         self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
-        self.Increment()
         self.SetResult()
 
