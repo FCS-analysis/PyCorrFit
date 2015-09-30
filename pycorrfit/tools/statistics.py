@@ -8,13 +8,17 @@ Values are sorted according to the page number.
 """
 from __future__ import division
 
+import codecs
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np
+import re
 
 from .info import InfoClass
 from .. import misc
+from .. import models as mdls
+
 
 # Menu entry name
 MENUINFO = ["&Statistics view", "Show some session statistics."]
@@ -149,6 +153,7 @@ class Stat(wx.Frame):
         
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
+        self.canvas.SetEnableZoom(True)
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
         ## Icon
         if parent.MainIcon is not None:
@@ -173,58 +178,33 @@ class Stat(wx.Frame):
         # values in the statistics window afterwards.
         # new iteration
         keys = Infodict.keys()
-        body = list()
-        tail = list()
+        parms = list()
+        errparms = list()
 
         for key in keys:
-            # "title" - filename/title first
-            if key == "title":
-                for item in Infodict[key]:
-                    if len(item) == 2:
-                        if item[0] == "filename/title":
-                            headtitle = [item]
-                        else:
-                            tail.append(item)
-            # "title" - filename/title first
-            elif key == "parameters":
-                headparm = list()
-                bodyparm = list()
-                for parm in Infodict[key]:
-                    headparm.append(parm)
-                    try:
-                        for fitp in Infodict["fitting"]:
-                            parmname = parm[0]
-                            errname = "Err "+parmname
-                            if fitp[0] == errname:
-                                headparm.append(fitp)
-                    except:
-                        # There was not fit, the fit with "Lev-Mar"
-                        # was not good, or another fit algorithm was
-                        # used.
-                        pass
-            elif key == "fitting":
-                for fitp in Infodict[key]:
-                    # We added the error data before in the parm section
-                    if unicode(fitp[0])[0:4] != u"Err ":
-                        tail.append(fitp)
-            elif key == "supplement":
-                body += Infodict[key]
-            # Append all other items
-            elif key == "background":
-                body += Infodict[key]
-            else:
-                for item in Infodict[key]:
-                    if item is not None and len(item) == 2:
-                        tail.append(item)
-        # Bring lists together
-        head = headtitle + headparm
-        body = bodyparm + body
+            for item in Infodict[key]:
+                if item is not None:
+                    if key == "fitting" and item[0].startswith("Err "):
+                        errparms.append(item)
+                    elif len(item) == 2:
+                        parms.append(item)
+
+        # Separate checkbox for fit errors
+        if len(errparms) > 0:
+            parms.append(("Fit errors", errparms))
         
-        Info = head + body + tail
+        Info = Stat.SortParameters(parms)
 
         # List of default checked parameters:
         checked = np.zeros(len(Info), dtype=np.bool)
-        checked[:len(head)] = True
+        # Fit parameters
+        pbool = page.corr.fit_parameters_variable
+        model = mdls.modeldict[page.corr.fit_model.id]
+        pname = mdls.GetHumanReadableParms(model.id, model.parameters[1])[0]
+        checkadd = np.array(pname)[pbool]
+        for ii, p in enumerate(Info):
+            if p[0] in checkadd:
+                checked[ii] = True
         # A list with additional strings that should be default checked
         # if found somewhere in the data.
         checklist = ["cpp", "duration", "bg rate", "avg.", "Model name"]
@@ -233,13 +213,15 @@ class Stat(wx.Frame):
             for checkitem in checklist:
                 if item[0].count(checkitem):
                     checked[i] = True
-        # Alist with strings that should not be checked:
-        checklist = ["Err "]
+        # A list with strings that should not be checked:
+        nochecklist = []
         for i in range(len(Info)):
             item = Info[i]
-            for checkitem in checklist:
+            for checkitem in nochecklist:
                 if item[0].count(checkitem):
                     checked[i] = False
+        
+        
         if return_std_checked:
             return Info, checked
         else:
@@ -248,18 +230,15 @@ class Stat(wx.Frame):
         
     def GetListOfPlottableParms(self, e=None, return_values=False,
                                 page=None):
-        """ Returns sorted list of parameters that can be plotted.
-            (This means that the values are convertable to floats)
+        """ Returns list of parameters that can be plotted.
+            (This means that the values are convertible to floats)
             If return_values is True, then a second list with
             the corresponding values is returned.
         """
         if page is None:
             page = self.Page
         if self.parent.notebook.GetPageCount() != 0:
-            #Info = self.InfoClass.GetPageInfo(self.Page)
             Info = self.GetListOfAllParameters(page=page)
-            #keys = Info.keys()
-            #keys.sort()
             parmlist = list()
             parmvals = list()
             for item in Info:
@@ -282,6 +261,10 @@ class Stat(wx.Frame):
 
 
     def GetWantedParameters(self):
+        """
+        Updates self.SaveInfo with all the information that will be
+        saved to the table.
+        """
         strFull = self.WXTextPages.GetValue()
         PageNumbers = misc.parseString2Pagenum(self, strFull)
         # Get the wanted parameters from the selection.
@@ -323,14 +306,17 @@ class Stat(wx.Frame):
         # covers missing values. This means checking for
         #    "label == subitem[0]"
         # and iteration over AllInfo with that consition.
-        for Info in pagekeys:
+        for ii in pagekeys:
             pageinfo = list()
             for label in checked:
                 label_in_there = False
-                for item in AllInfo[Info]:
-                    for subitem in AllInfo[Info][item]:
+                for item in AllInfo[ii]:
+                    for subitem in AllInfo[ii][item]:
                         if subitem is not None and len(subitem) == 2:
                             if label == subitem[0]:
+                                label_in_there = True
+                                pageinfo.append(subitem)
+                            elif label == "Fit errors" and subitem[0].startswith("Err "):
                                 label_in_there = True
                                 pageinfo.append(subitem)
                 if label_in_there == False:
@@ -591,7 +577,7 @@ class Stat(wx.Frame):
             if filename.lower().endswith(".txt") is not True:
                 filename = filename+".txt"
             dirname = dlg.GetDirectory()
-            openedfile = open(filename, 'wb')
+            openedfile = codecs.open(filename, 'w', encoding="utf-8")
             # Get Parameterlist of all Pages with same model id as
             # Self.Page
             # This creates self.SaveInfo:
@@ -599,14 +585,14 @@ class Stat(wx.Frame):
             # Write header
             linestring = u""
             for atuple in self.SaveInfo[0]:
-                linestring += str(atuple[0])+u"\t"
+                linestring += u"{}\t".format(atuple[0])
             # remove trailing "\t"
-            openedfile.write(linestring.strip()+u"\r\n")
+            openedfile.write(u"{}\r\n".format(linestring.strip()))
             # Write data         
             for item in self.SaveInfo:
-                linestring = ""
+                linestring = u""
                 for btuple in item:
-                    linestring += str(btuple[1])+u"\t"
+                    linestring += u"{}\t".format(btuple[1])
                 openedfile.write(linestring.strip()+u"\r\n")
             openedfile.close()
         else:
@@ -618,3 +604,144 @@ class Stat(wx.Frame):
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)
 
+    @staticmethod
+    def SortParameters(parms):
+        u"""
+        Sort a list of tuples according to the first item.
+        The sorting convention was met in issue #113:
+        
+        - at the beginning: avg. countrates and particle numbers
+        - fast components go before slow components:
+          e.g. [τ_trip, τ_diff]
+        - model parameters are sorted logically according to their origin:
+          e.g. [T1, τ_trip1], or [F1, τ_diff1], or [T2, τ_trip2]
+        - if the parameter ends with a number, then we sort it to the
+          logical blocks - includes n1, n2, etc.
+        - at end: other fitting parameters and mode information
+
+        fitting parameters
+        
+            intensities
+            n
+            tautrip1
+            T1
+            tautrip2
+            T2
+            tau1
+            F1
+            tau2
+            F2
+            tau3
+            F3
+            alpha
+            SP
+        
+        non-fitting parameter
+        
+            model name
+            chisquare
+            weighted fit
+            interval
+            measurement time
+            ...
+            model id
+        """
+        
+        startswith_sort = [
+                           u"avg. signal",
+                           u"n",
+                           u"T",
+                           u"τ_trip",
+                           u"F",
+                           u"C",
+                           u"D",
+                           u"τ",
+                           u"τ_diff",
+                           u"alpha",
+                           u"SP",
+                           ]
+
+        otherparms = list()
+
+        # append to this list all parameters that might be in another model.
+        for m in mdls.models:
+            for p in mdls.GetHumanReadableParms(m.id, m.parameters[1])[0]:
+                exists = False
+                for sw in startswith_sort+otherparms:
+                    if p.startswith(sw):
+                        exists = True
+                if not exists:
+                    otherparms.append(p)
+        
+        # sort the other parameters by name
+        otherparms.sort()
+        # special offsets to distinguish "T" and "Type":
+        special_off_start = ["Type", "Fit"]
+        
+        
+        def rate_tuple(item):
+            x = item[0]
+            return rate(x)
+        
+        def rate(x):
+            """
+            rate a parameter for sorting.
+            lower values are at the beginning of the list.
+            """
+            x = x.split("[")[0]
+            # start at the top
+            r = 0
+            
+            # BLOCK OFFSET
+            try:
+                intx = int(x[-1])
+            except:
+                pass
+            else:
+                # penalty: belongs to block
+                r += 3 + intx
+            
+            # STARTSWITH PENALTY
+            for p in startswith_sort:
+                if x.startswith(p):
+                    r += 1 + 3*(startswith_sort.index(p))
+                    break
+        
+            # Block offset integer
+            non_decimal = re.compile(r'[^\d]+')
+            pnum = non_decimal.sub("", x)
+            if len(pnum) > 0:
+                r += int(pnum)
+                
+            if x.count("3D"):
+                r -= 3
+            if x.count("2D"):
+                r -= 0
+        
+            # Other Parameters
+            for p in otherparms:
+                if p.startswith(x):
+                    r += (otherparms.index(p)) + 3*len(startswith_sort)
+
+            # Special offsets
+            for p in special_off_start:
+                if x.startswith(p):
+                    r += 300
+
+            if r==0:
+                r = 10000
+
+            return r
+
+
+        def compare(x,y):
+            """
+            rates x and y.
+            returns -1, 0, 1 required for common list sort
+            """
+            rx = rate_tuple(x)
+            ry = rate_tuple(y)
+            
+            return rx-ry
+
+        return sorted(parms, cmp=compare)
