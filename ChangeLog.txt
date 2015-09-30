@@ -1,3 +1,10 @@
+0.9.1
+- Tool 'Overlay curves': improve UI (#117)
+- Tool 'Statistics view': improve UI (#113)
+- Tool 'Trace view': display countrate (#121)
+- Bugfixes:
+  - Unicode errors in statistics tool (#131)
+  - Load session errors with empty pages
 0.9.0
 - Improve parameter display (#52, #114)
 - Display Chi2 on each page (#115)
