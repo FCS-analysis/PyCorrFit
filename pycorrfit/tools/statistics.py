@@ -13,6 +13,7 @@ import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 import numpy as np
+import re
 
 from .info import InfoClass
 from .. import misc
@@ -177,65 +178,33 @@ class Stat(wx.Frame):
         # values in the statistics window afterwards.
         # new iteration
         keys = Infodict.keys()
-        body = list()
-        tail = list()
+        parms = list()
+        errparms = list()
 
         for key in keys:
-            # "title" - filename/title first
-            if key == "title":
-                for item in Infodict[key]:
-                    if len(item) == 2:
-                        if item[0] == "filename/title":
-                            headtitle = [item]
-                        else:
-                            tail.append(item)
-            # "title" - filename/title first
-            elif key == "parameters":
-                headparm = list()
-                bodyparm = list()
-                errparms = list()
-                for parm in Infodict[key]:
-                    headparm.append(parm)
-                    try:
-                        for fitp in Infodict["fitting"]:
-                            parmname = parm[0]
-                            errname = "Err "+parmname
-                            if fitp[0] == errname:
-                                errparms.append(fitp)
-                    except:
-                        # There was not fit, the fit with "Lev-Mar"
-                        # was not good, or another fit algorithm was
-                        # used.
-                        pass
-            elif key == "fitting":
-                for fitp in Infodict[key]:
-                    # We added the error data before in the parm section
-                    if unicode(fitp[0])[0:4] != u"Err ":
-                        tail.append(fitp)
-            elif key == "supplement":
-                body += Infodict[key]
-            # Append all other items
-            elif key == "background":
-                body += Infodict[key]
-            else:
-                for item in Infodict[key]:
-                    if item is not None and len(item) == 2:
-                        tail.append(item)
-        # Bring lists together
-        head = headtitle + headparm
-        body = bodyparm + body
+            for item in Infodict[key]:
+                if item is not None:
+                    if key == "fitting" and item[0].startswith("Err "):
+                        errparms.append(item)
+                    elif len(item) == 2:
+                        parms.append(item)
 
         # Separate checkbox for fit errors
         if len(errparms) > 0:
-            tail.append(("Fit errors", errparms))
+            parms.append(("Fit errors", errparms))
         
-        Info = head + body + tail
-        
-
+        Info = Stat.SortParameters(parms)
 
         # List of default checked parameters:
         checked = np.zeros(len(Info), dtype=np.bool)
-        checked[:len(head)] = True
+        # Fit parameters
+        pbool = page.corr.fit_parameters_variable
+        model = mdls.modeldict[page.corr.fit_model.id]
+        pname = mdls.GetHumanReadableParms(model.id, model.parameters[1])[0]
+        checkadd = np.array(pname)[pbool]
+        for ii, p in enumerate(Info):
+            if p[0] in checkadd:
+                checked[ii] = True
         # A list with additional strings that should be default checked
         # if found somewhere in the data.
         checklist = ["cpp", "duration", "bg rate", "avg.", "Model name"]
@@ -244,7 +213,7 @@ class Stat(wx.Frame):
             for checkitem in checklist:
                 if item[0].count(checkitem):
                     checked[i] = True
-        # Alist with strings that should not be checked:
+        # A list with strings that should not be checked:
         nochecklist = []
         for i in range(len(Info)):
             item = Info[i]
@@ -685,28 +654,41 @@ class Stat(wx.Frame):
                            u"τ_trip",
                            u"F",
                            u"C",
+                           u"D",
+                           u"τ",
                            u"τ_diff",
                            u"alpha",
                            u"SP",
                            ]
 
+        otherparms = list()
+
         # append to this list all parameters that might be in another model.
         for m in mdls.models:
-            for p in m.parameters[0]:
-                append = list()
+            for p in mdls.GetHumanReadableParms(m.id, m.parameters[1])[0]:
                 exists = False
-                for sw in startswith_sort:
+                for sw in startswith_sort+otherparms:
                     if p.startswith(sw):
                         exists = True
                 if not exists:
-                    startswith_sort.append(p)
+                    otherparms.append(p)
         
+        # sort the other parameters by name
+        otherparms.sort()
+        # special offsets to distinguish "T" and "Type":
+        special_off_start = ["Type", "Fit"]
+        
+        
+        def rate_tuple(item):
+            x = item[0]
+            return rate(x)
         
         def rate(x):
             """
             rate a parameter for sorting.
             lower values are at the beginning of the list.
             """
+            x = x.split("[")[0]
             # start at the top
             r = 0
             
@@ -717,13 +699,38 @@ class Stat(wx.Frame):
                 pass
             else:
                 # penalty: belongs to block
-                r += 2 + intx
+                r += 3 + intx
             
             # STARTSWITH PENALTY
-            for p in startswith_sort():
+            for p in startswith_sort:
                 if x.startswith(p):
-                    r += startswith_sort.index(p)
+                    r += 1 + 3*(startswith_sort.index(p))
+                    break
         
+            # Block offset integer
+            non_decimal = re.compile(r'[^\d]+')
+            pnum = non_decimal.sub("", x)
+            if len(pnum) > 0:
+                r += int(pnum)
+                
+            if x.count("3D"):
+                r -= 3
+            if x.count("2D"):
+                r -= 0
+        
+            # Other Parameters
+            for p in otherparms:
+                if p.startswith(x):
+                    r += (otherparms.index(p)) + 3*len(startswith_sort)
+
+            # Special offsets
+            for p in special_off_start:
+                if x.startswith(p):
+                    r += 300
+
+            if r==0:
+                r = 10000
+
             return r
 
 
@@ -732,6 +739,9 @@ class Stat(wx.Frame):
             rates x and y.
             returns -1, 0, 1 required for common list sort
             """
-            idx = 0
-            idy = 0
+            rx = rate_tuple(x)
+            ry = rate_tuple(y)
             
+            return rx-ry
+
+        return sorted(parms, cmp=compare)

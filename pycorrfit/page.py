@@ -1011,13 +1011,13 @@ class FittingPanel(wx.Panel):
         """
         updates the self.WXTextChi2 text control
         """
+        label = u""
         if hasattr(self.corr, "fit_results"):
-            chi2 = self.corr.fit_results["chi2"]
-            chi2str = float2string_nsf(chi2, n=3)
-            chi2str = nice_string(chi2str)
-            label = u"  χ²={}".format(chi2str)
-        else:
-            label = u""
+            if "chi2" in self.corr.fit_results:
+                chi2 = self.corr.fit_results["chi2"]
+                chi2str = float2string_nsf(chi2, n=3)
+                chi2str = nice_string(chi2str)
+                label = u"  χ²={}".format(chi2str)
         # This does not work with wxPython 2.8.12:
         #self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
         self.WXTextChi2.SetLabel(u"{}".format(label))
