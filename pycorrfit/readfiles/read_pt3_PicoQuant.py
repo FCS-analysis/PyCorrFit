@@ -107,7 +107,7 @@ def openPT3(dirname, filename):
         # autotime,auto[:,0,1]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrcc01[id1].reshape(-1,1)) ))
-        tracelist.append([getTrace(po, 1), getTrace(po, 1)])
+        tracelist.append([getTrace(po, 1), getTrace(po, 2)])
     
     # CC10 - Cross-Correlation CH1-CH0
     corrcc10 = auto[:,1,0]
@@ -116,7 +116,7 @@ def openPT3(dirname, filename):
         # autotime,auto[:,1,0]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrcc10[id1].reshape(-1,1)) ))
-        tracelist.append([getTrace(po, 1), getTrace(po, 1)])
+        tracelist.append([getTrace(po, 1), getTrace(po, 2)])
 
     filelist = [filename] * len(typelist)
 
