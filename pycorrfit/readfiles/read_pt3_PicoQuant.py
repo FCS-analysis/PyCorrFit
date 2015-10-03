@@ -8,6 +8,7 @@ import numpy as np
 import os
 from .read_pt3_scripts.correlation_objects import picoObject
 
+from . import util
 
 class ParameterClass():
     """Stores parameters for correlation """
@@ -51,7 +52,10 @@ def getTrace(picoObject, number):
     trace[:,0] = time # ms
     trace[:,1] = intensity / deltat # kHz
     
-    return trace
+    # If the trace is too big. Wee need to bin it.
+    newtrace = util.downsample_trace(trace)
+    
+    return newtrace
     
 
 
