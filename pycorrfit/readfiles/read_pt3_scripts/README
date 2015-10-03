@@ -1,0 +1,14 @@
+The following files were copied from the repository 
+https://github.com/dwaithe/FCS_point_correlator
+
+- correlation_methods.py
+- correlation_objects.py
+- fitting_methods.py
+- import_methods.py
+
+The following changes were performed:
+- fib4.pyx
+  A doc string was inserted.
+- correlation_objects.py
+  Line 7 was commented out:
+  #from lmfit import minimize, Parameters,report_fit,report_errors, fit_report

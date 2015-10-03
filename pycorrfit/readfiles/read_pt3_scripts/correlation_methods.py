@@ -1,6 +1,7 @@
 import numpy as np
-from . import fib4
-
+import fib4
+import time
+import thread
 
 """FCS Bulk Correlation Software
 
@@ -86,8 +87,12 @@ def tttr2xfcs (y,num,NcascStart,NcascEnd, Nsub):
                 
                 #New method, cython
                 i1,i2 = fib4.dividAndConquer(y, y+lag,y.shape[0])
+
+                #If the weights (num) are one as in the first Ncasc round, then the correlation is equal to np.sum(i1)
                 i1 = i1.astype(np.bool);
                 i2 = i2.astype(np.bool);
+
+                #Now we want to weight each photon corectly.
                 #Faster dot product method, faster than converting to matrix.
                 auto[(k+(j)*Nsub),:,:] = np.dot((num[i1,:]).T,num[i2,:])/delta    
             
@@ -100,6 +105,11 @@ def tttr2xfcs (y,num,NcascStart,NcascEnd, Nsub):
     for j in range(0, auto.shape[0]):
         auto[j,:,:] = auto[j,:,:]*dt/(dt-autotime[j])
     autotime = autotime/1000000
+
+
+    #Removes the trailing zeros.
+    autotime = autotime[autotime != 0]
+    auto = auto[autotime != 0,:,:]
     return auto, autotime
 
 
