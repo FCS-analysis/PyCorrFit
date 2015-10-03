@@ -41,6 +41,7 @@ import wx
 import yaml
 
 import readfiles
+from readfiles import read_pt3_scripts
 
 
 def GetLocationOfFile(filename):
@@ -155,7 +156,7 @@ def SoftwareUsed():
            "\n - wxPython "+wx.__version__
     # Other software
     text += "\n\nOther software:"+\
-            "\n - FCS_point_correlator (9311a5c15e)" +\
+            "\n - FCS_point_correlator ({})".format(read_pt3_scripts.version) +\
             "\n    PicoQuant file format for Python by Dominic Waithe"
     if hasattr(sys, 'frozen'):
         pyinst = "\n\nThis executable has been created using PyInstaller."
