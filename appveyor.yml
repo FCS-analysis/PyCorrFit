@@ -64,7 +64,7 @@ install:
   # Install package-specific libraries
   # CONDA installs
   # Pinned versions are defined in freeze_appveyor\pinned
-  - xcopy freeze_appveyor\pinned c:\python27-conda32\conda-meta\ /Y
+  - xcopy freeze_appveyor\pinned %PYTHON%\conda-meta\ /Y
   - "conda install --yes numpy"
   - "conda install --yes pip"
   - "conda install --yes scipy"
