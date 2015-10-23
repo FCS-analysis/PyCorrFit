@@ -1,3 +1,11 @@
+0.9.2
+- Bugfixes:
+  - "Slider Simulation"/"Parm Range" broken (#133)
+  - Computation of average intensity did not work
+    correctly for unequally spaced traces
+- Update .pt3 reader to version 8399ff7401
+- Import traces of .pt3 files (#118)
+  Warning: Absolute values for intensity might be wrong
 0.9.1
 - Tool 'Overlay curves': improve UI (#117)
 - Tool 'Statistics view': improve UI (#113)
