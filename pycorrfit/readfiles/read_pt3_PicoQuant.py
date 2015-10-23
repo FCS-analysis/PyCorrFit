@@ -8,6 +8,7 @@ import numpy as np
 import os
 from .read_pt3_scripts.correlation_objects import picoObject
 
+from . import util
 
 class ParameterClass():
     """Stores parameters for correlation """
@@ -24,6 +25,39 @@ class ParameterClass():
         self.winInt = 10
         self.photonCountBin = 25
         
+
+def getTrace(picoObject, number):
+    """
+    Extracts trace `number` from a `picoObject`.
+    
+    Parameters
+    ----------
+    picoObject: instance of picoObject
+        The data retreived from a pt3 file
+    number:
+        The id of the trace, can be 1 or 2.
+    """
+    
+    attrint = "timeSeries{}".format(number)
+    attrtime = "timeSeriesScale{}".format(number)
+
+    # binned photon counts
+    intensity = np.array(getattr(picoObject, attrint))
+    # Time in ms for each bin
+    time = np.array(getattr(picoObject, attrtime))
+    # time delta
+    deltat = np.abs(time[2]-time[1])
+    
+    trace = np.zeros((intensity.shape[0],2))
+    trace[:,0] = time # ms
+    trace[:,1] = intensity / deltat # kHz
+    
+    # If the trace is too big. Wee need to bin it.
+    newtrace = util.downsample_trace(trace)
+    
+    return newtrace
+    
+
 
 def openPT3(dirname, filename):
     """ Retreive correlation curves from PicoQuant data files 
@@ -43,7 +77,7 @@ def openPT3(dirname, filename):
 
     corrlist = list()
     typelist = list()
-    
+    tracelist = list()
     # Some data points are zero for some reason
     id1 = np.where(autotime!=0)
 
@@ -55,6 +89,7 @@ def openPT3(dirname, filename):
         # autotime,auto[:,0,0]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrac0[id1].reshape(-1,1)) ))
+        tracelist.append([getTrace(po, 1)])
     
     # AC1 - autocorrelation CH1
     corrac1 = auto[:,1,1]
@@ -63,6 +98,7 @@ def openPT3(dirname, filename):
         # autotime,auto[:,1,1]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrac1[id1].reshape(-1,1)) ))
+        tracelist.append([getTrace(po, 2)])
     
     # CC01 - Cross-Correlation CH0-CH1
     corrcc01 = auto[:,0,1]
@@ -71,6 +107,7 @@ def openPT3(dirname, filename):
         # autotime,auto[:,0,1]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrcc01[id1].reshape(-1,1)) ))
+        tracelist.append([getTrace(po, 1), getTrace(po, 2)])
     
     # CC10 - Cross-Correlation CH1-CH0
     corrcc10 = auto[:,1,0]
@@ -79,10 +116,9 @@ def openPT3(dirname, filename):
         # autotime,auto[:,1,0]
         corrlist.append(np.hstack( (autotime[id1].reshape(-1,1),
                                     corrcc10[id1].reshape(-1,1)) ))
-
+        tracelist.append([getTrace(po, 1), getTrace(po, 2)])
 
     filelist = [filename] * len(typelist)
-    tracelist = [None] * len(typelist)
 
     dictionary = dict()
     dictionary["Correlation"] = corrlist

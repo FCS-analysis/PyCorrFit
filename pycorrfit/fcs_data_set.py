@@ -7,6 +7,7 @@ from __future__ import print_function, division
 
 import hashlib
 import numpy as np
+import scipy.integrate as spintg
 import scipy.interpolate as spintp
 import scipy.optimize as spopt
 import warnings
@@ -61,7 +62,9 @@ class Trace(object):
     @property
     def countrate(self):
         if self._countrate is None:
-            self._countrate = np.average(self._trace[:,1])
+            #self._countrate = np.average(self._trace[:,1])
+            # Take into account traces that have arbitrary sampling
+            self._countrate = spintg.simps(self._trace[:,1], self._trace[:,0]) / self.duration
         return self._countrate
     
     @countrate.setter

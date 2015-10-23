@@ -7,6 +7,7 @@ import csv
 import numpy as np
 import warnings
 
+from . import util
 
 def openFCS(dirname, filename):
     """ 
@@ -128,37 +129,8 @@ def openFCS_Multiple(dirname, filename):
                         trace.append( (np.float(row[3])*1000,
                                        np.float(row[4])/1000) )
                     trace = np.array(trace)
-                    # The trace is too big. Wee need to bin it.
-                    if len(trace) >= 500:
-                        # We want about 500 bins
-                        # We need to sum over intervals of length *teiler*
-                        teiler = int(len(trace)/500)
-                        newlength = len(trace)/teiler
-                        newsignal = np.zeros(newlength)
-                        # Simultaneously sum over all intervals
-                        for j in np.arange(teiler):
-                            newsignal = \
-                                 newsignal+trace[j:newlength*teiler:teiler][:,1]
-                        newsignal = 1.* newsignal / teiler
-                        newtimes = trace[teiler-1:newlength*teiler:teiler][:,0]
-                        if len(trace)%teiler != 0:
-                            # We have a rest signal
-                            # We average it and add it to the trace
-                            rest = trace[newlength*teiler:][:,1]
-                            lrest = len(rest)
-                            rest = np.array([sum(rest)/lrest])
-                            newsignal = np.concatenate((newsignal, rest),
-                                                       axis=0)
-                            timerest = np.array([trace[-1][0]])
-                            newtimes = np.concatenate((newtimes, timerest),
-                                                      axis=0)
-                        newtrace=np.zeros((len(newtimes),2))
-                        newtrace[:,0] = newtimes
-                        newtrace[:,1] = newsignal
-                    else:
-                        # Declare newtrace -
-                        # otherwise we have a problem down three lines ;)
-                        newtrace = trace
+                    # If the trace is too big. Wee need to bin it.
+                    newtrace = util.downsample_trace(trace)
                     # Finally add the trace to the list
                     traces.append(newtrace)
                     if FoundType[:2] != "AC":
@@ -370,37 +342,8 @@ def openFCS_Single(dirname, filename):
                         # So we need to put some factors here
                         trace.append( (np.float(row[0])*1000, np.float(row[1])) )
                     trace = np.array(trace)
-                    # The trace is too big. Wee need to bin it.
-                    if len(trace) >= 500:
-                        # We want about 500 bins
-                        # We need to sum over intervals of length *teiler*
-                        teiler = int(len(trace)/500)
-                        newlength = len(trace)/teiler
-                        newsignal = np.zeros(newlength)
-                        # Simultaneously sum over all intervals
-                        for j in np.arange(teiler):
-                            newsignal = \
-                                 newsignal+trace[j:newlength*teiler:teiler][:,1]
-                        newsignal = 1.* newsignal / teiler
-                        newtimes = trace[teiler-1:newlength*teiler:teiler][:,0]
-                        if len(trace)%teiler != 0:
-                            # We have a rest signal
-                            # We average it and add it to the trace
-                            rest = trace[newlength*teiler:][:,1]
-                            lrest = len(rest)
-                            rest = np.array([sum(rest)/lrest])
-                            newsignal = np.concatenate((newsignal, rest),
-                                                       axis=0)
-                            timerest = np.array([trace[-1][0]])
-                            newtimes = np.concatenate((newtimes, timerest),
-                                                      axis=0)
-                        newtrace=np.zeros((len(newtimes),2))
-                        newtrace[:,0] = newtimes
-                        newtrace[:,1] = newsignal
-                    else:
-                        # Declare newtrace -
-                        # otherwise we have a problem down three lines ;)
-                        newtrace = trace
+                    # If the trace is too big. Wee need to bin it.
+                    newtrace = util.downsample_trace(trace)
                 tracecurve = False
         if fcscurve == True:
             if Alldata[i].partition("=")[0].strip() == "##NPOINTS":

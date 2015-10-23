@@ -8,7 +8,9 @@ Select the range in which the parameter should reside for fitting.
 
 
 import wx
+from wx.lib.agw import floatspin
 import numpy as np
+
 
 from .. import edclasses  # edited floatspin
 from .. import models as mdls
@@ -55,8 +57,8 @@ class RangeSelector(wx.Frame):
         # = wx.BoxSizer(wx.VERTICAL)
         self.WXboxsizer = wx.FlexGridSizer(rows=len(labels), cols=4, vgap=5, hgap=5)
         for i in range(len(labels)):
-            left = edclasses.FloatSpin(self.panel, digits=7, increment=.1)
-            right = edclasses.FloatSpin(self.panel, digits=7, increment=.1)
+            left = floatspin.FloatSpin(self.panel, digits=7, increment=.1)
+            right = floatspin.FloatSpin(self.panel, digits=7, increment=.1)
             left.SetValue(self.parameter_range[i][0])
             right.SetValue(self.parameter_range[i][1])
             left.Bind(wx.EVT_SPINCTRL, self.OnSetParmRange)

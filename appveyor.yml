@@ -10,6 +10,13 @@
 #  only:
 #  - master
 
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
+
+
 environment:
 
   global:
@@ -51,18 +58,24 @@ install:
   # the parent CMD process).
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
-
   # Check that we have the expected version and architecture for Python
   - "python --version"
-  
+
+  # Install package-specific libraries
+  # CONDA installs
+  # Pinned versions are defined in freeze_appveyor\pinned
+  - xcopy freeze_appveyor\pinned %PYTHON%\conda-meta\ /Y
+  - "conda install --yes numpy"
+  - "conda install --yes pip"
+  - "conda install --yes scipy"
+  - "conda install --yes wxpython"
+  # PIP installs
   # Install the build dependencies of the project. 
   - "pip install cython"
   - "pip install wheel"
-  
   # Install package-specific libraries  
   - "pip install matplotlib"
   - "pip install sympy"
-  
   # Install pyinstaller
   - 'ECHO Downloading %PYWIN_DL%'
   - ps: (new-object net.webclient).DownloadFile("$env:PYWIN_DL", 'C:/pywin_inst.exe')
