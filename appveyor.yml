@@ -100,11 +100,11 @@ after_test:
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "%WITH_COMPILER% pyinstaller -y freeze_pyinstaller\\PyCorrFit_win7.spec"
+  - "%WITH_COMPILER% pyinstaller -y --log-level=WARN freeze_pyinstaller\\PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
-  - iscc win7_innosetup.iss
+  - iscc /VERYSILENT win7_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
