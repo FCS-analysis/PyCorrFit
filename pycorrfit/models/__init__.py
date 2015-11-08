@@ -31,6 +31,7 @@ import sys
 from . import MODEL_classic_gaussian_2D
 from . import MODEL_classic_gaussian_3D
 from . import MODEL_classic_gaussian_3D2D
+from . import MODEL_classic_gaussian_TT3D3D
 from . import MODEL_TIRF_gaussian_1C
 from . import MODEL_TIRF_gaussian_3D2D
 from . import MODEL_TIRF_gaussian_3D3D
@@ -435,7 +436,7 @@ modeltypes = dict()
 #modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6033, 6034]
 #modeltypes[u"TIR (□xσ/Exp.)"] = [6000, 6010, 6022, 6020, 6023, 6021]
 
-modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032]
+modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032, 6043]
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 modeltypes[u"User"] = list()

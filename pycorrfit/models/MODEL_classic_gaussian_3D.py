@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This file contains TIR one component models + triplet
+This file contains 3D models for confocal FCS.
 """
 from __future__ import division
 

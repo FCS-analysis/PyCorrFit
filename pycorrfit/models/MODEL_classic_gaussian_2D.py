@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This file contains some simple 2D models for confocal microscopy
+This file contains simple 2D models for confocal FCS.
 """
 from __future__ import division
 
