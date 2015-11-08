@@ -173,6 +173,53 @@ def test_6032():
     assert  model(parms1b, tau=TAU) - model3(parms3, tau=TAU) < 1e-14
 
 
+def test_6043():
+    model = mdls.modeldict[6043]
+    parms = [ 
+                1.452,       # n
+                4.48,        # taud1
+                8438,        # taud2
+                0.425,       # F
+                5.43,        # SP
+                0.876,       # alpha
+                0.0012,      # tautrip1
+                0.0101,      # T1
+                0.0021,      # tautrip2
+                0.0102,      # T2
+                0.00004      # offset
+                ] 
+    assert model(parms, tau=TAU) - 0.70599013426715551 < 1e-14
+
+    #->T+3D+3D
+    model2 = mdls.modeldict[6030]
+    parms2 = [ 
+                2.153,      # n
+                5.54,       # taud1
+                1532,       # taud2
+                0.4321,     # F
+                4.4387,     # SP
+                0.9234,     # alpha
+                0.002648,   # tautrip
+                0.1151,     # T
+                0.008       # offset
+                ]
+    parms1 = [
+                2.153,      # n
+                5.54,       # taud1
+                1532,       # taud2
+                0.4321,     # F
+                4.4387,     # SP
+                0.9234,     # alpha
+                0.002648,   # tautrip1
+                0.1151,     # T1
+                0.0021,     # tautrip2
+                0.0,        # T2
+                0.008       # offset
+                ] 
+
+    assert  model(parms1, tau=TAU) - model2(parms2, tau=TAU) < 1e-14
+    
+
 if __name__ == "__main__":
     # Run all tests
     loc = locals()
