@@ -218,7 +218,7 @@ def test_6043():
                 ] 
 
     assert  model(parms1, tau=TAU) - model2(parms2, tau=TAU) < 1e-14
-    
+
 
 if __name__ == "__main__":
     # Run all tests
