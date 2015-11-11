@@ -1173,6 +1173,8 @@ class Fit(object):
         method = Algorithms[self.fit_algorithm][0]
 
         # Begin fitting
+        # TODO:
+        # - increase number of iterations
         result = lmfit.minimize(fcn=self.fit_function,
                                 params=params,
                                 method=method,

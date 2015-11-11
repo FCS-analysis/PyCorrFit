@@ -1,10 +1,10 @@
 0.9.3
-- Fitting:
-  - Switched to lmfit package for fitting.
-    This introduces a new dependency for building PyCorrFit.
+- Fitting: migrate to lmfit
+  - This introduces a new dependency for building PyCorrFit.
     (e.g. in Debian, the package "python-lmfit" is required)
-  - Removed "Polak-Ribiere" fitting algorithm.
+  - Removed "Polak-Ribiere" fitting algorithm
   - Added "Sequential Linear Squares Programming" algorithm
+  - Imrpove behavior at parameter boundaries
 - New model: confocal T+T+3D+3D
 - Bugfixes:
   - Sessions saved with 64bit Windows were not opened (#136)

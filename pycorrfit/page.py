@@ -53,7 +53,7 @@ def nice_string(string):
     - 1.000000 -> 1
     - 1.010000 -> 1.010
     """
-    if len(string.split(".")[1].replace("0", "")) == 0:
+    if len(string.split(".")) > 0 and len(string.split(".")[1].replace("0", "")) == 0:
         return "{:d}".format(int(float(string)))
     else:
         olen = len(string)
