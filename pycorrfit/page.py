@@ -38,7 +38,10 @@ def float2string_nsf(fval, n=7):
         q=abs(fval)
         k=int(np.ceil(np.log10(q/n)))
         npoint = n-k
-    string="{:.{}f}".format(fval, npoint)
+    try:
+        string="{:.{}f}".format(fval, npoint)
+    except:
+        string="{}".format(fval)
     return string
 
 def nice_string(string):

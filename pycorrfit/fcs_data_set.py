@@ -6,6 +6,7 @@ Classes for FCS data evaluation.
 from __future__ import print_function, division
 
 import hashlib
+import lmfit
 import numpy as np
 import scipy.integrate as spintg
 import scipy.interpolate as spintp
@@ -687,6 +688,7 @@ class Fit(object):
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
                                                    uselatex=uselatex)
+                self.fit_parm_names = corr.fit_model.parameters[0]
                 self.func = corr.fit_model.function
                 self.check_parms = corr.check_parms
                 # Directly perform the fit and set the "fit" attribute
@@ -852,7 +854,7 @@ class Fit(object):
         # Calculate degrees of freedom
         dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
-        chi2 = self.fit_function_scalar(self.fit_parm[self.fit_bool], self.x)
+        
         if self.chi_squared_type == "reduced expected sum of squares":
             fitted = self.func(self.fit_parm, self.x)
             chi2 = np.sum((self.y-fitted)**2/np.abs(fitted)) / dof
@@ -864,6 +866,10 @@ class Fit(object):
             fitted = self.func(self.fit_parm, self.x)
             variance = self.fit_weights**2
             chi2 = np.sum((self.y-fitted)**2/variance) / dof
+        else:
+            chi2 = self.fit_function_scalar(self.fit_parm, self.x, self.y, self.fit_weights)
+        
+            
         return chi2
 
 
@@ -1088,78 +1094,87 @@ class Fit(object):
         return dataweights
         
 
-    def fit_function(self, parms, x):
-        """ Create the function to be minimized. The old function
-            `function` has more parameters than we need for the fitting.
-            So we use this function to set only the necessary 
-            parameters. Returns what `function` would have done.
+    def fit_function(self, params, x, y, weights=1):
+        """ 
+        objective function that returns the residual (difference between
+        model and data) to be minimized in a least squares sense.
         """
-        # We reorder the needed variables to only use these that are
-        # not fixed for minimization
-        index = 0
-        for i in np.arange(len(self.fit_parm)):
-            if self.fit_bool[i]:
-                self.fit_parm[i] = parms[index]
-                index += 1
+        if isinstance(params, lmfit.parameter.Parameters):
+            parms = [p[1].value for p in params.items()]
+        else:
+            parms = params
         # Only allow physically correct parameters
-        self.fit_parm = self.check_parms(self.fit_parm)
-        tominimize = (self.func(self.fit_parm, x) - self.y)
+        # TODO:
+        # - The next line should be covered by lmfit in the future
+        self.fit_parm = self.check_parms(parms)
+        tominimize = (self.func(parms, x) - y)
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
         with np.errstate(divide='ignore'):
-            tominimize = np.where(self.fit_weights!=0, 
-                                  tominimize/self.fit_weights, 0)
+            tominimize = np.where(weights!=0, 
+                                  tominimize/weights, 0)
         ## There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
-    def fit_function_scalar(self, parms, x):
+    def fit_function_scalar(self, parms, x, y, weights=1):
         """
             Wrapper of `fit_function` for scalar minimization methods.
             Returns the sum of squares of the input data.
             (Methods that are not "Lev-Mar")
         """
-        e = self.fit_function(parms, x)
+        e = self.fit_function(parms, x, y, weights)
         return np.sum(e*e)
 
     def minimize(self):
         """ This will run the minimization process
+        
+        The following parameters are used:
+        self.x : 1d ndarray length N
+        self.y : 1d ndarray length N
+        self.fit_weights : 1d ndarray length N
+        
+        
+        self.fit_bool : 1d ndarray length P, bool
+        self.fit_parm : 1d ndarray length P, float
+        self.fit_parm_names : 1d ndarray length P, str
+        
         """
         assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
+        
+        params = lmfit.Parameters()
+        for pp in range(len(self.fit_parm)):
+            params.add(lmfit.Parameter(name="parm{:04d}".format(pp),#self.fit_parm_names[pp],
+                                       value=self.fit_parm[pp],
+                                       vary=self.fit_bool[pp],
+                                        )
+                                       )
+
         # Get algorithm
-        algorithm = Algorithms[self.fit_algorithm][0]
+        method = Algorithms[self.fit_algorithm][0]
 
         # Begin fitting
-        
-        if self.fit_algorithm == "Lev-Mar":
-            res = algorithm(self.fit_function, self.fit_parm[self.fit_bool],
-                            args=(self.x,), full_output=1)
-        else:
-            disp = self.verbose > 0 # print convergence message
-            res = algorithm(self.fit_function_scalar, self.fit_parm[self.fit_bool],
-                            args=(self.x,), full_output=1, disp=disp)
-
+        result = lmfit.minimize(fcn=self.fit_function,
+                                params=params,
+                                method=method,
+                                kws={"x":self.x,
+                                        "y":self.y,
+                                        "weights":self.fit_weights}
+                                )
+       
         # The optimal parameters
-        parmoptim = res[0]
+        parmoptim = [ p.value for p in result.params.values() ]
         # Now write the optimal parameters to our values:
-        index = 0
-        for i in range(len(self.fit_parm)):
-            if self.fit_bool[i]:
-                self.fit_parm[i] = parmoptim[index]
-                index = index + 1
+        self.fit_parm = np.array(parmoptim)
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
-        # Write optimal parameters back to this class.
-        # Must be called after `self.fitparm = ...`
-        chi = self.chi_squared
         # Compute error estimates for fit (Only "Lev-Mar")
-        if self.fit_algorithm == "Lev-Mar":
+        if self.fit_algorithm == "Lev-Mar" and result.success:
             # This is the standard way to minimize the data. Therefore,
             # we are a little bit more verbose.
-            if res[4] not in [1,2,3,4]:
-                warnings.warn("Optimal parameters not found: " + res[3])
+            self.covar = result.covar
             try:
-                self.covar = res[1] * chi # The covariance matrix
+                self.parmoptim_error = np.diag(self.covar)
             except:
                 warnings.warn("PyCorrFit Warning: Error estimate not "+\
                               "possible, because we could not "+\
@@ -1167,10 +1182,6 @@ class Fit(object):
                               "try reducing the number of fitting "+\
                               "parameters.")
                 self.parmoptim_error = None
-            else:
-                # Error estimation of fitted parameters
-                if self.covar is not None:
-                    self.parmoptim_error = np.diag(self.covar)
         else:
             self.parmoptim_error = None
 
@@ -1199,21 +1210,21 @@ def GetAlgorithmStringList():
 Algorithms = dict()
 
 # the original one is the least squares fit "leastsq"
-Algorithms["Lev-Mar"] = [spopt.leastsq, 
-           "Levenberg-Marquardt"]
+Algorithms["Lev-Mar"] = ["leastsq", 
+                         "Levenberg-Marquardt"]
 
 # simplex 
-Algorithms["Nelder-Mead"] = [spopt.fmin,
-           "Nelder-Mead (downhill simplex)"]
+Algorithms["Nelder-Mead"] = ["nelder",
+                             "Nelder-Mead (downhill simplex)"]
 
 # quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
-Algorithms["BFGS"] = [spopt.fmin_bfgs,
-           "BFGS (quasi-Newton)"]
+Algorithms["BFGS"] = ["lbfgsb",
+                      "BFGS (quasi-Newton)"]
 
 # modified Powell-method
-Algorithms["Powell"] = [spopt.fmin_powell,
-           "modified Powell (conjugate direction)"]
+Algorithms["Powell"] = ["powell",
+                        "modified Powell (conjugate direction)"]
 
 # nonliner conjugate gradient method by Polak and Ribiere
-Algorithms["Polak-Ribiere"] = [spopt.fmin_cg,
-           "Polak-Ribiere (nonlinear conjugate gradient)"]
+Algorithms["SLSQP"] = ["slsqp",
+                        "Sequential Linear Squares Programming"]
