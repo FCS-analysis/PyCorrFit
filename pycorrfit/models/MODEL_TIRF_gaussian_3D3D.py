@@ -127,9 +127,9 @@ def get_boundaries(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
     # F
-    boundaries[3] = [0, 1]
+    boundaries[3] = [0, .9999999999999]
     # T
-    boundaries[8] = [0, 1]    
+    boundaries[8] = [0, .9999999999999]
     # offset
     boundaries[-1] = [None, None]
     return boundaries

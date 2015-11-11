@@ -87,7 +87,7 @@ def get_boundaries_xy_T_gauss(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
     # F
-    boundaries[3] = [0,1]
+    boundaries[3] = [0,.9999999999999]
     boundaries[-1] = [None, None]
     return boundaries
 
@@ -147,9 +147,9 @@ def get_boundaries_6031(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
     # F
-    boundaries[3] = [0,1]
+    boundaries[3] = [0,.9999999999999]
     # T
-    boundaries[6] = [0,1]
+    boundaries[6] = [0,.9999999999999]
     boundaries[-1] = [None, None]
     return boundaries
 

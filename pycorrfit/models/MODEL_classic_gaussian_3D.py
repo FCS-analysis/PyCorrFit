@@ -92,7 +92,7 @@ def get_boundaries_6011(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
     # T
-    boundaries[1] = [0,1]
+    boundaries[1] = [0,.9999999999999]
     return boundaries
 
 
@@ -155,9 +155,9 @@ def get_boundaries_3D3DT(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
     # F
-    boundaries[3] = [0,1]
+    boundaries[3] = [0,.9999999999999]
     # T
-    boundaries[7] = [0,1]
+    boundaries[7] = [0,.9999999999999]
     return boundaries
 
 
