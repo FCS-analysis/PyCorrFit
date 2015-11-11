@@ -73,6 +73,7 @@ install:
   # Install package-specific libraries  
   - "pip install matplotlib"
   - "pip install sympy"
+  - "pip install lmfit"
   # Install pyinstaller
   - 'ECHO Downloading %PYWIN_DL%'
   - ps: (new-object net.webclient).DownloadFile("$env:PYWIN_DL", 'C:/pywin_inst.exe')

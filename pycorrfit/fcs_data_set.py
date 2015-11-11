@@ -961,22 +961,20 @@ class Fit(object):
                                      "{} knots.".format(knotnumber))
                 return
             if verbose > 0:
+                ## If plotting module is available:
+                #name = "spline fit: "+str(knotnumber)+" knots"
+                #plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
+                #                         dirname=".",
+                #                         uselatex=uselatex)
+                # use matplotlib.pylab
                 try:
-                    # If plotting module is available:
-                    name = "spline fit: "+str(knotnumber)+" knots"
-                    plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
-                                             dirname=".",
-                                             uselatex=uselatex)
-                except:
-                    # use matplotlib.pylab
-                    try:
-                        from matplotlib import pylab as plt
-                        plt.xscale("log")
-                        plt.plot(x, ys, x, y)
-                        plt.show()
-                    except ImportError:
-                        # Tell the user to install matplotlib
-                        print("Couldn't import pylab! - not Plotting")
+                    from matplotlib import pylab as plt
+                    plt.xscale("log")
+                    plt.plot(x, ys, x, y)
+                    plt.show()
+                except ImportError:
+                    # Tell the user to install matplotlib
+                    print("Couldn't import pylab! - not Plotting")
 
             ## Calculation of variance
             # In some cases, the actual cropping interval from ival[0]
