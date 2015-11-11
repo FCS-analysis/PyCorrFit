@@ -479,7 +479,7 @@ class Correlation(object):
                 c[0] = b[0]
                 c[1] = b[1]
             new.append(c)         
-        return new
+        return np.array(new)
 
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):

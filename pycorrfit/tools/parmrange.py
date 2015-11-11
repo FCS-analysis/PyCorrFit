@@ -46,10 +46,23 @@ class RangeSelector(wx.Frame):
         """
         corr = self.Page.corr
         self.parameter_range = np.zeros_like(corr.fit_parameters_range)
+        leftbound = []
+        for item in corr.fit_parameters_range[:,0]:
+            if item is None:
+                leftbound.append(1e15)
+            else:
+                leftbound.append(item)
         labels, parmleft = mdls.GetHumanReadableParms(corr.fit_model.id,  # @UnusedVariable
-                                                 corr.fit_parameters_range[:,0])
+                                                      leftbound)
+        rightbound = []
+        for item in corr.fit_parameters_range[:,1]:
+            if item is None:
+                rightbound.append(1e15)
+            else:
+                rightbound.append(item)
+        
         labels, parmright = mdls.GetHumanReadableParms(corr.fit_model.id,
-                                                 corr.fit_parameters_range[:,1])
+                                                       rightbound)
         self.parameter_range[:,0] = np.array(parmleft)
         self.parameter_range[:,1] = np.array(parmright)
         # create line
