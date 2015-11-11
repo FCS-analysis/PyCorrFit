@@ -5,6 +5,7 @@ Classes for FCS data evaluation.
 """
 from __future__ import print_function, division
 
+import copy
 import hashlib
 import lmfit
 import numpy as np
@@ -236,7 +237,7 @@ class Correlation(object):
         Set the backgrounds. The value can either be a list of traces or
         instances of traces or a single trace in an array.
         """
-        backgrounds = list()
+        backgrounds = []
         if not isinstance(value, list):
             value = [value]
         assert len(value) in [0,1,2], "Backgrounds must be list with up to two elements."
@@ -298,13 +299,16 @@ class Correlation(object):
             boundaries self.fit_parameters_range for each parameter.
         """
         p = 1.*np.array(parms)
-        p = self.fit_model.func_verification(p)
         r = self.fit_parameters_range
-        # TODO:
-        # - add potentials such that parameters don't stick to boundaries
         for i in range(len(p)):
             if r[i][0] == r[i][1]:
                 pass
+            elif r[i][0] is None:
+                if p[i] > r[i][1]:
+                    p[i] = r[i][1]
+            elif r[i][1] is None:
+                if p[i] < r[i][0]:
+                    p[i] = r[i][1]
             elif p[i] < r[i][0]:
                 p[i] = r[i][0]
             elif p[i] > r[i][1]:
@@ -353,8 +357,7 @@ class Correlation(object):
             # perform parameter normalization
             corr[:,1] *= self.normalize_factor
             return corr
-    
-    
+
     @property
     def is_ac(self):
         """True if instance contains autocorrelation"""
@@ -463,7 +466,20 @@ class Correlation(object):
     @property
     def fit_parameters_range(self):
         """valid fitting ranges for fit parameters"""
-        return self._fit_parameters_range
+        model = self.fit_model.boundaries
+        mine = self._fit_parameters_range
+        new = []
+        for a, b in zip(model, mine):
+            c = [None, None]
+            if a[0] != a[1]:
+                c[0] = a[0]
+                c[1] = a[1]
+            # user overrides model
+            if b[0] != b[1]:
+                c[0] = b[0]
+                c[1] = b[1]
+            new.append(c)         
+        return new
 
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):
@@ -595,7 +611,7 @@ class Correlation(object):
         Set the traces. The value can either be a list of traces or
         instances of traces or a single trace in an array.
         """
-        traces = list()
+        traces = []
         if not isinstance(value, list):
             value = [value]
         assert len(value) in [0,1,2], "Traces must be list with up to two elements."
@@ -682,6 +698,7 @@ class Fit(object):
                 # fit_bool: True for variable
                 self.fit_bool = corr.fit_parameters_variable.copy()
                 self.fit_parm = corr.fit_parameters.copy()
+                self.fit_bound = copy.copy(corr.fit_parameters_range)
                 self.is_weighted_fit = corr.is_weighted_fit
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
@@ -689,6 +706,7 @@ class Fit(object):
                 self.fit_parm_names = corr.fit_model.parameters[0]
                 self.func = corr.fit_model.function
                 self.check_parms = corr.check_parms
+                
                 # Directly perform the fit and set the "fit" attribute
                 self.minimize()
                 # update correlation model parameters
@@ -701,15 +719,16 @@ class Fit(object):
             #   i.e. fitting "n" separately for two models
             # Initiate all arrays
             self.fit_algorithm = self.correlations[0].fit_algorithm
-            xtemp = list()      # x
-            ytemp = list()      # y
-            weights = list()    # weights
+            xtemp = []      # x
+            ytemp = []      # y
+            weights = []    # weights
             ids = [0]           # ids in big fitting array
-            cmodels = list()    # correlation model info
-            initpar = list()    # initial parameters
-            varin = list()      # names of variable fitting parameters
-            variv = list()      # values of variable fitting parameters
-            varmap = list()     # list of indices of fitted parameters
+            cmodels = []    # correlation model info
+            initpar = []    # initial parameters
+            varin = []      # names of variable fitting parameters
+            variv = []      # values of variable fitting parameters
+            varmap = []     # list of indices of fitted parameters
+            varbound = []   # list of fitting boundaries
             self.is_weighted_fit = None
             for corr in self.correlations:
                 xtemp.append(corr.correlation_fit[:,0])
@@ -719,12 +738,13 @@ class Fit(object):
                 cmodels.append(corr.fit_model)
                 initpar.append(corr.fit_parameters)
                 # Create list of variable parameters
-                varthis = list()
+                varthis = []
                 for ipm, par in enumerate(corr.fit_model.parameters[0]):
                     if corr.fit_parameters_variable[ipm]:
                         varthis.append(ipm)
                         varin.append(par)
                         variv.append(corr.fit_parameters[ipm])
+                        varbound.append(corr.fit_parameters_range[ipm])
                 varmap.append(varthis)
 
             # These are the variable fitting parameters
@@ -739,6 +759,8 @@ class Fit(object):
             self.fit_parm = variv
             self.fit_weights = np.concatenate(weights)
             self.fit_parm_names = varin
+            self.fit_bound = varbound
+
             
             
             def parameters_global_to_local(parameters, iicorr, varin=varin,
@@ -775,7 +797,7 @@ class Fit(object):
             # Create function for fitting using ids
             def global_func(parameters, tau,
                             glob2loc=parameters_global_to_local):
-                out = list()
+                out = []
                 # ids start at 0
                 for ii, mod in enumerate(cmodels):
                     # Update parameters
@@ -1101,10 +1123,6 @@ class Fit(object):
             parms = [p[1].value for p in params.items()]
         else:
             parms = params
-        # Only allow physically correct parameters
-        # TODO:
-        # - The next line should be covered by lmfit in the future
-        self.fit_parm = self.check_parms(parms)
         tominimize = (self.func(parms, x) - y)
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
@@ -1140,9 +1158,14 @@ class Fit(object):
         
         params = lmfit.Parameters()
         for pp in range(len(self.fit_parm)):
+            bound = self.fit_bound[pp]
+            if bound[0] == bound[-1]:
+                bound=[None, None]
             params.add(lmfit.Parameter(name="parm{:04d}".format(pp),#self.fit_parm_names[pp],
                                        value=self.fit_parm[pp],
                                        vary=self.fit_bool[pp],
+                                       min=bound[0],
+                                       max=bound[1],
                                         )
                                        )
 
@@ -1188,8 +1211,8 @@ def GetAlgorithmStringList():
         Returns two lists (that are key-sorted) for key and string.
     """
     A = Algorithms
-    out1 = list()
-    out2 = list()
+    out1 = []
+    out2 = []
     a = list(A.keys())
     a.sort()
     for key in a:

@@ -71,29 +71,15 @@ def CF_Gxyz_gauss_3D3DTT(parms, tau):
     G = 1/n*(particle1 + particle2)*triplet1*triplet2/norm + off
     return G
 
-def Check_3D3DTT(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = taud1
-    parms[2] = np.abs(parms[2]) # = taud2
-    F=parms[3]
-    parms[4]=np.abs(parms[4])
-    parms[5]=np.abs(parms[5])
-    T1=parms[7]
-    T2=parms[9]
-    #off=parms[8]
-    
-    
-    # Triplet fraction is between 0 and one. T may not be one!
-    T1 = (0.<=T1<1.)*T1 + .99999999999999*(T1>=1)
-    T2 = (0.<=T2<1.)*T2 + .99999999999999*(T2>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[7] = T1
-    parms[9] = T2
-
-    return parms
+def get_boundaries_3D3DTT(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    # F
+    boundaries[3] = [0,1]
+    # T
+    boundaries[7] = [0,1]
+    boundaries[9] = [0,1]
+    return boundaries
 
 
 m_gauss_3d_3d_t_t_mix_6043 = [6043, "T+T+3D+3D",
@@ -185,6 +171,6 @@ model = dict()
 model["Parameters"] = parms_6043
 model["Definitions"] = m_gauss_3d_3d_t_t_mix_6043
 model["Supplements"] = MoreInfo_6043
-model["Verification"] = Check_3D3DTT
+model["Boundaries"] = get_boundaries_3D3DTT(values_6043)
 
 Modelarray = [model]

@@ -25,7 +25,7 @@ unit of inv. volume : 1000 /µm³
 
 import numpy as np                  # NumPy
 import sys
-
+import warnings
 
 ## Models
 from . import MODEL_classic_gaussian_2D
@@ -54,11 +54,11 @@ class Model(object):
         else:
             self._supplements = lambda x, y: []
 
-        if "Verification" in list(datadict.keys()):
-            self._verification = datadict["Verification"]
+        if "Boundaries" in list(datadict.keys()):
+            self._boundaries = datadict["Boundaries"]
         else:
             # dummy verification function
-            self._verification = lambda parms: parms
+            self._boundaries = [[None,None]]*len(self._parameters[1])
 
     def __call__(self, parameters, tau):
         return self.function(parameters, tau)
@@ -119,7 +119,8 @@ class Model(object):
 
     @property
     def func_verification(self):
-        return self._verification
+        warnings.warn("`func_verification is deprecated: please do not use it!")
+        return lambda x: x
     
     def get_supplementary_parameters(self, values, countrate=None):
         """
@@ -159,6 +160,10 @@ class Model(object):
     def parameters(self):
         return self._parameters
 
+    @property
+    def boundaries(self):
+        return self._boundaries
+
 
 def AppendNewModel(Modelarray):
     """ Append a new model from a modelarray. *Modelarray* has to be a list
@@ -172,7 +177,7 @@ def AppendNewModel(Modelarray):
     global models
     global modeldict
     global supplement
-    global verification
+    global boundaries
 
     for datadict in Modelarray:
         # We can have many models in one model array
@@ -188,7 +193,7 @@ def AppendNewModel(Modelarray):
         supplement[amod.id] = amod.func_supplements
 
         # Check functions - check for correct values
-        verification[amod.id] = amod.func_verification
+        boundaries[amod.id] = amod.boundaries
 
 
 def GetHumanReadableParms(model, parameters):
@@ -420,8 +425,8 @@ models = list()
 modeldict = dict()
 # A dictionary for supplementary data:
 supplement = dict()
-# A dictionary for checking for correct variables
-verification = dict()
+# A dictionary containing model boundaries
+boundaries = dict()
 
 
 # Load all models from the imported "MODEL_*" submodules

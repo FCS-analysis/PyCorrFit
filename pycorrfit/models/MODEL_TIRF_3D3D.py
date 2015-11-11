@@ -140,7 +140,7 @@ parms_6023 = [labels_6023, values_6023, valuestofit_6023,
 model1 = dict()
 model1["Parameters"] = parms_6023
 model1["Definitions"] = m_tir_3d_3d_mix_6023
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = [[0, None]] * len(values_6023)
 
 
 Modelarray = [model1]

@@ -33,11 +33,12 @@ def CF_Gxy_gauss(parms, tau):
     G = dc + 1/n * BB
     return G
 
-def Check_xy_gauss(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1])
 
-    return parms
+def get_boundaries_xy_gauss(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    boundaries[-1] = [None, None]
+    return boundaries
 
 
 # 2D simple gauss
@@ -82,21 +83,13 @@ def CF_Gxy_T_gauss(parms, tau):
     return G
 
 
-
-def Check_xy_T_gauss(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = taudiff
-    tautrip = np.abs(parms[2])
-    T=parms[3]
-
-
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-
-    parms[2] = tautrip
-    parms[3] = T
-    return parms
-
+def get_boundaries_xy_T_gauss(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    # F
+    boundaries[3] = [0,1]
+    boundaries[-1] = [None, None]
+    return boundaries
 
 
 # 2D + 2D + Triplet Gauß
@@ -150,27 +143,15 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
     G = 1/n*(particle1 + particle2)*triplet/norm + off
     return G
 
-def Check_6031(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = taud1
-    parms[2] = np.abs(parms[2]) # = taud2
-    F=parms[3]
-    parms[4] = np.abs(parms[4])
-    tautrip = np.abs(parms[5])
-    T=parms[6]
-    #off=parms[7]
-    
-     
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[5] = tautrip
-    parms[6] = T
-
-    return parms
+def get_boundaries_6031(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    # F
+    boundaries[3] = [0,1]
+    # T
+    boundaries[6] = [0,1]
+    boundaries[-1] = [None, None]
+    return boundaries
 
 
 def MoreInfo_6001(parms, countrate=None):
@@ -288,19 +269,19 @@ model1 = dict()
 model1["Parameters"] = parms_6001
 model1["Definitions"] = m_twodga6001
 model1["Supplements"] = MoreInfo_6001
-model1["Verification"] = Check_xy_gauss
+model1["Boundaries"] = get_boundaries_xy_gauss(values_6001)
 
 model2 = dict()
 model2["Parameters"] = parms_6002
 model2["Definitions"] = m_twodga6002
 model2["Supplements"] = MoreInfo_6001
-model2["Verification"] = Check_xy_T_gauss
+model2["Boundaries"] = get_boundaries_xy_T_gauss(values_6002)
 
 model3 = dict()
 model3["Parameters"] = parms_6031
 model3["Definitions"] = m_gauss_2d_2d_t_mix_6031
 model3["Supplements"] = MoreInfo_6031
-model3["Verification"] = Check_6031
+model3["Boundaries"] = get_boundaries_6031(values_6031)
 
 
 Modelarray = [model1, model2, model3]

@@ -392,11 +392,12 @@ values_factor_human_readable_6021 = [10, # "D_3D [µm²/s]",
 parms_6021 = [labels_6021, values_6021, valuestofit_6021,
               labels_human_readable_6021, values_factor_human_readable_6021]
 
+boundaries = [ [0, None] ] * len(values_6021)
 
 model1 = dict()
 model1["Parameters"] = parms_6021
 model1["Definitions"] = m_tir_3d_2d_ubib6021
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = boundaries
 
 
 Modelarray = [model1]

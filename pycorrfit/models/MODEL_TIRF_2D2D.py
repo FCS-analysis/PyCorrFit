@@ -120,9 +120,12 @@ parms_6022 = [labels_6022, values_6022, valuestofit_6022,
               labels_human_readable_6022, values_factor_human_readable_6022]
 
 
+boundaries = [ [0, None] ] * len(values_6022)
+
+
 model1 = dict()
 model1["Parameters"] = parms_6022
 model1["Definitions"] = m_tir_2d_2d_mix_6022
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = boundaries
 
 Modelarray = [model1]
