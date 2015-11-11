@@ -10,11 +10,9 @@ import lmfit
 import numpy as np
 import scipy.integrate as spintg
 import scipy.interpolate as spintp
-import scipy.optimize as spopt
 import warnings
 
 from . import models as mdls
-from . import plotting
 
 class Trace(object):
     """ unifies trace handling
@@ -1119,9 +1117,8 @@ class Fit(object):
 
     def fit_function_scalar(self, parms, x, y, weights=1):
         """
-            Wrapper of `fit_function` for scalar minimization methods.
-            Returns the sum of squares of the input data.
-            (Methods that are not "Lev-Mar")
+        Wrapper of `fit_function`.
+        Returns the sum of squares of the input data.
         """
         e = self.fit_function(parms, x, y, weights)
         return np.sum(e*e)
@@ -1133,7 +1130,6 @@ class Fit(object):
         self.x : 1d ndarray length N
         self.y : 1d ndarray length N
         self.fit_weights : 1d ndarray length N
-        
         
         self.fit_bool : 1d ndarray length P, bool
         self.fit_parm : 1d ndarray length P, float
