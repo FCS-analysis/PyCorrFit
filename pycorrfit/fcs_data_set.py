@@ -344,6 +344,7 @@ class Correlation(object):
             corr[:,1] *= self.bg_correction_factor
             # perform parameter normalization
             return corr[self.fit_ival[0]:self.fit_ival[1],:]
+        
     
     @property
     def correlation_plot(self):
@@ -509,7 +510,7 @@ class Correlation(object):
     def lag_time(self):
         """logarithmic lag time axis"""
         if self.correlation is not None:
-            return self._correlation[:,0]
+            return self._correlation[:,0].copy()
         elif self._lag_time is not None:
             return self._lag_time
         else:
@@ -549,6 +550,9 @@ class Correlation(object):
         """fitted data values, same shape as self.correlation_fit"""
         toplot = self.modeled_fit
         toplot[:,1] *= self.normalize_factor
+        if toplot[-1,1] == 0.1:
+            import IPython
+            IPython.embed()
         return toplot
 
     @property

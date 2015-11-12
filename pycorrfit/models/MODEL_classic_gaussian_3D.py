@@ -93,6 +93,7 @@ def get_boundaries_6011(parms):
     boundaries = [[0, None]]*len(parms)
     # T
     boundaries[1] = [0,.9999999999999]
+    boundaries[-1] = [None, None]
     return boundaries
 
 
@@ -158,6 +159,7 @@ def get_boundaries_3D3DT(parms):
     boundaries[3] = [0,.9999999999999]
     # T
     boundaries[7] = [0,.9999999999999]
+    boundaries[-1] = [None, None]
     return boundaries
 
 

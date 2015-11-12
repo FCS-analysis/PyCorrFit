@@ -9,6 +9,8 @@
   - Detect parameters that are stuck during fitting
   - Fit each curve five times or less and check
     whether the fit converges.
+- Allow infinity ("inf" and "-inf") parameters for models
+  and boundaries.
 - New model: confocal T+T+3D+3D
 - Bugfixes:
   - Sessions saved with 64bit Windows were not opened (#136)
