@@ -2,9 +2,13 @@
 - Fitting: migrate to lmfit
   - This introduces a new dependency for building PyCorrFit.
     (e.g. in Debian, the package "python-lmfit" is required)
+  - Improves behavior at parameter boundaries
   - Removed "Polak-Ribiere" fitting algorithm
   - Added "Sequential Linear Squares Programming" algorithm
-  - Imrpove behavior at parameter boundaries
+- Heuristic fit:
+  - Detect parameters that are stuck during fitting
+  - Fit each curve five times or less and check
+    whether the fit converges.
 - New model: confocal T+T+3D+3D
 - Bugfixes:
   - Sessions saved with 64bit Windows were not opened (#136)

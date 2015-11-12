@@ -478,6 +478,10 @@ class Correlation(object):
             if b[0] != b[1]:
                 c[0] = b[0]
                 c[1] = b[1]
+            for ii in range(2):
+                if c[ii] is not None and np.isnan(c[ii]):
+                    c[ii] = None
+
             new.append(c)         
         return np.array(new)
 
@@ -1176,10 +1180,11 @@ class Fit(object):
         # Begin fitting
         # Fit a several times and stop earlier if the residuals
         # are small enough (heuristic approach).
+        nfits = 5
         diff = np.inf
-        for _ii in range(5):
+        parmsinit = np.array([ p.value for p in params.values() ])
+        for ii in range(nfits):
             res0 = self.fit_function(params, self.x, self.y)
-            
             result = lmfit.minimize(fcn=self.fit_function,
                                     params=params,
                                     method=method,
@@ -1191,12 +1196,31 @@ class Fit(object):
             params = result.params
             res1 = self.fit_function(params, self.x, self.y)
             diff = np.average(np.abs(res0-res1))
-            if diff < 1e-8:
+
+            if hasattr(result, "ier") and not result.errorbars and ii+1 < nfits:
+                # This case applies to the Levenberg-Marquardt algorithm
+                multby = .5
+                # Try to vary stuck fitting parameters
+                # the result from the previous fit
+                parmsres = np.array([ p.value for p in result.params.values() ])
+                # the parameters that are varied during fitting
+                parmsbool = np.array([ p.vary for p in result.params.values() ])
+                # The parameters that are stuck
+                parmstuck = parmsbool * (parmsinit==parmsres)
+                parmsres[parmstuck] *= multby
+                for jj, p in enumerate(params.values()):
+                    p.value = parmsres[jj]
+                warnings.warn(u"PyCorrFit detected problems in fitting, "+\
+                              u"detected a stuck parameter, multiplied "+\
+                              u"it by {}, and fitted again. ".format(multby)+\
+                              u"The stuck parameters are: {}".format(
+                                np.array(self.fit_parm_names)[parmstuck]))
+            elif diff < 1e-8:
                 # Experience tells us this is good enough.
                 break
-       
+
         # The optimal parameters
-        parmoptim = [ p.value for p in result.params.values() ]
+        parmoptim = [ p.value for p in params.values() ]
         # Now write the optimal parameters to our values:
         self.fit_parm = np.array(parmoptim)
         # Only allow physically correct parameters
@@ -1247,8 +1271,6 @@ Algorithms["Lev-Mar"] = ["leastsq",
                          "Levenberg-Marquardt",
                          {"ftol" : 1.49012e-08,
                           "xtol" : 1.49012e-08,
-                          "gtol" : 0.0,
-                          "maxfev" : 0,
                           }
                         ]
 

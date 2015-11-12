@@ -32,13 +32,13 @@ def float2string_nsf(fval, n=7):
     String with only n s.f. and trailing zeros.
     """
     #sgn=np.sign(fval)
-    if fval == 0:
-        npoint=n
-    else:
-        q=abs(fval)
-        k=int(np.ceil(np.log10(q/n)))
-        npoint = n-k
     try:
+        if fval == 0:
+            npoint=n
+        else:
+            q=abs(fval)
+            k=int(np.ceil(np.log10(q/n)))
+            npoint = n-k
         string="{:.{}f}".format(fval, npoint)
     except:
         string="{}".format(fval)
@@ -53,7 +53,7 @@ def nice_string(string):
     - 1.000000 -> 1
     - 1.010000 -> 1.010
     """
-    if len(string.split(".")) > 0 and len(string.split(".")[1].replace("0", "")) == 0:
+    if string.count(".") and len(string.split(".")[1].replace("0", "")) == 0:
         return "{:d}".format(int(float(string)))
     else:
         olen = len(string)
@@ -61,6 +61,7 @@ def nice_string(string):
         if olen > len(newstring):
             string=newstring+"0"
         return string
+
 
 class PCFFloatValidator(wx.PyValidator):
     def __init__(self, flag=None, pyVar=None):
