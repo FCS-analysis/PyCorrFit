@@ -1171,17 +1171,29 @@ class Fit(object):
 
         # Get algorithm
         method = Algorithms[self.fit_algorithm][0]
+        methodkwargs = Algorithms[self.fit_algorithm][2]
 
         # Begin fitting
-        # TODO:
-        # - increase number of iterations
-        result = lmfit.minimize(fcn=self.fit_function,
-                                params=params,
-                                method=method,
-                                kws={"x":self.x,
-                                        "y":self.y,
-                                        "weights":self.fit_weights}
-                                )
+        # Fit a several times and stop earlier if the residuals
+        # are small enough (heuristic approach).
+        diff = np.inf
+        for _ii in range(5):
+            res0 = self.fit_function(params, self.x, self.y)
+            
+            result = lmfit.minimize(fcn=self.fit_function,
+                                    params=params,
+                                    method=method,
+                                    kws={"x":self.x,
+                                            "y":self.y,
+                                            "weights":self.fit_weights},
+                                    **methodkwargs
+                                    )
+            params = result.params
+            res1 = self.fit_function(params, self.x, self.y)
+            diff = np.average(np.abs(res0-res1))
+            if diff < 1e-8:
+                # Experience tells us this is good enough.
+                break
        
         # The optimal parameters
         parmoptim = [ p.value for p in result.params.values() ]
@@ -1232,20 +1244,34 @@ Algorithms = dict()
 
 # the original one is the least squares fit "leastsq"
 Algorithms["Lev-Mar"] = ["leastsq", 
-                         "Levenberg-Marquardt"]
+                         "Levenberg-Marquardt",
+                         {"ftol" : 1.49012e-08,
+                          "xtol" : 1.49012e-08,
+                          "gtol" : 0.0,
+                          "maxfev" : 0,
+                          }
+                        ]
 
 # simplex 
 Algorithms["Nelder-Mead"] = ["nelder",
-                             "Nelder-Mead (downhill simplex)"]
+                             "Nelder-Mead (downhill simplex)",
+                             {}
+                             ]
 
 # quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
 Algorithms["BFGS"] = ["lbfgsb",
-                      "BFGS (quasi-Newton)"]
+                      "BFGS (quasi-Newton)",
+                      {}
+                      ]
 
 # modified Powell-method
 Algorithms["Powell"] = ["powell",
-                        "modified Powell (conjugate direction)"]
+                        "modified Powell (conjugate direction)",
+                        {}
+                        ]
 
 # nonliner conjugate gradient method by Polak and Ribiere
 Algorithms["SLSQP"] = ["slsqp",
-                        "Sequential Linear Squares Programming"]
+                       "Sequential Linear Squares Programming",
+                       {}
+                       ]
