@@ -1147,7 +1147,7 @@ class Fit(object):
         return np.sum(e*e)
 
     @staticmethod
-    def lmfitparm2array(parms, parmid="parm", attribute="value"):
+    def lmfitparm2array(parms, parmid="sparm", attribute="value"):
         """
         Convert lmfit parameters to a numpy array.
         Parameters are identified by name `parmid` which should
