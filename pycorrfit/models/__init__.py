@@ -23,7 +23,8 @@ unit of inv. volume : 1000 /µm³
 # This file is necessary for this folder to become a module that can be 
 # imported from within Python/PyCorrFit.
 
-import numpy as np                  # NumPy
+import copy
+import numpy as np
 import sys
 import warnings
 
@@ -61,7 +62,17 @@ class Model(object):
             self._boundaries = [[None,None]]*len(self._parameters[1])
         
         if "Constraints" in list(datadict.keys()):
-            self._constraints = datadict["Constraints"]
+            # sort constraints such that the first value is always
+            # larger than the last.
+            newcc = []
+            for cc in datadict["Constraints"]:
+                if cc[0] < cc[2]:
+                    if cc[1] == ">":
+                        cc = [cc[2], "<", cc[0]]
+                    elif cc[1] == "<":
+                        cc = [cc[2], ">", cc[0]]
+                newcc.append(cc)
+            self._constraints = newcc
         else:
             self._constraints = []
 
@@ -84,6 +95,11 @@ class Model(object):
         times `tau`
         """
         return self.function(parameters, tau)
+
+    @property
+    def constraints(self):
+        """ fitting constraints """
+        return copy.copy(self._constraints)
 
     @property
     def components(self):

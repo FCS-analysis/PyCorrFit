@@ -714,7 +714,7 @@ class Fit(object):
                 self.fit_parm_names = corr.fit_model.parameters[0]
                 self.func = corr.fit_model.function
                 self.check_parms = corr.check_parms
-                
+                self.constraints = corr.fit_model.constraints
                 # Directly perform the fit and set the "fit" attribute
                 self.minimize()
                 # update correlation model parameters
@@ -768,7 +768,8 @@ class Fit(object):
             self.fit_weights = np.concatenate(weights)
             self.fit_parm_names = varin
             self.fit_bound = varbound
-
+            self.constraints = []
+            warnings.warn("Constraints are not supported yet for global fitting.")
             
             
             def parameters_global_to_local(parameters, iicorr, varin=varin,
@@ -1146,6 +1147,73 @@ class Fit(object):
         e = self.fit_function(parms, x, y, weights)
         return np.sum(e*e)
 
+    def get_lmfitparm(self):
+        """
+        Generates an lmfit parameter class from the present data set.
+
+        The following parameters are used:
+        self.x : 1d ndarray length N
+        self.y : 1d ndarray length N
+        self.fit_weights : 1d ndarray length N
+        
+        self.fit_bool : 1d ndarray length P, bool
+        self.fit_parm : 1d ndarray length P, float
+        """
+        params = lmfit.Parameters()
+        # create constraint dict for convenience:
+        ccdict = {}
+        for cc in self.constraints:
+            ccdict[cc[0]] = [cc[1], cc[2]]
+            
+            
+        for pp in range(len(self.fit_parm)):
+            ## analyze constraints using lmfit:
+            # This is difficult to implement:
+            # - What if one of the parameters should not vary?
+            #   It is automatically changed if the other parameter changes.
+            #   One would have to make the other parameter the dependent one, i.e.
+            #   Also take into account which parameters are True in self.fit_bool!
+            #   This means, first adding parameters that are not varied.
+            #   Then, subsequently adding the varied ones.
+            #   ccdict should have only varied parameters as keys.
+            # - What about global fitting?
+            # - 
+            #if pp in ccdict:
+            #    # constrained parameters
+            #    ppref = ccdict[pp][1]
+            #    rel = ccdict[pp][0]
+            #    if rel == "<":
+            #        deltaname="delta_{}_{}".format(pp, ppref)
+            #        params.add(lmfit.Parameter(name=deltaname,
+            #                               value=self.fit_parm[ppref]-self.fit_parm[pp],
+            #                               vary=self.fit_bool[pp],
+            #                               min=0,
+            #                               max=np.inf,
+            #                                ))
+            #        ppcomp = "parm{:04d}-{}".format(ppref, deltaname)
+            #        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+            #                                         # this condition deals with negative numbers
+            #                                   expr="{COMP} if {COMP} > 0 else 0".format(COMP=ppcomp)
+            #                                ))
+            #    elif rel == ">":
+            #        # The opposite of the above case
+            #        pass
+            #        
+            #    else:
+            #        raise NotImplementedError("Only '<' and '>' are allowed constraints!")
+            ## normal parameter
+            bound = self.fit_bound[pp]
+            if bound[0] == bound[-1]:
+                bound=[None, None]
+            params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                       value=self.fit_parm[pp],
+                                       vary=self.fit_bool[pp],
+                                       min=bound[0],
+                                       max=bound[1],
+                                        )
+                                       )
+        return params
+
     @staticmethod
     def lmfitparm2array(parms, parmid="parm", attribute="value"):
         """
@@ -1179,37 +1247,18 @@ class Fit(object):
             parr = [getattr(p[1], attribute) for p in items if p[0].startswith(parmid)]
         else:
             parr = parms
-        
+
         return np.array(parr)
 
     def minimize(self):
         """ This will run the minimization process
-        
-        The following parameters are used:
-        self.x : 1d ndarray length N
-        self.y : 1d ndarray length N
-        self.fit_weights : 1d ndarray length N
-        
-        self.fit_bool : 1d ndarray length P, bool
-        self.fit_parm : 1d ndarray length P, float
-        self.fit_parm_names : 1d ndarray length P, str
-        
+      
         """
         assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
         
-        params = lmfit.Parameters()
-        for pp in range(len(self.fit_parm)):
-            bound = self.fit_bound[pp]
-            if bound[0] == bound[-1]:
-                bound=[None, None]
-            params.add(lmfit.Parameter(name="parm{:04d}".format(pp),#self.fit_parm_names[pp],
-                                       value=self.fit_parm[pp],
-                                       vary=self.fit_bool[pp],
-                                       min=bound[0],
-                                       max=bound[1],
-                                        )
-                                       )
-
+        # get all parameters for minimization
+        params = self.get_lmfitparm()
+        
         # Get algorithm
         method = Algorithms[self.fit_algorithm][0]
         methodkwargs = Algorithms[self.fit_algorithm][2]
@@ -1245,8 +1294,9 @@ class Fit(object):
                 # The parameters that are stuck
                 parmstuck = parmsbool * (parmsinit==parmsres)
                 parmsres[parmstuck] *= multby
-                for jj, p in enumerate(params.values()):
-                    p.value = parmsres[jj]
+                # write changes
+                self.fit_parm = parmsres
+                params = self.get_lmfitparm()
                 warnings.warn(u"PyCorrFit detected problems in fitting, "+\
                               u"detected a stuck parameter, multiplied "+\
                               u"it by {}, and fitted again. ".format(multby)+\
@@ -1256,10 +1306,8 @@ class Fit(object):
                 # Experience tells us this is good enough.
                 break
 
-        # The optimal parameters
-        parmoptim = Fit.lmfitparm2array(params)
         # Now write the optimal parameters to our values:
-        self.fit_parm = np.array(parmoptim)
+        self.fit_parm = Fit.lmfitparm2array(params)
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
         # Compute error estimates for fit (Only "Lev-Mar")
@@ -1278,6 +1326,7 @@ class Fit(object):
                 self.parmoptim_error = None
         else:
             self.parmoptim_error = None
+
 
 
 def GetAlgorithmStringList():
