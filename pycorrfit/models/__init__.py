@@ -59,6 +59,11 @@ class Model(object):
         else:
             # dummy verification function
             self._boundaries = [[None,None]]*len(self._parameters[1])
+        
+        if "Constraints" in list(datadict.keys()):
+            self._constraints = datadict["Constraints"]
+        else:
+            self._constraints = []
 
     def __call__(self, parameters, tau):
         return self.function(parameters, tau)

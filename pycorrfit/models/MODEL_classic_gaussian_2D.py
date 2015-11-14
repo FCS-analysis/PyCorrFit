@@ -276,6 +276,7 @@ model2["Parameters"] = parms_6002
 model2["Definitions"] = m_twodga6002
 model2["Supplements"] = MoreInfo_6001
 model2["Boundaries"] = get_boundaries_xy_T_gauss(values_6002)
+model2["Constraints"] = [[2, "<", 1]]   # triplet time < diffusion time
 
 model3 = dict()
 model3["Parameters"] = parms_6031

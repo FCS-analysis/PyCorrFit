@@ -1165,8 +1165,9 @@ class Fit(object):
             "parm", i.e. parameters are named like this:
             "parm0001", "parm0002", etc.
         attribute : str
-            The attribute to return, e.g. "value", "vary"
-        
+            The attribute to return, e.g.
+            - "value" : return the current value of the parameter
+            - "vary" : return if the parameter is varied during fitting
         
         Returns:
         parr : ndarray
@@ -1180,7 +1181,6 @@ class Fit(object):
             parr = parms
         
         return np.array(parr)
-        
 
     def minimize(self):
         """ This will run the minimization process
