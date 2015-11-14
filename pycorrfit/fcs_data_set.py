@@ -1127,10 +1127,7 @@ class Fit(object):
         objective function that returns the residual (difference between
         model and data) to be minimized in a least squares sense.
         """
-        if isinstance(params, lmfit.parameter.Parameters):
-            parms = [p[1].value for p in params.items()]
-        else:
-            parms = params
+        parms = Fit.lmfitparm2array(params)
         tominimize = (self.func(parms, x) - y)
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
@@ -1148,6 +1145,42 @@ class Fit(object):
         """
         e = self.fit_function(parms, x, y, weights)
         return np.sum(e*e)
+
+    @staticmethod
+    def lmfitparm2array(parms, parmid="parm", attribute="value"):
+        """
+        Convert lmfit parameters to a numpy array.
+        Parameters are identified by name `parmid` which should
+        be at the beginning of a parameters.
+        
+        This method is necessary to separate artificial constraint parameters
+        from the actual parameters.
+        
+        Parameters
+        ----------
+        parms : lmfit.parameter.Parameters or ndarray
+            The input parameters.
+        parmid : str
+            The identifier for parameters. By default this is
+            "parm", i.e. parameters are named like this:
+            "parm0001", "parm0002", etc.
+        attribute : str
+            The attribute to return, e.g. "value", "vary"
+        
+        
+        Returns:
+        parr : ndarray
+            If the input is an ndarray, the input will be returned.
+        """
+        if isinstance(parms, lmfit.parameter.Parameters):
+            items = parms.items()
+            items.sort(key=lambda x: x[0])
+            parr = [getattr(p[1], attribute) for p in items if p[0].startswith("parm")]
+        else:
+            parr = parms
+        
+        return np.array(parr)
+        
 
     def minimize(self):
         """ This will run the minimization process
@@ -1186,7 +1219,7 @@ class Fit(object):
         # are small enough (heuristic approach).
         nfits = 5
         diff = np.inf
-        parmsinit = np.array([ p.value for p in params.values() ])
+        parmsinit = Fit.lmfitparm2array(params)
         for ii in range(nfits):
             res0 = self.fit_function(params, self.x, self.y)
             result = lmfit.minimize(fcn=self.fit_function,
@@ -1206,9 +1239,9 @@ class Fit(object):
                 multby = .5
                 # Try to vary stuck fitting parameters
                 # the result from the previous fit
-                parmsres = np.array([ p.value for p in result.params.values() ])
+                parmsres = Fit.lmfitparm2array(params)
                 # the parameters that are varied during fitting
-                parmsbool = np.array([ p.vary for p in result.params.values() ])
+                parmsbool = Fit.lmfitparm2array(params, attribute="vary")
                 # The parameters that are stuck
                 parmstuck = parmsbool * (parmsinit==parmsres)
                 parmsres[parmstuck] *= multby
@@ -1224,7 +1257,7 @@ class Fit(object):
                 break
 
         # The optimal parameters
-        parmoptim = [ p.value for p in params.values() ]
+        parmoptim = Fit.lmfitparm2array(params)
         # Now write the optimal parameters to our values:
         self.fit_parm = np.array(parmoptim)
         # Only allow physically correct parameters
