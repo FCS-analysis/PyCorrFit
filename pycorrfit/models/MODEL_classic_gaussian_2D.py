@@ -36,8 +36,8 @@ def CF_Gxy_gauss(parms, tau):
 
 def get_boundaries_xy_gauss(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
-    boundaries[-1] = [None, None]
+    boundaries = [[0, np.inf]]*len(parms)
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -85,10 +85,10 @@ def CF_Gxy_T_gauss(parms, tau):
 
 def get_boundaries_xy_T_gauss(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
+    boundaries = [[0, np.inf]]*len(parms)
     # F
     boundaries[3] = [0,.9999999999999]
-    boundaries[-1] = [None, None]
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -283,6 +283,6 @@ model3["Parameters"] = parms_6031
 model3["Definitions"] = m_gauss_2d_2d_t_mix_6031
 model3["Supplements"] = MoreInfo_6031
 model3["Boundaries"] = get_boundaries_6031(values_6031)
-
+model3["Constraints"] = [[2, ">", 1], [5, "<", 1]]   # triplet time < diffusion time
 
 Modelarray = [model1, model2, model3]

@@ -1167,14 +1167,13 @@ class Fit(object):
         # First, add all fixed parameters
         for pp in range(len(self.fit_parm)):
             if not self.fit_bool[pp]:
-                bound = self.fit_bound[pp]
-                if bound[0] == bound[-1]:
-                    bound=[-np.inf, np.inf]
+                if self.fit_bound[pp][0] == self.fit_bound[pp][1]:
+                    self.fit_bound[pp]=[-np.inf, np.inf]
                 params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
                                            value=self.fit_parm[pp],
                                            vary=self.fit_bool[pp],
-                                           min=bound[0],
-                                           max=bound[1],
+                                           min=self.fit_bound[pp][0],
+                                           max=self.fit_bound[pp][1],
                                             )
                                            )
         
@@ -1188,7 +1187,7 @@ class Fit(object):
         # index number is dependent on only one parameter with a lower
         # index number, e.g. parm1>parm0, parm3<parm1, etc..
         cstrnew = {}
-        bndnew = []
+        bound = np.array(self.fit_bound).copy()
         for cc in self.constraints:
             if self.fit_bool[cc[0]] and self.fit_bool[cc[2]]:
                 # Both cc[0] and c[2] are varied.
@@ -1203,7 +1202,9 @@ class Fit(object):
                 elif cc[1] == ">":
                     # minimum
                     bnd = [self.fit_parm[cc[2]], np.inf]
-                bndnew.append([cc[0], bnd])
+                # update boundaries if necessary
+                bound[cc[0]] = [max(bound[cc[0]][0], bnd[0]),
+                                min(bound[cc[0]][1], bnd[1])]
             elif self.fit_bool[cc[2]]:
                 # Only cc[2] is varied, create boundary
                 if cc[1] == "<":
@@ -1212,7 +1213,9 @@ class Fit(object):
                 elif cc[1] == ">":
                     # maximum boundary
                     bnd = [-np.inf, self.fit_parm[cc[0]]]
-                bndnew.append([cc[2], bnd])
+                # update boundaries if necessary
+                bound[cc[2]] = [max(bound[cc[2]][0], bnd[0]),
+                                min(bound[cc[2]][1], bnd[1])]
             else:
                 # Neither cc[0] nor cc[2] are varied.
                 # Do nothing.
@@ -1244,8 +1247,8 @@ class Fit(object):
                                                          # this condition deals with negative numbers
                                                    expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
                                                         COMP=ppcomp,
-                                                        MIN=self.fit_bound[pp][0],
-                                                        MAX=self.fit_bound[pp][1])
+                                                        MIN=bound[pp][0],
+                                                        MAX=bound[pp][1])
                                                 ))
                     elif rel == ">":
                         # The opposite of the above case
@@ -1265,24 +1268,19 @@ class Fit(object):
                                                          # this condition deals with negative numbers
                                                    expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
                                                         COMP=ppcomp,
-                                                        MIN=self.fit_bound[pp][0],
-                                                        MAX=self.fit_bound[pp][1])
+                                                        MIN=bound[pp][0],
+                                                        MAX=bound[pp][1])
                                                 ))
                     else:
                         raise NotImplementedError("Only '<' and '>' are allowed constraints!")
                 
                 else:
                     ## normal parameter
-                    # Check if the parameter pp in in bndnew and update the boundaries
-                    # accorfingly.
-                    bound = self.fit_bound[pp]
-                    if bound[0] == bound[-1]:
-                        bound=[-np.inf, np.inf]
                     params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
                                                value=self.fit_parm[pp],
                                                vary=self.fit_bool[pp],
-                                               min=bound[0],
-                                               max=bound[1],
+                                               min=bound[pp][0],
+                                               max=bound[pp][1],
                                                 )
                                                )
         return params
