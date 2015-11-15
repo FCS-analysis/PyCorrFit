@@ -1221,6 +1221,7 @@ class Fit(object):
                 # Do nothing.
                 pass
 
+        # Third, setup all variable parameters with the necessary constraints.
         for pp in range(len(self.fit_parm)):
             if self.fit_bool[pp]:
                 # analyze constraints using lmfit:

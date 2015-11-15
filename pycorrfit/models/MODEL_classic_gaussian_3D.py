@@ -90,10 +90,10 @@ def CF_Gxyz_blink(parms, tau):
 
 def get_boundaries_6011(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
+    boundaries = [[0, np.inf]]*len(parms)
     # T
     boundaries[1] = [0,.9999999999999]
-    boundaries[-1] = [None, None]
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -154,12 +154,12 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
 
 def get_boundaries_3D3DT(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
+    boundaries = [[0, np.inf]]*len(parms)
     # F
     boundaries[3] = [0,.9999999999999]
     # T
     boundaries[7] = [0,.9999999999999]
-    boundaries[-1] = [None, None]
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -285,6 +285,7 @@ model1["Parameters"] = parms_6011
 model1["Definitions"] = m_3dblink6011
 model1["Supplements"] = MoreInfo_1C
 model1["Boundaries"] = get_boundaries_6011(values_6011)
+model1["Constraints"] = [[3, ">", 2]]   # triplet time < diffusion time
 
 model2 = dict()
 model2["Parameters"] = parms_6012
@@ -296,6 +297,6 @@ model3["Parameters"] = parms_6030
 model3["Definitions"] = m_gauss_3d_3d_t_mix_6030
 model3["Supplements"] = MoreInfo_6030
 model3["Boundaries"] = get_boundaries_3D3DT(values_6030)
-
+model3["Constraints"] = [[2, ">", 1], [6, "<", 1]]
 
 Modelarray = [model1, model2, model3]

@@ -62,11 +62,12 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
 def get_boundaries(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
+    boundaries = [[0, np.inf]]*len(parms)
     # F
     boundaries[3] = [0,.9999999999999]
     # T
     boundaries[7] = [0,.9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -150,5 +151,6 @@ model1["Parameters"] = parms
 model1["Definitions"] = m_gauss_3d_2d_t
 model1["Boundaries"] = get_boundaries(values)
 model1["Supplements"] = MoreInfo
+model1["Constraints"] = [[2, "<", 1], [6, "<", 2]]
 
 Modelarray = [model1]

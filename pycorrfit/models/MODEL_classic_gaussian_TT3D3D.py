@@ -73,12 +73,13 @@ def CF_Gxyz_gauss_3D3DTT(parms, tau):
 
 def get_boundaries_3D3DTT(parms):
     # strictly positive
-    boundaries = [[0, None]]*len(parms)
+    boundaries = [[0, np.inf]]*len(parms)
     # F
     boundaries[3] = [0,.9999999999999]
     # T
     boundaries[7] = [0,.9999999999999]
     boundaries[9] = [0,.9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
     return boundaries
 
 
@@ -101,11 +102,11 @@ labels_6043  = [u"n",
 
 labels_human_readable_6043  = [
                         u"n",
-                        u"τ"+u"\u2081"+" [ms]",
-                        u"τ"+u"\u2082"+" [ms]",
-                        u"F"+u"\u2081", 
+                        u"τ₁ [ms]",
+                        u"τ₂ [ms]",
+                        u"F₁", 
                         u"SP",
-                        u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                        u"\u03b1"+u" (q₂/q₁)", 
                         u"τ_trip₁ [µs]",
                         u"T₁",
                         u"τ_trip₂ [µs]",
@@ -172,5 +173,6 @@ model["Parameters"] = parms_6043
 model["Definitions"] = m_gauss_3d_3d_t_t_mix_6043
 model["Supplements"] = MoreInfo_6043
 model["Boundaries"] = get_boundaries_3D3DTT(values_6043)
+model["Constraints"] = [[2, ">", 1], [6, "<", 1], [8, "<", 6]]
 
 Modelarray = [model]
