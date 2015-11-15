@@ -24,6 +24,7 @@ def wixi(x):
     return np.real_if_close(wixi)
 
 # 3D + 2D + T
+# model 6033
 def CF_Gxyz_3d2dT_gauss(parms, tau):
     u""" Two-component, two- and three-dimensional diffusion
         with a Gaussian lateral detection profile and

@@ -24,6 +24,7 @@ def wixi(x):
     return np.real_if_close(wixi)  
 
 # 3D + 3D + T
+# model 6034
 def CF_Gxyz_3D3DT_gauss(parms, tau):
     u""" Two-component three-dimensional diffusion with a Gaussian
         lateral detection profile and an exponentially decaying profile
@@ -199,14 +200,14 @@ labels  = [u"n",
                 ]
 values = [ 
                 25,      # n
-                25.,       # D1
-                0.9,    # D2
+                0.9,     # D1
+                25.0,    # D2
                 0.5,     # F1
-                9.44,       # r0
-                1.0,       # deva
+                9.44,    # r0
+                1.0,     # deva
                 1.0,     # alpha
-                0.001,       # tautrip
-                0.01,       # T
+                0.001,   # tautrip
+                0.01,    # T
                 0.0      # offset
                 ]    
 # Human readable stuff

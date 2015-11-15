@@ -23,6 +23,7 @@ def wixi(x):
 
 
 # 3D + 3D no binding TIRF
+# model 6023
 def CF_Gxyz_TIR_square_3d3d(parms, tau, wixi=wixi):
     u""" Two-component three-dimensional free diffusion
         with a square-shaped lateral detection area taking into account
@@ -102,14 +103,14 @@ labels_6023 = [u"D"+u"\u2081"+u" [10 µm²/s]",
                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_6023 = [
-                9.0,     # D_3D₁ [10 µm²/s]
-                0.5,    # D_3D₂ [10 µm²/s]
+                0.9,     # D_3D₁ [10 µm²/s]
+                9.0,     # D_3D₂ [10 µm²/s]
                 2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
                 1.0,     # d_eva [100 nm]
                 0.01,    # conc.3D₁ [1000 /µm³]
                 0.03,    # conc.3D₂ [1000 /µm³]
-                1       # alpha
+                1        # alpha
                 ]        
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.

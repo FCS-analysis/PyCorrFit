@@ -7,7 +7,7 @@ from __future__ import division
 import numpy as np
 
 # 3D + 3D + Triplet Gauß
-    # Model 6030
+# Model 6043
 def CF_Gxyz_gauss_3D3DTT(parms, tau):
     u""" Two-component three-dimensional free diffusion
         with a Gaussian laser profile, including two triplet components.
@@ -121,9 +121,9 @@ values_6043 = [
                 0.5,     # F
                 5,       # SP
                 1.0,     # alpha
-                0.001,   # tautrip1
+                0.002,   # tautrip1
                 0.01,    # T1
-                0.002,   # tautrip2
+                0.001,   # tautrip2
                 0.01,    # T2
                 0.0      # offset
                 ]   
