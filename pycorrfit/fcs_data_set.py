@@ -471,7 +471,7 @@ class Correlation(object):
         mine = self._fit_parameters_range
         new = []
         for a, b in zip(model, mine):
-            c = [None, None]
+            c = [-np.inf, np.inf]
             if a[0] != a[1]:
                 c[0] = a[0]
                 c[1] = a[1]
@@ -479,9 +479,10 @@ class Correlation(object):
             if b[0] != b[1]:
                 c[0] = b[0]
                 c[1] = b[1]
-            for ii in range(2):
-                if c[ii] is not None and np.isnan(c[ii]):
-                    c[ii] = None
+            if c[0] is not None and np.isnan(c[0]):
+                c[0] = -np.inf
+            if c[1] is not None and np.isnan(c[1]):
+                c[1] = np.inf
 
             new.append(c)         
         return np.array(new)
@@ -716,6 +717,8 @@ class Fit(object):
                 self.check_parms = corr.check_parms
                 self.constraints = corr.fit_model.constraints
                 # Directly perform the fit and set the "fit" attribute
+                self.minimize()
+                # Run a second time:
                 self.minimize()
                 # update correlation model parameters
                 corr.fit_parameters = self.fit_parm
@@ -1160,58 +1163,128 @@ class Fit(object):
         self.fit_parm : 1d ndarray length P, float
         """
         params = lmfit.Parameters()
-        # create constraint dict for convenience:
-        ccdict = {}
-        for cc in self.constraints:
-            ccdict[cc[0]] = [cc[1], cc[2]]
-            
-            
+
+        # First, add all fixed parameters
         for pp in range(len(self.fit_parm)):
-            ## analyze constraints using lmfit:
-            # This is difficult to implement:
-            # - What if one of the parameters should not vary?
-            #   It is automatically changed if the other parameter changes.
-            #   One would have to make the other parameter the dependent one, i.e.
-            #   Also take into account which parameters are True in self.fit_bool!
-            #   This means, first adding parameters that are not varied.
-            #   Then, subsequently adding the varied ones.
-            #   ccdict should have only varied parameters as keys.
-            # - What about global fitting?
-            # - 
-            #if pp in ccdict:
-            #    # constrained parameters
-            #    ppref = ccdict[pp][1]
-            #    rel = ccdict[pp][0]
-            #    if rel == "<":
-            #        deltaname="delta_{}_{}".format(pp, ppref)
-            #        params.add(lmfit.Parameter(name=deltaname,
-            #                               value=self.fit_parm[ppref]-self.fit_parm[pp],
-            #                               vary=self.fit_bool[pp],
-            #                               min=0,
-            #                               max=np.inf,
-            #                                ))
-            #        ppcomp = "parm{:04d}-{}".format(ppref, deltaname)
-            #        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
-            #                                         # this condition deals with negative numbers
-            #                                   expr="{COMP} if {COMP} > 0 else 0".format(COMP=ppcomp)
-            #                                ))
-            #    elif rel == ">":
-            #        # The opposite of the above case
-            #        pass
-            #        
-            #    else:
-            #        raise NotImplementedError("Only '<' and '>' are allowed constraints!")
-            ## normal parameter
-            bound = self.fit_bound[pp]
-            if bound[0] == bound[-1]:
-                bound=[None, None]
-            params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
-                                       value=self.fit_parm[pp],
-                                       vary=self.fit_bool[pp],
-                                       min=bound[0],
-                                       max=bound[1],
-                                        )
-                                       )
+            if not self.fit_bool[pp]:
+                bound = self.fit_bound[pp]
+                if bound[0] == bound[-1]:
+                    bound=[-np.inf, np.inf]
+                params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                           value=self.fit_parm[pp],
+                                           vary=self.fit_bool[pp],
+                                           min=bound[0],
+                                           max=bound[1],
+                                            )
+                                           )
+        
+        # Second, summarize the constraints in a dictionary, where
+        # keys are the parameter indexes of varied parameters.
+        # The dictionary cstrnew only allows integer keys that are
+        # representing parameter indices. The fact that we are effectively
+        # reducing the number of valid constraints to one per parameter
+        # is a design problem that cannot be resolved here. The constraints
+        # must be defined in such a way, that a parameter with a larger
+        # index number is dependent on only one parameter with a lower
+        # index number, e.g. parm1>parm0, parm3<parm1, etc..
+        cstrnew = {}
+        bndnew = []
+        for cc in self.constraints:
+            if self.fit_bool[cc[0]] and self.fit_bool[cc[2]]:
+                # Both cc[0] and c[2] are varied.
+                # Everything will work fine, independent of the
+                # the fact if cc[2] is varied or not.
+                cstrnew[cc[0]] = [cc[1], cc[2]]
+            elif self.fit_bool[cc[0]]:
+                # Only cc[0] is varied, create boundary
+                if cc[1] == "<":
+                    # maximum
+                    bnd = [-np.inf, self.fit_parm[cc[2]]]
+                elif cc[1] == ">":
+                    # minimum
+                    bnd = [self.fit_parm[cc[2]], np.inf]
+                bndnew.append([cc[0], bnd])
+            elif self.fit_bool[cc[2]]:
+                # Only cc[2] is varied, create boundary
+                if cc[1] == "<":
+                    # minimum boundary
+                    bnd = [self.fit_parm[cc[0]], np.inf]
+                elif cc[1] == ">":
+                    # maximum boundary
+                    bnd = [-np.inf, self.fit_parm[cc[0]]]
+                bndnew.append([cc[2], bnd])
+            else:
+                # Neither cc[0] nor cc[2] are varied.
+                # Do nothing.
+                pass
+
+        for pp in range(len(self.fit_parm)):
+            if self.fit_bool[pp]:
+                # analyze constraints using lmfit:
+                if pp in cstrnew:
+                    # constrained parameters
+                    ppref = cstrnew[pp][1]
+                    rel = cstrnew[pp][0]
+                    #TODO:
+                    # - combine the two following cases for better readybility
+                    if rel == "<":
+                        #p2 < p1
+                        #-> p2 = p1 - d21
+                        #-> d21 = p1 - p2
+                        #-> d21 > 0
+                        deltaname="delta_{}_{}".format(pp, ppref)
+                        params.add(lmfit.Parameter(name=deltaname,
+                                               value=self.fit_parm[ppref]-self.fit_parm[pp],
+                                               vary=self.fit_bool[pp],
+                                               min=0,
+                                               max=np.inf,
+                                                ))
+                        ppcomp = "parm{:04d}-{}".format(ppref, deltaname)
+                        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                                         # this condition deals with negative numbers
+                                                   expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
+                                                        COMP=ppcomp,
+                                                        MIN=self.fit_bound[pp][0],
+                                                        MAX=self.fit_bound[pp][1])
+                                                ))
+                    elif rel == ">":
+                        # The opposite of the above case
+                        #p2 > p1
+                        #-> p2 = p1 + d21
+                        #-> d21 = p2 - p1
+                        #-> d21 > 0
+                        deltaname="delta_{}_{}".format(pp, ppref)
+                        params.add(lmfit.Parameter(name=deltaname,
+                                               value=self.fit_parm[pp]-self.fit_parm[ppref],
+                                               vary=self.fit_bool[pp],
+                                               min=0,
+                                               max=np.inf,
+                                                ))
+                        ppcomp = "parm{:04d}+{}".format(ppref, deltaname)
+                        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                                         # this condition deals with negative numbers
+                                                   expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
+                                                        COMP=ppcomp,
+                                                        MIN=self.fit_bound[pp][0],
+                                                        MAX=self.fit_bound[pp][1])
+                                                ))
+                    else:
+                        raise NotImplementedError("Only '<' and '>' are allowed constraints!")
+                
+                else:
+                    ## normal parameter
+                    # Check if the parameter pp in in bndnew and update the boundaries
+                    # accorfingly.
+                    bound = self.fit_bound[pp]
+                    if bound[0] == bound[-1]:
+                        bound=[-np.inf, np.inf]
+                    params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                               value=self.fit_parm[pp],
+                                               vary=self.fit_bool[pp],
+                                               min=bound[0],
+                                               max=bound[1],
+                                                )
+                                               )
         return params
 
     @staticmethod
