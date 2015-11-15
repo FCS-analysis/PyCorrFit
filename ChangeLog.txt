@@ -5,10 +5,13 @@
   - Improves behavior at parameter boundaries
   - Removed "Polak-Ribiere" fitting algorithm
   - Added "Sequential Linear Squares Programming" algorithm
-- Heuristic fit:
+- Heuristic fit (#109):
   - Detect parameters that are stuck during fitting
   - Fit each curve five times or less and check
     whether the fit converges.
+  - If two diffusion time parameter exist in a model, always
+    make sure that one parameter is the larger one. This
+    feature can currently not be disabled (#110).
 - Allow infinity ("inf" and "-inf") parameters for models
   and boundaries.
 - New model: confocal T+T+3D+3D
