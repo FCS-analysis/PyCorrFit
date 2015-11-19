@@ -637,7 +637,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
         openedfile.close()
 
 
-session_wildcards = [".pcfs", ".pycorrfit-session.zip"]
+session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]
 
 
 ReadmeCSV = """# This file was created using PyCorrFit version {}.

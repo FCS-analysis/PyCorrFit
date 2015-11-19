@@ -17,6 +17,8 @@
 - New model: confocal T+T+3D+3D
 - Bugfixes:
   - Sessions saved with 64bit Windows were not opened (#136)
+  - Old sessions and "KeyError: 'chi2'"
+  - Old session file extension was not recognized (#106)
 0.9.2
 - Bugfixes:
   - "Slider Simulation"/"Parm Range" broken (#133)

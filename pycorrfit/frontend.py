@@ -1258,9 +1258,8 @@ class MyFrame(wx.Frame):
             return "abort"
         
         ## Create user dialog
-        wc = opf.session_wildcards
-        wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(
-                                                           wc[0], wc[1])
+        wc = [ "*{}".format(w) for w in opf.session_wildcards ]
+        wcstring = "PyCorrFit session (*.pcfs)|{}".format(";".join(wc))
         if sessionfile is None:
             dlg = wx.FileDialog(self, "Open session file",
                                 self.dirname, "", wcstring, wx.FD_OPEN)
