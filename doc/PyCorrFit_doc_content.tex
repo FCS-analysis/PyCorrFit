@@ -70,7 +70,7 @@ You can also directly download the source code at any developmental stage\footno
 
 The following chapter introduces the general idea of how to start and accomplish a fitting project. FCS experiments produce different sets of experimental correlation functions which must be interpreted with appropriate physical models (\hyref{Chapter}{sec:theor}). Each correlation function refers to a single contiguous signal trace or ``run''. In \textit{PyCorrFit}, the user must assign a mathematical model function to each correlation function during the loading procedure. The assignment is irreversible in the sense that within an existing \textit{PyCorrFit} session it cannot be changed. This feature assures the stability of the batch processing routine for automated fitting of large data sets. Nevertheless, the fit of different models to the same data can be explored by loading the data twice or simply by creating two different sessions.
 
-Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T-3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T-3D-3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
+Let's briefly discuss a typical example: To determine the diffusion coefficient of a fluorescently labeled protein in free solution, one has to deal with two sets of autocorrelation data: measurements of a diffusion standard (e.g. free dye for which a diffusion coefficient has been published) to calibrate the detection volume and measurements of the protein sample. The protein sample may contain small amounts of slowly diffusing aggregates. While the calibration measurements can be fitted with a one-component diffusion model (T+3D), the protein sample displays two mobility states, monomers and aggregates, which are taken into account by a two-component diffusion model (T+3D+3D). With \textit{PyCorrFit} such a situation can be treated in three ways, having different pros and cons: 
 
 
 \begin{enumerate}
@@ -296,9 +296,9 @@ When choosing a model from the \textit{Models} menu, a new page opens and the mo
 \rule{0pt}{3ex} - Confocal (Gaussian): T+3D+3D & Triplet with two diffusive components \\
 %Confocal (Gaussian): T+3D+3D+3D & [Triplet with three diffusive components]
 %Confocal (Gaussian): 2D &  2D diffusion, e.g. in membranes \\
-\rule{0pt}{3ex} - Confocal (Gaussian): T-2D &  Triplet blinking and 2D diffusion \\
-\rule{0pt}{3ex} - Confocal (Gaussian): T-2D-2D & Triplet with two diffusive components \\
-\rule{0pt}{3ex} - Confocal (Gaussian): T-3D-2D &  Triplet with mixed 3D and 2D diffusion \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T+2D &  Triplet blinking and 2D diffusion \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T+2D+2D & Triplet with two diffusive components \\
+\rule{0pt}{3ex} - Confocal (Gaussian): T+3D+2D &  Triplet with mixed 3D and 2D diffusion \\
 \rule{0pt}{3ex}
 \end{tabular}
 
@@ -724,9 +724,8 @@ PyCorrFit can utilize several algorithms to perform this minimization. The descr
 \item The \textbf{BFGS} method uses the quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno (BFGS) \cite{Nocedal2006} (pp. 136). It uses the first derivatives only. BFGS has proven good performance even for non-smooth optimizations.
 \item The \textbf{Levenberg-Marquardt} algorithm \cite{Levenberg1944} uses the first derivatives and combines the Gauss–Newton algorithm with a trust region approach. It is very robust compared to other algorithms and it is very popular in curve-fitting. \textit{PyCorrFit} uses this algorithm by default. If this algorithm is used, \textit{PyCorrFit} can estimate an error of the fit parameters using the covariance matrix.
 \item The \textbf{Nelder-Mead} method uses the Simplex algorithm \cite{Nelder1965,Wright1996}. This algorithm has been successful in many applications but other algorithms using the first and/or second derivatives information might be preferred for their better performances and robustness in general.
-\item The method \textbf{Polak-Ribiere} uses a nonlinear conjugate gradient algorithm by Polak and Ribiere, a variant of the Fletcher-Reeves method described in \cite{Nocedal2006} pp.
-120-122. Only the first derivatives are used.
 \item The method \textbf{Powell} is a modification of Powell's method \cite{Powell1964, Press} which is a conjugate direction method. It performs sequential one-dimensional minimizations along each vector of the directions set, which is updated at each iteration of the main minimization loop. The function need not be differentiable, and no derivatives are taken.
+\item \textbf{Sequential Linear Squares Programming}  inherently accepts boundaries and thus might behave better than other algorithms for problems with  bounded parameters.
 \end{itemize}
 
 \input{PyCorrFit_doc_models}
