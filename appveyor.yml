@@ -65,10 +65,7 @@ install:
   # CONDA installs
   # Pinned versions are defined in freeze_appveyor\pinned
   - xcopy freeze_appveyor\pinned %PYTHON%\conda-meta\ /Y
-  - "conda install --yes numpy"
-  - "conda install --yes pip"
-  - "conda install --yes scipy"
-  - "conda install --yes wxpython"
+  - "conda install --yes --quiet numpy pip scipy wxpython"
   # PIP installs
   # Install the build dependencies of the project. 
   - "pip install cython"
@@ -76,6 +73,7 @@ install:
   # Install package-specific libraries  
   - "pip install matplotlib"
   - "pip install sympy"
+  - "pip install lmfit"
   # Install pyinstaller
   - 'ECHO Downloading %PYWIN_DL%'
   - ps: (new-object net.webclient).DownloadFile("$env:PYWIN_DL", 'C:/pywin_inst.exe')
@@ -103,11 +101,11 @@ after_test:
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "%WITH_COMPILER% pyinstaller -y freeze_pyinstaller\\PyCorrFit_win7.spec"
+  - "%WITH_COMPILER% pyinstaller -y --log-level=WARN freeze_pyinstaller\\PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
-  - iscc win7_innosetup.iss
+  - iscc /VERYSILENT win7_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.

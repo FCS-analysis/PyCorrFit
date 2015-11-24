@@ -8,7 +8,6 @@ from __future__ import division, print_function
 import sys
 from os.path import abspath, dirname, split
 
-import matplotlib.pylab as plt
 import numpy as np
 
 # Add parent directory to beginning of path variable

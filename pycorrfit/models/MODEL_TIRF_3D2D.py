@@ -23,6 +23,7 @@ def wixi(x):
 
 
 # 3D + 2D no binding TIRF
+# model 6020
 def CF_Gxyz_TIR_square_3d2d(parms, tau, wixi=wixi):
     u""" Two-component two- and three-dimensional diffusion
         with a square-shaped lateral detection area taking into account
@@ -96,7 +97,7 @@ labels_6020 = [u"D_3D [10 µm²/s]",
                u"\u03b1"+" (q3D/q2D)"
                 ]
 values_6020 = [
-                50.0,     # D_3D [10 µm²/s]
+                50.0,    # D_3D [10 µm²/s]
                 0.81,    # D_2D [10 µm²/s]
                 2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
@@ -135,6 +136,7 @@ parms_6020 = [labels_6020, values_6020, valuestofit_6020,
 model1 = dict()
 model1["Parameters"] = parms_6020
 model1["Definitions"] = m_tir_3d_2d_mix_6020
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = [[0, np.inf]]*len(values_6020)
+model1["Constraints"] = [[1, "<", 0]]
 
 Modelarray = [model1]

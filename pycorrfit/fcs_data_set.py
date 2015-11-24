@@ -5,15 +5,15 @@ Classes for FCS data evaluation.
 """
 from __future__ import print_function, division
 
+import copy
 import hashlib
+import lmfit
 import numpy as np
 import scipy.integrate as spintg
 import scipy.interpolate as spintp
-import scipy.optimize as spopt
 import warnings
 
 from . import models as mdls
-from . import plotting
 
 class Trace(object):
     """ unifies trace handling
@@ -237,7 +237,7 @@ class Correlation(object):
         Set the backgrounds. The value can either be a list of traces or
         instances of traces or a single trace in an array.
         """
-        backgrounds = list()
+        backgrounds = []
         if not isinstance(value, list):
             value = [value]
         assert len(value) in [0,1,2], "Backgrounds must be list with up to two elements."
@@ -299,13 +299,16 @@ class Correlation(object):
             boundaries self.fit_parameters_range for each parameter.
         """
         p = 1.*np.array(parms)
-        p = self.fit_model.func_verification(p)
         r = self.fit_parameters_range
-        # TODO:
-        # - add potentials such that parameters don't stick to boundaries
         for i in range(len(p)):
             if r[i][0] == r[i][1]:
                 pass
+            elif r[i][0] is None:
+                if p[i] > r[i][1]:
+                    p[i] = r[i][1]
+            elif r[i][1] is None:
+                if p[i] < r[i][0]:
+                    p[i] = r[i][1]
             elif p[i] < r[i][0]:
                 p[i] = r[i][0]
             elif p[i] > r[i][1]:
@@ -341,6 +344,7 @@ class Correlation(object):
             corr[:,1] *= self.bg_correction_factor
             # perform parameter normalization
             return corr[self.fit_ival[0]:self.fit_ival[1],:]
+        
     
     @property
     def correlation_plot(self):
@@ -354,8 +358,7 @@ class Correlation(object):
             # perform parameter normalization
             corr[:,1] *= self.normalize_factor
             return corr
-    
-    
+
     @property
     def is_ac(self):
         """True if instance contains autocorrelation"""
@@ -464,7 +467,25 @@ class Correlation(object):
     @property
     def fit_parameters_range(self):
         """valid fitting ranges for fit parameters"""
-        return self._fit_parameters_range
+        model = self.fit_model.boundaries
+        mine = self._fit_parameters_range
+        new = []
+        for a, b in zip(model, mine):
+            c = [-np.inf, np.inf]
+            if a[0] != a[1]:
+                c[0] = a[0]
+                c[1] = a[1]
+            # user overrides model
+            if b[0] != b[1]:
+                c[0] = b[0]
+                c[1] = b[1]
+            if c[0] is not None and np.isnan(c[0]):
+                c[0] = -np.inf
+            if c[1] is not None and np.isnan(c[1]):
+                c[1] = np.inf
+
+            new.append(c)         
+        return np.array(new)
 
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):
@@ -490,7 +511,7 @@ class Correlation(object):
     def lag_time(self):
         """logarithmic lag time axis"""
         if self.correlation is not None:
-            return self._correlation[:,0]
+            return self._correlation[:,0].copy()
         elif self._lag_time is not None:
             return self._lag_time
         else:
@@ -530,6 +551,9 @@ class Correlation(object):
         """fitted data values, same shape as self.correlation_fit"""
         toplot = self.modeled_fit
         toplot[:,1] *= self.normalize_factor
+        if toplot[-1,1] == 0.1:
+            import IPython
+            IPython.embed()
         return toplot
 
     @property
@@ -596,7 +620,7 @@ class Correlation(object):
         Set the traces. The value can either be a list of traces or
         instances of traces or a single trace in an array.
         """
-        traces = list()
+        traces = []
         if not isinstance(value, list):
             value = [value]
         assert len(value) in [0,1,2], "Traces must be list with up to two elements."
@@ -683,13 +707,18 @@ class Fit(object):
                 # fit_bool: True for variable
                 self.fit_bool = corr.fit_parameters_variable.copy()
                 self.fit_parm = corr.fit_parameters.copy()
+                self.fit_bound = copy.copy(corr.fit_parameters_range)
                 self.is_weighted_fit = corr.is_weighted_fit
                 self.fit_weights = Fit.compute_weights(corr,
                                                    verbose=verbose,
                                                    uselatex=uselatex)
+                self.fit_parm_names = corr.fit_model.parameters[0]
                 self.func = corr.fit_model.function
                 self.check_parms = corr.check_parms
+                self.constraints = corr.fit_model.constraints
                 # Directly perform the fit and set the "fit" attribute
+                self.minimize()
+                # Run a second time:
                 self.minimize()
                 # update correlation model parameters
                 corr.fit_parameters = self.fit_parm
@@ -701,15 +730,16 @@ class Fit(object):
             #   i.e. fitting "n" separately for two models
             # Initiate all arrays
             self.fit_algorithm = self.correlations[0].fit_algorithm
-            xtemp = list()      # x
-            ytemp = list()      # y
-            weights = list()    # weights
+            xtemp = []      # x
+            ytemp = []      # y
+            weights = []    # weights
             ids = [0]           # ids in big fitting array
-            cmodels = list()    # correlation model info
-            initpar = list()    # initial parameters
-            varin = list()      # names of variable fitting parameters
-            variv = list()      # values of variable fitting parameters
-            varmap = list()     # list of indices of fitted parameters
+            cmodels = []    # correlation model info
+            initpar = []    # initial parameters
+            varin = []      # names of variable fitting parameters
+            variv = []      # values of variable fitting parameters
+            varmap = []     # list of indices of fitted parameters
+            varbound = []   # list of fitting boundaries
             self.is_weighted_fit = None
             for corr in self.correlations:
                 xtemp.append(corr.correlation_fit[:,0])
@@ -719,12 +749,13 @@ class Fit(object):
                 cmodels.append(corr.fit_model)
                 initpar.append(corr.fit_parameters)
                 # Create list of variable parameters
-                varthis = list()
+                varthis = []
                 for ipm, par in enumerate(corr.fit_model.parameters[0]):
                     if corr.fit_parameters_variable[ipm]:
                         varthis.append(ipm)
                         varin.append(par)
                         variv.append(corr.fit_parameters[ipm])
+                        varbound.append(corr.fit_parameters_range[ipm])
                 varmap.append(varthis)
 
             # These are the variable fitting parameters
@@ -739,6 +770,9 @@ class Fit(object):
             self.fit_parm = variv
             self.fit_weights = np.concatenate(weights)
             self.fit_parm_names = varin
+            self.fit_bound = varbound
+            self.constraints = []
+            warnings.warn("Constraints are not supported yet for global fitting.")
             
             
             def parameters_global_to_local(parameters, iicorr, varin=varin,
@@ -775,7 +809,7 @@ class Fit(object):
             # Create function for fitting using ids
             def global_func(parameters, tau,
                             glob2loc=parameters_global_to_local):
-                out = list()
+                out = []
                 # ids start at 0
                 for ii, mod in enumerate(cmodels):
                     # Update parameters
@@ -852,7 +886,7 @@ class Fit(object):
         # Calculate degrees of freedom
         dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
-        chi2 = self.fit_function_scalar(self.fit_parm[self.fit_bool], self.x)
+        
         if self.chi_squared_type == "reduced expected sum of squares":
             fitted = self.func(self.fit_parm, self.x)
             chi2 = np.sum((self.y-fitted)**2/np.abs(fitted)) / dof
@@ -864,6 +898,10 @@ class Fit(object):
             fitted = self.func(self.fit_parm, self.x)
             variance = self.fit_weights**2
             chi2 = np.sum((self.y-fitted)**2/variance) / dof
+        else:
+            chi2 = self.fit_function_scalar(self.fit_parm, self.x, self.y, self.fit_weights)
+        
+            
         return chi2
 
 
@@ -961,22 +999,20 @@ class Fit(object):
                                      "{} knots.".format(knotnumber))
                 return
             if verbose > 0:
+                ## If plotting module is available:
+                #name = "spline fit: "+str(knotnumber)+" knots"
+                #plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
+                #                         dirname=".",
+                #                         uselatex=uselatex)
+                # use matplotlib.pylab
                 try:
-                    # If plotting module is available:
-                    name = "spline fit: "+str(knotnumber)+" knots"
-                    plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
-                                             dirname=".",
-                                             uselatex=uselatex)
-                except:
-                    # use matplotlib.pylab
-                    try:
-                        from matplotlib import pylab as plt
-                        plt.xscale("log")
-                        plt.plot(x, ys, x, y)
-                        plt.show()
-                    except ImportError:
-                        # Tell the user to install matplotlib
-                        print("Couldn't import pylab! - not Plotting")
+                    from matplotlib import pylab as plt
+                    plt.xscale("log")
+                    plt.plot(x, ys, x, y)
+                    plt.show()
+                except ImportError:
+                    # Tell the user to install matplotlib
+                    print("Couldn't import pylab! - not Plotting")
 
             ## Calculation of variance
             # In some cases, the actual cropping interval from ival[0]
@@ -1090,78 +1126,269 @@ class Fit(object):
         return dataweights
         
 
-    def fit_function(self, parms, x):
-        """ Create the function to be minimized. The old function
-            `function` has more parameters than we need for the fitting.
-            So we use this function to set only the necessary 
-            parameters. Returns what `function` would have done.
+    def fit_function(self, params, x, y, weights=1):
+        """ 
+        objective function that returns the residual (difference between
+        model and data) to be minimized in a least squares sense.
         """
-        # We reorder the needed variables to only use these that are
-        # not fixed for minimization
-        index = 0
-        for i in np.arange(len(self.fit_parm)):
-            if self.fit_bool[i]:
-                self.fit_parm[i] = parms[index]
-                index += 1
-        # Only allow physically correct parameters
-        self.fit_parm = self.check_parms(self.fit_parm)
-        tominimize = (self.func(self.fit_parm, x) - self.y)
+        parms = Fit.lmfitparm2array(params)
+        tominimize = (self.func(parms, x) - y)
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
         with np.errstate(divide='ignore'):
-            tominimize = np.where(self.fit_weights!=0, 
-                                  tominimize/self.fit_weights, 0)
+            tominimize = np.where(weights!=0, 
+                                  tominimize/weights, 0)
         ## There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
-    def fit_function_scalar(self, parms, x):
+    def fit_function_scalar(self, parms, x, y, weights=1):
         """
-            Wrapper of `fit_function` for scalar minimization methods.
-            Returns the sum of squares of the input data.
-            (Methods that are not "Lev-Mar")
+        Wrapper of `fit_function`.
+        Returns the sum of squares of the input data.
         """
-        e = self.fit_function(parms, x)
+        e = self.fit_function(parms, x, y, weights)
         return np.sum(e*e)
+
+    def get_lmfitparm(self):
+        """
+        Generates an lmfit parameter class from the present data set.
+
+        The following parameters are used:
+        self.x : 1d ndarray length N
+        self.y : 1d ndarray length N
+        self.fit_weights : 1d ndarray length N
+        
+        self.fit_bool : 1d ndarray length P, bool
+        self.fit_parm : 1d ndarray length P, float
+        """
+        params = lmfit.Parameters()
+
+        # First, add all fixed parameters
+        for pp in range(len(self.fit_parm)):
+            if not self.fit_bool[pp]:
+                if self.fit_bound[pp][0] == self.fit_bound[pp][1]:
+                    self.fit_bound[pp]=[-np.inf, np.inf]
+                params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                           value=self.fit_parm[pp],
+                                           vary=self.fit_bool[pp],
+                                           min=self.fit_bound[pp][0],
+                                           max=self.fit_bound[pp][1],
+                                            )
+                                           )
+        
+        # Second, summarize the constraints in a dictionary, where
+        # keys are the parameter indexes of varied parameters.
+        # The dictionary cstrnew only allows integer keys that are
+        # representing parameter indices. The fact that we are effectively
+        # reducing the number of valid constraints to one per parameter
+        # is a design problem that cannot be resolved here. The constraints
+        # must be defined in such a way, that a parameter with a larger
+        # index number is dependent on only one parameter with a lower
+        # index number, e.g. parm1>parm0, parm3<parm1, etc..
+        cstrnew = {}
+        bound = np.array(self.fit_bound).copy()
+        for cc in self.constraints:
+            if self.fit_bool[cc[0]] and self.fit_bool[cc[2]]:
+                # Both cc[0] and c[2] are varied.
+                # Everything will work fine, independent of the
+                # the fact if cc[2] is varied or not.
+                cstrnew[cc[0]] = [cc[1], cc[2]]
+            elif self.fit_bool[cc[0]]:
+                # Only cc[0] is varied, create boundary
+                if cc[1] == "<":
+                    # maximum
+                    bnd = [-np.inf, self.fit_parm[cc[2]]]
+                elif cc[1] == ">":
+                    # minimum
+                    bnd = [self.fit_parm[cc[2]], np.inf]
+                # update boundaries if necessary
+                bound[cc[0]] = [max(bound[cc[0]][0], bnd[0]),
+                                min(bound[cc[0]][1], bnd[1])]
+            elif self.fit_bool[cc[2]]:
+                # Only cc[2] is varied, create boundary
+                if cc[1] == "<":
+                    # minimum boundary
+                    bnd = [self.fit_parm[cc[0]], np.inf]
+                elif cc[1] == ">":
+                    # maximum boundary
+                    bnd = [-np.inf, self.fit_parm[cc[0]]]
+                # update boundaries if necessary
+                bound[cc[2]] = [max(bound[cc[2]][0], bnd[0]),
+                                min(bound[cc[2]][1], bnd[1])]
+            else:
+                # Neither cc[0] nor cc[2] are varied.
+                # Do nothing.
+                pass
+
+        # Third, setup all variable parameters with the necessary constraints.
+        for pp in range(len(self.fit_parm)):
+            if self.fit_bool[pp]:
+                # analyze constraints using lmfit:
+                if pp in cstrnew:
+                    # constrained parameters
+                    ppref = cstrnew[pp][1]
+                    rel = cstrnew[pp][0]
+                    #TODO:
+                    # - combine the two following cases for better readybility
+                    if rel == "<":
+                        #p2 < p1
+                        #-> p2 = p1 - d21
+                        #-> d21 = p1 - p2
+                        #-> d21 > 0
+                        deltaname="delta_{}_{}".format(pp, ppref)
+                        params.add(lmfit.Parameter(name=deltaname,
+                                               value=self.fit_parm[ppref]-self.fit_parm[pp],
+                                               vary=self.fit_bool[pp],
+                                               min=0,
+                                               max=np.inf,
+                                                ))
+                        ppcomp = "parm{:04d}-{}".format(ppref, deltaname)
+                        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                                         # this condition deals with negative numbers
+                                                   expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
+                                                        COMP=ppcomp,
+                                                        MIN=bound[pp][0],
+                                                        MAX=bound[pp][1])
+                                                ))
+                    elif rel == ">":
+                        # The opposite of the above case
+                        #p2 > p1
+                        #-> p2 = p1 + d21
+                        #-> d21 = p2 - p1
+                        #-> d21 > 0
+                        deltaname="delta_{}_{}".format(pp, ppref)
+                        params.add(lmfit.Parameter(name=deltaname,
+                                               value=self.fit_parm[pp]-self.fit_parm[ppref],
+                                               vary=self.fit_bool[pp],
+                                               min=0,
+                                               max=np.inf,
+                                                ))
+                        ppcomp = "parm{:04d}+{}".format(ppref, deltaname)
+                        params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                                         # this condition deals with negative numbers
+                                                   expr="{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
+                                                        COMP=ppcomp,
+                                                        MIN=bound[pp][0],
+                                                        MAX=bound[pp][1])
+                                                ))
+                    else:
+                        raise NotImplementedError("Only '<' and '>' are allowed constraints!")
+                
+                else:
+                    ## normal parameter
+                    params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
+                                               value=self.fit_parm[pp],
+                                               vary=self.fit_bool[pp],
+                                               min=bound[pp][0],
+                                               max=bound[pp][1],
+                                                )
+                                               )
+        return params
+
+    @staticmethod
+    def lmfitparm2array(parms, parmid="parm", attribute="value"):
+        """
+        Convert lmfit parameters to a numpy array.
+        Parameters are identified by name `parmid` which should
+        be at the beginning of a parameters.
+        
+        This method is necessary to separate artificial constraint parameters
+        from the actual parameters.
+        
+        Parameters
+        ----------
+        parms : lmfit.parameter.Parameters or ndarray
+            The input parameters.
+        parmid : str
+            The identifier for parameters. By default this is
+            "parm", i.e. parameters are named like this:
+            "parm0001", "parm0002", etc.
+        attribute : str
+            The attribute to return, e.g.
+            - "value" : return the current value of the parameter
+            - "vary" : return if the parameter is varied during fitting
+        
+        Returns:
+        parr : ndarray
+            If the input is an ndarray, the input will be returned.
+        """
+        if isinstance(parms, lmfit.parameter.Parameters):
+            items = parms.items()
+            items.sort(key=lambda x: x[0])
+            parr = [getattr(p[1], attribute) for p in items if p[0].startswith(parmid)]
+        else:
+            parr = parms
+
+        return np.array(parr)
 
     def minimize(self):
         """ This will run the minimization process
+      
         """
         assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
+        
+        # get all parameters for minimization
+        params = self.get_lmfitparm()
+        
         # Get algorithm
-        algorithm = Algorithms[self.fit_algorithm][0]
+        method = Algorithms[self.fit_algorithm][0]
+        methodkwargs = Algorithms[self.fit_algorithm][2]
 
         # Begin fitting
-        
-        if self.fit_algorithm == "Lev-Mar":
-            res = algorithm(self.fit_function, self.fit_parm[self.fit_bool],
-                            args=(self.x,), full_output=1)
-        else:
-            disp = self.verbose > 0 # print convergence message
-            res = algorithm(self.fit_function_scalar, self.fit_parm[self.fit_bool],
-                            args=(self.x,), full_output=1, disp=disp)
+        # Fit a several times and stop earlier if the residuals
+        # are small enough (heuristic approach).
+        nfits = 5
+        diff = np.inf
+        parmsinit = Fit.lmfitparm2array(params)
+        for ii in range(nfits):
+            res0 = self.fit_function(params, self.x, self.y)
+            result = lmfit.minimize(fcn=self.fit_function,
+                                    params=params,
+                                    method=method,
+                                    kws={"x":self.x,
+                                            "y":self.y,
+                                            "weights":self.fit_weights},
+                                    **methodkwargs
+                                    )
+            params = result.params
+            res1 = self.fit_function(params, self.x, self.y)
+            diff = np.average(np.abs(res0-res1))
 
-        # The optimal parameters
-        parmoptim = res[0]
+            if hasattr(result, "ier") and not result.errorbars and ii+1 < nfits:
+                # This case applies to the Levenberg-Marquardt algorithm
+                multby = .5
+                # Try to vary stuck fitting parameters
+                # the result from the previous fit
+                parmsres = Fit.lmfitparm2array(params)
+                # the parameters that are varied during fitting
+                parmsbool = Fit.lmfitparm2array(params, attribute="vary")
+                # The parameters that are stuck
+                parmstuck = parmsbool * (parmsinit==parmsres)
+                parmsres[parmstuck] *= multby
+                # write changes
+                self.fit_parm = parmsres
+                params = self.get_lmfitparm()
+                warnings.warn(u"PyCorrFit detected problems in fitting, "+\
+                              u"detected a stuck parameter, multiplied "+\
+                              u"it by {}, and fitted again. ".format(multby)+\
+                              u"The stuck parameters are: {}".format(
+                                np.array(self.fit_parm_names)[parmstuck]))
+            elif diff < 1e-8:
+                # Experience tells us this is good enough.
+                break
+
         # Now write the optimal parameters to our values:
-        index = 0
-        for i in range(len(self.fit_parm)):
-            if self.fit_bool[i]:
-                self.fit_parm[i] = parmoptim[index]
-                index = index + 1
+        self.fit_parm = Fit.lmfitparm2array(params)
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
-        # Write optimal parameters back to this class.
-        # Must be called after `self.fitparm = ...`
-        chi = self.chi_squared
         # Compute error estimates for fit (Only "Lev-Mar")
-        if self.fit_algorithm == "Lev-Mar":
+        if self.fit_algorithm == "Lev-Mar" and result.success:
             # This is the standard way to minimize the data. Therefore,
             # we are a little bit more verbose.
-            if res[4] not in [1,2,3,4]:
-                warnings.warn("Optimal parameters not found: " + res[3])
+            self.covar = result.covar
             try:
-                self.covar = res[1] * chi # The covariance matrix
+                self.parmoptim_error = np.diag(self.covar)
             except:
                 warnings.warn("PyCorrFit Warning: Error estimate not "+\
                               "possible, because we could not "+\
@@ -1169,12 +1396,9 @@ class Fit(object):
                               "try reducing the number of fitting "+\
                               "parameters.")
                 self.parmoptim_error = None
-            else:
-                # Error estimation of fitted parameters
-                if self.covar is not None:
-                    self.parmoptim_error = np.diag(self.covar)
         else:
             self.parmoptim_error = None
+
 
 
 def GetAlgorithmStringList():
@@ -1183,8 +1407,8 @@ def GetAlgorithmStringList():
         Returns two lists (that are key-sorted) for key and string.
     """
     A = Algorithms
-    out1 = list()
-    out2 = list()
+    out1 = []
+    out2 = []
     a = list(A.keys())
     a.sort()
     for key in a:
@@ -1201,21 +1425,33 @@ def GetAlgorithmStringList():
 Algorithms = dict()
 
 # the original one is the least squares fit "leastsq"
-Algorithms["Lev-Mar"] = [spopt.leastsq, 
-           "Levenberg-Marquardt"]
+Algorithms["Lev-Mar"] = ["leastsq", 
+                         "Levenberg-Marquardt",
+                         {"ftol" : 1.49012e-08,
+                          "xtol" : 1.49012e-08,
+                          }
+                        ]
 
 # simplex 
-Algorithms["Nelder-Mead"] = [spopt.fmin,
-           "Nelder-Mead (downhill simplex)"]
+Algorithms["Nelder-Mead"] = ["nelder",
+                             "Nelder-Mead (downhill simplex)",
+                             {}
+                             ]
 
 # quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shanno
-Algorithms["BFGS"] = [spopt.fmin_bfgs,
-           "BFGS (quasi-Newton)"]
+Algorithms["BFGS"] = ["lbfgsb",
+                      "BFGS (quasi-Newton)",
+                      {}
+                      ]
 
 # modified Powell-method
-Algorithms["Powell"] = [spopt.fmin_powell,
-           "modified Powell (conjugate direction)"]
+Algorithms["Powell"] = ["powell",
+                        "modified Powell (conjugate direction)",
+                        {}
+                        ]
 
 # nonliner conjugate gradient method by Polak and Ribiere
-Algorithms["Polak-Ribiere"] = [spopt.fmin_cg,
-           "Polak-Ribiere (nonlinear conjugate gradient)"]
+Algorithms["SLSQP"] = ["slsqp",
+                       "Sequential Linear Squares Programming",
+                       {}
+                       ]

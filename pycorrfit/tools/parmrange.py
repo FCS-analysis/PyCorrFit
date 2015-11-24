@@ -14,6 +14,8 @@ import numpy as np
 
 from .. import edclasses  # edited floatspin
 from .. import models as mdls
+from .. import wxutils
+
 
 
 class RangeSelector(wx.Frame):
@@ -46,19 +48,31 @@ class RangeSelector(wx.Frame):
         """
         corr = self.Page.corr
         self.parameter_range = np.zeros_like(corr.fit_parameters_range)
+        leftbound = []
+        for item in corr.fit_parameters_range[:,0]:
+            if item is None:
+                leftbound.append(-np.inf)
+            else:
+                leftbound.append(item)
         labels, parmleft = mdls.GetHumanReadableParms(corr.fit_model.id,  # @UnusedVariable
-                                                 corr.fit_parameters_range[:,0])
+                                                      leftbound)
+        rightbound = []
+        for item in corr.fit_parameters_range[:,1]:
+            if item is None:
+                rightbound.append(np.inf)
+            else:
+                rightbound.append(item)
+        
         labels, parmright = mdls.GetHumanReadableParms(corr.fit_model.id,
-                                                 corr.fit_parameters_range[:,1])
+                                                       rightbound)
         self.parameter_range[:,0] = np.array(parmleft)
         self.parameter_range[:,1] = np.array(parmright)
         # create line
         
-        # = wx.BoxSizer(wx.VERTICAL)
         self.WXboxsizer = wx.FlexGridSizer(rows=len(labels), cols=4, vgap=5, hgap=5)
         for i in range(len(labels)):
-            left = floatspin.FloatSpin(self.panel, digits=7, increment=.1)
-            right = floatspin.FloatSpin(self.panel, digits=7, increment=.1)
+            left = wxutils.PCFFloatTextCtrl(self.panel)
+            right = wxutils.PCFFloatTextCtrl(self.panel)
             left.SetValue(self.parameter_range[i][0])
             right.SetValue(self.parameter_range[i][1])
             left.Bind(wx.EVT_SPINCTRL, self.OnSetParmRange)

@@ -21,7 +21,7 @@ def wixi(x):
     
     return np.real_if_close(wixi)
 
-
+# model 6022
 # 2D + 2D no binding TIRF
 def CF_Gxy_TIR_square_2d2d(parms, tau, wixi=wixi):
     u""" Two-component two-dimensional diffusion with a square-shaped
@@ -87,8 +87,8 @@ labels_6022 = [ u"D"+u"\u2081"+u" [10 µm²/s]",
                 u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")"
                 ]
 values_6022 = [
-                0.90,     # D_2D₁ [10 µm²/s]
-                0.01,    # D_2D₂ [10 µm²/s]
+                0.01,    # D_2D₁ [10 µm²/s]
+                0.90,    # D_2D₂ [10 µm²/s]
                 2.3,     # σ [100 nm]
                 7.50,    # a [100 nm]
                 0.01,    # conc.2D₁ [100 /µm²]
@@ -120,9 +120,13 @@ parms_6022 = [labels_6022, values_6022, valuestofit_6022,
               labels_human_readable_6022, values_factor_human_readable_6022]
 
 
+boundaries = [ [0, np.inf] ] * len(values_6022)
+
+
 model1 = dict()
 model1["Parameters"] = parms_6022
 model1["Definitions"] = m_tir_2d_2d_mix_6022
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = boundaries
+model1["Constraints"] = [[1, ">", 0]]
 
 Modelarray = [model1]

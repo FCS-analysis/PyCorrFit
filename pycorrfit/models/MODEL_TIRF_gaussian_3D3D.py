@@ -24,6 +24,7 @@ def wixi(x):
     return np.real_if_close(wixi)  
 
 # 3D + 3D + T
+# model 6034
 def CF_Gxyz_3D3DT_gauss(parms, tau):
     u""" Two-component three-dimensional diffusion with a Gaussian
         lateral detection profile and an exponentially decaying profile
@@ -123,34 +124,16 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
     return G + off
 
 
-def Checkme(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = D1
-    parms[2] = np.abs(parms[2]) # = D2
-    F=parms[3]
-    parms[4] = np.abs(parms[4]) # = r0
-    parms[5]=np.abs(parms[5])
-    parms[6]=np.abs(parms[6])
-    tautrip=np.abs(parms[7])
-    T=parms[8]
-    #off=parms[9]
-
-    # REMOVED (issue #2)
-    ## Force triplet component to be smaller than diffusion times
-    #tauD2 = r0**2/(4*D2)
-    #tauD1 = r0**2/(4*D1)
-    #tautrip = min(tautrip,tauD2*0.9, tauD1*0.9)
-
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[7] = tautrip
-    parms[8] = T
-
-    return parms
+def get_boundaries(parms):
+    # strictly positive
+    boundaries = [[0, np.inf]]*len(parms)
+    # F
+    boundaries[3] = [0, .9999999999999]
+    # T
+    boundaries[8] = [0, .9999999999999]
+    # offset
+    boundaries[-1] = [-np.inf, np.inf]
+    return boundaries
 
 
 def MoreInfo(parms, countrate=None):
@@ -217,14 +200,14 @@ labels  = [u"n",
                 ]
 values = [ 
                 25,      # n
-                25.,       # D1
-                0.9,    # D2
+                0.9,     # D1
+                25.0,    # D2
                 0.5,     # F1
-                9.44,       # r0
-                1.0,       # deva
+                9.44,    # r0
+                1.0,     # deva
                 1.0,     # alpha
-                0.001,       # tautrip
-                0.01,       # T
+                0.001,   # tautrip
+                0.01,    # T
                 0.0      # offset
                 ]    
 # Human readable stuff
@@ -259,7 +242,8 @@ parms = [labels, values, valuestofit, labelshr, valueshr]
 model1 = dict()
 model1["Parameters"] = parms
 model1["Definitions"] = m_gauss_3d_3d_t
-model1["Verification"] = Checkme
+model1["Boundaries"] = get_boundaries(values)
 model1["Supplements"] = MoreInfo
+model1["Constraints"] = [[2, ">", 1]]
 
 Modelarray = [model1]

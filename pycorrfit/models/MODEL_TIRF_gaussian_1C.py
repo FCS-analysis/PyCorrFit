@@ -202,6 +202,18 @@ def MoreInfo_6014(parms, countrate=None):
     return Info
 
 
+def get_boundaries_6014(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    boundaries[5] = [0, 1]
+    return boundaries
+
+def get_boundaries_6013(parms):
+    # strictly positive
+    boundaries = [[0, None]]*len(parms)
+    return boundaries
+
+
 # 3D Model TIR gaussian
 m_3dtirsq6013 = [6013, "3D","Simple 3D diffusion w/ TIR",
                  CF_Gxyz_TIR_gauss]
@@ -232,7 +244,7 @@ model1 = dict()
 model1["Parameters"] = parms_6013
 model1["Definitions"] = m_3dtirsq6013
 model1["Supplements"] = MoreInfo_6013
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = get_boundaries_6013(values_6013)
 
 
 # 3D Model TIR gaussian + triplet
@@ -271,7 +283,7 @@ model2 = dict()
 model2["Parameters"] = parms_6014
 model2["Definitions"] = m_3dtirsq6014
 model2["Supplements"] = MoreInfo_6014
-model2["Verification"] = lambda parms: np.abs(parms)
+model2["Boundaries"] = get_boundaries_6014(values_6014)
 
 
 Modelarray = [model1, model2]

@@ -311,7 +311,7 @@ def SaveSessionData(sessionfile, Infodict):
         # Range of fitting parameters
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
-    yaml.dump(Parmlist, open(parmsfilename, "wb"))
+    yaml.safe_dump(Parmlist, open(parmsfilename, "wb"))
     Arc.write(parmsfilename)
     os.remove(os.path.join(tempdir, parmsfilename))
     # Supplementary data (errors of fit)
@@ -325,7 +325,7 @@ def SaveSessionData(sessionfile, Infodict):
         chi2 = Sups[idsup]["Chi sq"]
         globalshare = Sups[idsup]["Global Share"]
         Suplist.append([idsup, error, chi2, globalshare])
-    yaml.dump(Suplist, open(errsfilename, "wb"))
+    yaml.safe_dump(Suplist, open(errsfilename, "wb"))
     Arc.write(errsfilename)
     os.remove(os.path.join(tempdir, errsfilename))
     # Save external functions
@@ -637,7 +637,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
         openedfile.close()
 
 
-session_wildcards = [".pcfs", ".pycorrfit-session.zip"]
+session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]
 
 
 ReadmeCSV = """# This file was created using PyCorrFit version {}.

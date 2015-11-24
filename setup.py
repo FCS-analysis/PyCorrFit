@@ -131,6 +131,7 @@ setup(
         "NumPy >= 1.5.1",
         "SciPy >= 0.8.0",
         "PyYAML >= 3.09",
+        "lmfit",
         ],
     setup_requires=["cython"],
     # scripts

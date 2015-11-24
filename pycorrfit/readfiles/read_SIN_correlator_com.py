@@ -232,6 +232,16 @@ def openSIN(dirname, filename):
         traces.append(np.array(trace2))
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
+    else:
+        # We assume that we have a mode like this:
+        # Mode= 2 3 3 2 0 1 1 0
+        raise NotImplemented("This format is not yet implemented (issue #135).")
+        # TODO:
+        # - write test function for .sin correlator files
+        # - load correlation and traces from sin files in 2D arrays
+        # -> use this if, elif, elif, else loop to only assign curves
+        #    (to improve code quality)
+        
     dictionary = dict()
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces

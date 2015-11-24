@@ -239,13 +239,13 @@ model1 = dict()
 model1["Parameters"] = parms_6000
 model1["Definitions"] = m_twodsq6000
 model1["Supplements"] = MoreInfo_6000
-model1["Verification"] = lambda parms: np.abs(parms)
+model1["Boundaries"] = [[0, None]]*len(values_6000)
 
 model2 = dict()
 model2["Parameters"] = parms_6010
 model2["Definitions"] = m_3dtirsq6010
 model2["Supplements"] = MoreInfo_6010
-model2["Verification"] = lambda parms: np.abs(parms)
+model2["Boundaries"] = [[0, None]]*len(values_6010)
 
 
 Modelarray = [model1, model2]

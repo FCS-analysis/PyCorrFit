@@ -26,6 +26,7 @@ import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+import lmfit
 import numpy
 import os
 import platform
@@ -148,6 +149,7 @@ def SoftwareUsed():
     text = "Python "+sys.version+\
            "\n\nModules:"+\
            "\n - cython "+\
+           "\n - lmfit "+lmfit.__version__+\
            "\n - matplotlib "+matplotlib.__version__+\
            "\n - NumPy "+numpy.__version__+\
            "\n - PyYAML "+yaml.__version__ +\

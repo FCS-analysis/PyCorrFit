@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This file contains TIR one component models + triplet
+This file contains 3D models for confocal FCS.
 """
 from __future__ import division
 
@@ -88,21 +88,13 @@ def CF_Gxyz_blink(parms, tau):
     return G
 
 
-def Check_6011(parms):
-    parms[0] = np.abs(parms[0])
-    T = parms[1]
-    tautrip = np.abs(parms[2])
-    parms[3] = np.abs(parms[3])# = taudiff
-    parms[4] = np.abs(parms[4])
-    #off = parms[5]
-    
-    # Triplet fraction is between 0 and one.
-    T = (0.<=T<1.)*T + .999999999*(T>=1)
-
-    parms[1] = T
-    parms[2] = tautrip
-
-    return parms
+def get_boundaries_6011(parms):
+    # strictly positive
+    boundaries = [[0, np.inf]]*len(parms)
+    # T
+    boundaries[1] = [0,.9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
+    return boundaries
 
 
 # 3D + 3D + Triplet Gauß
@@ -160,28 +152,15 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
     G = 1/n*(particle1 + particle2)*triplet/norm + off
     return G
 
-def Check_3D3DT(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = taud1
-    parms[2] = np.abs(parms[2]) # = taud2
-    F=parms[3]
-    parms[4]=np.abs(parms[4])
-    parms[5]=np.abs(parms[5])
-    tautrip=np.abs(parms[6])
-    T=parms[7]
-    #off=parms[8]
-    
-    
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[6] = tautrip
-    parms[7] = T
-
-    return parms
+def get_boundaries_3D3DT(parms):
+    # strictly positive
+    boundaries = [[0, np.inf]]*len(parms)
+    # F
+    boundaries[3] = [0,.9999999999999]
+    # T
+    boundaries[7] = [0,.9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
+    return boundaries
 
 
 def MoreInfo_1C(parms, countrate=None):
@@ -305,7 +284,8 @@ model1 = dict()
 model1["Parameters"] = parms_6011
 model1["Definitions"] = m_3dblink6011
 model1["Supplements"] = MoreInfo_1C
-model1["Verification"] = Check_6011
+model1["Boundaries"] = get_boundaries_6011(values_6011)
+model1["Constraints"] = [[3, ">", 2]]   # triplet time < diffusion time
 
 model2 = dict()
 model2["Parameters"] = parms_6012
@@ -316,7 +296,7 @@ model3 = dict()
 model3["Parameters"] = parms_6030
 model3["Definitions"] = m_gauss_3d_3d_t_mix_6030
 model3["Supplements"] = MoreInfo_6030
-model3["Verification"] = Check_3D3DT
-
+model3["Boundaries"] = get_boundaries_3D3DT(values_6030)
+model3["Constraints"] = [[2, ">", 1], [6, "<", 1]]
 
 Modelarray = [model1, model2, model3]

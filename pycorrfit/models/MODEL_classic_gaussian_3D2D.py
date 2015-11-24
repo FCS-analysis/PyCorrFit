@@ -1,22 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    PyCorrFit
-    This file contains a 3D+2D+T confocal FCS model.
-
-    Copyright (C) 2011-2012  Paul Müller
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License 
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+This file contains a T+3D+2D model for confocal FCS.
 """
 from __future__ import division
 
@@ -76,26 +60,15 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
 
     return G + off
 
-def Checkme(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) #= taud2D
-    parms[2] = np.abs(parms[2]) #= taud3D
-    F=parms[3]
-    parms[4]=np.abs(parms[4])
-    parms[5]=np.abs(parms[5])
-    tautrip=np.abs(parms[6])
-    T=parms[7]
-    #off=parms[8]
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[6] = tautrip
-    parms[7] = T
-
-    return parms
+def get_boundaries(parms):
+    # strictly positive
+    boundaries = [[0, np.inf]]*len(parms)
+    # F
+    boundaries[3] = [0,.9999999999999]
+    # T
+    boundaries[7] = [0,.9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
+    return boundaries
 
 
 def MoreInfo(parms, countrate=None):
@@ -176,7 +149,8 @@ parms = [labels, values, valuestofit,
 model1 = dict()
 model1["Parameters"] = parms
 model1["Definitions"] = m_gauss_3d_2d_t
-model1["Verification"] = Checkme
+model1["Boundaries"] = get_boundaries(values)
 model1["Supplements"] = MoreInfo
+model1["Constraints"] = [[2, "<", 1], [6, "<", 2]]
 
 Modelarray = [model1]

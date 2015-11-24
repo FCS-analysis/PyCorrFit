@@ -24,6 +24,7 @@ def wixi(x):
     return np.real_if_close(wixi)
 
 # 3D + 2D + T
+# model 6033
 def CF_Gxyz_3d2dT_gauss(parms, tau):
     u""" Two-component, two- and three-dimensional diffusion
         with a Gaussian lateral detection profile and
@@ -106,34 +107,15 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
     return G + off
 
 
-def Checkme(parms):
-    parms[0] = np.abs(parms[0])
-    parms[1] = np.abs(parms[1]) # = D2D
-    parms[2] = np.abs(parms[2]) # = D3D
-    F=parms[3]
-    parms[4] = np.abs(parms[4]) # = r0
-    parms[5]=np.abs(parms[5])
-    parms[6]=np.abs(parms[6])
-    tautrip=np.abs(parms[7])
-    T=parms[8]
-    #off=parms[9]
-
-    #taud2D = r0**2/(4*D2D)
-    #taud3D = r0**2/(4*D3D)
-    # We are not doing this anymore (Issue #2).
-    ## Force triplet component to be smaller than diffusion times
-    ## tautrip = min(tautrip,taud2D*0.9, taud3D*0.9)
-    
-    # Triplet fraction is between 0 and one. T may not be one!
-    T = (0.<=T<1.)*T + .99999999999999*(T>=1)
-    # Fraction of molecules may also be one
-    F = (0.<=F<=1.)*F + 1.*(F>1)
-
-    parms[3] = F
-    parms[7] = tautrip
-    parms[8] = T
-
-    return parms
+def get_boundaries(parms):
+    # strictly positive
+    boundaries = [[0, np.inf]]*len(parms)
+    # F
+    boundaries[3] = [0, .9999999999999]
+    # T
+    boundaries[8] = [0, .9999999999999]
+    boundaries[-1] = [-np.inf, np.inf]
+    return boundaries
 
 
 def MoreInfo(parms, countrate=None):
@@ -217,7 +199,7 @@ labelshr  = [u"n",
              u"F_3D", 
              u"r₀ [nm]",
              u"d_eva [nm]",
-             u"\u03b1"+" (q_3D/q_2D)", 
+             u"\u03b1"+u" (q_3D/q_2D)", 
              u"τ_trip [µs]",
              u"T",
              u"offset"
@@ -242,7 +224,8 @@ parms = [labels, values, valuestofit, labelshr, valueshr]
 model1 = dict()
 model1["Parameters"] = parms
 model1["Definitions"] = m_gauss_3d_2d_t
-model1["Verification"] = Checkme
+model1["Boundaries"] = get_boundaries(values)
 model1["Supplements"] = MoreInfo
+model1["Constraints"] = [[2, ">", 1]]
 
 Modelarray = [model1]

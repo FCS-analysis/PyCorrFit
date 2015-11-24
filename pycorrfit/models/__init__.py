@@ -23,14 +23,16 @@ unit of inv. volume : 1000 /µm³
 # This file is necessary for this folder to become a module that can be 
 # imported from within Python/PyCorrFit.
 
-import numpy as np                  # NumPy
+import copy
+import numpy as np
 import sys
-
+import warnings
 
 ## Models
 from . import MODEL_classic_gaussian_2D
 from . import MODEL_classic_gaussian_3D
 from . import MODEL_classic_gaussian_3D2D
+from . import MODEL_classic_gaussian_TT3D3D
 from . import MODEL_TIRF_gaussian_1C
 from . import MODEL_TIRF_gaussian_3D2D
 from . import MODEL_TIRF_gaussian_3D3D
@@ -53,11 +55,26 @@ class Model(object):
         else:
             self._supplements = lambda x, y: []
 
-        if "Verification" in list(datadict.keys()):
-            self._verification = datadict["Verification"]
+        if "Boundaries" in list(datadict.keys()):
+            self._boundaries = datadict["Boundaries"]
         else:
             # dummy verification function
-            self._verification = lambda parms: parms
+            self._boundaries = [[None,None]]*len(self._parameters[1])
+        
+        if "Constraints" in list(datadict.keys()):
+            # sort constraints such that the first value is always
+            # larger than the last.
+            newcc = []
+            for cc in datadict["Constraints"]:
+                if cc[0] < cc[2]:
+                    if cc[1] == ">":
+                        cc = [cc[2], "<", cc[0]]
+                    elif cc[1] == "<":
+                        cc = [cc[2], ">", cc[0]]
+                newcc.append(cc)
+            self._constraints = newcc
+        else:
+            self._constraints = []
 
     def __call__(self, parameters, tau):
         return self.function(parameters, tau)
@@ -78,6 +95,11 @@ class Model(object):
         times `tau`
         """
         return self.function(parameters, tau)
+
+    @property
+    def constraints(self):
+        """ fitting constraints """
+        return copy.copy(self._constraints)
 
     @property
     def components(self):
@@ -118,7 +140,8 @@ class Model(object):
 
     @property
     def func_verification(self):
-        return self._verification
+        warnings.warn("`func_verification is deprecated: please do not use it!")
+        return lambda x: x
     
     def get_supplementary_parameters(self, values, countrate=None):
         """
@@ -158,6 +181,10 @@ class Model(object):
     def parameters(self):
         return self._parameters
 
+    @property
+    def boundaries(self):
+        return self._boundaries
+
 
 def AppendNewModel(Modelarray):
     """ Append a new model from a modelarray. *Modelarray* has to be a list
@@ -171,7 +198,7 @@ def AppendNewModel(Modelarray):
     global models
     global modeldict
     global supplement
-    global verification
+    global boundaries
 
     for datadict in Modelarray:
         # We can have many models in one model array
@@ -187,7 +214,7 @@ def AppendNewModel(Modelarray):
         supplement[amod.id] = amod.func_supplements
 
         # Check functions - check for correct values
-        verification[amod.id] = amod.func_verification
+        boundaries[amod.id] = amod.boundaries
 
 
 def GetHumanReadableParms(model, parameters):
@@ -419,8 +446,8 @@ models = list()
 modeldict = dict()
 # A dictionary for supplementary data:
 supplement = dict()
-# A dictionary for checking for correct variables
-verification = dict()
+# A dictionary containing model boundaries
+boundaries = dict()
 
 
 # Load all models from the imported "MODEL_*" submodules
@@ -435,7 +462,7 @@ modeltypes = dict()
 #modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6033, 6034]
 #modeltypes[u"TIR (□xσ/Exp.)"] = [6000, 6010, 6022, 6020, 6023, 6021]
 
-modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032]
+modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032, 6043]
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 modeltypes[u"User"] = list()

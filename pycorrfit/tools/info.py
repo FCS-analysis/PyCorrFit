@@ -158,7 +158,8 @@ class InfoClass(object):
                     Title.append(["Type AC/CC", "Cross-correlation" ]) 
                 else:
                     Title.append(["Type AC/CC", "Autocorrelation" ]) 
-                Fitting.append([ u"χ²", corr.fit_results["chi2"]])
+                if "chi2" in corr.fit_results:
+                    Fitting.append([ u"χ²", corr.fit_results["chi2"]])
                 if weightedfit:
                     try:
                         Fitting.append(["Weighted fit", corr.fit_results["weighted fit type"]])

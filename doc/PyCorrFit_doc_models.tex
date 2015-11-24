@@ -167,6 +167,18 @@ $\tau_\mathrm{trip}$ &  Characteristic residence time in triplet state \\
 \end{center}
 \vspace{2em}
 
+
+% 3D+3D diffusion + T+T
+\noindent \begin{tabular}{lp{.7\textwidth}}
+Name & \textbf{Confocal (Gaussian) T+T+3D+3D} \\ 
+ID & \textbf{6043} \\ 
+Descr. &  Two-component three-dimensional free diffusion with a Gaussian laser profile, including two triplet components. 
+The correlation function is a superposition of three-dimensional model functions of the type \textbf{T+3D} (6011).
+\end{tabular}
+\vspace{2em}
+
+
+
 \subsection{TIR-FCS}
 \label{sec:imple.tirfc}
 The model functions make use of the Faddeeva function (complex error function)\footnote{In user-defined model functions (\hyref{Section}{sec:hacke.extmod}), the Faddeeva function is accessible through \texttt{wofz()}. For convenience, the function \texttt{wixi()} can be used which only takes $\xi$ as an argument and the imaginary $i$ can be omitted.}:

@@ -1,4 +1,5 @@
 Cython==0.22
+lmfit
 matplotlib==1.4.3
 numpy==1.9.2
 PyYAML==3.11
