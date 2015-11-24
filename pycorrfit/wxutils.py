@@ -25,9 +25,9 @@ def float2string_nsf(fval, n=7):
             npoint=n
         else:
             q=abs(fval)
-            # prevent k from having negative values
-            k=max(0,int(np.ceil(np.log10(q/n))))
-            npoint = n-k
+            k=int(np.ceil(np.log10(q/n)))
+            # prevent negative significant digits
+            npoint = max(0, n-k)
         string="{:.{}f}".format(fval, npoint)
     except:
         string="{}".format(fval)
