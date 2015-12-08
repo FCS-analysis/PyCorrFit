@@ -223,8 +223,9 @@ class BatchCtrl(wx.Frame):
         self.dropdown = wx.ComboBox(panel, -1, "Current page", (15, 30),
                          wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
         # Create the dropdownlist
-        text2 = wx.StaticText(panel, label='This will affect all pages'+
-                                           '\nwith the same model.'+
+        text2 = wx.StaticText(panel, label='This will affect all pages with'+
+                                           '\nthe same model, except those'+
+                                           '\nexplicitly excluded.'+
                                            '\nApply parameters:')
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioHere, self.rbtnhere)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioThere, self.rbtnthere)
