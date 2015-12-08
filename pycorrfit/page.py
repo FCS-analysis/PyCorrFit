@@ -515,15 +515,27 @@ class FittingPanel(wx.Panel):
         #                       normtoNDropdown, textnor]
         if self.corr.is_cc:
             # update both self.bgselected and self.bg2selected
-            bg = [self.AmplitudeInfo[1][0].GetValue(),
-                  self.AmplitudeInfo[1][1].GetValue()]
-            tools.background.ApplyAutomaticBackground(self, bg,
-                                                      self.parent)
+            bg = [float(self.AmplitudeInfo[1][0].GetValue()),
+                  float(self.AmplitudeInfo[1][1].GetValue())]
+            sig = [float(self.AmplitudeInfo[0][0].GetValue()),
+                  float(self.AmplitudeInfo[0][1].GetValue())]
+            # Make sure bg < sig
+            for ii in range(len(bg)):
+                if sig[ii] != 0:
+                    if bg[ii] > .99*sig[ii]:
+                        bg[ii] = .99*sig[ii]
+                        self.AmplitudeInfo[1][ii].SetValue(bg[ii])
         else:
             # Only update self.bgselected 
-            bg = self.AmplitudeInfo[1][0].GetValue()
-            tools.background.ApplyAutomaticBackground(self, bg,
-                                                      self.parent)
+            bg = float(self.AmplitudeInfo[1][0].GetValue())
+            sig = float(self.AmplitudeInfo[0][0].GetValue())
+            # Make sure bg < sig
+            if sig != 0:
+                if bg > .99*sig:
+                    bg = .99*sig
+                    self.AmplitudeInfo[1][0].SetValue(bg)
+        tools.background.ApplyAutomaticBackground(self, bg,
+                                                  self.parent)
         e.Skip()
 
     
