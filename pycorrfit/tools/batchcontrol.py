@@ -215,7 +215,6 @@ class BatchCtrl(wx.Frame):
 
         ## Parameter source selection
         boxleft = wx.StaticBox(panel, label="Parameter source")
-        text1 = wx.StaticText(panel, label="Choose source of parameters:")
         self.rbtnhere = wx.RadioButton(panel, -1, 'This session', 
                                         style = wx.RB_GROUP)
         self.rbtnhere.SetValue(True)
@@ -223,15 +222,22 @@ class BatchCtrl(wx.Frame):
         self.dropdown = wx.ComboBox(panel, -1, "Current page", (15, 30),
                          wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
         # Create the dropdownlist
-        text2 = wx.StaticText(panel, label='This will affect all pages with'+
-                                           '\nthe same model, except those'+
-                                           '\nexplicitly excluded.'+
-                                           '\nApply parameters:')
+        text2 = wx.StaticText(panel, label="""Only data sets that have the
+same model as the parameter
+source will be affected by
+batch modification, which
+includes parameter values as
+well as settings for fitting
+and background correction.
+To prevent batch modification
+of parameter values for an
+individual page, check its 
+"prevent batch modification"
+check box.""")
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioHere, self.rbtnhere)
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioThere, self.rbtnthere)
         self.Bind(wx.EVT_COMBOBOX, self.RedrawParameterBox, self.dropdown)
         leftSizer = wx.StaticBoxSizer(boxleft, wx.VERTICAL)
-        leftSizer.Add(text1)
         leftSizer.Add(self.rbtnhere)
         leftSizer.Add(self.rbtnthere)
         leftSizer.AddSpacer(5)
@@ -255,7 +261,7 @@ class BatchCtrl(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnFit, btnfit)
 
         ## Sizers
-        sizer_bag = wx.GridBagSizer(hgap=20, vgap=5)
+        sizer_bag = wx.GridBagSizer(hgap=5, vgap=5)
         sizer_bag.Add(leftSizer, (0,0))
         sizer_bag.Add(rightSizer, (0,1))
         horsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -280,6 +286,11 @@ class BatchCtrl(wx.Frame):
             sizer.RemoveWindow(window)
             window.Destroy()
 
+        text = wx.StaticText(panel, label="""If desired, (de)select
+individual parameters
+for batch modification.""")
+        sizer.Add(text)
+
         parms = self.GetParameters()
         modelid = parms[1]
         ptext, _pval = mdls.GetHumanReadableParms(modelid, parms[2])
@@ -295,7 +306,7 @@ class BatchCtrl(wx.Frame):
         box = sizer.GetStaticBox()
         boxs = box.GetBestSize()
         sizs = sizer.GetMinSize()
-        thesize = (max(boxs[0], sizs[0]), sizs[1])
+        thesize = (max(boxs[0], sizs[0]+20), sizs[1])
         sizer.SetMinSize(thesize)
         box.SetMinSize(thesize)
         box.SetSize(thesize)
