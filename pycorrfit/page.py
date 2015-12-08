@@ -133,6 +133,14 @@ class FittingPanel(wx.Panel):
         return self.corr.fit_model.id
     
     @property
+    def prevent_batch_modification(self):
+        return self.wxCBPreventBatchParms.GetValue()
+    
+    @prevent_batch_modification.setter
+    def prevent_batch_modification(self, value):
+        self.wxCBPreventBatchParms.SetValue(value)
+    
+    @property
     def title(self):
         return self.tabtitle.GetValue()
 
@@ -740,7 +748,12 @@ class FittingPanel(wx.Panel):
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(sizerti)
         self.panelsettings.sizer.Add(box1)
-        # Add button "Apply" and "Set range"
+        # checkbox "Protect from batch control"
+        self.wxCBPreventBatchParms = wx.CheckBox(self.panelsettings,
+                                                 -1,
+                                                 "prevent batch modification")
+        box1.Add(self.wxCBPreventBatchParms)
+        # buttons "Apply" and "Set range"
         horzs = wx.BoxSizer(wx.HORIZONTAL)
         buttonapply = wx.Button(self.panelsettings, label="Apply")
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)

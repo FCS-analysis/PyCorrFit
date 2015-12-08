@@ -188,8 +188,6 @@ class Correlation(object):
         self.fit_weight_type = fit_weight_type
         self.fit_weight_parameters = fit_weight_data
     
-        # lock prevents any changes to the parameters
-        self.lock_parameters = False
         self.normparm = normparm
         self.title = title
         self.traces = traces
@@ -452,17 +450,13 @@ class Correlation(object):
     @property
     def fit_parameters(self):
         """parameters that were fitted/will be used for fitting"""
-        return self._fit_parameters
+        return self._fit_parameters.copy()
 
     @fit_parameters.setter
     def fit_parameters(self, value):
         # must unlock parameters, if change is required
         value = np.array(value)
-        if self.lock_parameters == False:
-            self._fit_parameters = self.check_parms(value)
-        else:
-            warnings.warn("Correlation {}: fixed parameters unchanged.".
-                          format(self.uid))
+        self._fit_parameters = self.check_parms(value)
 
     @property
     def fit_parameters_range(self):

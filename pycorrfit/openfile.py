@@ -258,6 +258,28 @@ def LoadSessionData(sessionfile, parameters_only=False):
                     Wdata.append(np.float(row[0]))
             Weightsdict[pageid][Nkey] = np.array(Wdata)
         Infodict["External Weights"] = Weightsdict
+    ## Preferences
+    preferencesname = "preferences.cfg"
+    try:
+        # Raises KeyError, if file is not present:
+        Arc.getinfo(preferencesname)
+    except:
+        pass
+    else:
+        prefdict = {}
+        with Arc.open(preferencesname) as fd:
+            data = fd.readlines()
+        for line in data:
+            line = line.strip()
+            if len(line) == 0 or line.startswith("#"):
+                continue
+            key, value = line.split("=")
+            key = key.strip()
+            value = value.strip()
+            if value.count(","):
+                value = [ v.strip() for v in value.split(",")]
+            prefdict[key] = value
+        Infodict["Preferences"] = prefdict
     Arc.close()
     return Infodict
 
@@ -278,7 +300,7 @@ def SaveSessionData(sessionfile, Infodict):
         "External Functions, dict": modelids to external model functions
         "External Weights", dict: page numbers, external weights for fitting
         "Parameters", dict: page numbers, all parameters of the pages
-        "Preferences", dict: not used yet
+        "Preferences", dict: fixed page parameters
         "Traces", dict: page numbers, all traces of the pages
 
 
@@ -493,6 +515,18 @@ def SaveSessionData(sessionfile, Infodict):
     WeightFile.close()
     Arc.write(WeightFilename)
     os.remove(os.path.join(tempdir, WeightFilename))
+    ## Preferences
+    preferencesname = "preferences.cfg"
+    with open(preferencesname, 'w') as fd:
+        for key in Infodict["Preferences"]:
+            value = Infodict["Preferences"][key]
+            if isinstance(value, list):
+                value = " ".join("{}".format(it) for it in value)
+            else:
+                value = "{}".format(value)
+            fd.write("{} = {}\n".format(key, value))
+    Arc.write(preferencesname)
+    os.remove(os.path.join(tempdir, preferencesname))
     ## Readme
     rmfilename = "Readme.txt"
     rmfile = open(rmfilename, 'wb')

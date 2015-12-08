@@ -74,8 +74,10 @@ class BatchCtrl(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
-
-    def OnApply(self, event):
+    
+    def GetParameters(self):
+        """ The parameters
+        """
         # Get the item from the dropdown list
         item = self.dropdown.GetSelection()
         if self.rbtnhere.Value == True:
@@ -91,12 +93,37 @@ class BatchCtrl(wx.Frame):
         else:
             # Get Parameters from different session
             Parms = self.YamlParms[item]
+        return Parms
+
+
+    def GetProtectedParameterIDs(self):
+        """ The model parameters that are protected from batch control
+        
+        """
+        Parms = self.GetParameters()
+        pbool = np.ones(len(Parms[2]), dtype=bool)
+        return pbool
+    
+    
+    def OnApply(self, event):
+        Parms = self.GetParameters()
         modelid = Parms[1]
         # Set all parameters for all pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
             if OtherPage.corr.fit_model.id == modelid and OtherPage.corr.correlation is not None:
+                # create a copy of the fitting parameters in
+                # case we want to protect them
+                proparms = OtherPage.corr.fit_parameters
                 self.parent.UnpackParameters(Parms, OtherPage)
+                if OtherPage.wxCBPreventBatchParms.GetValue():
+                    # write back protected parameters
+                    OtherPage.corr.fit_parameters = proparms
+                    OtherPage.apply_parameters_reverse()
+                else:
+                    # write back only selected parameters
+                    pbool = self.GetProtectedParameterIDs()
+                    OtherPage.corr.fit_parameters[pbool] = proparms[pbool]
                 OtherPage.PlotAll(trigger="parm_batch")
         # Update all other tools fit the finalize trigger.
         self.parent.OnFNBPageChanged(trigger="parm_finalize")

@@ -1429,9 +1429,17 @@ class MyFrame(wx.Frame):
         except:
             pass
         try:
-            Infodict["Preferences"] # not used yet
+            prefdict = Infodict["Preferences"]
         except:
             pass
+        else:
+            for key in prefdict:
+                if key == "Pages prevent batch modification":
+                    for pid in prefdict[key]:
+                        for i in np.arange(N):
+                            page = self.notebook.GetPage(i)
+                            if page.counter.strip("#: ") == pid:
+                                page.prevent_batch_modification = True
         if self.notebook.GetPageCount() > 0:
             # Enable the "Current" Menu
             self.EnableToolCurrent(True)
@@ -1591,6 +1599,14 @@ class MyFrame(wx.Frame):
             Infodict["External Weights"][counter] = external_weights
         # Append Session Comment:
         Infodict["Comments"]["Session"] = self.SessionComment
+        # Protected pages:
+        protpage = []
+        for i in np.arange(N):
+            # Set Page 
+            Page = self.notebook.GetPage(i)
+            if Page.prevent_batch_modification:
+                protpage.append(Page.counter.strip("#: "))
+        Infodict["Preferences"]["Pages prevent batch modification"] = protpage
         # File dialog
         dlg = wx.FileDialog(self, "Save session file", self.dirname, "",
                             "PyCorrFit session (*.pcfs)|*.pcfs|All files (*.*)|*.*",
