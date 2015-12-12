@@ -57,7 +57,7 @@ class PyTest(Command):
 
 # Download documentation if it was not compiled
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
-webdoc = "https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf"
+webdoc = "https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf"
 if not exists(Documentation):
     print("Downloading {} from {}".format(Documentation, webdoc))
     import urllib
@@ -102,7 +102,7 @@ setup(
     long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
     name=name,
     platforms=['ALL'],
-    url='https://github.com/paulmueller/PyCorrFit',
+    url='https://github.com/FCS-analysis/PyCorrFit',
     version=version,
     # data files
     packages=['pycorrfit',

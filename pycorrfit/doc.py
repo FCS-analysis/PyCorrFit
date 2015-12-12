@@ -185,6 +185,6 @@ except:
     
     
 # Github homepage
-GitChLog = "https://raw.github.com/paulmueller/PyCorrFit/master/ChangeLog.txt"
-GitHome = "https://github.com/paulmueller/PyCorrFit"
-GitWiki = "https://github.com/paulmueller/PyCorrFit/wiki"
+GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/ChangeLog.txt"
+GitHome = "https://github.com/FCS-analysis/PyCorrFit"
+GitWiki = "https://github.com/FCS-analysis/PyCorrFit/wiki"

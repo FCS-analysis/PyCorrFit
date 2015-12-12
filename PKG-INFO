@@ -2,11 +2,11 @@ Metadata-Version: 1.0
 Name: pycorrfit
 Version: 0.8.0
 Summary: UNKNOWN
-Home-page: https://github.com/paulmueller/PyCorrFit
+Home-page: https://github.com/FCS-analysis/PyCorrFit
 Author: Paul Mueller
 Author-email: paul.mueller@biotec.tu-dresden.de
 License: GPL v2
-Description: ![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/doc-src/Images/PyCorrFit_logo_dark.png)
+Description: ![PyCorrFit](https://raw.github.com/FCS-analysis/PyCorrFit/master/doc-src/Images/PyCorrFit_logo_dark.png)
         =========
         
         This repository contains the source code of PyCorrFit - a scientific tool for fitting
@@ -24,10 +24,10 @@ Description: ![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/do
         information, visit the official homepage at http://pycorrfit.craban.de.
         
         
-        - [Download the latest version](https://github.com/paulmueller/PyCorrFit/releases)  
-        - [Documentation](https://github.com/paulmueller/PyCorrFit/raw/master/PyCorrFit_doc.pdf)
-        - [Run PyCorrFit from source](https://github.com/paulmueller/PyCorrFit/wiki/Running-PyCorrFit-from-source)
-        - [Write model functions](https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions)
-        - [Need help?](https://github.com/paulmueller/PyCorrFit/wiki/Creating-a-new-issue)
+        - [Download the latest version](https://github.com/FCS-analysis/PyCorrFit/releases)  
+        - [Documentation](https://github.com/FCS-analysis/PyCorrFit/raw/master/PyCorrFit_doc.pdf)
+        - [Run PyCorrFit from source](https://github.com/FCS-analysis/PyCorrFit/wiki/Running-PyCorrFit-from-source)
+        - [Write model functions](https://github.com/FCS-analysis/PyCorrFit/wiki/Writing-model-functions)
+        - [Need help?](https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-new-issue)
         
 Platform: UNKNOWN

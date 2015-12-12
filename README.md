@@ -1,8 +1,8 @@
-![PyCorrFit](https://raw.github.com/paulmueller/PyCorrFit/master/doc/Images/PyCorrFit_logo_dark.png)
+![PyCorrFit](https://raw.github.com/FCS-analysis/PyCorrFit/master/doc/Images/PyCorrFit_logo_dark.png)
 =========
 [![PyPI](http://img.shields.io/pypi/v/PyCorrFit.svg)](https://pypi.python.org/pypi/pycorrfit)
-[![Build Win](https://img.shields.io/appveyor/ci/paulmueller/PyCorrFit/master.svg?label=build_win)](https://ci.appveyor.com/project/paulmueller/pycorrfit)
-[![Build Mac](https://img.shields.io/travis/paulmueller/PyCorrFit/master.svg?label=build_mac)](https://travis-ci.org/paulmueller/PyCorrFit)
+[![Build Win](https://img.shields.io/appveyor/ci/FCS-analysis/PyCorrFit/master.svg?label=build_win)](https://ci.appveyor.com/project/FCS-analysis/pycorrfit)
+[![Build Mac](https://img.shields.io/travis/FCS-analysis/PyCorrFit/master.svg?label=build_mac)](https://travis-ci.org/FCS-analysis/PyCorrFit)
 
 
 
@@ -21,8 +21,8 @@ with different excitation geometries like total internal reflection (TIR). For m
 information, visit the official homepage at http://pycorrfit.craban.de.
 
 
-- [Download the latest version](https://github.com/paulmueller/PyCorrFit/releases)  
-- [Documentation](https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf)
-- [Run PyCorrFit from source](https://github.com/paulmueller/PyCorrFit/wiki/Running-from-source)
-- [Write your own model functions](https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions)
-- [Need help?](https://github.com/paulmueller/PyCorrFit/wiki/Creating-a-new-issue)
+- [Download the latest version](https://github.com/FCS-analysis/PyCorrFit/releases)  
+- [Documentation](https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf)
+- [Run PyCorrFit from source](https://github.com/FCS-analysis/PyCorrFit/wiki/Running-from-source)
+- [Write your own model functions](https://github.com/FCS-analysis/PyCorrFit/wiki/Writing-model-functions)
+- [Need help?](https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-new-issue)
