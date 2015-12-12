@@ -333,7 +333,22 @@ def SaveSessionData(sessionfile, Infodict):
         # Range of fitting parameters
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
-    yaml.safe_dump(Parmlist, open(parmsfilename, "wb"))
+    try:
+        # We would like to perform safe_dump, because in the
+        # Windoes x64 version, some integers are exported
+        # like this: `!!python/long '105'` using `yaml.dump`.
+        with open(parmsfilename, "wb") as yamlfd:
+            yaml.safe_dump(Parmlist, yamlfd)
+    except:# yaml.representer.RepresenterError:
+        # This error occured once on Mac OS 10.8.5:
+        # `RepresenterError: cannot represent an object: 0`
+        # In this case, we choose to use the normal dump
+        # and pray.
+        if os.path.exists(parmsfilename):
+            os.remove(parmsfilename)
+        with open(parmsfilename, "wb") as yamlfd:
+            yaml.dump(Parmlist, yamlfd)
+        
     Arc.write(parmsfilename)
     os.remove(os.path.join(tempdir, parmsfilename))
     # Supplementary data (errors of fit)
