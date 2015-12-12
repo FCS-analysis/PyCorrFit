@@ -258,6 +258,28 @@ def LoadSessionData(sessionfile, parameters_only=False):
                     Wdata.append(np.float(row[0]))
             Weightsdict[pageid][Nkey] = np.array(Wdata)
         Infodict["External Weights"] = Weightsdict
+    ## Preferences
+    preferencesname = "preferences.cfg"
+    try:
+        # Raises KeyError, if file is not present:
+        Arc.getinfo(preferencesname)
+    except:
+        pass
+    else:
+        prefdict = {}
+        with Arc.open(preferencesname) as fd:
+            data = fd.readlines()
+        for line in data:
+            line = line.strip()
+            if len(line) == 0 or line.startswith("#"):
+                continue
+            key, value = line.split("=")
+            key = key.strip()
+            value = value.strip()
+            if value.count(","):
+                value = [ v.strip() for v in value.split(",")]
+            prefdict[key] = value
+        Infodict["Preferences"] = prefdict
     Arc.close()
     return Infodict
 
@@ -278,7 +300,7 @@ def SaveSessionData(sessionfile, Infodict):
         "External Functions, dict": modelids to external model functions
         "External Weights", dict: page numbers, external weights for fitting
         "Parameters", dict: page numbers, all parameters of the pages
-        "Preferences", dict: not used yet
+        "Preferences", dict: fixed page parameters
         "Traces", dict: page numbers, all traces of the pages
 
 
@@ -311,7 +333,22 @@ def SaveSessionData(sessionfile, Infodict):
         # Range of fitting parameters
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
-    yaml.safe_dump(Parmlist, open(parmsfilename, "wb"))
+    try:
+        # We would like to perform safe_dump, because in the
+        # Windoes x64 version, some integers are exported
+        # like this: `!!python/long '105'` using `yaml.dump`.
+        with open(parmsfilename, "wb") as yamlfd:
+            yaml.safe_dump(Parmlist, yamlfd)
+    except:# yaml.representer.RepresenterError:
+        # This error occured once on Mac OS 10.8.5:
+        # `RepresenterError: cannot represent an object: 0`
+        # In this case, we choose to use the normal dump
+        # and pray.
+        if os.path.exists(parmsfilename):
+            os.remove(parmsfilename)
+        with open(parmsfilename, "wb") as yamlfd:
+            yaml.dump(Parmlist, yamlfd)
+        
     Arc.write(parmsfilename)
     os.remove(os.path.join(tempdir, parmsfilename))
     # Supplementary data (errors of fit)
@@ -493,6 +530,18 @@ def SaveSessionData(sessionfile, Infodict):
     WeightFile.close()
     Arc.write(WeightFilename)
     os.remove(os.path.join(tempdir, WeightFilename))
+    ## Preferences
+    preferencesname = "preferences.cfg"
+    with open(preferencesname, 'w') as fd:
+        for key in Infodict["Preferences"]:
+            value = Infodict["Preferences"][key]
+            if isinstance(value, list):
+                value = " ".join("{}".format(it) for it in value)
+            else:
+                value = "{}".format(value)
+            fd.write("{} = {}\n".format(key, value))
+    Arc.write(preferencesname)
+    os.remove(os.path.join(tempdir, preferencesname))
     ## Readme
     rmfilename = "Readme.txt"
     rmfile = open(rmfilename, 'wb')

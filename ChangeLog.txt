@@ -1,3 +1,11 @@
+0.9.4
+- Batch control allows to select individual parameters (#108)
+- Allow to exclude pages from batch fitting (#107)
+- Bugfixes:
+  - Fix `ValueError` in parameter display
+  - Possibly fixed error with `yaml.safe_dump`
+    on Mac OSx 10.8.5
+  - Make sure background is lower than signal (#137)
 0.9.3
 - Fitting: migrate to lmfit
   - This introduces a new dependency for building PyCorrFit.

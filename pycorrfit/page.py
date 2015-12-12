@@ -133,6 +133,14 @@ class FittingPanel(wx.Panel):
         return self.corr.fit_model.id
     
     @property
+    def prevent_batch_modification(self):
+        return self.wxCBPreventBatchParms.GetValue()
+    
+    @prevent_batch_modification.setter
+    def prevent_batch_modification(self, value):
+        self.wxCBPreventBatchParms.SetValue(value)
+    
+    @property
     def title(self):
         return self.tabtitle.GetValue()
 
@@ -507,15 +515,27 @@ class FittingPanel(wx.Panel):
         #                       normtoNDropdown, textnor]
         if self.corr.is_cc:
             # update both self.bgselected and self.bg2selected
-            bg = [self.AmplitudeInfo[1][0].GetValue(),
-                  self.AmplitudeInfo[1][1].GetValue()]
-            tools.background.ApplyAutomaticBackground(self, bg,
-                                                      self.parent)
+            bg = [float(self.AmplitudeInfo[1][0].GetValue()),
+                  float(self.AmplitudeInfo[1][1].GetValue())]
+            sig = [float(self.AmplitudeInfo[0][0].GetValue()),
+                  float(self.AmplitudeInfo[0][1].GetValue())]
+            # Make sure bg < sig
+            for ii in range(len(bg)):
+                if sig[ii] != 0:
+                    if bg[ii] > .99*sig[ii]:
+                        bg[ii] = .99*sig[ii]
+                        self.AmplitudeInfo[1][ii].SetValue(bg[ii])
         else:
             # Only update self.bgselected 
-            bg = self.AmplitudeInfo[1][0].GetValue()
-            tools.background.ApplyAutomaticBackground(self, bg,
-                                                      self.parent)
+            bg = float(self.AmplitudeInfo[1][0].GetValue())
+            sig = float(self.AmplitudeInfo[0][0].GetValue())
+            # Make sure bg < sig
+            if sig != 0:
+                if bg > .99*sig:
+                    bg = .99*sig
+                    self.AmplitudeInfo[1][0].SetValue(bg)
+        tools.background.ApplyAutomaticBackground(self, bg,
+                                                  self.parent)
         e.Skip()
 
     
@@ -740,7 +760,12 @@ class FittingPanel(wx.Panel):
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
         self.panelsettings.sizer.Add(sizerti)
         self.panelsettings.sizer.Add(box1)
-        # Add button "Apply" and "Set range"
+        # checkbox "Protect from batch control"
+        self.wxCBPreventBatchParms = wx.CheckBox(self.panelsettings,
+                                                 -1,
+                                                 "prevent batch modification")
+        box1.Add(self.wxCBPreventBatchParms)
+        # buttons "Apply" and "Set range"
         horzs = wx.BoxSizer(wx.HORIZONTAL)
         buttonapply = wx.Button(self.panelsettings, label="Apply")
         self.Bind(wx.EVT_BUTTON, self.PlotAll, buttonapply)

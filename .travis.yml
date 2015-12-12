@@ -104,4 +104,4 @@ deploy:
     - "${RELEASE_PKG_FILEA}"
   on:
     tags: true
-    repo: paulmueller/PyCorrFit
+    repo: FCS-analysis/PyCorrFit

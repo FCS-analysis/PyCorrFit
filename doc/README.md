@@ -1,5 +1,5 @@
 This folder contains the TeX-source of the 
-[PyCorrFit documentation](https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf).
+[PyCorrFit documentation](https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf).
 
 If, for some reason, you wish to compile it yourself, you will need a 
 working LaTeX distribution.

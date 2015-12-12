@@ -18,11 +18,11 @@ This package provides the Python module `pycorrfit` and its graphical user inter
 graphical user interface is written with wxPython. A HowTo for the installation of the 
 latest version of PyCorrFit using pip can be found there:
 
-https://github.com/paulmueller/PyCorrFit/wiki/Installation_pip
+https://github.com/FCS-analysis/PyCorrFit/wiki/Installation_pip
 
 Further reading:
 
-- Latest downloads: https://github.com/paulmueller/PyCorrFit/releases   
-- Documentation: https://github.com/paulmueller/PyCorrFit/wiki/PyCorrFit_doc.pdf  
-- Write model functions: https://github.com/paulmueller/PyCorrFit/wiki/Writing-model-functions   
-- Need help? https://github.com/paulmueller/PyCorrFit/wiki/Creating-a-new-issue   
+- Latest downloads: https://github.com/FCS-analysis/PyCorrFit/releases   
+- Documentation: https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf  
+- Write model functions: https://github.com/FCS-analysis/PyCorrFit/wiki/Writing-model-functions   
+- Need help? https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-new-issue   
