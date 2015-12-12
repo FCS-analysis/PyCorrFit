@@ -275,7 +275,9 @@ check box.""")
         # Check if we even have pages.
         self.OnPageChanged()
         panel.Layout()
+        sizer_bag.Fit(self)
         self.mastersizer = sizer_bag
+        
 
     def RedrawParameterBox(self, e=None):
         sizer = self.parameter_sizer
@@ -291,17 +293,19 @@ individual parameters
 for batch modification.""")
         sizer.Add(text)
 
-        parms = self.GetParameters()
-        modelid = parms[1]
-        ptext, _pval = mdls.GetHumanReadableParms(modelid, parms[2])
-        ptext = [ p.split()[0] for p in ptext ]
-        self.wxParameterCheckBoxes = []
-        for p in ptext:
-            cb = wx.CheckBox(panel, label=p)
-            cb.SetValue(True)
-            self.wxParameterCheckBoxes.append(cb)
-            sizer.Add(cb)
-        
+        if self.parent.notebook.GetPageCount():
+            # Get parameters of current page
+            parms = self.GetParameters()
+            modelid = parms[1]
+            ptext, _pval = mdls.GetHumanReadableParms(modelid, parms[2])
+            ptext = [ p.split()[0] for p in ptext ]
+            self.wxParameterCheckBoxes = []
+            for p in ptext:
+                cb = wx.CheckBox(panel, label=p)
+                cb.SetValue(True)
+                self.wxParameterCheckBoxes.append(cb)
+                sizer.Add(cb)
+
         # Try to set sizes correctly
         box = sizer.GetStaticBox()
         boxs = box.GetBestSize()
