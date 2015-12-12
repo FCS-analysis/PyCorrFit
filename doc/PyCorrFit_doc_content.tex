@@ -203,9 +203,13 @@ The tool is closed by the button \textit{Cancel}. All the listed data sets will 
 \label{sec:menub.tools.batch}
 By default, the current page is taken as a reference to perform automated fitting. A batch is defined as the ensemble of correlation data sets (pages) assigned to the same model function within a session. A session can therefore have several batches, even for the same data. 
 
-For fitting, it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range }tool for individual pages.
+For fitting, it is crucial to carefully define the starting parameters, whether parameters should be fixed or varied, the range of values which make physically sense, and other options offered within the \textit{Main window}. By executing \textit{Apply to applicable pages}, these settings are transferred to all other pages assigned to the same fit model. Note that this includes the range of lag times (lag time channels) which may have been changed with the \textit{Data range} tool for individual pages.
+
+It is possible to prevent the application of fitting parameters to individual pages by checking the \textit{prevent batch modification} checkbox in the \textit{Model parameters} box of a page.
 
 The button \textit{Fit applicable pages} then performs fitting on all pages of the same batch. Alternatively, the user can define an external source of parameters as a reference, i.e. the first page of some \textit{Other session} (*.pcfs). However, this assumes a consistent assignment of model functions.
+
+
 
 \subsubsection{Tools / Global fitting}
 \label{sec:menub.tools.globa}
