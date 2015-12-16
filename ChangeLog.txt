@@ -1,3 +1,9 @@
+0.9.5
+- Bugfixes
+  - Closing the batch control window causes segfault bug (#142)
+  - Closing page causes error when batch control is active (#143)
+  - Plot normalization causes "Save Session" to fail (#144)
+  - Plot normalization not loaded from session (#145)
 0.9.4
 - Batch control allows to select individual parameters (#108)
 - Allow to exclude pages from batch fitting (#107)
