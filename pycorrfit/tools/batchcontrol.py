@@ -249,7 +249,6 @@ check box.""")
         ## Parameter selection
         boxright = wx.StaticBox(panel, label="Selected parameters")
         rightSizer = wx.StaticBoxSizer(boxright, wx.VERTICAL)
-        boxright.SetSizer(rightSizer)
         self.parameter_sizer = rightSizer
         self.RedrawParameterBox()
 
