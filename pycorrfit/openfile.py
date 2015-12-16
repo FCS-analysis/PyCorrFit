@@ -335,9 +335,12 @@ def SaveSessionData(sessionfile, Infodict):
         # Channel selection
         Parms[idparm][4] = np.array(Parms[idparm][4],dtype="int").tolist()
         # Background selection
-        Parms[idparm][6] = np.array(Parms[idparm][6],dtype="int").tolist()
+        for ii in range(len(Parms[idparm][6])):
+            if Parms[idparm][6][ii] is not None:
+                Parms[idparm][6][ii] = int(Parms[idparm][6][ii])
         # Plot normalization
-        Parms[idparm][8] = np.array(Parms[idparm][8],dtype="int").tolist()
+        if Parms[idparm][8] is not None:
+            Parms[idparm][8] = int(Parms[idparm][8])
         # Fit parameter range
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
