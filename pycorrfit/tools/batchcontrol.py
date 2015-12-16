@@ -150,6 +150,8 @@ class BatchCtrl(wx.Frame):
         if Page is not None:
             # redraw this tool if necessary
             if self.curpage is not None:
+                import IPython
+                IPython.embed()
                 oldmodelid = self.curpage.modelid
             else:
                 oldmodelid = 0
