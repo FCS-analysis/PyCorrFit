@@ -191,8 +191,8 @@ class FittingPanel(wx.Panel):
         self._bg2selected = value
 
     def apply_parameters(self, event=None):
-        """ Read the values from the form and write it to the
-            pages parameters.
+        """ Read the values from the GUI form and write it to the
+            pages parameters / correlation class.
             This function is called when the "Apply" button is hit.
         """
         modelid = self.corr.fit_model.id
@@ -263,7 +263,7 @@ class FittingPanel(wx.Panel):
 
     def apply_parameters_reverse(self, event=None):
         """ Read the values from the pages parameters and write
-            it to the form.
+            it to the GUI form.
         """
         modelid = self.corr.fit_model.id
         #
@@ -287,6 +287,12 @@ class FittingPanel(wx.Panel):
         List[1] = "spline ("+str(self.FitKnots)+" knots)"
         self.Fitbox[1].SetItems(List)
         self.Fitbox[1].SetSelection(idf)
+        # Normalization
+        if self.corr.normparm is None:
+            normsel = 0
+        else:
+            normsel = self.corr.normparm + 1
+        self.AmplitudeInfo[2].SetSelection(normsel)
         # Fitting algorithm
         keys = pcfbase.GetAlgorithmStringList()[0]
         idalg = keys.index(self.corr.fit_algorithm)

@@ -328,22 +328,35 @@ def SaveSessionData(sessionfile, Infodict):
     for idparm in ParmsKeys:
         # Make sure we do not accidently save arrays.
         # This would not work correctly with yaml.
+        # Parameters
         Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
-        Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
-        # Range of fitting parameters
+        # Parameter varied
+        Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist() 
+        # Channel selection
+        Parms[idparm][4] = np.array(Parms[idparm][4],dtype="int").tolist()
+        # Background selection
+        for ii in range(len(Parms[idparm][6])):
+            if Parms[idparm][6][ii] is not None:
+                Parms[idparm][6][ii] = int(Parms[idparm][6][ii])
+        # Plot normalization
+        if Parms[idparm][8] is not None:
+            Parms[idparm][8] = int(Parms[idparm][8])
+        # Fit parameter range
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
+    
     try:
         # We would like to perform safe_dump, because in the
         # Windoes x64 version, some integers are exported
         # like this: `!!python/long '105'` using `yaml.dump`.
         with open(parmsfilename, "wb") as yamlfd:
             yaml.safe_dump(Parmlist, yamlfd)
-    except:# yaml.representer.RepresenterError:
-        # This error occured once on Mac OS 10.8.5:
+    except yaml.representer.RepresenterError:
         # `RepresenterError: cannot represent an object: 0`
         # In this case, we choose to use the normal dump
         # and pray.
+        # However, this should not happen, because in the above
+        # for-loop we set the correct dtype for each parameter .
         if os.path.exists(parmsfilename):
             os.remove(parmsfilename)
         with open(parmsfilename, "wb") as yamlfd:

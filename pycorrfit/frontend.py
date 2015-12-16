@@ -1820,6 +1820,7 @@ class MyFrame(wx.Frame):
             # New feature in 0.7.8 includes normalization to a fitting
             # parameter.
             Page.corr.normparm = Parms[8]
+            Page.apply_parameters_reverse()
             Page.OnAmplitudeCheck("init")
         if len(Parms) >= 10:
             Page.corr.fit_parameters_range = np.array(Parms[9])

@@ -548,9 +548,6 @@ class Correlation(object):
         """fitted data values, same shape as self.correlation_fit"""
         toplot = self.modeled_fit
         toplot[:,1] *= self.normalize_factor
-        if toplot[-1,1] == 0.1:
-            import IPython
-            IPython.embed()
         return toplot
 
     @property
@@ -559,7 +556,6 @@ class Correlation(object):
         if self.normparm is None:
             # nothing to do
             return 1
-        
         if self.normparm < self.fit_parameters.shape[0]:
             nfactor = self.fit_parameters[self.normparm]
         else:
