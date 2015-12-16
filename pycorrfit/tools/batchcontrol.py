@@ -146,16 +146,17 @@ class BatchCtrl(wx.Frame):
         if trigger in ["fit_batch", "fit_finalize", "init",
                        "parm_batch", "parm_finalize"]:
             return
-        
+
+        oldpage = self.curpage
+        self.curpage = self.parent.notebook.GetCurrentPage()
+                
         if Page is not None:
             # redraw this tool if necessary
-            if self.curpage is not None:
-                import IPython
-                IPython.embed()
+            if oldpage is not None and not isinstance(oldpage, wx._core._wxPyDeadObject):
                 oldmodelid = self.curpage.modelid
             else:
                 oldmodelid = 0
-            newmodelid = Page.modelid
+            newmodelid = self.curpage.modelid
             if oldmodelid != newmodelid:
                 self.RedrawParameterBox()
 
@@ -169,7 +170,7 @@ class BatchCtrl(wx.Frame):
             self.dropdown.SetItems(DDlist)
             self.dropdown.SetSelection(0)
 
-        self.curpage = self.parent.notebook.GetCurrentPage()
+        
 
 
     def OnRadioHere(self, event=None):
@@ -311,9 +312,8 @@ for batch modification.""")
         box = sizer.GetStaticBox()
         boxs = box.GetBestSize()
         sizs = sizer.GetMinSize()
-        thesize = (max(boxs[0], sizs[0]+20), sizs[1])
+        thesize = (max(boxs[0], sizs[0]), sizs[1])
         sizer.SetMinSize(thesize)
-        box.SetMinSize(thesize)
         box.SetSize(thesize)
 
         try:
