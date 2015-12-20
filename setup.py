@@ -99,7 +99,6 @@ setup(
               "tir", "fitting"
               ],
     license="GPL v2",
-    long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
     name=name,
     platforms=['ALL'],
     url='https://github.com/FCS-analysis/PyCorrFit',
@@ -134,6 +133,7 @@ setup(
         "lmfit >= 0.9.2",
         ],
     setup_requires=["cython"],
+    tests_require=["urllib3", "simplejson"],
     # scripts
     entry_points={
        "gui_scripts": ["{name:s}={name:s}:Main".format(

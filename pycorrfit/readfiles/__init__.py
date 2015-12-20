@@ -217,6 +217,21 @@ def openZIP(dirname, filename):
     dictionary["Filename"] = Filelist
     return dictionary
 
+def get_supported_extensions():
+    """
+    Returns list of extensions of currently supported file types.
+    """
+    extlist = []
+    for kf in list(Filetypes.keys()):
+        ext = kf.split("|")[-1]
+        ext = ext.split(";")
+        ext = [ e.lower().strip("*. ") for e in ext]
+        ext = list(np.unique(ext))
+        extlist += ext
+    extlist = list(np.unique(extlist))
+    extlist.sort()
+    return extlist
+    
 
 # The string that is shown when opening all supported files
 # We add an empty space so it is listed first in the dialogs.
@@ -246,5 +261,4 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "Zip file (*.zip)|*.zip" : openZIP,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
-BGFiletypes = AddAllWildcard(BGFiletypes)
-
+BGFiletypes = AddAllWildcard(BGFiletypes)   
