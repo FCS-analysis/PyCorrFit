@@ -70,6 +70,8 @@ install:
 - arch -i386 python setup.py develop
 
 script:
+# Run tests
+- arch -i386 python setup.py test
 # Create wheel pacakge
 - arch -i386 python setup.py bdist_wheel
 # Create source pacakge
