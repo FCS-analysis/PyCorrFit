@@ -40,21 +40,6 @@ else:
                         )
               ]
 
-
-class PyTest(Command):
-    """ Perform pytests
-    """
-    user_options = []
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        errno = subprocess.call([sys.executable, 'tests/runtests.py'])
-        raise SystemExit(errno)
-
 # Download documentation if it was not compiled
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
 webdoc = "https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf"
@@ -116,9 +101,7 @@ setup(
                  },
     # cython
     ext_modules=EXTENSIONS,
-    cmdclass={'build_ext': build_ext,
-              'test': PyTest,
-             },
+    cmdclass={'build_ext': build_ext},
     # requirements
     extras_require = {
         # If you need the GUI of this project in your project, add
@@ -132,8 +115,8 @@ setup(
         "PyYAML >= 3.09",
         "lmfit >= 0.9.2",
         ],
-    setup_requires=["cython"],
-    tests_require=["urllib3", "simplejson"],
+    setup_requires=["cython", 'pytest-runner'],
+    tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
     entry_points={
        "gui_scripts": ["{name:s}={name:s}:Main".format(
