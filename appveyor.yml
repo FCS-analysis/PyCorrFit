@@ -18,12 +18,13 @@ notifications:
 
 
 environment:
-
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\freeze_appveyor\\run_with_compiler.cmd"
+    GH_READ_API_TOKEN:
+      secure: GvXoZj2gfC/Zjpe5k3BLTNKTNLWPFK9hB97npxEDM5rUxcrESItbUhrPwXCaAt8s
 
   matrix:
     - PYTHON: "C:\\Python27-conda32"

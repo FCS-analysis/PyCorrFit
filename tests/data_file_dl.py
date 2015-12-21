@@ -87,7 +87,18 @@ def get_data_files_ext(extension, dldir=dldir, http=pool_manager,
     """
     ext = extension.lower()
     url = api_origin+"trees/master?recursive=1"
-    r = http.request("GET", url, headers={'User-Agent': 'python-urllib3'})
+    # headers
+    headers = {'User-Agent': __file__}
+    # GitHub API token to prevent rate-limits
+    # Key is generated with
+    #
+    #    gem install travis
+    #    travis encrypt GH_READ_API_TOKEN=secret-token
+    #    
+    # Add the result to env in travis.yml.
+    if "GH_READ_API_TOKEN" in os.environ:
+        headers["Authorization"] = "token {}".format(os.environ["GH_READ_API_TOKEN"])
+    r = http.request("GET", url, headers=headers)
     jd = json.loads(r.data)
     tree = jd["tree"]
     files = [ t["path"] for t in tree ]
