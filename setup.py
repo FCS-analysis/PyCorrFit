@@ -92,12 +92,14 @@ setup(
     packages=['pycorrfit',
               'pycorrfit.models',
               'pycorrfit.readfiles',
-              'pycorrfit.tools'
+              'pycorrfit.gui',
+              'pycorrfit.gui.tools',
               ],
     package_dir={'pycorrfit': 'pycorrfit',
                  'pycorrfit.models': 'pycorrfit/models',
                  'pycorrfit.readfiles': 'pycorrfit/readfiles',
-                 'pycorrfit.tools': 'pycorrfit/tools'
+                 'pycorrfit.gui': 'pycorrfit/gui',
+                 'pycorrfit.gui.tools': 'pycorrfit/gui/tools',
                  },
     # cython
     ext_modules=EXTENSIONS,
