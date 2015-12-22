@@ -30,7 +30,7 @@ def get_file_location(filename):
     Locate non-Python files that are part of PyCorrFit.
     """
     dirname = os.path.dirname(os.path.abspath(__file__))
-    locations = ["/../", "/../pycorrfit_doc/", "/../doc/"]
+    locations = ["/./", "/pycorrfit_doc/", "/doc/"]
     locations += [ "/.."+l for l in locations]
     locations = [ os.path.realpath(dirname+l) for l in locations]
 

@@ -8,9 +8,8 @@
 #  pip install wheel twine
 #  python setup.py bdist wheel
 from __future__ import print_function
-from setuptools import setup, Extension, Command
+from setuptools import setup, Extension
 import sys
-import subprocess
 
 from os.path import join, dirname, realpath, exists
 from warnings import warn

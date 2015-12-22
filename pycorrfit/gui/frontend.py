@@ -32,15 +32,14 @@ from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import meta
-
-from . import page
 try:
-    from . import plotting
+    from pycorrfit import plotting
 except ImportError:
     warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
              "available. Reason: {}.".format(sys.exc_info()[1].message))
 
-from . import tools                        # Some tools
+from . import page
+from . import tools
 from . import usermodel
 
 
