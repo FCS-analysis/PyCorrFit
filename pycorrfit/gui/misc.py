@@ -10,7 +10,6 @@ import codecs
 from distutils.version import LooseVersion # For version checking
 import numpy as np
 import os
-import sys
 import tempfile
 import urllib2
 import webbrowser

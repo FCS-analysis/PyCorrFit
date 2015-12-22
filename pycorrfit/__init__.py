@@ -8,7 +8,10 @@ from . import meta
 from . import models
 from . import openfile
 from . import readfiles
-from . import fcs_data_set
+
+from .correlation import Correlation
+from .fit import Fit
+from .trace import Trace
 
 __version__ = meta.get_version()
 __author__ = u"Paul Müller"

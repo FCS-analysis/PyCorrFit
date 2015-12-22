@@ -10,7 +10,7 @@ Open a text window with lots of information.
 import wx
 import numpy as np
 
-from pycorrfit import fcs_data_set
+from pycorrfit import fit
 from pycorrfit import models as mdls
 
 # Menu entry name
@@ -170,7 +170,7 @@ class InfoClass(object):
                 else:
                     ChiSqType = "unknown"
                 Fitting.append([ u"χ²-type", ChiSqType])
-                Fitting.append([ "Algorithm", fcs_data_set.Algorithms[corr.fit_algorithm][1]])
+                Fitting.append([ "Algorithm", fit.Algorithms[corr.fit_algorithm][1]])
                 if len(Page.GlobalParameterShare) != 0:
                     shared = str(Page.GlobalParameterShare[0])
                     for item in Page.GlobalParameterShare[1:]:

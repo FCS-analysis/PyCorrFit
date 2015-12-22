@@ -17,7 +17,7 @@ import wx.lib.plot as plot
 
 from pycorrfit import openfile as opf                  # How to treat an opened file
 from pycorrfit import readfiles
-from pycorrfit.fcs_data_set import Trace
+from pycorrfit import Trace
 
 from .. import misc
 

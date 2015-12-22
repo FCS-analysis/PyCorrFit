@@ -7,18 +7,16 @@ The frontend displays the GUI (Graphic User Interface).
 All functions and modules are called from here.
 """
 import numpy as np                      # NumPy
-import re
-import string
 import warnings
 import wx                               # GUI interface wxPython
-from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 
 
 from pycorrfit import models as mdls
-from pycorrfit import fcs_data_set as pcfbase
-from pycorrfit.fcs_data_set import Correlation, Fit
+from pycorrfit import fit
+from pycorrfit import Correlation, Fit
+
 
 from . import tools
 from . import wxutils
@@ -122,8 +120,8 @@ class FittingPanel(wx.Panel):
     def active_parms(self):
         names = self.corr.fit_model.parameters[0]
         parms = self.corr.fit_parameters
-        bool = self.corr.fit_parameters_variable
-        return [names, parms, bool]
+        bools = self.corr.fit_parameters_variable
+        return [names, parms, bools]
 
     @property
     def IsCrossCorrelation(self):
@@ -250,7 +248,7 @@ class FittingPanel(wx.Panel):
             fit_weight_data = self.corr.fit_weight_data
         
         # Fitting algorithm
-        keys = pcfbase.GetAlgorithmStringList()[0]
+        keys = fit.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
         
         self.corr.fit_algorithm = keys[idalg]
@@ -295,7 +293,7 @@ class FittingPanel(wx.Panel):
             normsel = self.corr.normparm + 1
         self.AmplitudeInfo[2].SetSelection(normsel)
         # Fitting algorithm
-        keys = pcfbase.GetAlgorithmStringList()[0]
+        keys = fit.GetAlgorithmStringList()[0]
         idalg = keys.index(self.corr.fit_algorithm)
         self.AlgorithmDropdown.SetSelection(idalg)
         self.updateChi2()
@@ -856,7 +854,7 @@ class FittingPanel(wx.Panel):
         textalg = wx.StaticText(self.panelsettings, label="Algorithm")
         fitsizer.Add(textalg)
         self.AlgorithmDropdown = wx.ComboBox(self.panelsettings)
-        items = pcfbase.GetAlgorithmStringList()[1]
+        items = fit.GetAlgorithmStringList()[1]
         self.AlgorithmDropdown.SetItems(items)
         self.Bind(wx.EVT_COMBOBOX, self.apply_parameters,
                   self.AlgorithmDropdown)

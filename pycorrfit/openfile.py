@@ -19,7 +19,7 @@ import warnings
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport
 from .readfiles import BGFiletypes  # @UnusedImport
-from .fcs_data_set import Trace
+from .trace import Trace
 from . import meta
 
 __version__ = meta.get_version()

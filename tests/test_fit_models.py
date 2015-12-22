@@ -14,7 +14,8 @@ import numpy as np
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 import pycorrfit
-from pycorrfit.fcs_data_set import Correlation, Fit
+from pycorrfit.correlation import Correlation
+from pycorrfit.fit import Fit
 
 
 # GLOBAL PARAMETERS FOR THIS TEST:

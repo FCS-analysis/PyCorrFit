@@ -10,7 +10,7 @@ Perform global fitting on pages which share parameters.
 import wx
 import numpy as np
 
-from pycorrfit.fcs_data_set import Fit
+from pycorrfit import Fit
 from .. import misc
 
 
