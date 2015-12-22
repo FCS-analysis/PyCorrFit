@@ -1,3 +1,8 @@
+0.9.6
+- Under the hood:
+  - Separation of core and GUI modules
+  - Include tests in distributions for PyPI
+  - Improve automated testing on Windows and Mac OS
 0.9.5
 - Bugfixes
   - Closing the batch control window causes segfault bug (#142)
