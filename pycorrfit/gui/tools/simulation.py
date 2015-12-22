@@ -12,7 +12,7 @@ import wx
 from wx.lib.agw import floatspin
 import numpy as np
 
-from .. import models as mdls
+from pycorrfit import models as mdls
 
 # Menu entry name
 MENUINFO = ["S&lider simulation",

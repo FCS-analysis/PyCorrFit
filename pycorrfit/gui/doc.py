@@ -41,47 +41,19 @@ except ImportError:
 import wx
 import yaml
 
-import readfiles
-from readfiles import read_pt3_scripts
+import pycorrfit
+from pycorrfit import readfiles, meta
+from pycorrfit.readfiles import read_pt3_scripts
 
-
-def GetLocationOfFile(filename):
-    dirname = os.path.dirname(os.path.abspath(__file__))
-    locations = [
-                    os.path.realpath(dirname+"/../"),
-                    os.path.realpath(dirname+"/../pycorrfit_doc/"),
-                    os.path.realpath(dirname+"/../doc/"),
-                ]
-
-    for i in range(len(locations)):
-        # check /usr/lib64/32 -> /usr/lib
-        for larch in ["lib32", "lib64"]:
-            if dirname.count(larch):
-                locations.append(locations[i].replace(larch, "lib", 1))
-    
-    ## freezed binaries:
-    if hasattr(sys, 'frozen'):
-        try:
-            adir = sys._MEIPASS + "/doc/"  # @UndefinedVariable
-        except:
-            adir = "./"
-        locations.append(os.path.realpath(adir))
-    for loc in locations:
-        thechl = os.path.join(loc,filename)
-        if os.path.exists(thechl):
-            return thechl
-            break
-    # if this does not work:
-    return None
-
+__version__ = pycorrfit.__version__
 
 def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
-    return GetLocationOfFile(filename)
+    return meta.get_file_location(filename)
 
 
 def GetLocationOfDocumentation(filename = "PyCorrFit_doc.pdf"):
     """ Returns the location of the documentation if there is any."""
-    return GetLocationOfFile(filename)
+    return meta.get_file_location(filename)
 
 
 def info(version):
@@ -175,14 +147,6 @@ HomePage = "http://pycorrfit.craban.de/"
 ChangeLog = "ChangeLog.txt"
 StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
 
-# Check if we can extract the version
-try:
-    clfile = open(StaticChangeLog, 'r')
-    __version__ = clfile.readline().strip()
-    clfile.close()     
-except:
-    __version__ = "0.0.0-unknown"
-    
     
 # Github homepage
 GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/ChangeLog.txt"

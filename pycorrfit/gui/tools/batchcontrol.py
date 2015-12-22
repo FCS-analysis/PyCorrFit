@@ -11,8 +11,8 @@ import numpy as np
 import os
 import wx
 
-from .. import openfile as opf     # How to treat an opened file
-from .. import models as mdls
+from pycorrfit import openfile as opf     # How to treat an opened file
+from pycorrfit import models as mdls
 
 
 # Menu entry name

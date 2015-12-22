@@ -10,8 +10,10 @@ Creates an average of curves.
 import numpy as np
 import wx
 
+from pycorrfit import models as mdls
+
 from .. import misc
-from .. import models as mdls
+
 
 # Menu entry name
 MENUINFO = ["&Average data", "Create an average curve from whole session."]

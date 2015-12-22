@@ -8,12 +8,10 @@ Select the range in which the parameter should reside for fitting.
 
 
 import wx
-from wx.lib.agw import floatspin
 import numpy as np
 
 
-from .. import edclasses  # edited floatspin
-from .. import models as mdls
+from pycorrfit import models as mdls
 from .. import wxutils
 
 

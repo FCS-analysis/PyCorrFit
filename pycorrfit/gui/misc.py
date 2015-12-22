@@ -173,24 +173,6 @@ def getMainIcon(pxlength=32):
     return iconICO
 
 
-def findprogram(program):
-    """ Uses the systems PATH variable find executables"""
-    path = os.environ['PATH']
-    paths = path.split(os.pathsep)
-    for d in paths:
-        if os.path.isdir(d):
-            fullpath = os.path.join(d, program)
-            if sys.platform[:3] == 'win':
-                for ext in '.exe', '.bat':
-                    program_path = fullpath + ext
-                    if os.path.isfile(fullpath + ext):
-                        return (1, program_path)
-            else:
-                if os.path.isfile(fullpath):
-                    return (1, fullpath)
-    return (0, None)
-
-
 def Update(parent):
     """ This is a thread for _Update """
     parent.StatusBar.SetStatusText("Connecting to server...")

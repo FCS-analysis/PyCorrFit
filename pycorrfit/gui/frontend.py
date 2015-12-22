@@ -28,15 +28,18 @@ except ImportError:
 from . import doc                          # Documentation/some texts
 from . import edclasses
 
-from . import models as mdls
-from . import openfile as opf              # How to treat an opened file
+from pycorrfit import models as mdls
+from pycorrfit import openfile as opf
+from pycorrfit import readfiles
+from pycorrfit import meta
+
 from . import page
 try:
     from . import plotting
 except ImportError:
     warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
              "available. Reason: {}.".format(sys.exc_info()[1].message))
-from . import readfiles
+
 from . import tools                        # Some tools
 from . import usermodel
 
@@ -940,11 +943,11 @@ class MyFrame(wx.Frame):
             # do nothing
             return
         ## Check if we can use latex for plotting:
-        r1 = misc.findprogram("latex")[0]
-        r2 = misc.findprogram("dvipng")[0]
+        r1 = meta.find_program("latex")[0]
+        r2 = meta.find_program("dvipng")[0]
         # Ghostscript
-        r31 = misc.findprogram("gs")[0]
-        r32 = misc.findprogram("mgs")[0] # from miktex
+        r31 = meta.find_program("gs")[0]
+        r32 = meta.find_program("mgs")[0] # from miktex
         r3 = max(r31,r32)
         if r1+r2+r3 < 3:
             # Warn the user

@@ -23,7 +23,7 @@ from matplotlib import rcParams
 import unicodedata
 
 # For finding latex tools
-from .misc import findprogram
+from .meta import find_program
 from . import models as mdls
 
 
@@ -153,11 +153,11 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         fitlabel += ur", normalized to "+Page.corr.fit_model.parameters[0][Page.corr.normparm]
 
     ## Check if we can use latex for plotting:
-    r1 = findprogram("latex")[0]
-    r2 = findprogram("dvipng")[0]
+    r1 = find_program("latex")[0]
+    r2 = find_program("dvipng")[0]
     # Ghostscript
-    r31 = findprogram("gs")[0]
-    r32 = findprogram("mgs")[0] # from miktex
+    r31 = find_program("gs")[0]
+    r32 = find_program("mgs")[0] # from miktex
     r3 = max(r31,r32)
     if r1+r2+r3 < 3:
         uselatex = False
@@ -347,11 +347,11 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         labels.append("Channel {}: {}".format(ii+1, tr.name))
 
     ## Check if we can use latex for plotting:
-    r1 = findprogram("latex")[0]
-    r2 = findprogram("dvipng")[0]
+    r1 = find_program("latex")[0]
+    r2 = find_program("dvipng")[0]
     # Ghostscript
-    r31 = findprogram("gs")[0]
-    r32 = findprogram("mgs")[0]
+    r31 = find_program("gs")[0]
+    r32 = find_program("mgs")[0]
     r3 = max(r31,r32)
     if r1+r2+r3 < 3:
         uselatex = False

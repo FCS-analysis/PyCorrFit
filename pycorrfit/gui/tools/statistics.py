@@ -15,9 +15,10 @@ import wx.lib.scrolledpanel as scrolled
 import numpy as np
 import re
 
+from pycorrfit import models as mdls
+
 from .info import InfoClass
 from .. import misc
-from .. import models as mdls
 
 
 # Menu entry name

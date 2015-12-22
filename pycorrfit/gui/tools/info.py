@@ -10,8 +10,8 @@ Open a text window with lots of information.
 import wx
 import numpy as np
 
-from .. import fcs_data_set
-from .. import models as mdls
+from pycorrfit import fcs_data_set
+from pycorrfit import models as mdls
 
 # Menu entry name
 MENUINFO = ["Page &info",

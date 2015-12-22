@@ -29,7 +29,7 @@ except ImportError:
     Function = object
 import wx
 
-from . import models as mdls
+from pycorrfit import models as mdls
 
 
 class CorrFunc(object):

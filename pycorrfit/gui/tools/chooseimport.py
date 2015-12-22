@@ -11,7 +11,7 @@ of data (AC1, AC2, CC12, CC21) he wants to import.
 import numpy as np
 import wx
 
-from .. import models as mdls
+from pycorrfit import models as mdls
 from . import overlaycurves
 
 

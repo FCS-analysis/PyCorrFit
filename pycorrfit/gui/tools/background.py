@@ -15,10 +15,11 @@ import wx
 from wx.lib.agw import floatspin        # Float numbers in spin fields
 import wx.lib.plot as plot    
 
+from pycorrfit import openfile as opf                  # How to treat an opened file
+from pycorrfit import readfiles
+from pycorrfit.fcs_data_set import Trace
+
 from .. import misc
-from .. import openfile as opf                  # How to treat an opened file
-from .. import readfiles
-from ..fcs_data_set import Trace
 
 # Menu entry name
 MENUINFO = ["&Background correction", "Open a file for background correction."]

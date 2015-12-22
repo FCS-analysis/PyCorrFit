@@ -16,10 +16,11 @@ import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
 
 
-from . import models as mdls
+from pycorrfit import models as mdls
+from pycorrfit import fcs_data_set as pcfbase
+from pycorrfit.fcs_data_set import Correlation, Fit
+
 from . import tools
-from . import fcs_data_set as pcfbase
-from .fcs_data_set import Correlation, Fit
 from . import wxutils
 
 
