@@ -17,7 +17,6 @@ from warnings import warn
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
 from distutils.command.install import INSTALL_SCHEMES
-from IPython.core.release import long_description
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
