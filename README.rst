@@ -4,6 +4,7 @@
 |PyPI Version| |Build Status Win| |Build Status Mac|
 
 A graphical fitting tool for fluorescence correlation spectroscopy (FCS) that comes with support for several file formats, can be applied to a large variety of problems, and attempts to be as user-friendly as possible. Some of the features are
+
 - Averaging of curves
 - Background correction
 - Batch processing
@@ -63,8 +64,8 @@ break anything can be submitted to this branch.
 If you want to do big changes, please (fork ShapeOut and) create a separate branch,
 e.g. ``my_new_feature_dev``, and create a pull-request to *develop* once you are done making
 your changes.
-**Please make sure to edit the 
-`changelog <https://github.com/FCS-analysis/PyCorrFit/blob/master/ChangeLog.txt>`__**. 
+Please make sure to also update the 
+`changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/ChangeLog.txt>`__. 
 
 Tests
 -----
