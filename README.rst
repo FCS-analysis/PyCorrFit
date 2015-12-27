@@ -20,7 +20,7 @@ Getting started
 
 Installation
 ------------
-Installers for PyCorrFit are available at the `release page <https://github.com/FCS-analysis/PyCorrFit/releases`__.
+Installers for PyCorrFit are available at the `release page <https://github.com/FCS-analysis/PyCorrFit/releases>`__.
 If you have Python installed you can install PyCorrFit, including its scripting functionalities, from the Python package index:
 
 ::
@@ -83,8 +83,7 @@ Windows test binaries
 After each commit to the PyCorrFit repository, a binary installer is created
 by `Appveyor <https://ci.appveyor.com/project/paulmueller/PyCorrFit>`__. Click
 on a build and navigate to ``ARTIFACTS`` (upper right corner right under
-the running time of the build). From there you can download the executable
-Windows installer.
+the running time of the build). From there you can download the Windows installer of the commit.
 
 
 .. |PyCorrFit| image:: https://raw.github.com/FCS-analysis/PyCorrFit/master/doc/Images/PyCorrFit_logo_dark.png
