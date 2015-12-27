@@ -17,6 +17,7 @@ from warnings import warn
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
 from distutils.command.install import INSTALL_SCHEMES
+from IPython.core.release import long_description
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
@@ -78,6 +79,7 @@ setup(
         ],
     data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
+    long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,
     keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
               "tir", "fitting"
