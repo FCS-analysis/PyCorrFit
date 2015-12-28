@@ -180,7 +180,12 @@ modeltypes[u"User"] = []
 # The order of the import matters!
 # These models perform the integration by themselves using the `model_setup` method.
 from . import model_confocal_3d
+from . import model_confocal_3d_3d
 from . import model_confocal_2d
+from . import model_confocal_2d_2d
+from . import model_confocal_3d_2d
+
+
 
 from . import model_confocal_t_3d
 from . import model_confocal_t_3d_3d

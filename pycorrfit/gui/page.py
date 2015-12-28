@@ -736,7 +736,8 @@ class FittingPanel(wx.Panel):
         # Create empty tab title
         mddat = mdls.modeldict[modelid]
         modelshort = mdls.GetModelType(modelid)
-        titlelabel = u"Data set ({} {})".format(modelshort, mddat[1])
+        titlelabel = u"Data set {} ({} {})".format(
+                       self.counter.strip(" :"), modelshort, mddat[1])
         boxti = wx.StaticBox(self.panelsettings, label=titlelabel)
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         sizerti.SetMinSize((horizontalsize, -1))

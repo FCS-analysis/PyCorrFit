@@ -1,4 +1,7 @@
 0.9.6
+- New confocal fitting models:
+  - 3D+3D, 2D+2D, 3D+2D (no triplet)
+  - T+3D+3D+3D
 - Under the hood:
   - Separation of core and GUI modules
   - Include tests in distributions for PyPI
