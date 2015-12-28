@@ -60,6 +60,8 @@ def supplements(parms, countrate=None):
 
 
 parms = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
+
+## Boundaries
 boundaries = [[0, np.inf]]*len(parms)
 # T
 boundaries[1] = [0,.9999999999999]
