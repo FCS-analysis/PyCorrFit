@@ -131,11 +131,11 @@ def GetModelType(modelid):
         for key in modeltypes.keys():
             mlist = modeltypes[key]
             if mlist.count(modelid) == 1:
-                return shorttype[key]
                 try:
                     return shorttype[key]
                 except:
-                    return ""
+                    warnings.warn("No shorttype defined for `{}`.".format(key))
+                    return key
 
 def GetModelFunctionFromId(modelid):
     return modeldict[modelid][3]

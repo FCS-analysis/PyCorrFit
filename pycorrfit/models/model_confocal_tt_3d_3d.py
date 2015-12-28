@@ -95,6 +95,7 @@ def supplements(parms, countrate=None):
         # CPP
         cpp = countrate/n
         Info.append(["cpp [kHz]", cpp])
+    return Info
 
 
 parms = [
