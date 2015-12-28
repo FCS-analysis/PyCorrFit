@@ -171,7 +171,7 @@ boundaries = dict()
 shorttype = dict()
 shorttype[u"Confocal (Gaussian)"] = u"CFoc"
 shorttype[u"Confocal (Gaussian) and triplet"] = u"CFoc"
-shorttype[u"Confocal (Gaussian) with doubles triplet"] = u"CFoc+TT"
+shorttype[u"Confocal (Gaussian) with double triplet"] = u"CFoc"
 shorttype[u"TIR (Gaussian/Exp.)"] = u"TIR CFoc"
 shorttype[u"TIR (□xσ/Exp.)"] = u"TIR □xσ"
 

@@ -53,7 +53,7 @@ class ExceptionDialog(wx.MessageDialog):
 
 
 ########################################################################
-class FlatNotebookDemo(fnb.FlatNotebook):
+class FlatNotebook(fnb.FlatNotebook):
     """
     Flatnotebook class
     """
@@ -158,7 +158,7 @@ class MyFrame(wx.Frame):
         panel = wx.Panel(self)
         self.panel = panel
 
-        self.notebook = FlatNotebookDemo(panel)
+        self.notebook = FlatNotebook(panel)
         self.notebook.SetRightClickMenu(self.curmenu)
 
         #self.notebook.SetAGWWindowStyleFlag(FNB_X_ON_TAB)
