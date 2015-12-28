@@ -6,6 +6,7 @@ from __future__ import division
 
 import numpy as np
 
+
 # 3D simple gauss
 def CF_Gxyz_gauss(parms, tau):
     # Model 6012
@@ -216,7 +217,7 @@ parms_6011 = [labels_6011, values_6011, valuestofit_6011,
               labels_hr_6011, factors_hr_6011]
 
 # 3D Model gauss
-m_3dgauss6012 = [6012, "3D","3D confocal diffusion", CF_Gxyz_gauss]
+m_3dgauss6012 = [6012, "3D","3D diffusion (confocal)", CF_Gxyz_gauss]
 labels_6012 = [u"n",
                u"τ_diff [ms]",
                u"SP",
@@ -299,4 +300,4 @@ model3["Supplements"] = MoreInfo_6030
 model3["Boundaries"] = get_boundaries_3D3DT(values_6030)
 model3["Constraints"] = [[2, ">", 1], [6, "<", 1]]
 
-Modelarray = [model1, model2, model3]
+Modelarray = [model3]
