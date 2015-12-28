@@ -18,7 +18,7 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         particle2D = (1-F)/ (1+τ/τ_2D) 
-        particle3D = α*F/( (1+τ/τ_3D) * sqrt(1+τ/(τ_3D*SP²)))
+        particle3D = α²*F/( (1+τ/τ_3D) * sqrt(1+τ/(τ_3D*SP²)))
         triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
         norm = (1-F + α*F)²
         G = 1/n*(particle1 + particle2)*triplet/norm + offset

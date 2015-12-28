@@ -167,7 +167,7 @@ boundaries = dict()
 # shorttypes are used by the GUI to abbreviate the model type
 shorttype = dict()
 shorttype[u"Confocal (Gaussian)"] = u"CFoc"
-shorttype[u"Confocal (Gaussian) and triplet"] = u"CFoc+T"
+shorttype[u"Confocal (Gaussian) and triplet"] = u"CFoc"
 shorttype[u"Confocal (Gaussian) with doubles triplet"] = u"CFoc+TT"
 shorttype[u"TIR (Gaussian/Exp.)"] = u"TIR CFoc"
 shorttype[u"TIR (□xσ/Exp.)"] = u"TIR □xσ"
@@ -187,6 +187,7 @@ from . import model_confocal_t_3d_3d
 from . import model_confocal_t_2d
 from . import model_confocal_t_2d_2d
 from . import model_confocal_t_3d_2d
+from . import model_confocal_t_3d_3d_3d
 
 from . import model_confocal_tt_3d_3d
 
