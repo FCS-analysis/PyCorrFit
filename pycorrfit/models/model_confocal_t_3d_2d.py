@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-This file contains a T+3D+2D model for confocal FCS.
-"""
 from __future__ import division
 
 import numpy as np
+
+from .control import model_setup
+from .cp_confocal import twod, threed
+from .cp_triplet import trip
+from .cp_mix import double_pnum
+
 
 # 3D + 2D + T
 def CF_Gxyz_3d2dT_gauss(parms, tau):
@@ -48,30 +51,24 @@ def CF_Gxyz_3d2dT_gauss(parms, tau):
     T=parms[7]
     off=parms[8]
 
+    g = double_pnum(n=n,
+                    F1=1-F,
+                    alpha=alpha,
+                    comp1=twod,
+                    comp2=threed,
+                    kwargs1={"tau":tau,
+                             "taudiff":taud2D},
+                    kwargs2={"tau":tau,
+                             "taudiff":taud3D,
+                             "SP":SP},
+                    )
 
-    particle2D = (1-F)/ (1+tau/taud2D) 
-    particle3D = alpha**2*F/( (1+tau/taud3D) * np.sqrt(1+tau/(taud3D*SP**2)))
-    if tautrip == 0 or T == 0:
-        triplet = 1
-    else:
-        triplet = 1 + T/(1-T) * np.exp(-tau/tautrip)
-    norm = (1-F + alpha*F)**2
-    G = 1/n*(particle2D + particle3D)*triplet/norm
+    tr = trip(tau=tau, T=T, tautrip=tautrip)
 
-    return G + off
+    G = off + g*tr
+    return G
 
-def get_boundaries(parms):
-    # strictly positive
-    boundaries = [[0, np.inf]]*len(parms)
-    # F
-    boundaries[3] = [0,.9999999999999]
-    # T
-    boundaries[7] = [0,.9999999999999]
-    boundaries[-1] = [-np.inf, np.inf]
-    return boundaries
-
-
-def MoreInfo(parms, countrate=None):
+def supplements(parms, countrate=None):
     u"""Supplementary parameters:
         Effective number of freely diffusing particles in 3D solution:
         [9]  n3D = n*F
@@ -93,34 +90,51 @@ def MoreInfo(parms, countrate=None):
     return Info
 
 
-# 3D + 3D + T model gauss
-m_gauss_3d_2d_t = [6032, u"T+3D+2D",
-                   u"Separate 3D and 2D diffusion + triplet, Gauß",
-                   CF_Gxyz_3d2dT_gauss]
-labels  = [ u"n",
-            u"τ_2D [ms]",
-            u"τ_3D [ms]",
-            u"F_3D", 
-            u"SP",
-            u"\u03b1"+" (q_3D/q_2D)", 
-            u"τ_trip [ms]",
-            u"T",
-            u"offset"
-                ]
-values = [ 
-                25,      # n
-                240,     # taud2D
-                0.1,     # taud3D
-                0.5,     # F3D
-                7,       # SP
-                1.0,     # alpha
-                0.001,   # tautrip
-                0.01,    # T
-                0.0      # offset
-                ]
-# For user comfort we add values that are human readable.
-# Theese will be used for output that only humans can read.
-labels_human_readable  = [  u"n",
+parms = [   
+            25,      # n
+            240,     # taud2D
+            0.1,     # taud3D
+            0.5,     # F3D
+            7,       # SP
+            1.0,     # alpha
+            0.001,   # tautrip
+            0.01,    # T
+            0.0      # offset
+            ] 
+
+## Boundaries
+# strictly positive
+boundaries = [[0, np.inf]]*len(parms)
+# F
+boundaries[3] = [0,.9999999999999]
+# T
+boundaries[7] = [0,.9999999999999]
+boundaries[-1] = [-np.inf, np.inf]
+
+
+model_setup(
+             modelid=6032,
+             name="Separate 3D and 2D diffusion with triplet (confocal)",
+             comp="T+3D+2D",
+             mtype="Confocal (Gaussian) and triplet",
+             fctn=CF_Gxyz_3d2dT_gauss,
+             par_labels=[
+                            u"n",
+                            u"τ_2D [ms]",
+                            u"τ_3D [ms]",
+                            u"F_3D", 
+                            u"SP",
+                            u"\u03b1"+" (q_3D/q_2D)", 
+                            u"τ_trip [ms]",
+                            u"T",
+                            u"offset"
+                            ],
+             par_values=parms,
+             par_vary=[True, True, True, True, False, False, False, False, False],
+             par_boundaries=boundaries,
+             par_constraints=[[2, "<", 1], [6, "<", 2]],
+             par_hr_labels=[
+                            u"n",
                             u"τ_2D [ms]",
                             u"τ_3D [ms]",
                             u"F_3D", 
@@ -129,28 +143,17 @@ labels_human_readable  = [  u"n",
                             u"τ_trip [µs]",
                             u"T",
                             u"offset"
-                            ]
-values_factor_human_readable = [
-                          1.,     # "n",
-                          1.,     # "τ_2D [ms]",
-                          1.,     # "τ_3D [ms]",
-                          1.,     # "F_3D", 
-                          1.,     # "SP",
-                          1.,     # u"\u03b1"+" (q_3D/q_2D)", 
-                          1000.,  # "τ_trip [µs]",
-                          1.,     # "T",
-                          1.      # "offset"
-                ]
-valuestofit = [True, True, True, True, False, False, False, False, False]
-parms = [labels, values, valuestofit,
-         labels_human_readable, values_factor_human_readable]
-
-
-model1 = dict()
-model1["Parameters"] = parms
-model1["Definitions"] = m_gauss_3d_2d_t
-model1["Boundaries"] = get_boundaries(values)
-model1["Supplements"] = MoreInfo
-model1["Constraints"] = [[2, "<", 1], [6, "<", 2]]
-
-Modelarray = [model1]
+                            ],
+             par_hr_factors=[
+                              1.,     # "n",
+                              1.,     # "τ_2D [ms]",
+                              1.,     # "τ_3D [ms]",
+                              1.,     # "F_3D", 
+                              1.,     # "SP",
+                              1.,     # u"\u03b1"+" (q_3D/q_2D)", 
+                              1000.,  # "τ_trip [µs]",
+                              1.,     # "T",
+                              1.      # "offset"
+                            ],
+             supplementary_method=supplements
+            )

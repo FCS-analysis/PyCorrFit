@@ -72,7 +72,7 @@ model_setup(
              modelid=6011,
              name="3D diffusion with triplet (confocal)",
              comp="T+3D",
-             mtype="Confocal w/triplet (Gaussian)",
+             mtype="Confocal (Gaussian) and triplet",
              fctn=CF_Gxyz_blink,
              par_labels=[
                             u"n",

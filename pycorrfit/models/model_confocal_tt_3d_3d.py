@@ -9,34 +9,40 @@ from .cp_triplet import trip
 from .cp_mix import double_pnum
 
 
-def CF_Gxyz_gauss_3D3DT(parms, tau):
+# 3D + 3D + Triplet Gauß
+# Model 6043
+def CF_Gxyz_gauss_3D3DTT(parms, tau):
     u""" Two-component three-dimensional free diffusion
-        with a Gaussian laser profile, including a triplet component.
+        with a Gaussian laser profile, including two triplet components.
         The triplet factor takes into account a blinking term.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
         particle1 = F₁/( (1+τ/τ₁) * sqrt(1+τ/(τ₁*SP²)))
         particle2 = α*(1-F₁)/( (1+τ/τ₂) * sqrt(1+τ/(τ₂*SP²)))
-        triplet = 1 + T/(1-T)*exp(-τ/τ_trip)
+        triplet1 = 1 + T₁/(1-T₁)*exp(-τ/τ_trip₁)
+        triplet2 = 1 + T₂/(1-T₂)*exp(-τ/τ_trip₂)
         norm = (F₁ + α*(1-F₁))²
-        G = 1/n*(particle1 + particle2)*triplet/norm + offset
+        G = 1/n*(particle1 + particle2)*triplet1*triplet2/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0] n       Effective number of particles in confocal volume
-                    (n = n₁+n₂)
-        [1] τ₁      Diffusion time of particle species 1
-        [2] τ₂      Diffusion time of particle species 2
-        [3] F₁      Fraction of molecules of species 1 (n₁ = n*F₁)
-                    0 <= F₁ <= 1
-        [4] SP      SP=z₀/r₀, Structural parameter,
-                    describes elongation of the confocal volume
-        [5] α       Relative molecular brightness of particle
-                    2 compared to particle 1 (α = q₂/q₁)
-        [6] τ_trip  Characteristic residence time in triplet state
-        [7] T       Fraction of particles in triplet (non-fluorescent) state
-                    0 <= T < 1
-        [8] offset
+        [0]  n        Effective number of particles in confocal volume
+                      (n = n₁+n₂)
+        [1]  τ₁       Diffusion time of particle species 1
+        [2]  τ₂       Diffusion time of particle species 2
+        [3]  F₁       Fraction of molecules of species 1 (n₁ = n*F₁)
+                      0 <= F₁ <= 1
+        [4]  SP       SP=z₀/r₀, Structural parameter,
+                      describes elongation of the confocal volume
+        [5]  α        Relative molecular brightness of particle
+                      2 compared to particle 1 (α = q₂/q₁)
+        [6]  τ_trip₁  Characteristic residence time in triplet state
+        [7]  T₁       Fraction of particles in triplet (non-fluorescent) state
+                      0 <= T < 1
+        [8]  τ_trip₂  Characteristic residence time in triplet state
+        [9]  T₂       Fraction of particles in triplet (non-fluorescent) state
+                      0 <= T < 1
+        [10] offset
         *tau* - lag time
     """
     n=parms[0]
@@ -45,9 +51,11 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
     F=parms[3]
     SP=parms[4]
     alpha=parms[5]
-    tautrip=parms[6]
-    T=parms[7]
-    off=parms[8]
+    tautrip1=parms[6]
+    T1=parms[7]
+    tautrip2=parms[8]
+    T2=parms[9]
+    off=parms[10]
 
     g = double_pnum(n=n,
                     F1=F,
@@ -62,10 +70,13 @@ def CF_Gxyz_gauss_3D3DT(parms, tau):
                              "SP":SP},
                     )
 
-    tr = trip(tau=tau, T=T, tautrip=tautrip)
+    tr1 = trip(tau=tau, T=T1, tautrip=tautrip1)
+    tr2 = trip(tau=tau, T=T2, tautrip=tautrip2)
 
-    G = off + g*tr
+    G = off + g * tr1 * tr2
+
     return G
+
 
 def supplements(parms, countrate=None):
     u"""Supplementary parameters:
@@ -84,17 +95,19 @@ def supplements(parms, countrate=None):
         # CPP
         cpp = countrate/n
         Info.append(["cpp [kHz]", cpp])
-    return Info
 
 
-parms = [   25,      # n
+parms = [
+            25,      # n
             5,       # taud1
             1000,    # taud2
             0.5,     # F
             5,       # SP
             1.0,     # alpha
-            0.001,   # tautrip
-            0.01,    # T
+            0.002,   # tautrip1
+            0.01,    # T1
+            0.001,   # tautrip2
+            0.01,    # T2
             0.0      # offset
             ] 
 
@@ -105,15 +118,16 @@ boundaries = [[0, np.inf]]*len(parms)
 boundaries[3] = [0,.9999999999999]
 # T
 boundaries[7] = [0,.9999999999999]
+boundaries[9] = [0,.9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6030,
-             name="Separate 3D diffusion with triplet (confocal)",
-             comp="T+3D+3D",
-             mtype="Confocal (Gaussian) and triplet",
-             fctn=CF_Gxyz_gauss_3D3DT,
+             modelid=6043,
+             name="Separate 3D diffusion with double triplet (confocal)",
+             comp="T+T+3D+3D",
+             mtype="Confocal (Gaussian) with double triplet",
+             fctn=CF_Gxyz_gauss_3D3DTT,
              par_labels=[
                             u"n",
                             u"τ"+u"\u2081"+" [ms]",
@@ -121,23 +135,27 @@ model_setup(
                             u"F"+u"\u2081", 
                             u"SP",
                             u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                            u"τ_trip [ms]",
-                            u"T",
+                            u"τ_trip₁ [ms]",
+                            u"T₁",
+                            u"τ_trip₂ [ms]",
+                            u"T₂",
                             u"offset"
                             ],
              par_values=parms,
-             par_vary=[True, True, True, True, False, False, False, False, False],
+             par_vary=[True, True, True, True, False, False, False, False, False, False, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [6, "<", 1]],
+             par_constraints=[[2, ">", 1], [6, "<", 1], [8, "<", 6]],
              par_hr_labels=[
                             u"n",
-                            u"τ"+u"\u2081"+" [ms]",
-                            u"τ"+u"\u2082"+" [ms]",
-                            u"F"+u"\u2081", 
+                            u"τ₁ [ms]",
+                            u"τ₂ [ms]",
+                            u"F₁", 
                             u"SP",
-                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                            u"τ_trip [µs]",
-                            u"T",
+                            u"\u03b1"+u" (q₂/q₁)", 
+                            u"τ_trip₁ [µs]",
+                            u"T₁",
+                            u"τ_trip₂ [µs]",
+                            u"T₂",
                             u"offset"
                             ],
              par_hr_factors=[
@@ -147,8 +165,10 @@ model_setup(
                             1.,     # F
                             1.,     # SP
                             1.,     # alpha
-                            1000.,  # tautrip [µs]
-                            1.,     # T
+                            1000.,  # tautrip1 [µs]
+                            1.,     # T1
+                            1000.,  # tautrip2 [µs]
+                            1.,     # T2
                             1.      # offset
                             ],
              supplementary_method=supplements

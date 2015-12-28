@@ -111,7 +111,7 @@ model_setup(
              modelid=6031,
              name="Separate 2D diffusion with triplet (confocal)",
              comp="T+2D+2D",
-             mtype="Confocal w/triplet (Gaussian)",
+             mtype="Confocal (Gaussian) and triplet",
              fctn=CF_Gxyz_gauss_2D2DT,
              par_labels=[
                             u"n",
