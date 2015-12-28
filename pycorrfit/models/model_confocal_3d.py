@@ -57,10 +57,7 @@ def supplements(parms, countrate=None):
 
 parms = [4.0, 0.4, 5.0, 0.0]
 boundaries = [[0, np.inf]]*len(parms)
-# T
-boundaries[1] = [0,.9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
-
 
 model_setup(
              modelid=6012,
@@ -76,6 +73,5 @@ model_setup(
              par_values=parms,
              par_vary=[True, True, False, False],
              par_boundaries=boundaries,
-             par_constraints=[[3, ">", 2]],
              supplementary_method=supplements
             )

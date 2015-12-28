@@ -547,7 +547,7 @@ class Fit(object):
         for cc in self.constraints:
             if self.fit_bool[cc[0]] and self.fit_bool[cc[2]]:
                 # Both cc[0] and c[2] are varied.
-                # Everything will work fine, independent of the
+                # Everything will work fine, independent of
                 # the fact if cc[2] is varied or not.
                 cstrnew[cc[0]] = [cc[1], cc[2]]
             elif self.fit_bool[cc[0]]:

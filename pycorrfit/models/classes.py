@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
+from __future__ import division, print_function
 
 import copy
 import numpy as np
@@ -21,8 +21,8 @@ class Model(object):
             self._boundaries = datadict["Boundaries"]
         else:
             # dummy verification function
-            self._boundaries = [[None,None]]*len(self._parameters[1])
-        
+            self._boundaries = [[-np.inf, np.inf]]*len(self._parameters[1])
+
         if "Constraints" in list(datadict.keys()):
             # sort constraints such that the first value is always
             # larger than the last.

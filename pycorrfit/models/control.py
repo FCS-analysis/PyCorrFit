@@ -23,6 +23,9 @@ def append_model(modelarray):
     global boundaries
     global modeltypes
 
+    if not isinstance(modelarray, list):
+        modelarray = [modelarray]
+
     for datadict in modelarray:
         # We can have many models in one model array
         amod = Model(datadict)
@@ -145,7 +148,7 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
     if par_constraints is not None:
         model["Constraints"] = par_constraints
     
-    append_model([model])
+    append_model(model)
 
 
 # Pack all variables
