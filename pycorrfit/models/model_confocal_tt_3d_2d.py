@@ -4,32 +4,32 @@ from __future__ import division
 import numpy as np
 
 from .control import model_setup
-from .cp_confocal import threed
+from .cp_confocal import twod, threed
 from .cp_triplet import trip
 from .cp_mix import double_pnum
 
 
-# 3D + 3D + Triplet Gauß
-# Model 6043
-def CF_Gxyz_gauss_3D3DTT(parms, tau):
+# 3D + 2D + TT Gauß
+# Model 6045
+def CF_Gxyz_gauss_3D2DTT(parms, tau):
     u""" Two-component three-dimensional free diffusion
         with a Gaussian laser profile, including two triplet components.
         The triplet factor takes into account a blinking term.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
 
-        particle1 = F₁/( (1+τ/τ₁) * sqrt(1+τ/(τ₁*SP²)))
-        particle2 = α*(1-F₁)/( (1+τ/τ₂) * sqrt(1+τ/(τ₂*SP²)))
+        particle2D = (1-F)/ (1+τ/τ_2D) 
+        particle3D = α²*F/( (1+τ/τ_3D) * sqrt(1+τ/(τ_3D*SP²)))
         triplet1 = 1 + T₁/(1-T₁)*exp(-τ/τ_trip₁)
         triplet2 = 1 + T₂/(1-T₂)*exp(-τ/τ_trip₂)
         norm = (F₁ + α*(1-F₁))²
-        G = 1/n*(particle1 + particle2)*triplet1*triplet2/norm + offset
+        G = 1/n*(particle2D + particle3D)*triplet1*triplet2/norm + offset
 
         *parms* - a list of parameters.
         Parameters (parms[i]):
-        [0]  n        Effective number of particles in confocal volume
-                      (n = n₁+n₂)
-        [1]  τ₁       Diffusion time of particle species 1
-        [2]  τ₂       Diffusion time of particle species 2
+        [0] n         Effective number of particles in confocal volume
+                      (n = n2D+n3D)
+        [1] τ_2D      Diffusion time of surface bound particls
+        [2] τ_3D      Diffusion time of freely diffusing particles
         [3]  F₁       Fraction of molecules of species 1 (n₁ = n*F₁)
                       0 <= F₁ <= 1
         [4]  SP       SP=z₀/r₀, Structural parameter,
@@ -46,8 +46,8 @@ def CF_Gxyz_gauss_3D3DTT(parms, tau):
         *tau* - lag time
     """
     n=parms[0]
-    taud1=parms[1]
-    taud2=parms[2]
+    taud2D=parms[1]
+    taud3D=parms[2]
     F=parms[3]
     SP=parms[4]
     alpha=parms[5]
@@ -58,15 +58,14 @@ def CF_Gxyz_gauss_3D3DTT(parms, tau):
     off=parms[10]
 
     g = double_pnum(n=n,
-                    F1=F,
+                    F1=1-F,
                     alpha=alpha,
-                    comp1=threed,
+                    comp1=twod,
                     comp2=threed,
                     kwargs1={"tau":tau,
-                             "taudiff":taud1,
-                             "SP":SP},
+                             "taudiff":taud2D},
                     kwargs2={"tau":tau,
-                             "taudiff":taud2,
+                             "taudiff":taud3D,
                              "SP":SP},
                     )
 
@@ -80,29 +79,31 @@ def CF_Gxyz_gauss_3D3DTT(parms, tau):
 
 def supplements(parms, countrate=None):
     u"""Supplementary parameters:
-        [11] n₁ = n*F₁     Particle number of species 1
-        [12] n₂ = n*(1-F₁) Particle number of species 2
+        Effective number of freely diffusing particles in 3D solution:
+        [11] n3D = n*F
+        Effective number particles diffusing on 2D surface:
+        [12] n2D = n*(1-F)
     """
     # We can only give you the effective particle number
     n = parms[0]
-    F1 = parms[3]
+    F3d = parms[3]
     Info = list()
     # The enumeration of these parameters is very important for
     # plotting the normalized curve. Countrate must come out last!
-    Info.append([u"n\u2081", n*F1])
-    Info.append([u"n\u2082", n*(1.-F1)])
+    Info.append([u"n3D", n*F3d])
+    Info.append([u"n2D", n*(1.-F3d)])
     if countrate is not None:
         # CPP
         cpp = countrate/n
-        Info.append(["cpp [kHz]", cpp])
-    return Info
-
+        Info.append([u"cpp [kHz]", cpp])
+    return Info    
+    
 
 parms = [
             25,      # n
-            5,       # taud1
-            1000,    # taud2
-            0.5,     # F
+            240,     # taud2D
+            0.1,     # taud3D
+            0.5,     # F3D
             5,       # SP
             1.0,     # alpha
             0.002,   # tautrip1
@@ -124,18 +125,18 @@ boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6043,
-             name="Separate 3D diffusion with double triplet (confocal)",
-             comp="T+T+3D+3D",
+             modelid=6045,
+             name="Separate 3D and 2D diffusion with double triplet (confocal)",
+             comp="T+T+3D+2D",
              mtype="Confocal (Gaussian) with double triplet",
-             fctn=CF_Gxyz_gauss_3D3DTT,
+             fctn=CF_Gxyz_gauss_3D2DTT,
              par_labels=[
                             u"n",
-                            u"τ"+u"\u2081"+" [ms]",
-                            u"τ"+u"\u2082"+" [ms]",
-                            u"F"+u"\u2081", 
+                            u"τ_2D [ms]",
+                            u"τ_3D [ms]",
+                            u"F_3D", 
                             u"SP",
-                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                            u"\u03b1"+" (q_3D/q_2D)", 
                             u"τ_trip₁ [ms]",
                             u"T₁",
                             u"τ_trip₂ [ms]",
@@ -145,14 +146,14 @@ model_setup(
              par_values=parms,
              par_vary=[True, True, True, True, False, False, False, False, False, False, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [6, "<", 1], [8, "<", 6]],
+             par_constraints=[[2, "<", 1], [6, "<", 2], [8, "<", 6]],
              par_hr_labels=[
                             u"n",
-                            u"τ₁ [ms]",
-                            u"τ₂ [ms]",
-                            u"F₁", 
+                            u"τ_2D [ms]",
+                            u"τ_3D [ms]",
+                            u"F_3D", 
                             u"SP",
-                            u"\u03b1"+u" (q₂/q₁)", 
+                            u"\u03b1"+" (q_3D/q_2D)", 
                             u"τ_trip₁ [µs]",
                             u"T₁",
                             u"τ_trip₂ [µs]",
@@ -161,11 +162,11 @@ model_setup(
                             ],
              par_hr_factors=[
                             1.,     # n
-                            1.,     # taud1
-                            1.,     # taud2
-                            1.,     # F
-                            1.,     # SP
-                            1.,     # alpha
+                            1.,     # "τ_2D [ms]",
+                            1.,     # "τ_3D [ms]",
+                            1.,     # "F_3D", 
+                            1.,     # "SP",
+                            1.,     # u"\u03b1"+" (q_3D/q_2D)", 
                             1000.,  # tautrip1 [µs]
                             1.,     # T1
                             1000.,  # tautrip2 [µs]

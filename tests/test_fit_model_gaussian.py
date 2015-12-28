@@ -174,6 +174,7 @@ def test_6032():
 
 
 def test_6043():
+    # TT+3D+3D
     model = mdls.modeldict[6043]
     parms = [ 
                 1.452,       # n
@@ -220,7 +221,115 @@ def test_6043():
     assert  abs(model(parms1, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
 
 
+def test_6044():
+    # TT+2D+2D
+    model = mdls.modeldict[6044]
+    parms = [ 
+                1.452,       # n
+                4.48,        # taud1
+                8438,        # taud2
+                0.425,       # F
+                0.876,       # alpha
+                0.0012,      # tautrip1
+                0.0101,      # T1
+                0.0021,      # tautrip2
+                0.0102,      # T2
+                0.00004      # offset
+                ] 
+    assert abs(model(parms, tau=TAU) - 0.70599013619282502) < 1e-14
+
+    #->T+2D+2D
+    model2 = mdls.modeldict[6031]
+    parms2 = [ 
+                2.153,      # n
+                5.54,       # taud1
+                1532,       # taud2
+                0.4321,     # F
+                0.9234,     # alpha
+                0.002648,   # tautrip
+                0.1151,     # T
+                0.008       # offset
+                ]
+    parms1 = [
+                2.153,      # n
+                5.54,       # taud1
+                1532,       # taud2
+                0.4321,     # F
+                0.9234,     # alpha
+                0.002648,   # tautrip1
+                0.1151,     # T1
+                0.0021,     # tautrip2
+                0.0,        # T2
+                0.008       # offset
+                ] 
+
+    assert  abs(model(parms1, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+
+
+def test_6045():
+    #TT+3D+2D
+    model = mdls.modeldict[6045]
+    parms = [ 
+                25.123,      # n
+                240.123,     # taud2D
+                0.1125,      # taud3D
+                0.3512,      # F3D
+                5.312,       # SP
+                0.87671,     # alpha
+                0.0021987,   # tautrip1
+                0.032341,    # T1
+                0.0013243,   # tautrip2
+                0.014341,    # T2
+                0.12310      # offset
+                ]
+    assert abs(model(parms, tau=TAU) - 0.16498917764250026) < 1e-14
+    
+    #->T+3D+2D
+    model2 = mdls.modeldict[6032]
+    parms2 = [ 
+                25.123,      # n
+                240.123,     # taud2D
+                0.1125,      # taud3D
+                0.3512,      # F3D
+                5.312,       # SP
+                0.87671,     # alpha
+                0.0021987,   # tautrip1
+                0.032341,    # T1
+                0.12310      # offset
+                ]
+
+    parms1a = [ 
+                25.123,      # n
+                240.123,     # taud2D
+                0.1125,      # taud3D
+                0.3512,      # F3D
+                5.312,       # SP
+                0.87671,     # alpha
+                0.0021987,   # tautrip1
+                0.032341,    # T1
+                0.1,   # tautrip2
+                0.0,    # T2
+                0.12310      # offset
+                ]
+    parms1b = [ 
+                25.123,      # n
+                240.123,     # taud2D
+                0.1125,      # taud3D
+                0.3512,      # F3D
+                5.312,       # SP
+                0.87671,     # alpha
+                0.1,   # tautrip1
+                0.0,    # T1
+                0.0021987,   # tautrip2
+                0.032341,    # T2
+                0.12310      # offset
+                ]
+    assert  abs(model(parms1a, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+    assert  abs(model(parms1b, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+
+
 def test_6081():
+    # T+3D+3D+3D
     model = mdls.modeldict[6081]
     parms = [ 
                 1.412,       # n

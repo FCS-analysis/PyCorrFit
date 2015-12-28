@@ -31,6 +31,9 @@ def append_model(modelarray):
         amod = Model(datadict)
 
         models.append(amod)
+        if amod.id in modeldict:
+            raise ValueError("Model with same is already exists: \n {} vs. {}".
+                             format(amod, modeldict[amod.id]))
         modeldict[amod.id] = amod
 
         values.append(amod.parameters)
@@ -185,8 +188,6 @@ from . import model_confocal_2d
 from . import model_confocal_2d_2d
 from . import model_confocal_3d_2d
 
-
-
 from . import model_confocal_t_3d
 from . import model_confocal_t_3d_3d
 from . import model_confocal_t_2d
@@ -195,6 +196,8 @@ from . import model_confocal_t_3d_2d
 from . import model_confocal_t_3d_3d_3d
 
 from . import model_confocal_tt_3d_3d
+from . import model_confocal_tt_2d_2d
+from . import model_confocal_tt_3d_2d
 
 
 # These lines can be removed once all models are converted
