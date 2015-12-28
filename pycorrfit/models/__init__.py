@@ -28,7 +28,7 @@ import numpy as np
 import sys
 import warnings
 
-from .control import values, valuedict, models, modeldict, modeltypes, supplement, boundaries
+from .control import values, valuedict, models, modeldict, modeltypes, supplement, boundaries, shorttype
 
 def GetHumanReadableParms(model, parameters):
     """ From a set of parameters that have internal units e.g. [100 nm],
@@ -128,10 +128,6 @@ def GetModelType(modelid):
     if modelid >= 7000:
         return u"User"
     else:
-        shorttype = dict()
-        shorttype[u"Confocal (Gaussian)"] = u"Confocal"
-        shorttype[u"TIR (Gaussian/Exp.)"] = u"TIR Conf."
-        shorttype[u"TIR (□xσ/Exp.)"] = u"TIR □xσ"
         for key in modeltypes.keys():
             mlist = modeltypes[key]
             if mlist.count(modelid) == 1:

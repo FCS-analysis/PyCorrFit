@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Confocal fitting model components.
+Triplet components.
 """
 
 from __future__ import division

@@ -164,28 +164,38 @@ supplement = dict()
 # A dictionary containing model boundaries
 boundaries = dict()
 
+shorttype = dict()
+shorttype[u"Confocal (Gaussian)"] = u"CFoc"
+shorttype[u"Confocal w/triplet (Gaussian)"] = u"CFoc+T"
+shorttype[u"TIR (Gaussian/Exp.)"] = u"TIR CFoc"
+shorttype[u"TIR (□xσ/Exp.)"] = u"TIR □xσ"
 
 # Create a list for the differentiation between the models
 # This should make everything look a little cleaner
-modeltypes = dict()
+modeltypes = {}
+
 #modeltypes[u"Confocal (Gaussian)"] = [6001, 6002, 6012, 6011, 6031, 6032, 6030]
 #modeltypes[u"TIR (Gaussian/Exp.)"] = [6013, 6033, 6034]
 #modeltypes[u"TIR (□xσ/Exp.)"] = [6000, 6010, 6022, 6020, 6023, 6021]
 
 # The order of the import matters!
+# These models perform the integration by themselves using the `model_setup` method.
 from . import model_confocal_3d
-from . import model_confocal_3d_t
+from . import model_confocal_t_3d
+from . import model_confocal_t_3d_3d
 
 
-# These lines can be removed once all models are converted from `MODEL` to `model`
-modeltypes[u"Confocal (Gaussian)"] = [6011, 6030, 6002, 6031, 6032, 6043]
+# These lines can be removed once all models are converted
+# from `MODEL_*` to `model_` syntax.
+modeltypes[u"Confocal (Gaussian)"] += [6002, 6031, 6032, 6043]
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 modeltypes[u"User"] = []
 
+
+
 ## Models
 from . import MODEL_classic_gaussian_2D
-from . import MODEL_classic_gaussian_3D
 from . import MODEL_classic_gaussian_3D2D
 from . import MODEL_classic_gaussian_TT3D3D
 from . import MODEL_TIRF_gaussian_1C
