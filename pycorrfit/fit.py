@@ -548,7 +548,7 @@ class Fit(object):
             if self.fit_bool[cc[0]] and self.fit_bool[cc[2]]:
                 # Both cc[0] and c[2] are varied.
                 # Everything will work fine, independent of
-                # the fact if cc[2] is varied or not.
+                # whether cc[2] is varied or not.
                 cstrnew[cc[0]] = [cc[1], cc[2]]
             elif self.fit_bool[cc[0]]:
                 # Only cc[0] is varied, create boundary
@@ -586,7 +586,7 @@ class Fit(object):
                     ppref = cstrnew[pp][1]
                     rel = cstrnew[pp][0]
                     #TODO:
-                    # - combine the two following cases for better readybility
+                    # - combine the two following cases for better readability
                     if rel == "<":
                         #p2 < p1
                         #-> p2 = p1 - d21
