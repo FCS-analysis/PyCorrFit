@@ -335,7 +335,7 @@ def test_6081():
                 1.412,       # n
                 4.498,       # taud1
                 245,         # taud2
-                2910,        # taud2
+                2910,        # taud3
                 0.123,       # F1
                 0.321,       # F3
                 5.12,        # SP
@@ -394,6 +394,75 @@ def test_6081():
 
     assert  abs(model(parmsa, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
     assert  abs(model(parmsb, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+
+
+def test_6082():
+    # T+3D+3D+2D
+    model = mdls.modeldict[6082]
+    parms = [ 
+                1.412,       # n
+                4.498,       # taud1
+                245,         # taud2
+                2910,        # taud3
+                0.123,       # F1
+                0.321,       # F3
+                5.12,        # SP
+                0.876,       # alpha21
+                0.378,       # alpha31
+                0.0021,      # tautrip
+                0.021,       # T
+                -0.0004      # offset
+                ]
+    assert abs(model(parms, tau=TAU) - 0.85970140411789908) < 1e-14
+
+    #->T+3D+2D
+    model2 = mdls.modeldict[6032]
+    parms2 = [ 
+                2.153,      # n
+                30.120,     # taud1
+                1.234,      # taud2
+                0.4321,     # F
+                4.4387,     # SP
+                1.341,      # alpha
+                0.002,      # tautrip
+                0.1151,     # T
+                1.2008      # offset
+                ]
+
+    parmsa = [
+                2.153,      # n
+                1.234,      # taud1
+                1,      # taud2
+                30.120,     # taud3
+                0.4321,     # F1
+                0,      # F2
+                4.4387,     # SP
+                1.,         # alpha21
+                1/1.341,    # alpha31
+                0.002,      # tautrip
+                0.1151,     # T
+                1.2008      # offset
+                ]
+
+    parmsb = [
+                2.153,      # n
+                1,      # taud1
+                1.234,      # taud2
+                30.120,     # taud3
+                0,      # F1
+                0.4321,     # F2
+                4.4387,     # SP
+                1,          # alpha21
+                1/1.341,    # alpha31
+                0.002,      # tautrip
+                0.1151,     # T
+                1.2008      # offset
+                ]
+
+
+    assert  abs(model(parmsa, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+    assert  abs(model(parmsb, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+
 
 
 if __name__ == "__main__":
