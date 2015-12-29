@@ -80,6 +80,8 @@ def test_fit_single_parameter():
             fitval = fit_single_parameter(model.id, fullparms, ii, newval, noise=False)
             #print(val-fitval)
             if not np.allclose([val], [fitval]):
+                import IPython
+                IPython.embed()
                 faillist.append([model.id, model.parameters[0][ii], val, fitval])
     if len(faillist) != 0:
         raise ValueError("Model tests failed for:\n", faillist)

@@ -109,10 +109,10 @@ def supplements(parms, countrate=None):
 
 parms = [   25,      # n
             5,       # taud1
-            700,     # taud2
-            2000,    # taud3
-            0.2,     # F1
-            0.3,     # F2
+            1000,    # taud2
+            11000,   # taud3
+            0.5,     # F1
+            0.01,    # F2
             5,       # SP
             1.0,     # alpha21
             1.0,     # alpha31

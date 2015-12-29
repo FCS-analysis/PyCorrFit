@@ -78,7 +78,8 @@ def triple_pnum(n,
     """
     alpha11 = 1
     F3 = 1 - F1 - F2
-    assert F3 >= 0
+    if F3 < 0:
+        F3 = 0
     
     norm = (F1*alpha11 + F2*alpha21 + F3*alpha31)**2
 
