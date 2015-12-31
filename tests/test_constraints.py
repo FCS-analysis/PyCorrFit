@@ -16,8 +16,6 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 import data_file_dl
 import pycorrfit as pcf
 
-import data_file_dl
-
 
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.

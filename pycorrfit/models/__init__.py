@@ -28,7 +28,9 @@ import numpy as np
 import sys
 import warnings
 
+from .classes import Model
 from .control import values, valuedict, models, modeldict, modeltypes, supplement, boundaries, shorttype
+
 
 def GetHumanReadableParms(model, parameters):
     """ From a set of parameters that have internal units e.g. [100 nm],

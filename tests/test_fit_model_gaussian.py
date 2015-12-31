@@ -18,7 +18,6 @@ from pycorrfit import models as mdls
 # GLOBAL PARAMETERS FOR THIS TEST:
 TAU = 1.468e-6
 
-
 def test_6001():
     #2D
     model = mdls.modeldict[6001]
