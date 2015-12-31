@@ -12,6 +12,7 @@ from os.path import abspath, dirname, join, exists
 
 import simplejson as json
 import urllib3
+import warnings
 
 # Download path root
 raw_origin = "https://github.com/FCS-analysis/FCSdata/raw/master/"
@@ -52,6 +53,23 @@ def dl_file(url, dest, chunk_size=6553,
             out.write(data)
 
 
+def get_data_file(filename, dldir=dldir, pool_manager=pool_manager,
+                  api_origin=api_origin, raw_origin=raw_origin):
+    """
+    Return first occurrence of `filename` in the data file tree.
+    """
+    _f, ext = os.path.splitext(filename)
+    assert ext != "", "filename has no extension!"
+    files = get_data_files_ext(extension=ext, dldir=dldir,
+                               pool_manager=pool_manager,
+                               api_origin=api_origin,
+                               raw_origin=raw_origin)
+    
+    files = [ f for f in files if f.count(filename) ]
+    assert len(files) != 0, "filename not found"
+    return files[0]
+
+
 def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
                       api_origin=api_origin, raw_origin=raw_origin):
     """
@@ -85,23 +103,50 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
     file extionsion. E.g. all `*.sin` files must be located in a
     folder in the root directory named `sin`.
     """
-    files = get_fcs_data_tree(pool_manager=pool_manager, api_origin=api_origin)
-    
     ext = extension.lower()
-    extfiles = [ f for f in files if f.lower().startswith(ext+"/") and f.lower().endswith("."+ext)]
-    
-    dl_files = []
-    
-    for f in extfiles:
-        dest = join(dldir, f)
-        if not exists(dest):
-            dl_file(join(raw_origin, f), dest)
-        dl_files.append(dest)
-    
+    if not ext.startswith("."):
+        ext = "."+ext
+    try:
+        # Get file list and download
+        files = get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin)
+        extfiles = [ f for f in files if f.lower().startswith(ext+"/") and f.lower().endswith(ext)]
+        extfiles.sort()
+        
+        dl_files = []
+        
+        for f in extfiles:
+            dest = join(dldir, f)
+            if not exists(dest):
+                dl_file(join(raw_origin, f), dest)
+            dl_files.append(dest)
+            
+    except urllib3.exceptions.MaxRetryError:
+        # e.g. no internet connection
+        warnings.warn("Non connection, using previuously downloaded files only.")
+        files = get_data_tree_local(dldir=dldir)
+        dl_files = [ f for f in files if f.lower().endswith(ext)]
+
+       
     return dl_files
 
 
-def get_fcs_data_tree(pool_manager=pool_manager, api_origin=api_origin):
+def get_data_tree_local(dldir=dldir):
+    """
+    Returns FCSdata repository tree of local files.
+    """
+    loc_files = []
+    for root, _dirs, files in os.walk(dldir):
+        # sorting convention: the folder names the extension
+        relpath = os.path.relpath(root, dldir)
+        ext = os.path.basename(relpath[::-1])[::-1]
+        for f in files:
+            if f.lower().endswith(ext):
+                loc_files.append(os.path.join(root, f))
+        
+    return loc_files
+
+
+def get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin):
     """
     Returns FCSdata repository tree.
     The tree is saved in the global variable `_fcs_data_tree` to reduce

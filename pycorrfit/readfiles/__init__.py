@@ -44,8 +44,21 @@ def AddAllWildcard(Dictionary):
 
 # To increase user comfort, we will now create a file opener thingy that
 # knows how to open all files we know.
-def openAny(dirname, filename):
-    """ Using the defined Filetypes and BGFiletypes, open the given file """
+def openAny(path, filename=None):
+    """ Using the defined Filetypes and BGFiletypes, open the given file
+    
+    Parameters
+    ----------
+    path : str
+        Full path to file or directory containing `filename`
+    filename : str
+        The name of the file if not given in path (optional).
+    """
+    if filename is None:
+        dirname, filename = os.path.split(path)
+    else:
+        dirname = path
+    
     wildcard = filename.split(".")[-1]
     for key in Filetypes.keys():
         # Recurse into the wildcards
