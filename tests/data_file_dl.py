@@ -78,7 +78,9 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
     that matches `extension` (case-insensitive).
     
     The files are downloaded and local paths in the
-    `dldir` directory are returned.
+    `dldir` directory are returned. If no internet
+    connection is available, previously downloaded
+    files will be used.
     
     Parameters
     ----------
@@ -109,7 +111,7 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
     try:
         # Get file list and download
         files = get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin)
-        extfiles = [ f for f in files if f.lower().startswith(ext+"/") and f.lower().endswith(ext)]
+        extfiles = [ f for f in files if f.lower().startswith(ext[1:]+"/") and f.lower().endswith(ext)]
         extfiles.sort()
         
         dl_files = []
