@@ -91,6 +91,7 @@ class Constraint(object):
         os = self.offset
         assert op in ["<", ">"], "Constraint operator not supported"
         
+        
         if p1["bool"] and p2["bool"]:
             # do nothing, this case is handled in `get_lmfit_parameter_kwargs`
             pass
@@ -132,8 +133,8 @@ class Constraint(object):
                     bnd = [-(p1["value"] - os), np.inf]
                 else:
                     bnd = [-np.inf, p1["value"] - os]
-            bound = [max(self.fit_bounds[p1["id"]][0], bnd[0]),
-                     min(self.fit_bounds[p1["id"]][1], bnd[1]),
+            bound = [max(self.fit_bounds[p2["id"]][0], bnd[0]),
+                     min(self.fit_bounds[p2["id"]][1], bnd[1]),
                      ]
             self.fit_bounds[p2["id"]] = bound
         else:
@@ -186,7 +187,7 @@ class Constraint(object):
                 kwdelt["value"] = self.fit_values[p1["id"]] - p2["bool"]*self.fit_values[p2["id"]]
                 kwdelt["vary"] = True
                 kwdelt["min"] = 0 # note: enforces ">=" (not ">")
-                kwdelt["max"] = np.inf #self.fit_bounds[p1["id"]][1] + max(-p2["bool"]*self.fit_bounds[p2["id"]]) - ofs
+                kwdelt["max"] = np.inf #self.fit_bounds[p1["id"]][1] + max(-p2["sign"]*self.fit_bounds[p2["id"]]) - ofs
                 
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
@@ -744,8 +745,9 @@ class Fit(object):
         #   [1, 0, "<", "2.3"]] -> parm1 + parm0 < 2.3
         for pp in range(len(self.fit_parm)):
             if self.fit_bool[pp]:
-                inconstr = len([ cc for cc in self.constraints if cc[0]==pp])
+                inconstr = len([ cc for cc in self.constraints if pp in cc])
                 kwarglist = []
+
                 if inconstr:
                     for cc in self.constraints:
                         con = Constraint(constraint=cc,

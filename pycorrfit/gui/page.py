@@ -650,9 +650,10 @@ class FittingPanel(wx.Panel):
                     if weights.shape[0] == self.corr.correlation.shape[0]:
                         weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
                         
+                    # perform some checks
                     if np.allclose(weights, np.ones_like(weights)):
                         weights = 0
-                    if weights.shape[0] != self.corr.modeled_fit.shape[0]:
+                    elif weights.shape[0] != self.corr.modeled_fit.shape[0]:
                         # non-matching weigths
                         warnings.warn("Unmatching weights found. Probably from previous data set.")
                         weights = 0

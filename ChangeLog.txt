@@ -1,5 +1,7 @@
 0.9.6
-- Fixed minor wx sizer problems for the tools
+- Bugfixes:
+  - Fixed minor wx sizer problems for the tools
+  - Fixed `AttributeError` in page.py if no weights are present
 - New confocal fitting models (#111):
   - 3D+3D, 2D+2D, 3D+2D; no triplet
   - T+T+2D+2D, T+T+3D+2D; double triplet
