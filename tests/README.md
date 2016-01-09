@@ -1,13 +1,9 @@
 ### Test Scripts
 
 
-This will run all tests:
+Execute all tests using `setup.py` in the parent directory:
 
-    python runtests.py
-
-Beautiful html output is possible with (Unix, package `aha` required)
-
-    ./runtests_html.sh
+    python setup.py test
 
 
 ### Running single tests

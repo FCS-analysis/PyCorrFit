@@ -8,9 +8,8 @@
 #  pip install wheel twine
 #  python setup.py bdist wheel
 from __future__ import print_function
-from setuptools import setup, Extension, Command
+from setuptools import setup, Extension
 import sys
-import subprocess
 
 from os.path import join, dirname, realpath, exists
 from warnings import warn
@@ -39,21 +38,6 @@ else:
                         include_dirs=[np.get_include()]
                         )
               ]
-
-
-class PyTest(Command):
-    """ Perform pytests
-    """
-    user_options = []
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        errno = subprocess.call([sys.executable, 'tests/runtests.py'])
-        raise SystemExit(errno)
 
 # Download documentation if it was not compiled
 Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
@@ -94,12 +78,12 @@ setup(
         ],
     data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
+    long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,
     keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
               "tir", "fitting"
               ],
     license="GPL v2",
-    long_description=open(join(dirname(__file__), 'Readme.txt')).read(),
     name=name,
     platforms=['ALL'],
     url='https://github.com/FCS-analysis/PyCorrFit',
@@ -108,18 +92,18 @@ setup(
     packages=['pycorrfit',
               'pycorrfit.models',
               'pycorrfit.readfiles',
-              'pycorrfit.tools'
+              'pycorrfit.gui',
+              'pycorrfit.gui.tools',
               ],
     package_dir={'pycorrfit': 'pycorrfit',
                  'pycorrfit.models': 'pycorrfit/models',
                  'pycorrfit.readfiles': 'pycorrfit/readfiles',
-                 'pycorrfit.tools': 'pycorrfit/tools'
+                 'pycorrfit.gui': 'pycorrfit/gui',
+                 'pycorrfit.gui.tools': 'pycorrfit/gui/tools',
                  },
     # cython
     ext_modules=EXTENSIONS,
-    cmdclass={'build_ext': build_ext,
-              'test': PyTest,
-             },
+    cmdclass={'build_ext': build_ext},
     # requirements
     extras_require = {
         # If you need the GUI of this project in your project, add
@@ -133,7 +117,8 @@ setup(
         "PyYAML >= 3.09",
         "lmfit >= 0.9.2",
         ],
-    setup_requires=["cython"],
+    setup_requires=["cython", 'pytest-runner'],
+    tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
     entry_points={
        "gui_scripts": ["{name:s}={name:s}:Main".format(

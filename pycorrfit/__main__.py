@@ -3,11 +3,5 @@
 Runs PyCorrFit
 """
 
-from . import doc
-from . import main
-
-## VERSION
-version = doc.__version__
-__version__ = version
-
+from .gui import main
 main.Main()

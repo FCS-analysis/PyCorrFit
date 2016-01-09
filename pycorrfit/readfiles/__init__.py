@@ -44,8 +44,21 @@ def AddAllWildcard(Dictionary):
 
 # To increase user comfort, we will now create a file opener thingy that
 # knows how to open all files we know.
-def openAny(dirname, filename):
-    """ Using the defined Filetypes and BGFiletypes, open the given file """
+def openAny(path, filename=None):
+    """ Using the defined Filetypes and BGFiletypes, open the given file
+    
+    Parameters
+    ----------
+    path : str
+        Full path to file or directory containing `filename`
+    filename : str
+        The name of the file if not given in path (optional).
+    """
+    if filename is None:
+        dirname, filename = os.path.split(path)
+    else:
+        dirname = path
+    
     wildcard = filename.split(".")[-1]
     for key in Filetypes.keys():
         # Recurse into the wildcards
@@ -217,6 +230,21 @@ def openZIP(dirname, filename):
     dictionary["Filename"] = Filelist
     return dictionary
 
+def get_supported_extensions():
+    """
+    Returns list of extensions of currently supported file types.
+    """
+    extlist = []
+    for kf in list(Filetypes.keys()):
+        ext = kf.split("|")[-1]
+        ext = ext.split(";")
+        ext = [ e.lower().strip("*. ") for e in ext]
+        ext = list(np.unique(ext))
+        extlist += ext
+    extlist = list(np.unique(extlist))
+    extlist.sort()
+    return extlist
+    
 
 # The string that is shown when opening all supported files
 # We add an empty space so it is listed first in the dialogs.
@@ -246,5 +274,4 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "Zip file (*.zip)|*.zip" : openZIP,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
-BGFiletypes = AddAllWildcard(BGFiletypes)
-
+BGFiletypes = AddAllWildcard(BGFiletypes)   

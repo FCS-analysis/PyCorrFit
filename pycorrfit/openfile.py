@@ -16,12 +16,13 @@ import yaml
 import zipfile
 import warnings
 
-from . import doc
-
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport
 from .readfiles import BGFiletypes  # @UnusedImport
-from .fcs_data_set import Trace
+from .trace import Trace
+from . import meta
+
+__version__ = meta.get_version()
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
@@ -712,7 +713,7 @@ ReadmeCSV = """# This file was created using PyCorrFit version {}.
 # If this file is opened by PyCorrFit, only the first two
 # columns will be imported as experimental data.
 #
-""".format(doc.__version__)
+""".format(__version__)
     
     
 ReadmeSession = """This file was created using PyCorrFit version {}.
@@ -801,4 +802,4 @@ trace*.csv (where * is (Number of page) | appendix "A" or "B" point to
             the respective channels (only in cross-correlation mode))
  - Contains times [ms]
  - Contains countrates [kHz]
-""".format(doc.__version__)
+""".format(__version__)

@@ -1,3 +1,16 @@
+0.9.6
+- Bugfixes:
+  - Fixed minor wx sizer problems for the tools
+  - Fixed `AttributeError` in page.py if no weights are present
+- New confocal fitting models (#111):
+  - 3D+3D, 2D+2D, 3D+2D; no triplet
+  - T+T+2D+2D, T+T+3D+2D; double triplet
+  - T+3D+3D+3D, T+3D+3D+2D (#40, #59)
+- Under the hood:
+  - Separation of core and GUI modules
+  - Include tests in distributions for PyPI
+  - Improve automated testing on Windows and Mac OS
+  - More constraint options for fitting
 0.9.5
 - Bugfixes
   - Closing the batch control window causes segfault bug (#142)

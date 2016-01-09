@@ -17,7 +17,7 @@ distrib=$(lsb_release -i | awk 'BEGIN { FS = "\t" }; { print $2 }')
 version=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 #Binname="dist/"${Progname}_${distrib}_${codename}_$(uname -r)".bin"
 Zipname="dist/"${Progname}_${version}_${distrib}_${codename}_$(uname -r)".zip"
-Env="env_${Progname}"
+Env=".env_${Progname}"
 
 echo $Specfile
 
