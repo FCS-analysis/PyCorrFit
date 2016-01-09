@@ -148,7 +148,6 @@ class Slide(wx.Frame):
         self.topSizer.Add(slidesizer)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        #self.SetMinSize(self.topSizer.GetMinSizeTuple())
         self.OnRadio()
         self.OnPageChanged(self.Page, init=True)
         #Icon

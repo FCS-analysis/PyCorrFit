@@ -164,8 +164,8 @@ class Constraint(object):
                 kwdelt["name"] = deltaname            
                 kwdelt["value"] = p2["bool"]*self.fit_values[p2["id"]] - self.fit_values[p1["id"]] 
                 kwdelt["vary"] = True
-                kwdelt["min"] = 0
-                kwdelt["max"] = np.inf #-(self.fit_bounds[p1["id"]][0] + self.fit_bounds[p2["id"]][0])
+                kwdelt["min"] = 0 # note: enforces "<=" (not "<")
+                kwdelt["max"] = np.inf
                 
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
@@ -185,8 +185,8 @@ class Constraint(object):
                 kwdelt["name"] = deltaname            
                 kwdelt["value"] = self.fit_values[p1["id"]] - p2["bool"]*self.fit_values[p2["id"]]
                 kwdelt["vary"] = True
-                kwdelt["min"] = 0
-                kwdelt["max"] = np.inf
+                kwdelt["min"] = 0 # note: enforces ">=" (not ">")
+                kwdelt["max"] = np.inf #self.fit_bounds[p1["id"]][1] + max(-p2["bool"]*self.fit_bounds[p2["id"]]) - ofs
                 
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])

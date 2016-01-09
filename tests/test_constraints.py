@@ -20,7 +20,7 @@ import pycorrfit as pcf
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
-    dfile = data_file_dl.get_data_file("PyCorrFit_CC_A488_withTrace.csv")
+    dfile = data_file_dl.get_data_file("019_cp_KIND+BFA.fcs")
     data = pcf.readfiles.openAny(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
@@ -30,18 +30,21 @@ def test_fit_constraint_simple_inequality():
                            fit_model=6035 # confocal 3D+3D)
                            )
     corr.fit_parameters_variable = [True, True, True, True, False, False, False]
+    # crop triplet data
+    corr.fit_ival[0] = 8
     pcf.Fit(corr)
-    assert corr.fit_parameters[1] < corr.fit_parameters[2]
-    # corr.fit_parameters
-    # n    6.42317485
-    # tau1 0.02200293
-    # tau2 0.086938
-    # F1   0.8913145
+    assert corr.fit_parameters[1] <= corr.fit_parameters[2]
     # -> deliberately reverse everything and try again 
     corr.fit_parameters[1], corr.fit_parameters[2] = corr.fit_parameters[2], corr.fit_parameters[1]
     corr.fit_parameters[3] = 1-corr.fit_parameters[3]
     pcf.Fit(corr)
-    assert corr.fit_parameters[1] < corr.fit_parameters[2]
+    # This tests also for equality
+    assert corr.fit_parameters[1] <= corr.fit_parameters[2]
+    if corr.fit_parameters[1] == corr.fit_parameters[2]:
+        print("found identity of fit parameters - multiplying by two to see if relation holds")
+        corr.fit_parameters[2] *= 2
+        pcf.Fit(corr)
+        assert corr.fit_parameters[1] < corr.fit_parameters[2]
 
 
 

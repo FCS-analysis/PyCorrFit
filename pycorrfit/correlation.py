@@ -286,6 +286,27 @@ class Correlation(object):
         self._fit_algorithm = value
 
     @property
+    def fit_ival(self):
+        """lag time interval for fitting"""
+        lag = self.lag_time
+        if lag is not None:
+            if self._fit_ival[1] <= 0 or self._fit_ival[1] > lag.shape[0]:
+                self._fit_ival[1] = lag.shape[0]
+        return self._fit_ival
+    
+    @fit_ival.setter
+    def fit_ival(self, value):
+        value = list(value)
+        if value[1] <= 0:
+            if self.lag_time is not None:
+                value[1] = self.lag_time.shape[0]
+            else:
+                # just to be sure
+                warnings.warn("No data available.")
+                value[1] = 10000000000000000
+        self._fit_ival = value
+
+    @property
     def fit_model(self):
         """instance of a fit model"""
         return self._fit_model
@@ -308,27 +329,6 @@ class Correlation(object):
             self._fit_parameters_variables = self._fit_model.default_variables
             self._fit_parameters_range = np.zeros((len(self._fit_parameters), 2))
             self.normalize_parm = None
-
-    @property
-    def fit_ival(self):
-        """lag time interval for fitting"""
-        lag = self.lag_time
-        if lag is not None:
-            if self._fit_ival[1] <= 0 or self._fit_ival[1] > lag.shape[0]:
-                self._fit_ival[1] = lag.shape[0]
-        return self._fit_ival
-    
-    @fit_ival.setter
-    def fit_ival(self, value):
-        value = list(value)
-        if value[1] <= 0:
-            if self.lag_time is not None:
-                value[1] = self.lag_time.shape[0]
-            else:
-                # just to be sure
-                warnings.warn("No data available.")
-                value[1] = 10000000000000000
-        self._fit_ival = value
 
     @property
     def fit_weight_data(self):

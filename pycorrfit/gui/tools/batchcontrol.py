@@ -150,15 +150,14 @@ class BatchCtrl(wx.Frame):
         oldpage = self.curpage
         self.curpage = self.parent.notebook.GetCurrentPage()
                 
-        if Page is not None:
-            # redraw this tool if necessary
-            if oldpage is not None and not isinstance(oldpage, wx._core._wxPyDeadObject):
-                oldmodelid = self.curpage.modelid
-            else:
-                oldmodelid = 0
-            newmodelid = self.curpage.modelid
-            if oldmodelid != newmodelid:
-                self.RedrawParameterBox()
+        # redraw this tool if necessary
+        if oldpage is not None and not isinstance(oldpage, wx._core._wxPyDeadObject):
+            oldmodelid = oldpage.modelid
+        else:
+            oldmodelid = 0
+        newmodelid = self.curpage.modelid
+        if oldmodelid != newmodelid:
+            self.RedrawParameterBox()
 
         # We need to update the list of Pages in self.dropdown
         if self.rbtnhere.Value == True:
@@ -279,6 +278,8 @@ check box.""")
         panel.Layout()
         sizer_bag.Fit(self)
         self.mastersizer = sizer_bag
+        self.mastersizer.Fit(self)
+        
         
 
     def RedrawParameterBox(self, e=None):
@@ -320,5 +321,6 @@ for batch modification.""")
             self.mastersizer.Fit(panel)
             panel.Layout()
             self.SetSize(panel.GetSize())
+            self.mastersizer.Fit(self)
         except:
             pass

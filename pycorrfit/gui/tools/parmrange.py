@@ -82,12 +82,18 @@ class RangeSelector(wx.Frame):
             self.WXboxsizer.Add(text2)
             self.WXboxsizer.Add(right)
             self.WXparmlist.append([left, [text, text2], right])
-
+        self.WXboxsizer.Layout()
+        
         self.topSizer.Add(self.WXboxsizer)
         self.btnapply = wx.Button(self.panel, wx.ID_ANY, 'Apply')
         self.Bind(wx.EVT_BUTTON, self.OnSetParmRange, self.btnapply)
         self.topSizer.Add(self.btnapply)
-        
+
+        self.topSizer.Layout()
+        self.panel.SetSizer(self.topSizer)
+        self.topSizer.Fit(self.panel)
+        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.topSizer.Fit(self)
 
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
@@ -130,10 +136,7 @@ class RangeSelector(wx.Frame):
         self.WXboxsizerlist = list()
         self.WXparmlist = list()
         self.FillPanel()
-        self.WXboxsizer.Layout()
-        self.topSizer.Layout()
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
-        self.topSizer.Fit(self)
+
 
 
     def OnSetParmRange(self, e):
