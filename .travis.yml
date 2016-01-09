@@ -54,7 +54,7 @@ install:
 #- brew install openblas
 #- brew install gfortran
 
-- pip install git+git://github.com/pyinstaller/pyinstaller.git@6c2fe6a2c49cfe3216a93c33bb7275f9cf76103a
+- pip install pyinstaller==3.0.0
 # final pip installs
 - pip install -r ./freeze_travis/requirements.txt
 
