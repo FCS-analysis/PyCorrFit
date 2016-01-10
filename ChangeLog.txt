@@ -1,5 +1,6 @@
-0.9.6-dev1
+0.9.6-dev2
 - Switch Mac OSx builds to 64bit
+- Use pyinstaller 3.0 for Mac OSx
 0.9.6
 - Bugfixes:
   - Fixed minor wx sizer problems for the tools
