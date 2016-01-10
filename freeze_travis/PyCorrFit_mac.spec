@@ -1,7 +1,7 @@
 # -*- mode: python -*-
-from os.path import dirname, abspath, join
+from os.path import abspath, join
 
-repo_dir = dirname(dirname(abspath(__file__)))
+repo_dir = abspath("../")
 
 hiddenimports = [
  		 "scipy.io.matlab.streams",
