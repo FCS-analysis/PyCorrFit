@@ -1,6 +1,8 @@
-0.9.6-dev2
+0.9.6-dev3
 - Switch Mac OSx builds to 64bit
 - Use pyinstaller 3.0 for Mac OSx
+- Bugfixes:
+  - Importing sessions with user-defined models did not work
 0.9.6
 - Bugfixes:
   - Fixed minor wx sizer problems for the tools
