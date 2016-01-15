@@ -25,13 +25,15 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
+                 # required for plot export with matplotlib:
                  "Tkinter",
                  "FixTk",
                  "_tkinter",
                  "Tkconstants",
                  "matplotlib.backends.backend_wxagg",
                  "FileDialog",
-                 "_wxagg"]
+                 "_wxagg",
+                 "Dialog"]
 
 
 ## Create inno setup .iss file

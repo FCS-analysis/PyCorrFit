@@ -9,6 +9,7 @@ functions and modules are called from here.
 from distutils.version import LooseVersion # For version checking
 import os
 import webbrowser
+import wx
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
 import wx.py.shell
 import numpy as np                      # NumPy
@@ -27,6 +28,7 @@ except ImportError:
 # PyCorrFit modules
 from . import doc                          # Documentation/some texts
 from . import edclasses
+
 try:
     from . import plotting
 except ImportError:
