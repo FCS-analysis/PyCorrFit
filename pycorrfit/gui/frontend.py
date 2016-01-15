@@ -231,8 +231,7 @@ class MyFrame(wx.Frame):
         if select:
             # A hack to have the last page displayed in the tab menu:
             Npag = self.notebook.GetPageCount()
-            for i in range(int(Npag)):
-                self.notebook.SetSelection(i)
+            self.notebook.SetSelection(Npag-1)
 
         #self.Thaw()
         self.tabcounter = self.tabcounter + 1
