@@ -25,7 +25,8 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
-                 "Tkinter"]
+                 "Tkinter",
+                 "FixTk"]
 
 
 ## Create inno setup .iss file
