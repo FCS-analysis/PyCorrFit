@@ -27,17 +27,18 @@ except ImportError:
 # PyCorrFit modules
 from . import doc                          # Documentation/some texts
 from . import edclasses
+try:
+    from . import plotting
+except ImportError:
+    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
+             "available. Reason: {}.".format(sys.exc_info()[1].message))
+
 
 from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import meta
 
-try:
-    from pycorrfit import plotting
-except ImportError:
-    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
-             "available. Reason: {}.".format(sys.exc_info()[1].message))
 
 from . import page
 from . import tools

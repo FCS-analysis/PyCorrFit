@@ -28,7 +28,10 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "Tkinter",
                  "FixTk",
                  "_tkinter",
-                 "Tkconstants"]
+                 "Tkconstants",
+                 "matplotlib.backends.backend_wxagg",
+                 "FileDialog",
+                 "_wxagg"]
 
 
 ## Create inno setup .iss file

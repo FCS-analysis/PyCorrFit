@@ -8,6 +8,7 @@ Be sure to install texlive-science and texlive-math-extra
 """
 
 
+import wx # b/c of pyinstaller
 import codecs
 import numpy as np
 import matplotlib
@@ -23,8 +24,8 @@ from matplotlib import rcParams
 import unicodedata
 
 # For finding latex tools
-from .meta import find_program
-from . import models as mdls
+from pycorrfit.meta import find_program
+from pycorrfit import models as mdls
 
 
 def greek2tex(char):
