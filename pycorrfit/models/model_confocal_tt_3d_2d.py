@@ -146,7 +146,7 @@ model_setup(
              par_values=parms,
              par_vary=[True, True, True, True, False, False, False, False, False, False, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, "<", 1], [6, "<", 2], [8, "<", 6]],
+             par_constraints=[[2, "<", 1], [6, "<", 2], [8, ">", 6]],
              par_hr_labels=[
                             u"n",
                             u"τ_2D [ms]",

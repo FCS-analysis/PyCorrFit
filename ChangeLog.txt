@@ -1,8 +1,12 @@
 0.9.6-dev3
 - Switch Mac OSx builds to 64bit
 - Use pyinstaller 3.0 for Mac OSx
+- Second triplet time is now larger than first triplet time
+  by default
 - Bugfixes:
-  - Importing sessions with user-defined models did not work
+  - Opening sessions with user-defined models
+  - Saving sessions with comments containing non-ASCII characters
+  - Graphical plot export does not find `plotting`
 0.9.6
 - Bugfixes:
   - Fixed minor wx sizer problems for the tools

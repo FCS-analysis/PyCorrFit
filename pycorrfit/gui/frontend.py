@@ -32,6 +32,7 @@ from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import meta
+
 try:
     from pycorrfit import plotting
 except ImportError:
