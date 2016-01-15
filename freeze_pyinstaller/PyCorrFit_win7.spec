@@ -4,6 +4,18 @@ import os
 import platform
 import sys
 
+# path matplotlibrc
+import matplotlib
+mplrc = matplotlib.matplotlib_fname()
+with open(mplrc) as fd:
+    data = fd.readlines()
+for ii, l in enumerate(data):
+    if l.strip().startswith("backend "):
+        data[ii] = "backend : WXAgg\n"
+with open(mplrc, "w") as fd:
+    fd.writelines(data)
+
+
 if not os.path.exists("freeze_pyinstaller"):
     raise Exception("Please go to `PyCorrFit` directory.")
 
@@ -25,15 +37,8 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
-                 # required for plot export with matplotlib:
-                 "Tkinter",
-                 "FixTk",
-                 "_tkinter",
-                 "Tkconstants",
-                 "matplotlib.backends.backend_wxagg",
-                 "FileDialog",
-                 "_wxagg",
-                 "Dialog"]
+                 ]
+
 
 
 ## Create inno setup .iss file
