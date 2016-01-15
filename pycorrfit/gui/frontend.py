@@ -9,6 +9,7 @@ functions and modules are called from here.
 from distutils.version import LooseVersion # For version checking
 import os
 import webbrowser
+import wx
 import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
 import wx.py.shell
 import numpy as np                      # NumPy
@@ -28,15 +29,18 @@ except ImportError:
 from . import doc                          # Documentation/some texts
 from . import edclasses
 
+try:
+    from . import plotting
+except ImportError:
+    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
+             "available. Reason: {}.".format(sys.exc_info()[1].message))
+
+
 from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import meta
-try:
-    from pycorrfit import plotting
-except ImportError:
-    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
-             "available. Reason: {}.".format(sys.exc_info()[1].message))
+
 
 from . import page
 from . import tools
@@ -230,8 +234,7 @@ class MyFrame(wx.Frame):
         if select:
             # A hack to have the last page displayed in the tab menu:
             Npag = self.notebook.GetPageCount()
-            for i in range(int(Npag)):
-                self.notebook.SetSelection(i)
+            self.notebook.SetSelection(Npag-1)
 
         #self.Thaw()
         self.tabcounter = self.tabcounter + 1

@@ -38,8 +38,8 @@ before_install:
 #- brew install wget
 - which python
 - python --version
-- export VERSIONER_PYTHON_PREFER_32_BIT=yes
-- defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+- export VERSIONER_PYTHON_PREFER_32_BIT=no
+- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
 
 install:
 - brew unlink gcc
@@ -54,33 +54,33 @@ install:
 #- brew install openblas
 #- brew install gfortran
 
-- arch -i386 pip install git+git://github.com/pyinstaller/pyinstaller.git@6c2fe6a2c49cfe3216a93c33bb7275f9cf76103a
+- pip install pyinstaller==3.0.0
 # final pip installs
-- arch -i386 pip install -r ./freeze_travis/requirements.txt
+- pip install -r ./freeze_travis/requirements.txt
 
 # wxPython
 - wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
 - sudo ./freeze_travis/install_dmg.sh
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
-- arch -i386 python -c "import wx; print wx.__version__"
-- arch -i386 python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
+- python -c "import wx; print wx.__version__"
+- python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
 - patch /usr/local/lib/wxPython-3.0.2.0/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
 # wxPython is only available in 64bit version with homebrew
 #- brew install wxpython
 
 # show packages
-- arch -i386 pip freeze
+- pip freeze
 # build extensions
-- arch -i386 python setup.py develop
+- python setup.py develop
 
 script:
 # Run tests
-- arch -i386 python setup.py test
+- python setup.py test
 # Create wheel pacakge
-- arch -i386 python setup.py bdist_wheel
+- python setup.py bdist_wheel
 # Create source pacakge
-- arch -i386 python setup.py sdist
+- python setup.py sdist
 # Create binary
 - ./freeze_travis/macOSx_bundle_script.sh
 - ls dist/

@@ -1,4 +1,9 @@
 # -*- mode: python -*-
+from os.path import abspath, join
+
+# This is not relative to this file
+repo_dir = abspath("./")
+
 hiddenimports = [
  		 "scipy.io.matlab.streams",
 		 "scipy.special",
@@ -11,11 +16,11 @@ hiddenimports = [
                  "scipy.sparse.csgraph.shortest_path",
                  "scipy.sparse.csgraph._validation"]
 
-a = Analysis(['pycorrfit/PyCorrFit.py'],
+a = Analysis([join(repo_dir, 'pycorrfit/PyCorrFit.py')],
              hiddenimports=hiddenimports,
              hookspath=None)
-a.datas += [('doc/ChangeLog.txt', 'ChangeLog.txt', 'DATA'),
-            ('doc/PyCorrFit_doc.pdf', 'doc/PyCorrFit_doc.pdf', 'DATA')]
+a.datas += [('doc/ChangeLog.txt', join(repo_dir, 'ChangeLog.txt'), 'DATA'),
+            ('doc/PyCorrFit_doc.pdf', join(repo_dir, 'doc/PyCorrFit_doc.pdf'), 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
@@ -33,5 +38,6 @@ coll = COLLECT(exe,
                upx=True,
                name='PyCorrFit')
 app = BUNDLE(coll,
-             name=os.path.join('dist', 'PyCorrFit.app'),
-             icon='freeze_pyinstaller/PyCorrFit.icns')
+             name=join(repo_dir, 'dist/PyCorrFit.app'),
+             icon=join(repo_dir, 'freeze_pyinstaller/PyCorrFit.icns')
+             )

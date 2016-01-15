@@ -4,9 +4,22 @@ import os
 import platform
 import sys
 
+## Patch matplotlibrc
+# This patch is required so matplotlib does not try to start with
+# the "TkAgg" backend, resulting in import errors.
+import matplotlib
+mplrc = matplotlib.matplotlib_fname()
+with open(mplrc) as fd:
+    data = fd.readlines()
+for ii, l in enumerate(data):
+    if l.strip().startswith("backend "):
+        data[ii] = "backend : WXAgg\n"
+with open(mplrc, "w") as fd:
+    fd.writelines(data)
+
+
 if not os.path.exists("freeze_pyinstaller"):
     raise Exception("Please go to `PyCorrFit` directory.")
-
     
 name = "PycorrFit"
 DIR = os.path.realpath(".")
@@ -24,8 +37,9 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "sympy.assumptions.handlers.common",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
-                 "scipy.sparse.csgraph.shortest_path",
-                 "scipy.sparse.csgraph._validation"]
+                 "scipy.sparse.csgraph._validation",
+                 ]
+
 
 
 ## Create inno setup .iss file

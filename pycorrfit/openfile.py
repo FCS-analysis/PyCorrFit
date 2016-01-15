@@ -477,7 +477,7 @@ def SaveSessionData(sessionfile, Infodict):
                 os.remove(os.path.join(tempdir, tracefilename))
     # Save comments into txt file
     commentfilename = "comments.txt"
-    commentfile = open(commentfilename, 'wb')
+    commentfile = codecs.open(commentfilename, 'w', encoding="utf-8")
     # Comments[-1] is comment on whole Session
     Ckeys = Infodict["Comments"].keys()
     Ckeys.sort()
@@ -546,7 +546,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, WeightFilename))
     ## Preferences
     preferencesname = "preferences.cfg"
-    with open(preferencesname, 'w') as fd:
+    with codecs.open(preferencesname, 'w',encoding="utf-8") as fd:
         for key in Infodict["Preferences"]:
             value = Infodict["Preferences"][key]
             if isinstance(value, list):
@@ -558,7 +558,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, preferencesname))
     ## Readme
     rmfilename = "Readme.txt"
-    rmfile = open(rmfilename, 'wb')
+    rmfile = codecs.open(rmfilename, 'w', encoding="utf-8")
     rmfile.write(ReadmeSession)
     rmfile.close()
     Arc.write(rmfilename)
@@ -703,7 +703,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
 session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]
 
 
-ReadmeCSV = """# This file was created using PyCorrFit version {}.
+ReadmeCSV = u"""# This file was created using PyCorrFit version {}.
 #
 # Lines starting with a '#' are treated as comments.
 # The data is stored as CSV below this comment section.
@@ -716,7 +716,7 @@ ReadmeCSV = """# This file was created using PyCorrFit version {}.
 """.format(__version__)
     
     
-ReadmeSession = """This file was created using PyCorrFit version {}.
+ReadmeSession = u"""This file was created using PyCorrFit version {}.
 The .zip archive you are looking at is a stored session of PyCorrFit.
 If you are interested in how the data is stored, you will find
 out here. Most important are the dimensions of units:

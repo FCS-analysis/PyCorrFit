@@ -30,6 +30,7 @@ except ImportError:
 import wx
 
 from pycorrfit import models as mdls
+from pycorrfit.models.control import append_model
 
 
 class CorrFunc(object):
@@ -204,7 +205,7 @@ class UserModel(object):
             self.SetCurrentID()
             self.modelarray[i]["Definitions"][0] = self.CurrentID
         # We assume that the models have the correct ID for now
-        mdls.AppendNewModel(self.modelarray)
+        append_model(self.modelarray)
         # Set variables and models
         # Is this still necessary? - We are doing this for compatibility!
         self.parent.value_set = mdls.values

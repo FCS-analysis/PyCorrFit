@@ -99,9 +99,9 @@ parms = [
             1000,    # taud2
             0.5,     # F
             1.0,     # alpha
-            0.002,   # tautrip1
+            0.001,   # tautrip1
             0.01,    # T1
-            0.001,   # tautrip2
+            0.002,   # tautrip2
             0.01,    # T2
             0.0      # offset
             ] 
@@ -138,7 +138,7 @@ model_setup(
              par_values=parms,
              par_vary=[True, True, True, True, False, False, False, False, False, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [5, "<", 1], [7, "<", 5]],
+             par_constraints=[[2, ">", 1], [5, "<", 1], [7, ">", 5]],
              par_hr_labels=[
                             u"n",
                             u"τ₁ [ms]",

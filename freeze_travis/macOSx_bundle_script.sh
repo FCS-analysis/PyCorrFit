@@ -58,7 +58,7 @@ echo "#######################"
 
 if [ -e $appn ]; then rm -R $appn; fi
 
-arch -i386 pyinstaller -y -F $Specfile
+pyinstaller -y -F $Specfile
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit

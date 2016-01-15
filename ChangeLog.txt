@@ -1,3 +1,13 @@
+0.9.7
+- Second triplet time is now larger than first triplet time
+  by default
+- Remove a hack that causes a run through all pages
+  e.g. when an average is created
+- Bugfixes:
+  - Opening sessions with user-defined models
+  - Saving sessions with comments containing non-ASCII characters
+  - Windows build: Graphical plot export was misconfigured
+    -> added matplotlibrc patch in .spec file
 0.9.6
 - Bugfixes:
   - Fixed minor wx sizer problems for the tools
