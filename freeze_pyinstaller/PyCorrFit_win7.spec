@@ -24,9 +24,8 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "sympy.assumptions.handlers.common",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
-                 "scipy.sparse.csgraph.shortest_path",
                  "scipy.sparse.csgraph._validation",
-                 "pycorrfit.plotting"]
+                 "Tkinter"]
 
 
 ## Create inno setup .iss file
