@@ -4,7 +4,9 @@ import os
 import platform
 import sys
 
-# path matplotlibrc
+## Patch matplotlibrc
+# This patch is required so matplotlib does not try to start with
+# the "TkAgg" backend, resulting in import errors.
 import matplotlib
 mplrc = matplotlib.matplotlib_fname()
 with open(mplrc) as fd:
@@ -18,7 +20,6 @@ with open(mplrc, "w") as fd:
 
 if not os.path.exists("freeze_pyinstaller"):
     raise Exception("Please go to `PyCorrFit` directory.")
-
     
 name = "PycorrFit"
 DIR = os.path.realpath(".")
@@ -74,7 +75,7 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           icon=ICO,
-          console=True )
+          console=False )
 
 coll = COLLECT(exe,
                a.binaries,
