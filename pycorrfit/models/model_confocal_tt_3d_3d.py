@@ -105,9 +105,9 @@ parms = [
             0.5,     # F
             5,       # SP
             1.0,     # alpha
-            0.002,   # tautrip1
+            0.001,   # tautrip1
             0.01,    # T1
-            0.001,   # tautrip2
+            0.002,   # tautrip2
             0.01,    # T2
             0.0      # offset
             ] 
