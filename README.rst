@@ -51,7 +51,7 @@ Information for developers
 
 Running from source
 -------------------
-The easiest way to run ShapeOut from source is to use
+The easiest way to run PyCorrFit from source is to use
 `Anaconda <http://continuum.io/downloads>`__. PyCorrFit requires wxPython which is not
 available at the Python package index. Make sure you install a unicode version of wxPython.
 Detailed installation instructions are `here <https://github.com/FCS-analysis/PyCorrFit/wiki/Running-from-source>`__.
