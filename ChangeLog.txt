@@ -1,3 +1,6 @@
+0.9.7.dev1
+- Bugfixes:
+  - Indexing error when saving sessions (#154)
 0.9.7
 - Second triplet time is now larger than first triplet time
   by default

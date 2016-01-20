@@ -1576,11 +1576,17 @@ class MyFrame(wx.Frame):
 
                 # optimization error
                 Alist = list()
-                if (corr.fit_results.has_key("fit error estimation") and 
-                    len(corr.fit_results["fit error estimation"]) != 0):
+                if (# there is an error key
+                    corr.fit_results.has_key("fit error estimation") and
+                    # the errors were computed
+                    len(corr.fit_results["fit error estimation"]) != 0 and
+                    # len(errors) matches len(fit parameters)
+                    len(corr.fit_results["fit error estimation"]) == len(corr.fit_results["fit parameters"])
+                    ): 
                     for ii, fitpid in enumerate(corr.fit_results["fit parameters"]):
-                        Alist.append([ int(fitpid),
-                                   float(corr.fit_results["fit error estimation"][ii]) ])
+                        Alist.append([int(fitpid),
+                                      float(corr.fit_results["fit error estimation"][ii])
+                                     ])
                 Infodict["Supplements"][counter]["FitErr"] = Alist
                 
             # Set exp data
