@@ -21,13 +21,6 @@ Getting started
 Installation
 ------------
 Installers for PyCorrFit are available at the `release page <https://github.com/FCS-analysis/PyCorrFit/releases>`__.
-If you have Python installed you can install PyCorrFit, including its scripting functionalities, from the Python package index:
-
-::
-
-    pip install pycorrfit[GUI]
-
-More information is available in the `PyCorrFit wiki <https://github.com/FCS-analysis/PyCorrFit/wiki/Running-from-source>`__.
 
 Documentation
 -------------
@@ -44,6 +37,17 @@ Problems
 --------
 If you find a bug or need help with a specific topic, do not hesitate to ask a question
 at the `issues page <https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-new-issue>`__.
+
+
+Advanced usage
+--------------
+If you have Python installed you can install PyCorrFit, including its scripting functionalities, from the Python package index:
+
+::
+
+    pip install pycorrfit[GUI]
+
+More information is available in the `PyCorrFit wiki <https://github.com/FCS-analysis/PyCorrFit/wiki/Running-from-source>`__.
 
 
 Information for developers
