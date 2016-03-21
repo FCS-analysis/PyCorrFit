@@ -1343,7 +1343,7 @@ class MyFrame(wx.Frame):
                                           counter=counter)
             # Add experimental Data
             # Import dataexp:
-            number = counter.strip().strip(":").strip("#")
+            number = counter.strip(":# ")
             pageid = int(number)
             dataexp = Infodict["Correlations"][pageid][1]
 
@@ -1464,7 +1464,8 @@ class MyFrame(wx.Frame):
         # What Data do we wish to save?
         Page = self.notebook.GetCurrentPage()
         # Export CSV data
-        filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+".csv"
+        filename = "#{:04d}_{}".format(int(Page.counter.strip(":# ")),
+                                       Page.title.strip())
         dlg = wx.FileDialog(self, "Save curve", self.dirname, filename, 
               "Correlation with trace (*.csv)|*.csv;*.*"+\
               "|Correlation only (*.csv)|*.csv;*.*",
@@ -1556,7 +1557,7 @@ class MyFrame(wx.Frame):
         for i in np.arange(N):
             # Set Page 
             Page = self.notebook.GetPage(i)
-            counter = int(Page.counter.strip().strip(":").strip("#"))
+            counter = int(Page.counter.strip(":# "))
             # Apply currently set parameters
             Page.apply_parameters()
             # Set parameters

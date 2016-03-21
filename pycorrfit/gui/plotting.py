@@ -178,7 +178,9 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure()
-    fig.canvas.set_window_title("Correlation - "+Page.title)
+    wtit = "Correlation #{:04d}_{}".format(int(Page.counter.strip(":# ")),
+                                     Page.title.strip())
+    fig.canvas.set_window_title(wtit)
     if resid is not None:
         gs = gridspec.GridSpec(2, 1, height_ratios=[5,1])
         ax = plt.subplot(gs[0])
@@ -368,7 +370,9 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     # create plot
     # plt.plot(x, y, '.', label = 'original data', markersize=5)
     fig=plt.figure(figsize=(10,3))
-    fig.canvas.set_window_title("Trace - "+Page.title)
+    wtit = "Trace #{:04d}_{}".format(int(Page.counter.strip(":# ")),
+                                     Page.title.strip())
+    fig.canvas.set_window_title(wtit)
     ax = plt.subplot(111)
     for i in np.arange(len(traces)):
         # Columns
