@@ -1482,7 +1482,10 @@ class MyFrame(wx.Frame):
                 savetrace = True
             else:
                 savetrace = False
-            opf.ExportCorrelation(path, Page, tools.info,
+            # Collect info on page
+            InfoMan = tools.info.InfoClass(CurPage=Page)
+            PageInfo = InfoMan.GetCurFancyInfo()
+            opf.ExportCorrelation(path, Page.corr, PageInfo,
                                   savetrace=savetrace)
         
         dlg.Destroy()

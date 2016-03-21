@@ -207,13 +207,13 @@ class InfoClass(object):
                 InfoDict["fitting"] = Fitting
 
         ## Normalization parameter id to name
-        if corr.normalize_parm is None:
+        if corr.normparm is None:
             normparmtext = "None"
-        elif Page.normparm < len(corr.fit_parameters):
-            normparmtext = corr.fit_model.parameters[0][corr.normalize_parm] 
+        elif corr.normparm < len(corr.fit_parameters):
+            normparmtext = corr.fit_model.parameters[0][corr.normparm] 
         else:
             # supplementary parameters
-            supnum = corr.normalize_parm - len(corr.fit_parameters)
+            supnum = corr.normparm - len(corr.fit_parameters)
             normparmtext = MoreInfo[supnum][0]
         Title.append(["Normalization", normparmtext]) 
         
