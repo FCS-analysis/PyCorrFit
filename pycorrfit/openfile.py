@@ -573,43 +573,50 @@ def SaveSessionData(sessionfile, Infodict):
     os.rmdir(tempdir)
 
 
-def ExportCorrelation(exportfile, Page, info, savetrace=True):
-    """ Write correlation data to a file
+def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
+    """ Write correlation data (as displayed in PyCorrFit) to a file
         
     
     Parameters
     ----------
     exportfile : str
-        Absolute filename to save data
-    Page : PyCorrFit Page object
+        Absolute file name to save the data to
+    correlation : PyCorrFit "Correlation" object
         Contains all correlation data
-    info : module
-        The `info` tool module. This is a workaround until Page has
-        its own class to create info data.
+    page_info : module
+        A multi-line string containing information on the correlation that
+        will be written to the file as a comment
     savetrace : bool
         Append the trace to the file
+    
+    Notes
+    -----
+    Note that this method exports the plotted data:
+    - Correlation.correlation_plot
+    - Correlation.residuals_plot
+    - Correlation.modeled_plot
+    which means that the data could be normalized to, for instance,
+    the total particle number `n`.
     """
-
     openedfile = codecs.open(exportfile, 'w', encoding="utf-8")
     ## First, some doc text
     openedfile.write(ReadmeCSV.replace('\n', '\r\n'))
-    # The infos
-    InfoMan = info.InfoClass(CurPage=Page)
-    PageInfo = InfoMan.GetCurFancyInfo()
-    for line in PageInfo.splitlines():
+    # The info
+    for line in page_info.splitlines():
         openedfile.write(u"# "+line+"\r\n")
     openedfile.write(u"#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
-    corr = Page.corr
+    corr = correlation
     mod = corr.modeled_plot[:,1]
+
     if corr.correlation is not None:
         # Experimental data
-        tau = corr.correlation_fit[:,0]
-        exp = corr.correlation_fit[:,1]
-        res = corr.residuals_fit[:,1]
+        tau = corr.correlation_plot[:,0]
+        exp = corr.correlation_plot[:,1]
+        res = corr.residuals_plot[:,1]
+
         # Plotting! Because we only export plotted area.
-        
         if corr.is_weighted_fit:
             weightname = corr.fit_weight_type
             try:
@@ -697,7 +704,7 @@ def ExportCorrelation(exportfile, Page, info, savetrace=True):
                 dataWriter.writerow(["{:.10e}".format(time[i]),
                                      "{:.10e}".format(intensity[i])])
 
-        openedfile.close()
+    openedfile.close()
 
 
 session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]

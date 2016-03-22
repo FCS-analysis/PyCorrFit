@@ -1343,7 +1343,7 @@ class MyFrame(wx.Frame):
                                           counter=counter)
             # Add experimental Data
             # Import dataexp:
-            number = counter.strip().strip(":").strip("#")
+            number = counter.strip(":# ")
             pageid = int(number)
             dataexp = Infodict["Correlations"][pageid][1]
 
@@ -1464,7 +1464,8 @@ class MyFrame(wx.Frame):
         # What Data do we wish to save?
         Page = self.notebook.GetCurrentPage()
         # Export CSV data
-        filename = Page.tabtitle.GetValue().strip()+Page.counter[:2]+".csv"
+        filename = "#{:04d}_{}".format(int(Page.counter.strip(":# ")),
+                                       Page.title.strip())
         dlg = wx.FileDialog(self, "Save curve", self.dirname, filename, 
               "Correlation with trace (*.csv)|*.csv;*.*"+\
               "|Correlation only (*.csv)|*.csv;*.*",
@@ -1481,7 +1482,10 @@ class MyFrame(wx.Frame):
                 savetrace = True
             else:
                 savetrace = False
-            opf.ExportCorrelation(path, Page, tools.info,
+            # Collect info on page
+            InfoMan = tools.info.InfoClass(CurPage=Page)
+            PageInfo = InfoMan.GetCurFancyInfo()
+            opf.ExportCorrelation(path, Page.corr, PageInfo,
                                   savetrace=savetrace)
         
         dlg.Destroy()
@@ -1556,7 +1560,7 @@ class MyFrame(wx.Frame):
         for i in np.arange(N):
             # Set Page 
             Page = self.notebook.GetPage(i)
-            counter = int(Page.counter.strip().strip(":").strip("#"))
+            counter = int(Page.counter.strip(":# "))
             # Apply currently set parameters
             Page.apply_parameters()
             # Set parameters
@@ -1576,11 +1580,17 @@ class MyFrame(wx.Frame):
 
                 # optimization error
                 Alist = list()
-                if (corr.fit_results.has_key("fit error estimation") and 
-                    len(corr.fit_results["fit error estimation"]) != 0):
+                if (# there is an error key
+                    corr.fit_results.has_key("fit error estimation") and
+                    # the errors were computed
+                    len(corr.fit_results["fit error estimation"]) != 0 and
+                    # len(errors) matches len(fit parameters)
+                    len(corr.fit_results["fit error estimation"]) == len(corr.fit_results["fit parameters"])
+                    ): 
                     for ii, fitpid in enumerate(corr.fit_results["fit parameters"]):
-                        Alist.append([ int(fitpid),
-                                   float(corr.fit_results["fit error estimation"][ii]) ])
+                        Alist.append([int(fitpid),
+                                      float(corr.fit_results["fit error estimation"][ii])
+                                     ])
                 Infodict["Supplements"][counter]["FitErr"] = Alist
                 
             # Set exp data

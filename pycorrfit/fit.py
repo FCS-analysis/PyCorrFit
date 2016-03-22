@@ -409,9 +409,9 @@ class Fit(object):
              "chi2 type" : self.chi_squared_type,
              "weighted fit" : c.is_weighted_fit,
              "fit algorithm" : c.fit_algorithm,
-             "fit result" : c.fit_parameters.copy(),
-             "fit parameters" : np.where(c.fit_parameters_variable)[0],
-             "fit weights" : self.compute_weights(c)
+             "fit result" : 1*c.fit_parameters,
+             "fit parameters" : 1*np.where(c.fit_parameters_variable)[0],
+             "fit weights" : 1*self.compute_weights(c)
              }
         
         

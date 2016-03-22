@@ -328,7 +328,7 @@ class Correlation(object):
             self._fit_parameters = self._fit_model.default_values
             self._fit_parameters_variables = self._fit_model.default_variables
             self._fit_parameters_range = np.zeros((len(self._fit_parameters), 2))
-            self.normalize_parm = None
+            self.normparm = None
 
     @property
     def fit_weight_data(self):

@@ -1,3 +1,9 @@
+0.9.8
+- Bugfixes:
+  - Indexing error when saving sessions (#154)
+  - Page number truncated in csv export (#159)
+  - Export of csv files used incorrect normalization (#153)
+  - Normalization parameter was not displayed in the 'Info' tool
 0.9.7
 - Second triplet time is now larger than first triplet time
   by default
