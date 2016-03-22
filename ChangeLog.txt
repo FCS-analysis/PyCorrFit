@@ -1,4 +1,4 @@
-0.9.7.dev1
+0.9.8
 - Bugfixes:
   - Indexing error when saving sessions (#154)
   - Page number truncated in csv export (#159)
