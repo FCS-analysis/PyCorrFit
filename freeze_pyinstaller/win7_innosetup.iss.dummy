@@ -21,7 +21,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={localappdata}\{#MyAppName}
 DisableDirPage=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
@@ -29,13 +29,14 @@ OutputBaseFilename={#MyAppName}_{#MyAppVersion}_{#MyAppPlatform}_setup
 Compression=lzma
 SolidCompression=yes
 ChangesAssociations=yes
+PrivilegesRequired=lowest
 
 
 [Registry]
-Root: HKCR; Subkey: ".pcfs"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "{#MyAppName}"; ValueType: string; ValueName: ""; ValueData: "PyCorrFit Session"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppName}.EXE,0"
-Root: HKCR; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}.EXE"" ""%1""" 
+Root: HKCU; Subkey: ".pcfs"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "{#MyAppName}"; ValueType: string; ValueName: ""; ValueData: "PyCorrFit Session"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "{#MyAppName}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppName}.EXE,0"
+Root: HKCU; Subkey: "{#MyAppName}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}.EXE"" ""%1""" 
 
 
 [Languages]
@@ -55,7 +56,7 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\{#MyAppName}_doc.pdf"
 Name: "{group}\Changelog"; Filename: "{app}\doc\Changelog.txt"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
