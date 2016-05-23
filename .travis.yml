@@ -65,6 +65,7 @@ install:
 ##- brew install gfortran
 
 # matplotlib backend workaround
+- mkdir $HOME/.matplotlib
 - echo "backend: TkAgg" >> $HOME/.matplotlib/matplotlibrc
 
 - pip install pyinstaller==3.0.0
