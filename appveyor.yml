@@ -96,7 +96,8 @@ test_script:
   - "pip install coveralls"
   - "coverage run --source=pycorrfit ./setup.py test"
   - "coverage report -m"
-  - "coveralls --verbose"
+# https://github.com/lemurheavy/coveralls-public/issues/429
+#  - "coveralls --verbose"
 
 after_test:
   # If tests are successful, create a whl package for the project.
