@@ -30,21 +30,22 @@ before_install:
 # a lot of cool formulae for scientific tools
 #- brew tap homebrew/science
 # numpy, scipy, matplotlib, ...
-- brew tap homebrew/python
-- brew tap homebrew/dupes
-- brew update
+#- brew tap homebrew/python
+#- brew tap homebrew/dupes
+#- brew update
 #- brew update && brew upgrade
-- brew install python --universal --framework
+#- brew install python --universal --framework
 #- brew install wget
-- which python
-- python --version
-- export VERSIONER_PYTHON_PREFER_32_BIT=no
-- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
+#- which python
+#- python --version
+#- export VERSIONER_PYTHON_PREFER_32_BIT=no
+#- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
 
 install:
 - wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh
 - bash Miniconda2-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
 - export PATH=$HOME/miniconda/bin:$PATH
+- which python
 - conda install numpy scipy wxpython
 
 #- brew unlink gcc
