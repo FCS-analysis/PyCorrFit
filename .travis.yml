@@ -49,7 +49,8 @@ install:
 - conda search numpy
 - conda search scipy
 - conda search wxpython
-- conda install --yes numpy scipy wxpython
+# https://github.com/ContinuumIO/anaconda-issues/issues/565
+- conda install --yes numpy==1.8.2 scipy wxpython
 
 #- brew unlink gcc
 #- brew install gcc --universal
