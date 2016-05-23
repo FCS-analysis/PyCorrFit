@@ -64,6 +64,9 @@ install:
 ##- brew install openblas
 ##- brew install gfortran
 
+# matplotlib backend workaround
+- echo "backend: TkAgg" >> $HOME/.matplotlib/matplotlibrc
+
 - pip install pyinstaller==3.0.0
 # final pip installs
 - pip install -r ./freeze_travis/requirements.txt
