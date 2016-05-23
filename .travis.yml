@@ -80,6 +80,7 @@ script:
 - travis_retry pip install coveralls
 - coverage run --source=pycorrfit ./setup.py test
 - coverage report -m
+- coveralls --verbose
 # Create wheel pacakge
 - python setup.py bdist_wheel
 # Create source pacakge
