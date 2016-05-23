@@ -76,7 +76,10 @@ install:
 
 script:
 # Run tests
-- python setup.py test
+- travis_retry pip install coverage
+- travis_retry pip install coveralls
+- coverage run --source=pycorrfit ./setup.py test
+- coverage report -m
 # Create wheel pacakge
 - python setup.py bdist_wheel
 # Create source pacakge
