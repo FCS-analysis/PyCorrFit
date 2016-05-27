@@ -31,7 +31,8 @@ def openSIN(dirname, filename):
 
 
 def openSIN_integer_mode(path):
-    """
+    """ Integer mode file format of e.g. flex03lq-1 correlator
+    
     This is a file format where the type (AC/CC) of the curve is
     determined using integers in the "Mode=" line, e.g.
     

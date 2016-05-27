@@ -1,8 +1,8 @@
 #!/bin/bash
 # pip install pyinstaller==2.1
 export PATH=/usr/local/bin:$PATH
-export VERSIONER_PYTHON_PREFER_32_BIT=yes
-defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
+#export VERSIONER_PYTHON_PREFER_32_BIT=yes
+#defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
 
 Progname="PyCorrFit"
 # Go to base dir of repo
