@@ -34,7 +34,7 @@ echo "###################"
 echo "Building Extensions"
 echo "###################"
 rm -f $Docname
-arch -i386  python setup.py build_ext --inplace
+python setup.py build_ext --inplace
 if [ $? -ne 0 ]; then
     echo "Error - Aborting"
     exit
