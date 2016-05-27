@@ -15,7 +15,7 @@ import data_file_dl
 import pycorrfit
 
 # Files that are known to not work
-exclude = ["sin/Correlator.com_Integer-Mode.SIN"]
+exclude = []
 
 
 def test_open():
