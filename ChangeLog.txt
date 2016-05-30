@@ -1,5 +1,6 @@
-0.9.8dev1
-- Remove admin-requirement during install
+0.9.8dev2
+- Remove admin-requirement during install (Windows)
+- Support newer correlator.com .sin file format (#135)
 0.9.8
 - Bugfixes:
   - Indexing error when saving sessions (#154)
