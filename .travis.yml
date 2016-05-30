@@ -126,7 +126,8 @@ deploy:
   file_glob: true
   file: 
     - "${RELEASE_PKG_FILEC}"
-    - "${RELEASE_PKG_FILEB}"
+    # Mac OSx build is broken (issue #147)
+    #- "${RELEASE_PKG_FILEB}"
     - "${RELEASE_PKG_FILEA}"
   on:
     tags: true
