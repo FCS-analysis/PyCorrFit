@@ -67,7 +67,7 @@ install:
 # fixes (matplotlib backend)
 - ./freeze_travis/fixes.sh
 
-- pip install pyinstaller==3.0.0
+- pip install pyinstaller==3.2.0
 # final pip installs
 - pip install -r ./freeze_travis/requirements.txt
 
@@ -95,7 +95,7 @@ script:
 - travis_retry pip install coveralls
 - coverage run --source=pycorrfit ./setup.py test
 - coverage report -m
-- coveralls --verbose
+- coveralls
 # Create wheel pacakge
 - python setup.py bdist_wheel
 # Create source pacakge

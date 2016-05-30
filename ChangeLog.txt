@@ -1,4 +1,4 @@
-0.9.8dev2
+0.9.8dev3
 - Remove admin-requirement during install (Windows)
 - Support newer correlator.com .sin file format (#135)
 0.9.8
