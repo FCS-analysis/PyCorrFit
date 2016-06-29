@@ -208,7 +208,7 @@ class Stat(wx.Frame):
                 checked[ii] = True
         # A list with additional strings that should be default checked
         # if found somewhere in the data.
-        checklist = ["cpp", "duration", "bg rate", "avg.", "Model name"]
+        checklist = ["cpp", "duration", "bg rate", "avg.", "Model name", "filename/title"]
         for i in range(len(Info)):
             item = Info[i]
             for checkitem in checklist:
