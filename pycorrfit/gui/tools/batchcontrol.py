@@ -109,21 +109,36 @@ class BatchCtrl(wx.Frame):
         item = self.dropdown.GetSelection()
         if self.rbtnhere.Value == True:
             if item <= 0:
-                Page = self.parent.notebook.GetCurrentPage()
+                page = self.parent.notebook.GetCurrentPage()
             else:
-                Page = self.parent.notebook.GetPage(item-1)
+                page = self.parent.notebook.GetPage(item-1)
             # Get internal ID
-            modelid = Page.corr.fit_model.id
+            modelid = page.corr.fit_model.id
         else:
             # Get external ID
             modelid = self.YamlParms[item][1]
-        # Fit all pages with right modelid
-        for i in np.arange(self.parent.notebook.GetPageCount()):
-            OtherPage = self.parent.notebook.GetPage(i)
-            if (OtherPage.corr.fit_model.id == modelid and
-                OtherPage.corr.correlation is not None):
-                #Fit
-                OtherPage.Fit_function(noplots=True,trigger="fit_batch")
+
+        # Get all pages with right modelid
+        fit_page_list = []
+        for ii in np.arange(self.parent.notebook.GetPageCount()):
+            pageii = self.parent.notebook.GetPage(ii)
+            if (pageii.corr.fit_model.id == modelid and
+                pageii.corr.correlation is not None):
+                fit_page_list.append(pageii)
+
+        # Fit the pages with a progress dialog
+        sty = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+        dlg = wx.ProgressDialog("Fitting Progress",
+                                "Fitting pages...",
+                                maximum=len(fit_page_list),
+                                parent=self,
+                                style=sty)
+        for jj, pagejj in enumerate(fit_page_list):
+            if dlg.Update(jj+1, "Fitting page {}\n {}".format(pagejj.counter, pagejj.title))[0] == False:
+                dlg.Destroy()
+                break
+            pagejj.Fit_function(noplots=True,trigger="fit_batch")
+        
         # Update all other tools fit the finalize trigger.
         self.parent.OnFNBPageChanged(trigger="fit_finalize")
 

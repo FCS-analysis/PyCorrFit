@@ -2,6 +2,7 @@
 - Remove admin-requirement during install (Windows)
 - Support newer correlator.com .sin file format (#135)
 - Statistics: check "filename/title" by default (#151)
+- Documentation: fix bad LaTeX commands (#163)
 0.9.8
 - Bugfixes:
   - Indexing error when saving sessions (#154)
