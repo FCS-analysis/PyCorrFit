@@ -217,7 +217,7 @@ class Fit(object):
 
         Parameters
         ----------
-        correlations: list of instances of `pycorrfit.Correlation`
+        correlations: list of instances or instance of `pycorrfit.Correlation`
             Correlations to fit.
         global fit : bool
             Perform global fit. The default behavior is

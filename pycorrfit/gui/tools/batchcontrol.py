@@ -134,10 +134,10 @@ class BatchCtrl(wx.Frame):
                                 parent=self,
                                 style=sty)
         for jj, pagejj in enumerate(fit_page_list):
-            if dlg.Update(jj+1, "Fitting page {}\n {}".format(pagejj.counter, pagejj.title))[0] == False:
+            if dlg.Update(jj+1, "Fitting page {}".format(pagejj.counter.strip("# :")))[0] == False:
                 dlg.Destroy()
                 break
-            pagejj.Fit_function(noplots=True,trigger="fit_batch")
+            pagejj.Fit_function(noplots=True, trigger="fit_batch")
         
         # Update all other tools fit the finalize trigger.
         self.parent.OnFNBPageChanged(trigger="fit_finalize")

@@ -58,7 +58,7 @@ class FittingPanel(wx.Panel):
         # A list containing page numbers that share parameters with this page.
         # This parameter is defined by the global fitting tool and is saved in
         # sessions.
-        self.GlobalParameterShare = list()
+        self.GlobalParameterShare = []
         # Counts number of Pages already created:
         self.counter = counter
         # Has inital plot been performed?
@@ -335,9 +335,12 @@ class FittingPanel(wx.Panel):
         self.apply_parameters()
         # Create instance of fitting class
         
+        # Reset list of globally shared parameters, because we are only
+        # fitting this single page now.
         # TODO:
-        # 
-        self.GlobalParameterShare = list()
+        # - also remove this page from the GlobalParameterShare list of
+        #   the other pages
+        self.GlobalParameterShare = []
 
         try:
             Fit(self.corr)
@@ -351,7 +354,7 @@ class FittingPanel(wx.Panel):
 
         # Update spin-control values
         self.apply_parameters_reverse()
-        # Plot everthing
+        # Plot everything
         try:
             self.PlotAll(trigger=trigger)
         except OverflowError:
