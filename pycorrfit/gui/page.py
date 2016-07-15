@@ -329,7 +329,7 @@ class FittingPanel(wx.Panel):
                       to `True`.
         
         """
-        FitProgressDlg(self, self, trigger=trigger)
+        FitProgressDlg(self, self)
 
 
     def Fit_finalize(self, trigger):

@@ -85,7 +85,10 @@ class WorkerThread(KThread):
 class ThreadedProgressDlg(object):
     def __init__(self, parent, targets, args=None, kwargs={},
                  title="Dialog title",
-                 messages=None):
+                 messages=None,
+                 time_delay=2):
+        wx.BeginBusyCursor()
+        
         if hasattr(targets, "__call__"):
             targets = [targets]
 
@@ -104,12 +107,13 @@ class ThreadedProgressDlg(object):
         if messages is None:
             messages = [ "item {} of {}".format(a+1, nums) for a in range(nums) ]
         
+        
+        time1 = time.time()
         sty = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
-        dlg = wx.ProgressDialog(title,
-                                "initializing...",
-                                maximum=nums,
-                                parent=parent,
-                                style=sty)
+        dlgargs = [title, "initializing..."]
+        dlgkwargs = {"maximum":nums, "parent":parent, "style":sty }
+        dlg = None
+
         self.aborted = False
         self.index_aborted = None
 
@@ -119,13 +123,20 @@ class ThreadedProgressDlg(object):
                                   args=args[jj],
                                   kwargs=kwargs[jj])
             while worker.is_alive() or init:
+                if (time.time()-time1 > time_delay or
+                    (time.time()-time1)/(jj+1)*nums > time_delay
+                    ) and dlg is None:
+                    dlg = wx.ProgressDialog(*dlgargs, **dlgkwargs)
+                    wx.EndBusyCursor()
+                    
                 init=False
                 time.sleep(.01)
-                if dlg.Update(jj+1, messages[jj])[0] == False:
-                    dlg.Destroy()
-                    worker.kill()
-                    self.aborted = True
-                    break
+                if dlg is not None:
+                    if dlg.Update(jj+1, messages[jj])[0] == False:
+                        dlg.Destroy()
+                        worker.kill()
+                        self.aborted = True
+                        break
             if self.aborted:
                 self.aborted = True
                 self.index_aborted = jj
@@ -136,8 +147,11 @@ class ThreadedProgressDlg(object):
                 self.aborted = True
                 self.index_aborted = jj
                 raise Exception(worker.traceback)
-
+        
+        wx.EndBusyCursor()
+        wx.BeginBusyCursor()
         self.finalize()
+        wx.EndBusyCursor()
 
     def finalize(self):
         pass
