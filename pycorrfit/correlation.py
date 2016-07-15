@@ -352,7 +352,7 @@ class Correlation(object):
     def fit_parameters(self):
         """parameters that were fitted/will be used for fitting"""
         # Do not return `self._fit_parameters.copy()`, because
-        # some methods of PyCorrFit depende on the array being
+        # some methods of PyCorrFit depend on the array being
         # accessible and changeable with indices.
         return self._fit_parameters
 

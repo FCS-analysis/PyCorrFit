@@ -13,6 +13,7 @@ import wx
 
 from pycorrfit import openfile as opf     # How to treat an opened file
 from pycorrfit import models as mdls
+from pycorrfit.gui.threaded_progress import FitProgressDlg
 
 
 # Menu entry name
@@ -126,21 +127,7 @@ class BatchCtrl(wx.Frame):
                 pageii.corr.correlation is not None):
                 fit_page_list.append(pageii)
 
-        # Fit the pages with a progress dialog
-        sty = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
-        dlg = wx.ProgressDialog("Fitting Progress",
-                                "Fitting pages...",
-                                maximum=len(fit_page_list),
-                                parent=self,
-                                style=sty)
-        for jj, pagejj in enumerate(fit_page_list):
-            if dlg.Update(jj+1, "Fitting page {}".format(pagejj.counter.strip("# :")))[0] == False:
-                dlg.Destroy()
-                break
-            pagejj.Fit_function(noplots=True, trigger="fit_batch")
-        
-        # Update all other tools fit the finalize trigger.
-        self.parent.OnFNBPageChanged(trigger="fit_finalize")
+        FitProgressDlg(self, fit_page_list, trigger="fit_batch")
 
 
     def OnPageChanged(self, Page=None, trigger=None):

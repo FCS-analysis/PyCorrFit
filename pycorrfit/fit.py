@@ -272,7 +272,7 @@ class Fit(object):
                 self.minimize()
                 # update correlation model parameters
                 corr.fit_parameters = self.fit_parm
-                # save fit instance in correlation class
+                # save fit data in correlation class
                 corr.fit_results = self.get_fit_results(corr)
         else:
             # TODO:
@@ -393,7 +393,7 @@ class Fit(object):
                 # write new model parameters
                 corr.fit_parameters = parameters_global_to_local(self.fit_parm,
                                                                  ii)
-                # save fit instance in correlation class
+                # save fit data in correlation class
                 corr.fit_results = self.get_fit_results(corr)
 
 
@@ -414,7 +414,6 @@ class Fit(object):
              "fit weights" : 1*self.compute_weights(c)
              }
         
-        
         if c.is_weighted_fit:
             d["weighted fit type"] = c.fit_weight_type
             if isinstance(c.fit_weight_data, (int, float)):
@@ -422,7 +421,6 @@ class Fit(object):
 
         if d["fit algorithm"] == "Lev-Mar" and self.parmoptim_error is not None:
             d["fit error estimation"] = self.parmoptim_error
-        
         
         return d
         

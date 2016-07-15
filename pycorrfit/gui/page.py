@@ -20,6 +20,7 @@ from pycorrfit import Correlation, Fit
 
 from . import tools
 from . import wxutils
+from pycorrfit.gui.threaded_progress import FitProgressDlg
 
 
 
@@ -328,30 +329,18 @@ class FittingPanel(wx.Panel):
                       to `True`.
         
         """
-        # Make a busy cursor
-        wx.BeginBusyCursor()
-        # Apply parameters
-        # This also applies the background correction, if present
-        self.apply_parameters()
-        # Create instance of fitting class
-        
+        FitProgressDlg(self, self, trigger=trigger)
+
+
+    def Fit_finalize(self, trigger):
+        """ Things that need be done after fitting
+        """
         # Reset list of globally shared parameters, because we are only
         # fitting this single page now.
         # TODO:
         # - also remove this page from the GlobalParameterShare list of
         #   the other pages
         self.GlobalParameterShare = []
-
-        try:
-            Fit(self.corr)
-        except ValueError:
-            # I sometimes had this on Windows. It is caused by fitting to
-            # a .SIN file without selection proper channels first.
-            print "There was an Error fitting. Please make sure that you\n"+\
-                  "are fitting in a proper channel domain."
-            wx.EndBusyCursor()
-            raise
-
         # Update spin-control values
         self.apply_parameters_reverse()
         # Plot everything
@@ -364,8 +353,6 @@ class FittingPanel(wx.Panel):
             warnings.warn("Could not plot canvas.") 
         # update displayed chi2
         self.updateChi2()
-        # Return cursor to normal
-        wx.EndBusyCursor()
 
 
     def Fit_WeightedFitCheck(self, event=None):
