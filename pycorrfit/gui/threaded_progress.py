@@ -149,7 +149,9 @@ class ThreadedProgressDlg(object):
         
         
         time1 = time.time()
-        sty = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+        sty = wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+        if len(targets) > 1:
+            sty = sty|wx.PD_REMAINING_TIME
         dlgargs = [title, "initializing..."]
         dlgkwargs = {"maximum":nums, "parent":parent, "style":sty }
         dlg = None
@@ -172,11 +174,18 @@ class ThreadedProgressDlg(object):
                 init=False
                 time.sleep(.01)
                 if dlg is not None:
-                    if dlg.Update(jj+1, messages[jj])[0] == False:
+                    if len(targets) == 1:
+                        # no progress bar but pulse
+                        cont = dlg.UpdatePulse(messages[jj])[0]
+                    else:
+                        # show progress until end
+                        cont = dlg.Update(jj+1, messages[jj])[0]
+                    if cont == False:
                         dlg.Destroy()
                         worker.kill()
                         self.aborted = True
                         break
+
             if self.aborted:
                 self.aborted = True
                 self.index_aborted = jj
@@ -188,6 +197,8 @@ class ThreadedProgressDlg(object):
                 self.index_aborted = jj
                 raise Exception(worker.traceback)
         
+        if dlg is not None:
+            dlg.Hide()
         wx.EndBusyCursor()
         wx.BeginBusyCursor()
         self.finalize()

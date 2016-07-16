@@ -350,7 +350,7 @@ class FitProgressDlg(ThreadedProgressDlg):
         self.pages = pages
         self.trigger = trigger
         title = "Fitting data"
-        messages = [ "fitting page {}".format(pi.counter.strip("# :")) for pi in pages ]
+        messages = [ "Fitting page #{}.".format(pi.counter.strip("# :")) for pi in pages ]
         targets = [Fit]*len(pages)
         args = [pi.corr for pi in pages]
         super(FitProgressDlg, self).__init__(parent, targets, args,
