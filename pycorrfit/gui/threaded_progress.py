@@ -9,7 +9,6 @@ import threading
 import traceback as tb
 import wx
 import sys
-from pycorrfit import Fit
 
 
 
@@ -198,51 +197,6 @@ class ThreadedProgressDlg(object):
         """ You may override this method in subclasses.
         """
         pass
-
-
-
-class FitProgressDlg(ThreadedProgressDlg):
-    def __init__(self, parent, pages, trigger=None):
-        """ A progress dialog for fitting in PyCorrFit
-        
-        This is a convenience class that wraps around `ThreadedProgressDlg`
-        and performs all necessary steps for fitting single pages in PyCorrFit.
-        
-        Parameters
-        ----------
-        parent : wx object
-            The parent of the progress dialog.
-        pages : list of instances of `pycorrfit.gui.page.FittingPanel`
-            The pages with the model and correlation for fitting.
-        trigger : str
-            PyCorrFit internal trigger string.
-        """
-        if not isinstance(pages, list):
-            pages = [pages]
-        self.pages = pages
-        self.trigger = trigger
-        title = "Fitting data"
-        messages = [ "fitting page {}".format(pi.counter.strip("# :")) for pi in pages ]
-        targets = [Fit]*len(pages)
-        args = [pi.corr for pi in pages]
-        super(FitProgressDlg, self).__init__(parent, targets, args,
-                                             title=title,
-                                             messages=messages)
-    
-    def finalize(self):
-        """ Do everything that is required after fitting, including
-        cleanup of non-fitted pages.
-        """
-        if self.aborted:
-            ## we need to cleanup
-            fin_index = max(0,self.index_aborted-1)
-            pab = self.pages[self.index_aborted]
-            pab.fit_results = None
-            pab.apply_parameters()
-        else:
-            fin_index = len(self.pages)
-        # finalize fitting
-        [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ] 
 
 
 

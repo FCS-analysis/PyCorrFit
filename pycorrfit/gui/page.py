@@ -15,12 +15,11 @@ import wx.lib.scrolledpanel as scrolled
 
 from pycorrfit import models as mdls
 from pycorrfit import fit
-from pycorrfit import Correlation, Fit
+from pycorrfit import Correlation
 
 
 from . import tools
 from . import wxutils
-from pycorrfit.gui.threaded_progress import FitProgressDlg
 
 
 
@@ -329,7 +328,7 @@ class FittingPanel(wx.Panel):
                       to `True`.
         
         """
-        FitProgressDlg(self, self)
+        tools.batchcontrol.FitProgressDlg(self, self)
 
 
     def Fit_finalize(self, trigger):
