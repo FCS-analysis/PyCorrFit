@@ -72,7 +72,6 @@ class WorkerThread(KThread):
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         self.start()
-        
 
     def run(self):
         """Run Worker Thread."""
@@ -87,6 +86,48 @@ class ThreadedProgressDlg(object):
                  title="Dialog title",
                  messages=None,
                  time_delay=2):
+        """ This class implements a progress dialog that can abort during
+        a function call, as opposed to the stock wx.ProgressDialog.
+        
+        Parameters
+        ----------
+        parent : wx object
+            The parent of the progress dialog.
+        targets : list of callables
+            The methods that will be called in each step in the progress.
+        args : list
+            The arguments to the targets. Should match length of targets.
+        kwargs : dict or list of dicts
+            Keyword arguments to the targets. If dict, then the same dict
+            is used for all targets.
+        title : str
+            The title of the progress dialog.
+        messages : list of str
+            The message displayed for each target. Should match length of
+            targets.
+        time_delay : float
+            Time after which the dialog should be displayed. The default
+            is 2s, which means that a dialog is only displayed after 2s
+            or earlier, if the overall progress seems to be taking longer
+            than 2s.
+        
+        Arguments
+        ---------
+        aborted : bool
+            Whether the progress was aborted by the user.
+        index_aborted : None or int
+            The index in `targets` at which the progress was aborted.
+        finalize : callable
+            A method that will be called after fitting. Can be overriden
+            by subclasses.
+        
+        Notes
+        -----
+        The progress dialog is only displayed when `time_delay` is or
+        seems shorter than the total running time of the progress. If
+        the progress is not displayed, then a busy cursor is displayed.
+         
+        """
         wx.BeginBusyCursor()
         
         if hasattr(targets, "__call__"):
@@ -154,12 +195,28 @@ class ThreadedProgressDlg(object):
         wx.EndBusyCursor()
 
     def finalize(self):
+        """ You may override this method in subclasses.
+        """
         pass
 
 
 
 class FitProgressDlg(ThreadedProgressDlg):
     def __init__(self, parent, pages, trigger=None):
+        """ A progress dialog for fitting in PyCorrFit
+        
+        This is a convenience class that wraps around `ThreadedProgressDlg`
+        and performs all necessary steps for fitting single pages in PyCorrFit.
+        
+        Parameters
+        ----------
+        parent : wx object
+            The parent of the progress dialog.
+        pages : list of instances of `pycorrfit.gui.page.FittingPanel`
+            The pages with the model and correlation for fitting.
+        trigger : str
+            PyCorrFit internal trigger string.
+        """
         if not isinstance(pages, list):
             pages = [pages]
         self.pages = pages
@@ -171,9 +228,11 @@ class FitProgressDlg(ThreadedProgressDlg):
         super(FitProgressDlg, self).__init__(parent, targets, args,
                                              title=title,
                                              messages=messages)
-
     
     def finalize(self):
+        """ Do everything that is required after fitting, including
+        cleanup of non-fitted pages.
+        """
         if self.aborted:
             ## we need to cleanup
             fin_index = max(0,self.index_aborted-1)
@@ -182,7 +241,6 @@ class FitProgressDlg(ThreadedProgressDlg):
             pab.apply_parameters()
         else:
             fin_index = len(self.pages)
-        
         # finalize fitting
         [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ] 
 
@@ -192,9 +250,9 @@ if __name__ == "__main__":
     # GUI Frame class that spins off the worker thread
     class MainFrame(wx.Frame):
         """Class MainFrame."""
-        def __init__(self, parent, id):
+        def __init__(self, parent, aid):
             """Create the MainFrame."""
-            wx.Frame.__init__(self, parent, id, 'Thread Test')
+            wx.Frame.__init__(self, parent, aid, 'Thread Test')
     
             # Dumb sample frame with two buttons
             but = wx.Button(self, wx.ID_ANY, 'Start Progress', pos=(0,0))
