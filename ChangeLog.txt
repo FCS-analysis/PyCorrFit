@@ -1,6 +1,7 @@
-0.9.8dev5
+0.9.8dev6
 - Remove admin-requirement during install (Windows)
 - Support newer correlator.com .sin file format (#135)
+- Add smart progress dialog for fitting (#155)
 - Statistics: check "filename/title" by default (#151)
 - Documentation: fix bad LaTeX commands (#163)
 0.9.8
