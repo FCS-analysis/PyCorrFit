@@ -421,7 +421,7 @@ class Fit(object):
 
         if d["fit algorithm"] == "Lev-Mar" and self.parmoptim_error is not None:
             d["fit error estimation"] = self.parmoptim_error
-        
+
         return d
         
 

@@ -353,6 +353,8 @@ class FitProgressDlg(ThreadedProgressDlg):
         messages = [ "Fitting page #{}.".format(pi.counter.strip("# :")) for pi in pages ]
         targets = [Fit]*len(pages)
         args = [pi.corr for pi in pages]
+        # write parameters from page instance to correlation 
+        [ pi.apply_parameters() for pi in self.pages ]
         super(FitProgressDlg, self).__init__(parent, targets, args,
                                              title=title,
                                              messages=messages)
@@ -369,5 +371,6 @@ class FitProgressDlg(ThreadedProgressDlg):
             pab.apply_parameters()
         else:
             fin_index = len(self.pages)
+
         # finalize fitting
-        [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ] 
+        [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ]
