@@ -199,6 +199,7 @@ class ThreadedProgressDlg(object):
         
         if dlg is not None:
             dlg.Hide()
+            dlg.Destroy()
         wx.EndBusyCursor()
         wx.BeginBusyCursor()
         self.finalize()

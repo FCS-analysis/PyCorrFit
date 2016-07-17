@@ -76,6 +76,7 @@ class BatchCtrl(wx.Frame):
     
     
     def OnApply(self, event):
+        wx.BeginBusyCursor()
         Parms = self.GetParameters()
         modelid = Parms[1]
         # Set all parameters for all pages
@@ -98,6 +99,7 @@ class BatchCtrl(wx.Frame):
                 OtherPage.PlotAll(trigger="parm_batch")
         # Update all other tools fit the finalize trigger.
         self.parent.OnFNBPageChanged(trigger="parm_finalize")
+        wx.EndBusyCursor()
 
 
     def OnClose(self, event=None):
