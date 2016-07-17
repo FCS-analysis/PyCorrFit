@@ -1,7 +1,7 @@
 |PyCorrFit|
 ===========
 
-|PyPI Version| |Build Status Win| |Build Status Mac|
+|PyPI Version| |Build Status Win| |Build Status Mac| |Coverage Status|
 
 A graphical fitting tool for fluorescence correlation spectroscopy (FCS) that comes with support for several file formats, can be applied to a large variety of problems, and attempts to be as user-friendly as possible. Some of the features are
 
@@ -97,3 +97,5 @@ the running time of the build). From there you can download the Windows installe
    :target: https://ci.appveyor.com/project/paulmueller/pycorrfit
 .. |Build Status Mac| image:: https://img.shields.io/travis/FCS-analysis/PyCorrFit/master.svg?label=build_mac
    :target: https://travis-ci.org/FCS-analysis/PyCorrFit
+.. |Coverage Status| image:: https://img.shields.io/coveralls/FCS-analysis/PyCorrFit.svg
+   :target: https://coveralls.io/r/FCS-analysis/PyCorrFit

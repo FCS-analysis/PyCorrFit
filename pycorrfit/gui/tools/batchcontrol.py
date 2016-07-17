@@ -13,7 +13,8 @@ import wx
 
 from pycorrfit import openfile as opf     # How to treat an opened file
 from pycorrfit import models as mdls
-
+from pycorrfit import Fit
+from pycorrfit.gui.threaded_progress import ThreadedProgressDlg 
 
 # Menu entry name
 MENUINFO = ["B&atch control", "Batch fitting."]
@@ -75,6 +76,7 @@ class BatchCtrl(wx.Frame):
     
     
     def OnApply(self, event):
+        wx.BeginBusyCursor()
         Parms = self.GetParameters()
         modelid = Parms[1]
         # Set all parameters for all pages
@@ -97,6 +99,7 @@ class BatchCtrl(wx.Frame):
                 OtherPage.PlotAll(trigger="parm_batch")
         # Update all other tools fit the finalize trigger.
         self.parent.OnFNBPageChanged(trigger="parm_finalize")
+        wx.EndBusyCursor()
 
 
     def OnClose(self, event=None):
@@ -109,23 +112,24 @@ class BatchCtrl(wx.Frame):
         item = self.dropdown.GetSelection()
         if self.rbtnhere.Value == True:
             if item <= 0:
-                Page = self.parent.notebook.GetCurrentPage()
+                page = self.parent.notebook.GetCurrentPage()
             else:
-                Page = self.parent.notebook.GetPage(item-1)
+                page = self.parent.notebook.GetPage(item-1)
             # Get internal ID
-            modelid = Page.corr.fit_model.id
+            modelid = page.corr.fit_model.id
         else:
             # Get external ID
             modelid = self.YamlParms[item][1]
-        # Fit all pages with right modelid
-        for i in np.arange(self.parent.notebook.GetPageCount()):
-            OtherPage = self.parent.notebook.GetPage(i)
-            if (OtherPage.corr.fit_model.id == modelid and
-                OtherPage.corr.correlation is not None):
-                #Fit
-                OtherPage.Fit_function(noplots=True,trigger="fit_batch")
-        # Update all other tools fit the finalize trigger.
-        self.parent.OnFNBPageChanged(trigger="fit_finalize")
+
+        # Get all pages with right modelid
+        fit_page_list = []
+        for ii in np.arange(self.parent.notebook.GetPageCount()):
+            pageii = self.parent.notebook.GetPage(ii)
+            if (pageii.corr.fit_model.id == modelid and
+                pageii.corr.correlation is not None):
+                fit_page_list.append(pageii)
+
+        FitProgressDlg(self, fit_page_list, trigger="fit_batch")
 
 
     def OnPageChanged(self, Page=None, trigger=None):
@@ -324,3 +328,51 @@ for batch modification.""")
             self.mastersizer.Fit(self)
         except:
             pass
+
+
+
+class FitProgressDlg(ThreadedProgressDlg):
+    def __init__(self, parent, pages, trigger=None):
+        """ A progress dialog for fitting in PyCorrFit
+        
+        This is a convenience class that wraps around `ThreadedProgressDlg`
+        and performs all necessary steps for fitting single pages in PyCorrFit.
+        
+        Parameters
+        ----------
+        parent : wx object
+            The parent of the progress dialog.
+        pages : list of instances of `pycorrfit.gui.page.FittingPanel`
+            The pages with the model and correlation for fitting.
+        trigger : str
+            PyCorrFit internal trigger string.
+        """
+        if not isinstance(pages, list):
+            pages = [pages]
+        self.pages = pages
+        self.trigger = trigger
+        title = "Fitting data"
+        messages = [ "Fitting page #{}.".format(pi.counter.strip("# :")) for pi in pages ]
+        targets = [Fit]*len(pages)
+        args = [pi.corr for pi in pages]
+        # write parameters from page instance to correlation 
+        [ pi.apply_parameters() for pi in self.pages ]
+        super(FitProgressDlg, self).__init__(parent, targets, args,
+                                             title=title,
+                                             messages=messages)
+    
+    def finalize(self):
+        """ Do everything that is required after fitting, including
+        cleanup of non-fitted pages.
+        """
+        if self.aborted:
+            ## we need to cleanup
+            fin_index = max(0,self.index_aborted-1)
+            pab = self.pages[self.index_aborted]
+            pab.fit_results = None
+            pab.apply_parameters()
+        else:
+            fin_index = len(self.pages)
+
+        # finalize fitting
+        [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ]

@@ -30,42 +30,57 @@ before_install:
 # a lot of cool formulae for scientific tools
 #- brew tap homebrew/science
 # numpy, scipy, matplotlib, ...
-- brew tap homebrew/python
-- brew tap homebrew/dupes
-- brew update
+#- brew tap homebrew/python
+#- brew tap homebrew/dupes
+#- brew update
 #- brew update && brew upgrade
-- brew install python --universal --framework
+#- brew install python --universal --framework
 #- brew install wget
-- which python
-- python --version
-- export VERSIONER_PYTHON_PREFER_32_BIT=no
-- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
+#- which python
+#- python --version
+#- export VERSIONER_PYTHON_PREFER_32_BIT=no
+#- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
 
 install:
-- brew unlink gcc
-- brew install gcc --universal
-- brew install freetype --universal
-#- brew install numpy --universal
-#- brew install scipy --universal
-#- brew install matplotlib --universal
+- wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh
+- bash Miniconda2-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
+- export PATH=$HOME/miniconda/bin:$PATH
+- which python
+- conda search numpy
+- conda search scipy
+- conda search wxpython
+# https://github.com/ContinuumIO/anaconda-issues/issues/565
+- conda install --yes numpy==1.8.2 scipy wxpython
 
-# https://github.com/Homebrew/homebrew/issues/34470
-#- brew install wxpython --universal
-#- brew install openblas
-#- brew install gfortran
+#- brew unlink gcc
+#- brew install gcc --universal
+#- brew install freetype --universal
+##- brew install numpy --universal
+##- brew install scipy --universal
+##- brew install matplotlib --universal
+#
+## https://github.com/Homebrew/homebrew/issues/34470
+##- brew install wxpython --universal
+##- brew install openblas
+##- brew install gfortran
 
-- pip install pyinstaller==3.0.0
+# fixes (matplotlib backend)
+- ./freeze_travis/fixes.sh
+
+- pip install pyinstaller==3.2.0
 # final pip installs
 - pip install -r ./freeze_travis/requirements.txt
 
-# wxPython
-- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
+## wxPython
+#- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
+
 - sudo ./freeze_travis/install_dmg.sh
+
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
 - python -c "import wx; print wx.__version__"
 - python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
-- patch /usr/local/lib/wxPython-3.0.2.0/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
+#- patch /usr/local/lib/wxPython-3.0.2.0/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
 # wxPython is only available in 64bit version with homebrew
 #- brew install wxpython
 
@@ -76,7 +91,11 @@ install:
 
 script:
 # Run tests
-- python setup.py test
+- travis_retry pip install coverage
+- travis_retry pip install coveralls
+- coverage run --source=pycorrfit ./setup.py test
+- coverage report -m
+- coveralls
 # Create wheel pacakge
 - python setup.py bdist_wheel
 # Create source pacakge
@@ -107,7 +126,8 @@ deploy:
   file_glob: true
   file: 
     - "${RELEASE_PKG_FILEC}"
-    - "${RELEASE_PKG_FILEB}"
+    # Mac OSx build is broken (issue #147)
+    #- "${RELEASE_PKG_FILEB}"
     - "${RELEASE_PKG_FILEA}"
   on:
     tags: true

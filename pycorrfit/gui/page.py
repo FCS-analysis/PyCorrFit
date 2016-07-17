@@ -15,7 +15,7 @@ import wx.lib.scrolledpanel as scrolled
 
 from pycorrfit import models as mdls
 from pycorrfit import fit
-from pycorrfit import Correlation, Fit
+from pycorrfit import Correlation
 
 
 from . import tools
@@ -58,7 +58,7 @@ class FittingPanel(wx.Panel):
         # A list containing page numbers that share parameters with this page.
         # This parameter is defined by the global fitting tool and is saved in
         # sessions.
-        self.GlobalParameterShare = list()
+        self.GlobalParameterShare = []
         # Counts number of Pages already created:
         self.counter = counter
         # Has inital plot been performed?
@@ -328,30 +328,21 @@ class FittingPanel(wx.Panel):
                       to `True`.
         
         """
-        # Make a busy cursor
-        wx.BeginBusyCursor()
-        # Apply parameters
-        # This also applies the background correction, if present
-        self.apply_parameters()
-        # Create instance of fitting class
-        
+        tools.batchcontrol.FitProgressDlg(self, self)
+
+
+    def Fit_finalize(self, trigger):
+        """ Things that need be done after fitting
+        """
+        # Reset list of globally shared parameters, because we are only
+        # fitting this single page now.
         # TODO:
-        # 
-        self.GlobalParameterShare = list()
-
-        try:
-            Fit(self.corr)
-        except ValueError:
-            # I sometimes had this on Windows. It is caused by fitting to
-            # a .SIN file without selection proper channels first.
-            print "There was an Error fitting. Please make sure that you\n"+\
-                  "are fitting in a proper channel domain."
-            wx.EndBusyCursor()
-            raise
-
+        # - also remove this page from the GlobalParameterShare list of
+        #   the other pages
+        self.GlobalParameterShare = []
         # Update spin-control values
         self.apply_parameters_reverse()
-        # Plot everthing
+        # Plot everything
         try:
             self.PlotAll(trigger=trigger)
         except OverflowError:
@@ -361,8 +352,6 @@ class FittingPanel(wx.Panel):
             warnings.warn("Could not plot canvas.") 
         # update displayed chi2
         self.updateChi2()
-        # Return cursor to normal
-        wx.EndBusyCursor()
 
 
     def Fit_WeightedFitCheck(self, event=None):
