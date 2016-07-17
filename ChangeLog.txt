@@ -1,6 +1,6 @@
-0.9.8dev6
+0.9.9
 - Remove admin-requirement during install (Windows)
-- Support newer correlator.com .sin file format (#135)
+- Support newer correlator.com .sin file format (experimental, #135)
 - Add smart progress dialog for fitting (#155)
 - Statistics: check "filename/title" by default (#151)
 - Documentation: fix bad LaTeX commands (#163)
@@ -74,7 +74,7 @@
   - Computation of average intensity did not work
     correctly for unequally spaced traces
 - Update .pt3 reader to version 8399ff7401
-- Import traces of .pt3 files (#118)
+- Import traces of .pt3 files (experimental, #118)
   Warning: Absolute values for intensity might be wrong
 0.9.1
 - Tool 'Overlay curves': improve UI (#117)
