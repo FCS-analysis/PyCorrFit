@@ -18,6 +18,8 @@ notifications:
 
 
 environment:
+  COVERALLS_REPO_TOKEN:
+    secure: US5V2RWPr+toU2ZX8lyNs5IJIgfo2S1OwBQ0PUdqJMkDi4K4uJpTnZ2Ub1rda/j9
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
@@ -93,8 +95,7 @@ test_script:
   - "pip install coveralls"
   - "coverage run --source=pycorrfit ./setup.py test"
   - "coverage report -m"
-# https://github.com/lemurheavy/coveralls-public/issues/429
-#  - "coveralls --verbose"
+  - "coveralls"
 
 after_test:
   # If tests are successful, create a whl package for the project.
