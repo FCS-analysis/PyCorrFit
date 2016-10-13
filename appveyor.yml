@@ -85,7 +85,9 @@ install:
   # Show the installed packages
   - "pip freeze"
   
-shallow_clone: true
+# Do not use shallow_clone, because we get the program version from the git tags
+#shallow_clone: true
+clone_depth: 100
 
 build: off
 
