@@ -3,7 +3,7 @@ set -e -x
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install -e "$HOME"
+    "${PYBIN}/pip" install -e /io
     "${PYBIN}/pip" wheel /io/ -w dist/
 done
 
@@ -13,9 +13,9 @@ for whl in dist/*.whl; do
 done
 
 # Install packages and test
-#for PYBIN in /opt/python/*/bin/; do
-#    "${PYBIN}/pip" install pycorrfit --no-index -f /io/dist
+for PYBIN in /opt/python/*/bin/; do
+    "${PYBIN}/python" install pycorrfit --no-index -f /io/dist
 #    cd "$HOME"
 #    
 #    (; "${PYBIN}/python" pymanylinuxdemo)
-#done
+done
