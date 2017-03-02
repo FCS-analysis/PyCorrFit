@@ -5,6 +5,10 @@
 #  git tag ...
 #  git push origin master && git push --tags
 # 
+# Do not send email notifications
+notifications:
+  email: false
+
 env:
   global:
     # GitHub API access via GH_READ_API_TOKEN
@@ -16,27 +20,20 @@ matrix:
       sudo: required
       services:
         - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-           MINICONDA=Miniconda-latest-Linux-x86_64.sh
+      env: MINICONDA=Miniconda2-latest-Linux-x86_64.sh
+           DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
       sudo: required
       services:
         - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+      env: MINICONDA=Miniconda2-latest-Linux-x86.sh
+           DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
-           MINICONDA=Miniconda-latest-Linux-x86.sh
     - os: osx
-
-# Do not send email notifications
-notifications:
-  email: false
-
-before_install:
-- which python
+      env: MINICONDA=Miniconda2-latest-MacOSX-x86_64.sh
 
 install:
-- pip freeze
-#- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
+- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
 - wget http://repo.continuum.io/miniconda/${MINICONDA} -O miniconda.sh
 - chmod +x miniconda.sh
 - ./miniconda.sh -b -p ${HOME}/miniconda
@@ -44,6 +41,7 @@ install:
 - conda update --yes conda
 - travis_retry conda install --yes pip numpy scipy wxpython cython
 - python setup.py develop
+- pip install coverage coveralls
 
 script:
 - coverage run --source=pycorrfit ./setup.py test
