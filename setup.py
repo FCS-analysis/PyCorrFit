@@ -45,7 +45,7 @@ else:
     pdfdoc = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
     webdoc = "https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf"
     if not exists(pdfdoc):
-        print("Downloading {} from {}".format(pdfdoc, webdoc))
+        print("Downloading documentation.")
         try:
             urllib.urlretrieve(webdoc, pdfdoc)
         except:

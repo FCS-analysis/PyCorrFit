@@ -12,10 +12,8 @@ for whl in dist/*.whl; do
     auditwheel repair "$whl" -w /io/dist/
 done
 
-# Install packages and test
+# Test 
 for PYBIN in /opt/python/*/bin/; do
-    "${PYBIN}/python" install pycorrfit --no-index -f /io/dist
-#    cd "$HOME"
-#    
-#    (; "${PYBIN}/python" pymanylinuxdemo)
+    "${PYBIN}/python" setup.py develop    
+    "${PYBIN}/python" setup.py test
 done
