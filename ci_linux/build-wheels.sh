@@ -2,7 +2,7 @@
 set -e -x
 
 # Compile wheels
-for PYBIN in /opt/python/*/bin; do
+for PYBIN in /opt/python/cp27*/bin; do
     "${PYBIN}/pip" install -e /io
     "${PYBIN}/pip" wheel /io/ -w dist/
 done
@@ -13,7 +13,7 @@ for whl in dist/*.whl; do
 done
 
 # Test 
-for PYBIN in /opt/python/*/bin/; do
+for PYBIN in /opt/python/cp27*/bin/; do
     "${PYBIN}/python" setup.py develop    
     "${PYBIN}/python" setup.py test
 done
