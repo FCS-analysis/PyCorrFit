@@ -38,6 +38,8 @@ before_install:
 - which python
 
 install:
+- pip freeze
+- pip uninstall numpy
 - sudo ./ci_${TRAVIS_OS_NAME}/install.sh
 - pip freeze
 - python setup.py develop
