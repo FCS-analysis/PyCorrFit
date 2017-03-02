@@ -5,11 +5,6 @@
 #  git tag ...
 #  git push origin master && git push --tags
 # 
-language: python
-
-virtualenv:
-  system_site_packages: true
-
 env:
   global:
     # GitHub API access via GH_READ_API_TOKEN
@@ -22,12 +17,14 @@ matrix:
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+           MINICONDA=Miniconda-latest-Linux-x86_64.sh
     - os: linux
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
+           MINICONDA=Miniconda-latest-Linux-x86.sh
     - os: osx
 
 # Do not send email notifications
@@ -39,15 +36,14 @@ before_install:
 
 install:
 - pip freeze
-- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
-- pip install --upgrade pip setuptools wheel
-- pip install --only-binary=numpy,scipy,cython numpy scipy cython
-- pip freeze
+#- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
+- wget http://repo.continuum.io/miniconda/${MINICONDA} -O miniconda.sh
+- chmod +x miniconda.sh
+- ./miniconda.sh -b -p ${HOME}/miniconda
+- export PATH=${HOME}/miniconda/bin:$PATH
+- conda update --yes conda
+- travis_retry conda install --yes pip numpy scipy wxpython cython
 - python setup.py develop
-- pip install coverage
-- pip install coveralls
-- python -c "import numpy; print numpy.__file__"
-- python -c "import numpy; print numpy.__version__"
 
 script:
 - coverage run --source=pycorrfit ./setup.py test
