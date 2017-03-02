@@ -15,19 +15,21 @@ env:
     secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
 
 language: python
-python: 2.7
 
 matrix:
   include:
     - os: linux
+      python: 2.7
       sudo: required
     - os: linux
+      python: 2.7
       install: true
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
+      python: 2.7
       install: true
       sudo: required
       services:
@@ -35,6 +37,7 @@ matrix:
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
     - os: osx
+      python: 2.7
 
 install:
 - source ./ci_${TRAVIS_OS_NAME}/install.sh
