@@ -3,18 +3,12 @@ set -e -x
 
 cd /io
 
-# Test 
 for PYBIN in /opt/python/cp27*/bin/; do
-    "${PYBIN}/pip" install --upgrade pip
-    "${PYBIN}/pip" install -e .
-    "${PYBIN}/pip" install cython
-    "${PYBIN}/python" setup.py develop
+    # Install
+    "${PYBIN}/pip" install -e . --ignore-installed
+    # Test
     "${PYBIN}/python" setup.py test
-done
-
-# Compile wheels
-for PYBIN in /opt/python/cp27*/bin; do
-    "${PYBIN}/python" setup.py develop
+    # Wheels
     "${PYBIN}/pip" wheel . -w dist/
 done
 
