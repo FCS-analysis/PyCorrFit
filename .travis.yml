@@ -14,11 +14,11 @@ env:
     # GitHub API access via GH_READ_API_TOKEN
     secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
 
+language: python
+
 matrix:
   include:
     - os: linux
-      language: python
-      python: 2.7
       sudo: required
     - os: linux
       install: true
@@ -37,6 +37,7 @@ matrix:
 
 install:
 - source ./ci_${TRAVIS_OS_NAME}/install.sh
+- python setup.py develop
 - pip freeze
 
 script:
