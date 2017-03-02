@@ -40,6 +40,8 @@ before_install:
 install:
 - pip freeze
 - sudo ./ci_${TRAVIS_OS_NAME}/install.sh
+- pip install --upgrade pip setuptools wheel
+- pip install --only-binary=numpy,scipy,cython numpy scipy cython
 - pip freeze
 - python setup.py develop
 - pip install coverage
