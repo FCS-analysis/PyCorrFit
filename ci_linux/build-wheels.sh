@@ -3,6 +3,8 @@ set -e -x
 
 cd /io
 
+echo ${TRAVIS_PYTHON_VERSION//./}
+
 for PYBIN in /opt/python/cp${TRAVIS_PYTHON_VERSION//./}*/bin/; do
     # Install
     "${PYBIN}/pip" install -e . --ignore-installed
