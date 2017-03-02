@@ -18,19 +18,18 @@ matrix:
   include:
     # only run tests
     - os: linux
-      install: true
       language: python
       sudo: required
     # deploy linux with docker
     - os: linux
-      install: false
+      install: true
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     # deploy linux  with docker
     - os: linux
-      install: false
+      install: true
       sudo: required
       services:
         - docker
@@ -38,7 +37,6 @@ matrix:
            PRE_CMD=linux32
     # Mac
     - os: osx
-      install: true
       language: python
 
 install:
