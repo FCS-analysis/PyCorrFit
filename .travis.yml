@@ -22,15 +22,11 @@ matrix:
   include:
     - os: linux
       python: 2.7
-    - os: linux
-      python: 2.7
-      install: true
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
       python: 2.7
-      install: true
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
@@ -44,8 +40,8 @@ install:
 - pip freeze
 
 script:
-- if [ -n "$DOCKER_IMAGE" ]; then source ./ci_${TRAVIS_OS_NAME}/dist.sh; fi
-- if [ -z "$DOCKER_IMAGE" ]; then source ./ci_${TRAVIS_OS_NAME}/test.sh; fi
+- source ./ci_${TRAVIS_OS_NAME}/test.sh
+- source ./ci_${TRAVIS_OS_NAME}/dist.sh
 
 
 # This section was created with
