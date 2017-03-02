@@ -1,10 +1,12 @@
 #!/bin/bash
 set -e
-sudo apt-get -y update
-sudo apt-get -qq install python-pip python-wxgtk2.8 
+deactivate
+sudo apt-get -qq update
+sudo apt-get -qq install python-pip python-wxgtk2.8
+sudo pip install virtualenv
 # use separate virtual environment
-pip install virtualenv
 virtualenv --system-site-packages ~/env
+source ~/env/bin/activate
 pip install --upgrade pip
 pip install scipy sympy numpy matplotlib cython
-source ~/env/bin/activate
+

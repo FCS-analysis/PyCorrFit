@@ -33,6 +33,7 @@ matrix:
 
 install:
 - source ./ci_${TRAVIS_OS_NAME}/install.sh
+- pip freeze
 - python setup.py develop
 - pip install coverage coveralls
 - which python
