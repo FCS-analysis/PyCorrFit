@@ -14,6 +14,8 @@ env:
     # GitHub API access via GH_READ_API_TOKEN
     secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
 
+language: python
+
 matrix:
   include:
     - os: linux
