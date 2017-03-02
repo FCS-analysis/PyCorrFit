@@ -16,44 +16,33 @@ env:
 
 matrix:
   include:
-    # only run tests
     - os: linux
-      language: python
-      sudo: required
-    # deploy linux with docker
-    - os: linux
-      install: true
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-    # deploy linux  with docker
     - os: linux
-      install: true
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
-    # Mac
     - os: osx
-      language: python
 
 install:
-# The following lines are executed only if NOT "install: true"
-- source ./ci_${TRAVIS_OS_NAME}/install.sh
-- pip freeze
-- python setup.py develop
-- pip install coverage coveralls
-# testing and coverage
-- coverage run --source=pycorrfit ./setup.py test
-- coverage report -m
-- coveralls
+- docker pull $DOCKER_IMAGE
+#- source ./ci_${TRAVIS_OS_NAME}/install.sh
+#- pip freeze
+#- python setup.py develop
+#- pip install coverage coveralls
 
 script:
+# testing and coverage
+#- coverage run --source=pycorrfit ./setup.py test
+#- coverage report -m
+#- coveralls
 # distribution packages
 #- source ./ci_${TRAVIS_OS_NAME}/dist.sh
-- docker pull $DOCKER_IMAGE
 - docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh
 
 
