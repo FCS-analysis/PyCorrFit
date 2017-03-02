@@ -17,11 +17,16 @@ env:
 matrix:
   include:
     - os: linux
+      language: python
+      sudo: required
+    - os: linux
+      install: true
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
+      install: true
       sudo: required
       services:
         - docker
@@ -30,20 +35,16 @@ matrix:
     - os: osx
 
 install:
-- docker pull $DOCKER_IMAGE
-#- source ./ci_${TRAVIS_OS_NAME}/install.sh
-#- pip freeze
-#- python setup.py develop
-#- pip install coverage coveralls
+- source ./ci_${TRAVIS_OS_NAME}/install.sh
+- pip freeze
+- python setup.py develop
+- pip install coverage coveralls
+- coverage run --source=pycorrfit ./setup.py test
+- coverage report -m
+- coveralls
 
 script:
-# testing and coverage
-#- coverage run --source=pycorrfit ./setup.py test
-#- coverage report -m
-#- coveralls
-# distribution packages
-#- source ./ci_${TRAVIS_OS_NAME}/dist.sh
-- docker run --rm -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/travis/build-wheels.sh
+- source ./ci_${TRAVIS_OS_NAME}/dist.sh
 
 
 # This section was created with
