@@ -20,30 +20,23 @@ matrix:
       sudo: required
       services:
         - docker
-      env: MINICONDA=Miniconda2-latest-Linux-x86_64.sh
-           DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
       sudo: required
       services:
         - docker
-      env: MINICONDA=Miniconda2-latest-Linux-x86.sh
-           DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
     - os: osx
-      env: MINICONDA=Miniconda2-latest-MacOSX-x86_64.sh
 
 install:
-- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
-- wget http://repo.continuum.io/miniconda/${MINICONDA} -O miniconda.sh
-- chmod +x miniconda.sh
-- ./miniconda.sh -b -p ${HOME}/miniconda
-- export PATH=${HOME}/miniconda/bin:$PATH
-- conda update --yes conda
-- travis_retry conda install --yes pip numpy scipy wxpython cython
+- source ./ci_${TRAVIS_OS_NAME}/install.sh
 - python setup.py develop
 - pip install coverage coveralls
+- which python
 
 script:
+- which python
 - coverage run --source=pycorrfit ./setup.py test
 - coverage report -m
 - coveralls
