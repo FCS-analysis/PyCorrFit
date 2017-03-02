@@ -31,19 +31,19 @@ matrix:
            PRE_CMD=linux32
     - os: osx
 
-install:
-- source ./ci_${TRAVIS_OS_NAME}/install.sh
-- pip freeze
-- python setup.py develop
-- pip install coverage coveralls
+#install:
+#- source ./ci_${TRAVIS_OS_NAME}/install.sh
+#- pip freeze
+#- python setup.py develop
+#- pip install coverage coveralls
 
 script:
 # testing and coverage
-- coverage run --source=pycorrfit ./setup.py test
-- coverage report -m
-- coveralls
+#- coverage run --source=pycorrfit ./setup.py test
+#- coverage report -m
+#- coveralls
 # distribution packages
-- ./ci_${TRAVIS_OS_NAME}/dist.sh
+- source ./ci_${TRAVIS_OS_NAME}/dist.sh
 
 
 # This section was created with
