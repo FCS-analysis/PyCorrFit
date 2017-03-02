@@ -8,11 +8,7 @@
 language: python
 
 python:
-  - "2.7"
-
-os:
-  - linux
-  - osx
+  - 2.7
 
 env:
   global:
@@ -20,18 +16,19 @@ env:
     secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
 
 matrix:
-  allow_failures:
-    - os: osx
   include:
-    - sudo: required
+    - os: linux
+      sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-    - sudo: required
+    - os: linux
+      sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
+    - os: osx
 
 # Do not send email notifications
 notifications:
@@ -41,7 +38,7 @@ before_install:
 - which python
 
 install:
-- ./ci_${TRAVIS_OS_NAME}/install.sh
+- sudo ./ci_${TRAVIS_OS_NAME}/install.sh
 - pip freeze
 - python setup.py develop
 
