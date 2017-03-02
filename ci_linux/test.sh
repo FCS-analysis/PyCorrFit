@@ -1,7 +1,7 @@
 #!/bin/bash
 # Call this script from the parent directory
 # This will produce wheels using docker
-set -e
+set -e -x
 source ~/env/bin/activate
 pip install coverage coveralls
 coverage run --source=pycorrfit ./setup.py test
