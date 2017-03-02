@@ -41,7 +41,7 @@ before_install:
 - which python
 
 install:
-- ./ci_{$TRAVIS_OS_NAME}/install.sh
+- ./ci_${TRAVIS_OS_NAME}/install.sh
 - pip freeze
 - python setup.py develop
 
@@ -53,7 +53,7 @@ script:
 - coveralls
 
 before-deploy:
-- ./ci_{$TRAVIS_OS_NAME}/dist.sh
+- ./ci_${TRAVIS_OS_NAME}/dist.sh
 
 # This section was created with
 # sudo apt-get install ruby1.9.1-dev
