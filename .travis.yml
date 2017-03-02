@@ -43,6 +43,8 @@ install:
 - python setup.py develop
 - pip install coverage
 - pip install coveralls
+- python -c "import numpy; print numpy.__file__"
+- python -c "import numpy; print numpy.__version__"
 
 script:
 - coverage run --source=pycorrfit ./setup.py test
