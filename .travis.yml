@@ -41,10 +41,10 @@ install:
 - sudo ./ci_${TRAVIS_OS_NAME}/install.sh
 - pip freeze
 - python setup.py develop
+- pip install coverage
+- pip install coveralls
 
 script:
-- travis_retry pip install coverage
-- travis_retry pip install coveralls
 - coverage run --source=pycorrfit ./setup.py test
 - coverage report -m
 - coveralls
