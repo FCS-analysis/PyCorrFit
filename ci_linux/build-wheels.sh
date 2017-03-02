@@ -3,9 +3,10 @@ set -e -x
 
 cd /io
 
-for PYBIN in /opt/python/cp27*/bin/; do
+for PYBIN in /opt/python/cp${TRAVIS_PYTHON_VERSION//./}*/bin/; do
     # Install
     "${PYBIN}/pip" install -e . --ignore-installed
+    "${PYBIN}/python" setup.py build_ext --inplace --force
     # Test
     "${PYBIN}/python" setup.py test
     # Wheels
