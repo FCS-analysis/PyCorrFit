@@ -7,6 +7,7 @@ cd /io
 for PYBIN in /opt/python/cp27*/bin/; do
     "${PYBIN}/pip" install --upgrade pip
     "${PYBIN}/pip" install -e .
+    "${PYBIN}/pip" install cython
     "${PYBIN}/python" setup.py develop
     "${PYBIN}/python" setup.py test
 done
