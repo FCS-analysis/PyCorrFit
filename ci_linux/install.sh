@@ -11,4 +11,4 @@ virtualenv --system-site-packages ~/env
 source ~/env/bin/activate
 pip install --upgrade pip
 pip install cython matplotlib lmfit numpy scipy sympy pytest-runner
-
+python setup.py develop
