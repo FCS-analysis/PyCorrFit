@@ -7,9 +7,6 @@
 # 
 language: python
 
-python:
-  - 2.7
-
 env:
   global:
     # GitHub API access via GH_READ_API_TOKEN
