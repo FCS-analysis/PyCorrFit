@@ -10,6 +10,7 @@ for PYBIN in /opt/python/cp27*/bin/; do
     "${PYBIN}/python" setup.py test
     # Wheels
     "${PYBIN}/pip" wheel . -w dist/
+    rm -rf .eggs
 done
 
 # Bundle external shared libraries into the wheels
