@@ -37,14 +37,10 @@ matrix:
 install:
 - source ./ci_${TRAVIS_OS_NAME}/install.sh
 - pip freeze
-- python setup.py develop
-- pip install coverage coveralls
-- coverage run --source=pycorrfit ./setup.py test
-- coverage report -m
-- coveralls
 
 script:
-- source ./ci_${TRAVIS_OS_NAME}/dist.sh
+- if [ -n "$DOCKER_IMAGE" ]; then ./ci_${TRAVIS_OS_NAME}/dist.sh; fi
+- if [ -z "$DOCKER_IMAGE" ]; then ./ci_${TRAVIS_OS_NAME}/test.sh; fi
 
 
 # This section was created with
