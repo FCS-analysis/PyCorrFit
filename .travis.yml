@@ -36,16 +36,15 @@ install:
 - pip freeze
 - python setup.py develop
 - pip install coverage coveralls
-- which python
 
 script:
-- which python
+# testing and coverage
 - coverage run --source=pycorrfit ./setup.py test
 - coverage report -m
 - coveralls
-
-before-deploy:
+# distribution packages
 - ./ci_${TRAVIS_OS_NAME}/dist.sh
+
 
 # This section was created with
 # sudo apt-get install ruby1.9.1-dev
