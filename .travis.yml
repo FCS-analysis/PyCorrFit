@@ -14,37 +14,46 @@ env:
     # GitHub API access via GH_READ_API_TOKEN
     secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
 
-language: python
-
 matrix:
   include:
+    # only run tests
     - os: linux
+      install: true
+      language: python
+      sudo: required
+    # deploy linux with docker
+    - os: linux
+      install: false
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+    # deploy linux  with docker
     - os: linux
+      install: false
       sudo: required
       services:
         - docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
+    # Mac
     - os: osx
+      install: true
+      language: python
 
-#install:
-#- source ./ci_${TRAVIS_OS_NAME}/install.sh
-#- pip freeze
-#- python setup.py develop
-#- pip install coverage coveralls
+install:
+- source ./ci_${TRAVIS_OS_NAME}/install.sh
+- pip freeze
+- python setup.py develop
+- pip install coverage coveralls
+# testing and coverage
+- coverage run --source=pycorrfit ./setup.py test
+- coverage report -m
+- coveralls
 
 script:
-# testing and coverage
-#- coverage run --source=pycorrfit ./setup.py test
-#- coverage report -m
-#- coveralls
 # distribution packages
 - source ./ci_${TRAVIS_OS_NAME}/dist.sh
-
 
 # This section was created with
 # sudo apt-get install ruby1.9.1-dev
