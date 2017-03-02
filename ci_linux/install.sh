@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x
+set -e -v
 deactivate
 sudo apt-get update -qq
 # Fixes the error:

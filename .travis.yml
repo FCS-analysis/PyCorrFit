@@ -44,8 +44,8 @@ install:
 - pip freeze
 
 script:
-- if [ -n "$DOCKER_IMAGE" ]; then ./ci_${TRAVIS_OS_NAME}/dist.sh; fi
-- if [ -z "$DOCKER_IMAGE" ]; then ./ci_${TRAVIS_OS_NAME}/test.sh; fi
+- if [ -n "$DOCKER_IMAGE" ]; then source ./ci_${TRAVIS_OS_NAME}/dist.sh; fi
+- if [ -z "$DOCKER_IMAGE" ]; then source ./ci_${TRAVIS_OS_NAME}/test.sh; fi
 
 
 # This section was created with
