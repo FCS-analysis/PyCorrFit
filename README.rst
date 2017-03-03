@@ -95,7 +95,7 @@ the running time of the build). From there you can download the Windows installe
    :target: https://pypi.python.org/pypi/pycorrfit
 .. |Build Status Win| image:: https://img.shields.io/appveyor/ci/paulmueller/PyCorrFit/master.svg?label=win
    :target: https://ci.appveyor.com/project/paulmueller/pycorrfit
-.. |Build Status Mac| image:: https://img.shields.io/travis/FCS-analysis/PyCorrFit/master.svg?label=osx_linux
+.. |Build Status Mac| image:: https://img.shields.io/travis/FCS-analysis/PyCorrFit/master.svg?label=linux_osx
    :target: https://travis-ci.org/FCS-analysis/PyCorrFit
 .. |Coverage Status| image:: https://img.shields.io/coveralls/FCS-analysis/PyCorrFit.svg
    :target: https://coveralls.io/r/FCS-analysis/PyCorrFit

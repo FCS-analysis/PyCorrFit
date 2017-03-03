@@ -7,9 +7,13 @@ pip install wheel
 pip wheel ./ -w wheelhouse/ --no-deps
 # Check for external dependencies
 pip install delocate
-delocate-listdeps dist/*.whl
+# display dependencies
+delocate-listdeps wheelhouse/*.whl
 mkdir -p dist
+# repair wheels
 delocate-wheel -w dist wheelhouse/*.whl
+# check fixed wheels
+delocate-listdeps --all dist/*.whl
 ls -l dist
 
 # Stop here (OSx, WxPython, Pyinstaller will not work nicely together)
