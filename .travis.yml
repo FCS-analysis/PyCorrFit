@@ -5,18 +5,19 @@ env:
   global:
     GH_REF: github.com/FCS-analysis/PyCorrFit.git
 
-language: python
 sudo: required
 
 matrix:
   include:
     - os: linux
       dist: trusty
+      language: python
       python: 2.7
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
       dist: trusty
+      language: python
       python: 2.7
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
