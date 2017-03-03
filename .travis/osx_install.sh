@@ -36,7 +36,7 @@ chmod +x miniconda.sh
 export PATH=${HOME}/miniconda/bin:$PATH
 conda update --yes conda
 travis_retry conda install --yes cython matplotlib numpy pip scipy wxpython
-
+pip install -e .
 
 # Patch wx.lib.plot
 # http://trac.wxwidgets.org/ticket/16767#no1
