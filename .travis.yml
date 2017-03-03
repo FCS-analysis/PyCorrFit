@@ -30,7 +30,7 @@ install:
 - pip freeze
 
 script:
-- source ./.travis/${TRAVIS_OS_NAME}_test.sh
+- source ./.travis/test.sh
 # Distribution files are copied to the "dist" directory
 - source ./.travis/${TRAVIS_OS_NAME}_dist.sh
 

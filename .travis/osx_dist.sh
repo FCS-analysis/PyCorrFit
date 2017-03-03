@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
 
+## Python Wheels
+# Create wheels
+pip install wheel
+pip wheel ./ -w wheelhouse/ --no-deps
+# Check for external dependencies
+pip install delocate
+delocate-listdeps dist/*.whl
+mkdir -p dist
+delocate-wheel -w dist wheelhouse/*.whl
+ls -l dist
+
+
+## Pyinstaller
 pip install pyinstaller
 export PATH=/usr/local/bin:$PATH
 #export VERSIONER_PYTHON_PREFER_32_BIT=yes
