@@ -12,6 +12,8 @@ mkdir -p dist
 delocate-wheel -w dist wheelhouse/*.whl
 ls -l dist
 
+# Stop here (OSx, WxPython, Pyinstaller will not work nicely together)
+exit 0
 
 ## Pyinstaller
 pip install pyinstaller

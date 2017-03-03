@@ -4,6 +4,8 @@ notifications:
 env:
   global:
     GH_REF: github.com/FCS-analysis/PyCorrFit.git
+    # GITHUB_API_TOKEN for tests
+    secure: "WhXXDXgr5gHtzEoFmlxmHJIUSBUBuYBXTI96Ir7BX9gG298E/qlKWeD9Bl+Mabhlvd/VqOAz73hRms0IjyZsoYSDRDxsbGbeI27+GzqBXtcFrexT09PIu24cay2oJ2bhUoDl/6u12+4ChCvAa1+OCJZb2U54B3RIkDME4WSOlUE="
 
 sudo: required
 
@@ -41,7 +43,7 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: eWTrAAu/Vxyi6RJo/mcylI19Ux1dKqgA++7J8OS3vbTEMTSeJa0gfATQGzBNpWxNu+uKolIh1p+GZE5ERk+M9A1dNg3XMjrsHBED66lDt/TYUiShm/Ro2zRY5q/CyZ0AkRtvgkYWCwktwe7WKrLaVYSD7xbopQViauP43JPHzgQ=
+    secure: aTI/VjS00ykcu7usyGlBsXBEK/RIaGdSFtYEIVNVdYk0vK9yzA/mfifmiz2klzJOrBxmnhIVUBnQAhLmW2QBPphVLVMWkPl/CBz/yCGJLDxiMm4DZhkoivKfLZX/2SQ6Aua3wciEHo/sbFhywKFbVARUXGgpmDXVYtJ706OR/ZA=
   skip_cleanup: true
   file_glob: true
   file: dist/*
