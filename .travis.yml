@@ -35,13 +35,13 @@ matrix:
       python: 2.7
 
 install:
-- source ./ci_${TRAVIS_OS_NAME}/install.sh
+- source ./.travis/${TRAVIS_OS_NAME}_install.sh
 - python setup.py develop
 - pip freeze
 
 script:
-- source ./ci_${TRAVIS_OS_NAME}/test.sh
-- source ./ci_${TRAVIS_OS_NAME}/dist.sh
+- source ./.travis/${TRAVIS_OS_NAME}_test.sh
+- source ./.travis/${TRAVIS_OS_NAME}_dist.sh
 
 
 # This section was created with
