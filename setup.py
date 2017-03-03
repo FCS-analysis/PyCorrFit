@@ -24,31 +24,33 @@ for scheme in INSTALL_SCHEMES.values():
 # We don't need cython if a .whl package is available.
 # Try to import cython and throw a warning if it does not work.
 try:
-    from Cython.Distutils import build_ext
     import numpy as np
 except ImportError:
-    print("Cython or NumPy not available. Building extensions "+
+    print("NumPy not available. Building extensions "+
           "with this setup script will not work:", sys.exc_info())
-    EXTENSIONS = []
-    build_ext = None
+    extensions = []
 else:
-    EXTENSIONS = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
-                        ["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
-                        libraries=[],
-                        include_dirs=[np.get_include()]
-                        )
-              ]
+    extensions = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
+                            sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
+                            include_dirs=[np.get_include()]
+                            )
+                 ]
 
-# Download documentation if it was not compiled
-Documentation = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
-webdoc = "https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf"
-if not exists(Documentation):
-    print("Downloading {} from {}".format(Documentation, webdoc))
+try:
     import urllib
-    #testfile = urllib.URLopener()
-    urllib.urlretrieve(webdoc, Documentation)
+except ImportError:
+    pass
+else:
+    # Download documentation if it was not compiled with latex
+    pdfdoc = join(dirname(realpath(__file__)), "doc/PyCorrFit_doc.pdf")
+    webdoc = "https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf"
+    if not exists(pdfdoc):
+        print("Downloading {} from {}".format(pdfdoc, webdoc))
+        try:
+            urllib.urlretrieve(webdoc, pdfdoc)
+        except:
+            print("Failed to download documentation.")
     
-
 # Get the version of PyCorrFit from the Changelog.txt
 StaticChangeLog = join(dirname(realpath(__file__)), "ChangeLog.txt")
 try:
@@ -102,8 +104,7 @@ setup(
                  'pycorrfit.gui.tools': 'pycorrfit/gui/tools',
                  },
     # cython
-    ext_modules=EXTENSIONS,
-    cmdclass={'build_ext': build_ext},
+    ext_modules = extensions,
     # requirements
     extras_require = {
         # If you need the GUI of this project in your project, add
@@ -117,7 +118,7 @@ setup(
         "PyYAML >= 3.09",
         "lmfit >= 0.9.2",
         ],
-    setup_requires=["cython", 'pytest-runner'],
+    setup_requires=["Cython", 'pytest-runner', 'NumPy'],
     tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
     entry_points={

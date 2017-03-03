@@ -3,7 +3,6 @@
 import sys
 from os.path import abspath, dirname
 
-import matplotlib.pylab as plt
 import numpy as np
 
 # Add parent directory to beginning of path variable
@@ -41,6 +40,7 @@ def test_simple_corr():
     
 
 if __name__ == "__main__":
+    import matplotlib.pylab as plt
     corr = create_corr()
 
     fig, (ax1, ax2) = plt.subplots(2,1)
