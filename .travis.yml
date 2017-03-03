@@ -1,37 +1,47 @@
 notifications:
   email: false
+
 env:
   global:
     GH_REF: github.com/FCS-analysis/PyCorrFit.git
+
 language: python
 sudo: required
+
 matrix:
   include:
-  - os: linux
-    dist: trusty
-    python: 2.7
-    services: docker
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-  - os: linux
-    dist: trusty
-    python: 2.7
-    services: docker
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686 PRE_CMD=linux32
-  - os: osx
-    python: 2.7
+    - os: linux
+      dist: trusty
+      python: 2.7
+      services: docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+    - os: linux
+      dist: trusty
+      python: 2.7
+      services: docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+           PRE_CMD=linux32
+    - os: osx
+      python: 2.7
+
 install:
 - source ./.travis/${TRAVIS_OS_NAME}_install.sh
 - python setup.py develop
 - pip freeze
+
 script:
 - source ./.travis/${TRAVIS_OS_NAME}_test.sh
+# Distribution files are copied to the "dist" directory
 - source ./.travis/${TRAVIS_OS_NAME}_dist.sh
+
+# This section was created with
+# sudo apt-get install ruby-dev
+# sudo gem install travis
+# travis setup releases
 deploy:
   provider: releases
-  api-key:
-    secure: NmpSpO8BEv60e3UivHNzEZviKN5qTV2i+2G6dgGIBI+oaY7MNMMY3WW+iv9nyABmlaiojrh5DhJTqFm+6LA16PW5xBFz33LIR/uhvbsm2pzTHvXrUsbq7ZfuRYdrXqWprW7+qQdizvQB+K1py2TdCJZsn3iqwtAUtxrZ/5IN1E0=
-#  api_key:
-#    secure: di+YeuT0jVxjQGb/GZvn5SwZ8bMlx6JxpxY9/rFIRHbzPStWqTPcJIBdWXrFBe/kPXuZmnuMdZnhM48x5H+2z2UEeUG6GGmauT1kLcvt6bpF3ZBo5KMDyab7RBAKrB3Osd6Z/JKRNr0sXB09i72ExaYE4Fs+zXkLQowjh9uXdKg=
+  api_key:
+    secure: eWTrAAu/Vxyi6RJo/mcylI19Ux1dKqgA++7J8OS3vbTEMTSeJa0gfATQGzBNpWxNu+uKolIh1p+GZE5ERk+M9A1dNg3XMjrsHBED66lDt/TYUiShm/Ro2zRY5q/CyZ0AkRtvgkYWCwktwe7WKrLaVYSD7xbopQViauP43JPHzgQ=
   skip_cleanup: true
   file_glob: true
   file: dist/*

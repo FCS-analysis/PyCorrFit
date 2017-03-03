@@ -1,5 +1,7 @@
 #!/bin/bash
-# pip install pyinstaller==2.1
+set -e
+
+pip install pyinstaller
 export PATH=/usr/local/bin:$PATH
 #export VERSIONER_PYTHON_PREFER_32_BIT=yes
 #defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
@@ -21,7 +23,7 @@ codename="MacOSx"
 distrib=$(sw_vers -productVersion )
 version=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 appn="./dist/${Progname}.app"
-StarterScript="./freeze_pyinstaller/macOSx_script_starter.sh"
+StarterScript="./.travs/macOSx_script_starter.sh"
 Zipname=${Progname}_${version}_${codename}_${distrib}"_app.zip"
 DMGname=${Progname}_${version}_${codename}_${distrib}".dmg"
 
