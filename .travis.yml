@@ -10,6 +10,8 @@ env:
 sudo: required
 
 matrix:
+  allow_failures:
+    - os: osx
   include:
     - os: linux
       dist: trusty
@@ -24,8 +26,6 @@ matrix:
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
-    - os: osx
-   allow_failures:
     - os: osx
 
 install:
