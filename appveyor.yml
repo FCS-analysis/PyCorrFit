@@ -4,18 +4,16 @@
 #  # Do not build on commits. Only nightly builds (web interface)
 #  author: /.*/
 
-# Only build master branch
-## seems to prevent building tags
-#branches:
-#  only:
-#  - master
+# Do not use shallow_clone, because coveralls needs a git repository
+#shallow_clone: true
+# Use large clone depth so that a tag is included for versioning
+clone_depth: 256
 
 notifications:
   - provider: Email
     on_build_success: false
     on_build_failure: false
     on_build_status_changed: false
-
 
 environment:
   COVERALLS_REPO_TOKEN:
@@ -33,12 +31,10 @@ environment:
     - PYTHON: "C:\\Miniconda"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
-      PYWIN_DL: "https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win32-py2.7.exe"
-
     - PYTHON: "C:\\Miniconda-x64"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "64"
-      PYWIN_DL: "https://downloads.sourceforge.net/project/pywin32/pywin32/Build%20219/pywin32-219.win-amd64-py2.7.exe"
+
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
@@ -76,18 +72,14 @@ install:
   - "pip install sympy"
   - "pip install lmfit"
   # Install pyinstaller (includes dependency for pywin32)
-  - "%WITH_COMPILER% pip install pypiwin32"
-  - "%WITH_COMPILER% pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
-
+  #- "%WITH_COMPILER% pip install pypiwin32"
+  #- "%WITH_COMPILER% pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
+  - "%WITH_COMPILER% pip install pyinstaller==3.2.1"
   # Run develop (installs yet missing packages and runs cython)
   - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
 
   # Show the installed packages
   - "pip freeze"
-  
-# Do not use shallow_clone, because we get the program version from the git tags
-#shallow_clone: true
-clone_depth: 100
 
 build: off
 
@@ -97,7 +89,7 @@ test_script:
   - "pip install coveralls"
   - "coverage run --source=pycorrfit ./setup.py test"
   - "coverage report -m"
-  - "coveralls"
+  - "coveralls || exit 0"
 
 after_test:
   # If tests are successful, create a whl package for the project.
@@ -109,7 +101,7 @@ after_test:
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
-  - iscc /VERYSILENT win7_innosetup.iss
+  - iscc /Q win7_innosetup.iss
 
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
