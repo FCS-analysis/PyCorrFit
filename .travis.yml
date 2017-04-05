@@ -5,7 +5,7 @@ env:
   global:
     GH_REF: github.com/FCS-analysis/PyCorrFit.git
     # GITHUB_API_TOKEN for tests
-    secure: "WhXXDXgr5gHtzEoFmlxmHJIUSBUBuYBXTI96Ir7BX9gG298E/qlKWeD9Bl+Mabhlvd/VqOAz73hRms0IjyZsoYSDRDxsbGbeI27+GzqBXtcFrexT09PIu24cay2oJ2bhUoDl/6u12+4ChCvAa1+OCJZb2U54B3RIkDME4WSOlUE="
+    secure: "Cm5bTzC3lRqHOl4bU4+35SeW9dIu0vOBJqi3BVQhBSd5D    +4Vw7afZ9EuGFTJyT1EH30gK6Nas+K+v5wHYPc2ZB19Ublan+Z+Z+7bQByi+zQnY6iJI+4HHYZVdGmZA+hhj1FVYJyHwsHWY2i1UgEIY2VAnMp47Q7dlFSaHET/tng="
 
 sudo: required
 
@@ -45,7 +45,7 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: aTI/VjS00ykcu7usyGlBsXBEK/RIaGdSFtYEIVNVdYk0vK9yzA/mfifmiz2klzJOrBxmnhIVUBnQAhLmW2QBPphVLVMWkPl/CBz/yCGJLDxiMm4DZhkoivKfLZX/2SQ6Aua3wciEHo/sbFhywKFbVARUXGgpmDXVYtJ706OR/ZA=
+    secure: "E982QtcvWPURFmhCuuojgk+k1olbjnByB1/ZEvf2EC6vTZI22KZ2r4szzYm3ZRjZzGNZ2P9/zkeDPcLxx4YmjwOvr/4gIesSUXK7OoK+Thgay4b7gJQgGhok9g2oXf8HicfPAdkTitg5QPt6NXIyk9N8tir10gVHlM/makEwmy4="
   skip_cleanup: true
   file_glob: true
   file: dist/*

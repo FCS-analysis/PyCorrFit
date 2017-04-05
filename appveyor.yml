@@ -23,9 +23,8 @@ environment:
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\freeze_appveyor\\run_with_compiler.cmd"
-    GH_READ_API_TOKEN:
-      secure: GvXoZj2gfC/Zjpe5k3BLTNKTNLWPFK9hB97npxEDM5rUxcrESItbUhrPwXCaAt8s
-
+    GH_API_TOKEN:
+      secure: REdGxEyvL7z7Ohn1K6pdEPmLdCMme9rHZmRF7oItwYFb9VTBNUhCYyb+T4AeLY3M
   # https://github.com/appveyor/ci/issues/359
   matrix:
     - PYTHON: "C:\\Miniconda"
