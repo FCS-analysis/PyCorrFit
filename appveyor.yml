@@ -18,7 +18,7 @@ notifications:
 environment:
   COVERALLS_REPO_TOKEN:
     secure: US5V2RWPr+toU2ZX8lyNs5IJIgfo2S1OwBQ0PUdqJMkDi4K4uJpTnZ2Ub1rda/j9
-  GH_API_TOKEN:
+  GITHUB_API_TOKEN:
     secure: REdGxEyvL7z7Ohn1K6pdEPmLdCMme9rHZmRF7oItwYFb9VTBNUhCYyb+T4AeLY3M
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
