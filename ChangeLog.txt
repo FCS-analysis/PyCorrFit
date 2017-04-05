@@ -1,3 +1,5 @@
+1.0.0
+- Fix regression: .sin files could not be opened (#167)
 0.9.9
 - Remove admin-requirement during install (Windows)
 - Support newer correlator.com .sin file format (experimental, #135)

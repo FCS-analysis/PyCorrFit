@@ -30,7 +30,8 @@ def test_open():
                 continue
             print(f)
             dn, fn = split(f)
-            pycorrfit.readfiles.openAny(dn, fn)
+            data = pycorrfit.readfiles.openAny(dn, fn)
+            assert len(data)
 
 
 if __name__ == "__main__":
