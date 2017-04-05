@@ -1,12 +1,7 @@
-include doc/*.tex
-include doc/*.bib
-include doc/*.pdf
-include doc/*.md
-include doc/Images/*
-include examples/external_model_functions/*.txt
-include README.md
 include ChangeLog.txt
-include pycorrfit/readfiles/read_pt3_scripts/*.py
-include pycorrfit/readfiles/read_pt3_scripts/*.pyx
-include pycorrfit/readfiles/read_pt3_scripts/LICENSE
-include tests/*.py
+include LICENSE
+include README.rst
+recursive-include examples *.txt
+recursive-include doc *.tex *.bib *.pdf *.md *.png *.svg
+recursive-include tests *.py *.md
+recursive-include pycorrfit *.py LICENCE README *.pyx
