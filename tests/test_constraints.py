@@ -5,10 +5,11 @@ Test if constraints work with model functions.
 """
 from __future__ import division, print_function
 
-import sys
-from os.path import abspath, dirname, split
 import numpy as np
 import os
+from os.path import abspath, dirname, split
+import pytest
+import sys
 
 
 # Add parent directory to beginning of path variable
@@ -16,7 +17,10 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 import data_file_dl
 import pycorrfit as pcf
 
+NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
@@ -47,6 +51,7 @@ def test_fit_constraint_simple_inequality():
         assert corr.fit_parameters[1] < corr.fit_parameters[2]
 
 
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_fit_constraint_sum_smaller_one():
     """ Check "a+b<c" relation during fitting.
     """

@@ -21,7 +21,7 @@ def CF_Gxy_gauss(parms, tau):
         Parameters (parms[i]):
         [0] n       Effective number of particles in confocal area
         [1] τ_diff  Characteristic residence time in confocal area
-        [3] offset
+        [2] offset
         *tau* - lag time
     """
     n = parms[0]

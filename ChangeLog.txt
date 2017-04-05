@@ -1,4 +1,5 @@
 1.0.0
+- New confocal fitting models T+T+2D and T+T+3D
 - Fix regression: .sin files could not be opened (#167)
 0.9.9
 - Remove admin-requirement during install (Windows)

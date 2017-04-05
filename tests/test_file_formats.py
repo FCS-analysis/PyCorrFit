@@ -5,9 +5,11 @@ Test if pycorrfit can open all file formats.
 """
 from __future__ import division, print_function
 
-import sys
-from os.path import abspath, dirname, split
 import numpy as np
+import os
+from os.path import abspath, dirname, split
+import pytest
+import sys
 
 # Add parent directory to beginning of path variable
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
@@ -17,7 +19,10 @@ import pycorrfit
 # Files that are known to not work
 exclude = []
 
+NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_open():
     """
     Try to open all files supported files

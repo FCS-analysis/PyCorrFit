@@ -245,5 +245,3 @@ def GetPositionOfParameter(model, name):
     for i in np.arange(len(stdparms[0])):
         if name == stdparms[0][i]:
             return int(i)
-    
-
