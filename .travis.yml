@@ -2,10 +2,9 @@ notifications:
   email: false
 
 env:
-  global:
-    GH_REF: github.com/FCS-analysis/PyCorrFit.git
-    # GITHUB_API_TOKEN for tests
-    secure: "Cm5bTzC3lRqHOl4bU4+35SeW9dIu0vOBJqi3BVQhBSd5D    +4Vw7afZ9EuGFTJyT1EH30gK6Nas+K+v5wHYPc2ZB19Ublan+Z+Z+7bQByi+zQnY6iJI+4HHYZVdGmZA+hhj1FVYJyHwsHWY2i1UgEIY2VAnMp47Q7dlFSaHET/tng="
+ - GH_REF: github.com/FCS-analysis/PyCorrFit.git
+ # GITHUB_API_TOKEN for tests
+ - secure: "Cm5bTzC3lRqHOl4bU4+35SeW9dIu0vOBJqi3BVQhBSd5D    +4Vw7afZ9EuGFTJyT1EH30gK6Nas+K+v5wHYPc2ZB19Ublan+Z+Z+7bQByi+zQnY6iJI+4HHYZVdGmZA+hhj1FVYJyHwsHWY2i1UgEIY2VAnMp47Q7dlFSaHET/tng="
 
 sudo: required
 
