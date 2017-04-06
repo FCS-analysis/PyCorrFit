@@ -1,2 +1,7 @@
-numpy 1.9.3 py27_0
-scipy 0.15.1 np19py27_0
+# Force numpy to 1.8, because the wx.lib.plot
+# in Anacondas wxpython 3.0 needs np.oldnumeric.
+# We also have to force lmfit to version 0.9.2,
+# because newer versions complain about some
+# functionality in scipy, which is not here because
+# there are no new scipy builds with numpy 1.8. 
+numpy 1.8.*
