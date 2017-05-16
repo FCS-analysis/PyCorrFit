@@ -196,7 +196,9 @@ from . import model_confocal_t_3d_2d
 from . import model_confocal_t_3d_3d_3d
 from . import model_confocal_t_3d_3d_2d
 
+from . import model_confocal_tt_3d
 from . import model_confocal_tt_3d_3d
+from . import model_confocal_tt_2d
 from . import model_confocal_tt_2d_2d
 from . import model_confocal_tt_3d_2d
 

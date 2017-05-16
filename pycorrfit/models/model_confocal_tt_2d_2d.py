@@ -11,8 +11,8 @@ from .cp_mix import double_pnum
 
 # 2D + 2D + TT Gauß
 # Model 6044
-def CF_Gxyz_gauss_2D2DTT(parms, tau):
-    u""" Two-component three-dimensional free diffusion
+def CF_Gxy_gauss_2D2DTT(parms, tau):
+    u""" Two-component two-dimensional free diffusion
         with a Gaussian laser profile, including two triplet components.
         The triplet factor takes into account a blinking term.
         Set *T* or *τ_trip* to 0, if no triplet component is wanted.
@@ -122,7 +122,7 @@ model_setup(
              name="Separate 2D diffusion with double triplet (confocal)",
              comp="T+T+2D+2D",
              mtype="Confocal (Gaussian) with double triplet",
-             fctn=CF_Gxyz_gauss_2D2DTT,
+             fctn=CF_Gxy_gauss_2D2DTT,
              par_labels=[
                             u"n",
                             u"τ"+u"\u2081"+" [ms]",

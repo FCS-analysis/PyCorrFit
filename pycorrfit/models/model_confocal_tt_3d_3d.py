@@ -9,7 +9,7 @@ from .cp_triplet import trip
 from .cp_mix import double_pnum
 
 
-# 3D + 3D + Triplet Gauß
+# 3D + 3D + TT Gauß
 # Model 6043
 def CF_Gxyz_gauss_3D3DTT(parms, tau):
     u""" Two-component three-dimensional free diffusion

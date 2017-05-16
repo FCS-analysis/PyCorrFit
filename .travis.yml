@@ -1,134 +1,55 @@
-# Mac OS X Python build
-# If Travis does not build, try this:
-# Change something in the repo
-#  git commit -a -m "new version"
-#  git tag ...
-#  git push origin master && git push --tags
-# 
-language:
-- objective-c
-
-python:
-- "2.7"
-
-env:
-  global:
-    # GitHub API access via GH_READ_API_TOKEN
-    secure: "MJ+GllVS6JeRPKrxCAhRrl/YLrAL+PMrWKa/C81mVGrWak1DO121DsbQc/G+DUASS37G/ErNqkNFN6gTxssKlewIk1SJ5oYVBkrZSagTVNDcb1XNzyPFiDX32uxz68sGJ8AMEa0GQbXnM0DF6ASgZYi7DnGPSyiFfgxERFtMOh8="
-
-# Only build master branch - This breaks building tags
-#branches:
-#  only:
-#  - master
-
-# Do not send email notifications
 notifications:
   email: false
 
-before_install:
-- which python
-# a lot of cool formulae for scientific tools
-#- brew tap homebrew/science
-# numpy, scipy, matplotlib, ...
-#- brew tap homebrew/python
-#- brew tap homebrew/dupes
-#- brew update
-#- brew update && brew upgrade
-#- brew install python --universal --framework
-#- brew install wget
-#- which python
-#- python --version
-#- export VERSIONER_PYTHON_PREFER_32_BIT=no
-#- defaults write com.apple.versioner.python Prefer-32-Bit -bool no
+env:
+  global:
+    - GH_REF: github.com/FCS-analysis/PyCorrFit.git
+    # GITHUB_API_TOKEN for tests
+    - secure: "Cm5bTzC3lRqHOl4bU4+35SeW9dIu0vOBJqi3BVQhBSd5D    +4Vw7afZ9EuGFTJyT1EH30gK6Nas+K+v5wHYPc2ZB19Ublan+Z+Z+7bQByi+zQnY6iJI+4HHYZVdGmZA+hhj1FVYJyHwsHWY2i1UgEIY2VAnMp47Q7dlFSaHET/tng="
+
+sudo: required
+
+matrix:
+  allow_failures:
+    - os: osx
+  include:
+    - os: linux
+      dist: trusty
+      language: python
+      python: 2.7
+      services: docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+    - os: linux
+      dist: trusty
+      language: python
+      python: 2.7
+      services: docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+           PRE_CMD=linux32
+    - os: osx
 
 install:
-- wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh
-- bash Miniconda2-latest-MacOSX-x86_64.sh -b -p $HOME/miniconda
-- export PATH=$HOME/miniconda/bin:$PATH
-- which python
-- conda search numpy
-- conda search scipy
-- conda search wxpython
-# https://github.com/ContinuumIO/anaconda-issues/issues/565
-- conda install --yes numpy==1.8.2 scipy wxpython
-
-#- brew unlink gcc
-#- brew install gcc --universal
-#- brew install freetype --universal
-##- brew install numpy --universal
-##- brew install scipy --universal
-##- brew install matplotlib --universal
-#
-## https://github.com/Homebrew/homebrew/issues/34470
-##- brew install wxpython --universal
-##- brew install openblas
-##- brew install gfortran
-
-# fixes (matplotlib backend)
-- ./freeze_travis/fixes.sh
-
-- pip install pyinstaller==3.2.0
-# final pip installs
-- pip install -r ./freeze_travis/requirements.txt
-
-## wxPython
-#- wget http://downloads.sourceforge.net/wxpython/wxPython3.0-osx-3.0.2.0-cocoa-py2.7.dmg
-
-- sudo ./freeze_travis/install_dmg.sh
-
-# Patch wx.lib.plot
-# http://trac.wxwidgets.org/ticket/16767#no1
-- python -c "import wx; print wx.__version__"
-- python -c "import wx; import wx.lib; import wx.lib.plot; print wx.lib.plot.__file__"
-#- patch /usr/local/lib/wxPython-3.0.2.0/lib/python2.7/site-packages/wx-3.0-osx_cocoa/wx/lib/plot.py ./freeze_travis/wxPython-3.0.2.0-plot.patch
-# wxPython is only available in 64bit version with homebrew
-#- brew install wxpython
-
-# show packages
-- pip freeze
-# build extensions
+- source ./.travis/${TRAVIS_OS_NAME}_install.sh
 - python setup.py develop
+- pip freeze
 
 script:
-# Run tests
-- travis_retry pip install coverage
-- travis_retry pip install coveralls
-- coverage run --source=pycorrfit ./setup.py test
-- coverage report -m
-- coveralls
-# Create wheel pacakge
-- python setup.py bdist_wheel
-# Create source pacakge
-- python setup.py sdist
-# Create binary
-- ./freeze_travis/macOSx_bundle_script.sh
-- ls dist/
-#- hdiutil create dist/hw.dmg -srcfolder dist/ -ov
-
-before_deploy:
-  - export RELEASE_PKG_FILEA=$(ls ./dist/*.tar.gz)
-  - export RELEASE_PKG_FILEB=$(ls ./dist/*.dmg)
-  - export RELEASE_PKG_FILEC=$(ls ./dist/*.whl)
-  - echo "deploying $RELEASE_PKG_FILEA to GitHub releases"
-  - echo "deploying $RELEASE_PKG_FILEB to GitHub releases"
-  - echo "deploying $RELEASE_PKG_FILEC to GitHub releases"
+- source ./.travis/test.sh
+# Distribution files are copied to the "dist" directory
+- source ./.travis/${TRAVIS_OS_NAME}_dist.sh
 
 # This section was created with
-# sudo apt-get install ruby1.9.1-dev
+# sudo apt-get install ruby-dev
 # sudo gem install travis
 # travis setup releases
 deploy:
   provider: releases
   api_key:
-    secure: gQu6BKSo5sucrieOvyLz/kn5Ai+vrnXK6Kdm+WMqzXE6keE0LzujXOHWQX2G2EBl1NCjzvt3HrEvJqwGEjLbduJBBPBHaOy71AfKuHaxRQPlFWMLn2iAVVval3q7xU4kEfjAdS50WmARqh6sT7gMj+pHpg1e3pz1SxybOeC40+k=
+    secure: "E982QtcvWPURFmhCuuojgk+k1olbjnByB1/ZEvf2EC6vTZI22KZ2r4szzYm3ZRjZzGNZ2P9/zkeDPcLxx4YmjwOvr/4gIesSUXK7OoK+Thgay4b7gJQgGhok9g2oXf8HicfPAdkTitg5QPt6NXIyk9N8tir10gVHlM/makEwmy4="
   skip_cleanup: true
-  # Allow
   file_glob: true
-  file: 
-    - "${RELEASE_PKG_FILEC}"
-    # Mac OSx build is broken (issue #147)
-    #- "${RELEASE_PKG_FILEB}"
-    - "${RELEASE_PKG_FILEA}"
+  file: dist/*
   on:
-    tags: true
     repo: FCS-analysis/PyCorrFit
+    tags: true
+

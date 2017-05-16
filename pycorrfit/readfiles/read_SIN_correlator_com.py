@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
-methods to open correlator.com .sin files
-"""
+"""methods to open correlator.com .sin files"""
+from __future__ import division
+
 import os
 import csv
 import numpy as np
 
 
 def openSIN(dirname, filename):
-    """ D
-    
-    """
+    """Parse .sin files (correlator.com)"""
     path = os.path.join(dirname, filename)
     with open(path) as fd:
         data = fd.readlines()
@@ -27,11 +25,11 @@ def openSIN(dirname, filename):
             if len(mode) - np.sum([len(m) for m in mode]) == 0:
                 return openSIN_integer_mode(path)
             else:
-                openSIN_old(path)
+                return openSIN_old(path)
 
 
 def openSIN_integer_mode(path):
-    """ Integer mode file format of e.g. flex03lq-1 correlator
+    """Integer mode file format of e.g. flex03lq-1 correlator (correlator.com)
     
     This is a file format where the type (AC/CC) of the curve is
     determined using integers in the "Mode=" line, e.g.
@@ -130,7 +128,7 @@ def openSIN_integer_mode(path):
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces
     dictionary["Type"] = curvelist
-    filelist = list()
+    filelist = []
     for _i in curvelist:
         filelist.append(os.path.basename(path))
     dictionary["Filename"] = filelist
@@ -138,7 +136,7 @@ def openSIN_integer_mode(path):
 
 
 def openSIN_old(path):
-    """ Parses the "old" sin file format using an "old" implementation.
+    """Parses the simple sin file format (correlator.com)
     
     Read data from a .SIN file, usually created by
     the software using correlators from correlator.com.
@@ -243,9 +241,9 @@ def openSIN_old(path):
             StartT = i+2 
         if Alldata[i][0:11] == "[Histogram]":
             EndT = i-2
-    curvelist = list()
-    correlations = list()
-    traces = list()
+    curvelist = []
+    correlations = []
+    traces = []
     # Get the correlation function
     Truedata = Alldata.__getslice__(StartC, EndC)
     timefactor = 1000 # because we want ms instead of s
@@ -264,12 +262,12 @@ def openSIN_old(path):
     # Process all Data:
     if Mode == "Single Auto":
         curvelist.append("AC")
-        corrdata = list()
+        corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
             corrdata.append((np.float(row[0])*timefactor, np.float(row[1])-1))
         correlations.append(np.array(corrdata))
-        trace = list()
+        trace = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace.append((np.float(row[0])*timefactor,
@@ -277,13 +275,13 @@ def openSIN_old(path):
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
         curvelist.append("CC")
-        corrdata = list()
+        corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
             corrdata.append((np.float(row[0])*timefactor, np.float(row[1])-1))
         correlations.append(np.array(corrdata))
-        trace1 = list()
-        trace2 = list()
+        trace1 = []
+        trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor,
@@ -294,16 +292,16 @@ def openSIN_old(path):
     elif Mode == "Dual Auto":
         curvelist.append("AC1")
         curvelist.append("AC2")
-        corrdata1 = list()
-        corrdata2 = list()
+        corrdata1 = []
+        corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
             corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
             corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
-        trace1 = list()
-        trace2 = list()
+        trace1 = []
+        trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor,
@@ -315,16 +313,16 @@ def openSIN_old(path):
     elif Mode == "Dual Cross":
         curvelist.append("CC12")
         curvelist.append("CC21")
-        corrdata1 = list()
-        corrdata2 = list()
+        corrdata1 = []
+        corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
             corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
             corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
-        trace1 = list()
-        trace2 = list()
+        trace1 = []
+        trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor,
@@ -338,10 +336,10 @@ def openSIN_old(path):
         curvelist.append("AC2")
         curvelist.append("CC12")
         curvelist.append("CC21")
-        corrdata1 = list()
-        corrdata2 = list()
-        corrdata12 = list()
-        corrdata21 = list()
+        corrdata1 = []
+        corrdata2 = []
+        corrdata12 = []
+        corrdata21 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
             corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
@@ -352,8 +350,8 @@ def openSIN_old(path):
         correlations.append(np.array(corrdata2))
         correlations.append(np.array(corrdata12))
         correlations.append(np.array(corrdata21))
-        trace1 = list()
-        trace2 = list()
+        trace1 = []
+        trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace1.append((np.float(row[0])*timefactor,
@@ -373,8 +371,9 @@ def openSIN_old(path):
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces
     dictionary["Type"] = curvelist
-    filelist = list()
+    filelist = []
     for i in curvelist:
         filelist.append(os.path.basename(path))
     dictionary["Filename"] = filelist
+
     return dictionary

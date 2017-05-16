@@ -163,13 +163,17 @@ def get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin):
         # Key is generated with
         #
         #    gem install travis
-        #    travis encrypt GH_READ_API_TOKEN=secret-token
+        #    travis encrypt GITHUB_API_TOKEN=secret-token
         #    
         # Add the result to env in travis.yml.
-        if "GH_READ_API_TOKEN" in os.environ:
-            headers["Authorization"] = "token {}".format(os.environ["GH_READ_API_TOKEN"])
-        r = pool_manager.request("GET", url, headers=headers)
-        jd = json.loads(r.data)
-        tree = jd["tree"]
-        _fcs_data_tree = [ t["path"] for t in tree ]
-    return _fcs_data_tree
+        if "GITHUB_API_TOKEN" in os.environ:
+            headers["Authorization"] = "token {}".format(os.environ["GITHUB_API_TOKEN"])
+            r = pool_manager.request("GET", url, headers=headers, retries=10)
+            jd = json.loads(r.data)
+            tree = jd["tree"]
+        else:
+            r = pool_manager.request("GET", url, headers=headers, retries=10)
+            jd = json.loads(r.data)
+            tree = jd["tree"]
+        fcs_data_tree = [ t["path"] for t in tree ]
+    return fcs_data_tree

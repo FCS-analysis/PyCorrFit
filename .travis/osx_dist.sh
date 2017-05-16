@@ -1,5 +1,26 @@
 #!/bin/bash
-# pip install pyinstaller==2.1
+set -e
+
+## Python Wheels
+# Create wheels
+pip install wheel
+pip wheel ./ -w wheelhouse/ --no-deps
+# Check for external dependencies
+pip install delocate
+# display dependencies
+delocate-listdeps wheelhouse/*.whl
+mkdir -p dist
+# repair wheels
+delocate-wheel -w dist wheelhouse/*.whl
+# check fixed wheels
+delocate-listdeps --all dist/*.whl
+ls -l dist
+
+# Stop here (OSx, WxPython, Pyinstaller will not work nicely together)
+exit 0
+
+## Pyinstaller
+pip install pyinstaller
 export PATH=/usr/local/bin:$PATH
 #export VERSIONER_PYTHON_PREFER_32_BIT=yes
 #defaults write com.apple.versioner.python Prefer-32-Bit -bool yes
@@ -21,7 +42,7 @@ codename="MacOSx"
 distrib=$(sw_vers -productVersion )
 version=$(head -n1 ./ChangeLog.txt | tr -d "\r\n")
 appn="./dist/${Progname}.app"
-StarterScript="./freeze_pyinstaller/macOSx_script_starter.sh"
+StarterScript="./.travs/macOSx_script_starter.sh"
 Zipname=${Progname}_${version}_${codename}_${distrib}"_app.zip"
 DMGname=${Progname}_${version}_${codename}_${distrib}".dmg"
 
