@@ -55,20 +55,3 @@ def get_file_location(filename):
     # if this does not work:
     return None
 
-
-def get_version():
-    """
-    Get the version.
-    """
-    StaticChangeLog = get_file_location("ChangeLog.txt")
-
-    # Check if we can extract the version
-    try:
-        clfile = open(StaticChangeLog, 'r')
-        version = clfile.readline().strip()
-        clfile.close()     
-    except:
-        version = "0.0.0-unknown"
-        
-        
-    return version

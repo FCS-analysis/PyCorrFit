@@ -1,5 +1,7 @@
 *.py[cod]
 
+_version_save.py
+
 # C extensions
 *.so
 

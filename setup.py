@@ -51,22 +51,18 @@ else:
         except:
             print("Failed to download documentation.")
     
-# Get the version of PyCorrFit from the Changelog.txt
-StaticChangeLog = join(dirname(realpath(__file__)), "ChangeLog.txt")
-try:
-    clfile = open(StaticChangeLog, 'r')
-    version = clfile.readline().strip()
-    clfile.close()     
-except:
-    warn("Could not find 'ChangeLog.txt'. PyCorrFit version is unknown.")
-    version = "0.0.0-unknown"
-
 # Parameters
 author = u"Paul Müller"
 authors = [author]
 description = 'Scientific tool for fitting correlation curves on a logarithmic plot.'
 name = 'pycorrfit'
 year = "2014"
+
+sys.path.insert(0, realpath(dirname(__file__))+"/"+name)
+try:
+    from _version import version
+except:
+    version = "unknown"
 
 setup(
     
