@@ -381,8 +381,8 @@ def openASC_ALV_7004_USB(path):
     # Find the different arrays
     # correlation array: "  "
     # trace array: "       "
-    Allcorr = list()
-    Alltrac = list()
+    Allcorr = []
+    Alltrac = []
     i=0
     intrace = False
     for item in Alldata:
@@ -401,16 +401,23 @@ def openASC_ALV_7004_USB(path):
     Allcorr = np.array(Allcorr)
     Alltrac = np.array(Alltrac)
     
+    
+    # TODO:
+    # - correctly read out the "Mode" property and assign AC/CC
+    #   with the correct channels.
+    # - before changing anything in this file, write a test method for
+    #   the ALV data file format.
+    
     # Allcorr: lag time, ac1, ac2, cc12, cc21
     # Alltrac: time, trace1, trace2, trace1, trace2
     assert np.allclose(Alltrac[:,1], Alltrac[:,3], rtol=.01), "unknown ALV file format"
     assert np.allclose(Alltrac[:,2], Alltrac[:,4], rtol=.01), "unknown ALV file format"
     
     guesstypelist = ["AC1", "AC2", "CC12", "CC21"]
-    typelist = list()
-    corrlist = list()
-    tracelist = list()
-    filelist = list()
+    typelist = []
+    corrlist = []
+    tracelist = []
+    filelist = []
     
     lagtime = Allcorr[:,0]
     time = Alltrac[:,0]*1000
