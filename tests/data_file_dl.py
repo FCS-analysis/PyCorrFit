@@ -63,7 +63,7 @@ def get_data_file(filename, dldir=dldir, pool_manager=pool_manager,
     assert ext != "", "filename has no extension!"
     extp = ext.strip(".").lower()
     
-    fbase = os.path.basename(filename)
+    fbase = filename
     fdir = os.path.join(dldir, extp)
     fpath = os.path.join(fdir, fbase)
 
