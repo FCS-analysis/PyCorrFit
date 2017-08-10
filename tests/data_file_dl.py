@@ -61,14 +61,18 @@ def get_data_file(filename, dldir=dldir, pool_manager=pool_manager,
     """
     _f, ext = os.path.splitext(filename)
     assert ext != "", "filename has no extension!"
-    files = get_data_files_ext(extension=ext, dldir=dldir,
-                               pool_manager=pool_manager,
-                               api_origin=api_origin,
-                               raw_origin=raw_origin)
+    extp = ext.strip(".").lower()
     
-    files = [ f for f in files if f.count(filename) ]
-    assert len(files) != 0, "filename not found"
-    return files[0]
+    fbase = os.path.basename(filename)
+    fdir = os.path.join(dldir, extp)
+    fpath = os.path.join(fdir, fbase)
+
+    if not os.path.exists(fpath):
+        # download file if it does not exist
+        url = raw_origin+extp+"/"+fbase
+        dl_file(url, fpath)
+
+    return fpath
 
 
 def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
