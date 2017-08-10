@@ -23,6 +23,45 @@ NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_alv7004usb():
+    """Test alv7004/USB format"""
+    
+    f1 = data_file_dl.get_data_file("ALV-7004USB_ac01_cc01_10.ASC")
+    data = pycorrfit.readfiles.openAny(f1)
+    assert data["Type"] == ["AC1", "AC2", "CC12", "CC21"]
+    assert np.allclose(data["Correlation"][0][10], np.array([0.000275, 0.11208]))
+    assert np.allclose(data["Correlation"][1][12], np.array([0.000325, 0.0900233]))
+    assert np.allclose(data["Correlation"][2][18], np.array([0.00055, 0.0582773]))
+    assert np.allclose(data["Correlation"][3][120], np.array([3.6864, 0.0224212]))
+    assert len(data["Trace"][0]) == 1
+    assert len(data["Trace"][1]) == 1
+    assert len(data["Trace"][2]) == 2
+    assert len(data["Trace"][3]) == 2
+    assert np.all(data["Trace"][0][0] == data["Trace"][2][0])
+    assert np.all(data["Trace"][1][0] == data["Trace"][2][1])
+    assert np.all(data["Trace"][0][0] == data["Trace"][3][0])
+    assert np.all(data["Trace"][1][0] == data["Trace"][3][1])
+    assert np.allclose(data["Trace"][0][0][10], np.array([1289.06, 140.20404]))
+    assert np.allclose(data["Trace"][1][0][100], np.array([11835.94, 94.68225]))
+
+    f2 = data_file_dl.get_data_file("ALV-7004USB_dia10_cen10_0001.ASC")
+    data2 = pycorrfit.readfiles.openAny(f2)
+    # There are empty AC2 and CC12/CC21 curves in this file that should be removed
+    # by pycorrfit.
+    assert data2["Type"] == ["AC1"]
+    assert np.allclose(data2["Correlation"][0][56], np.array([0.0144, 0.0513857]))
+    assert len(data2["Trace"][0]) == 1
+    assert np.allclose(data2["Trace"][0][0][210], np.array([49453.13, 165.41434]))
+
+    f3 = data_file_dl.get_data_file("ALV-7004.ASC")
+    data3 = pycorrfit.readfiles.openAny(f3)
+    assert len(data3["Type"]) == 1
+    assert data3["Type"][0].count("AC")
+    assert np.allclose(data3["Correlation"][0][56], np.array([0.0144, 0.38757]))
+    assert np.allclose(data3["Trace"][0][60], np.array([1.21523440e5, 5.11968700e1]))
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_open():
     """
     Try to open all files supported files

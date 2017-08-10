@@ -25,6 +25,7 @@ pool_manager = urllib3.PoolManager()
 
 _fcs_data_tree = None
 
+
 def dl_file(url, dest, chunk_size=6553,
             http=pool_manager):
     """
@@ -71,7 +72,7 @@ def get_data_file(filename, dldir=dldir, pool_manager=pool_manager,
 
 
 def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
-                      api_origin=api_origin, raw_origin=raw_origin):
+                       api_origin=api_origin, raw_origin=raw_origin):
     """
     Get all files in the repository `origin` that are
     in the folder `extension` and have a file-ending
@@ -122,9 +123,9 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
                 dl_file(join(raw_origin, f), dest)
             dl_files.append(dest)
             
-    except urllib3.exceptions.MaxRetryError:
+    except (urllib3.exceptions.MaxRetryError, KeyError):
         # e.g. no internet connection
-        warnings.warn("Non connection, using previuously downloaded files only.")
+        warnings.warn("No connection, using previuously downloaded files only.")
         files = get_data_tree_local(dldir=dldir)
         dl_files = [ f for f in files if f.lower().endswith(ext)]
 
