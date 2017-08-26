@@ -91,7 +91,7 @@ test_script:
   - "pip install coveralls"
   - "coverage run --source=pycorrfit ./setup.py test"
   - "coverage report -m"
-  - "coveralls || exit 0"
+  - "codecov || exit 0"
 
 after_test:
   # If tests are successful, create a whl package for the project.

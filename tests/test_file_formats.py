@@ -67,7 +67,7 @@ def test_alv7004usb():
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
-def tesst_open():
+def test_open():
     """
     Try to open all files supported files
     """
