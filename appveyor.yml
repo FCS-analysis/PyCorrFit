@@ -24,7 +24,7 @@ environment:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\freeze_appveyor\\run_with_compiler.cmd"
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\.appveyor\\run_with_compiler.cmd"
   # https://github.com/appveyor/ci/issues/359
   matrix:
     - PYTHON: "C:\\Miniconda"
@@ -59,8 +59,8 @@ install:
 
   # Install package-specific libraries
   # CONDA installs
-  # Pinned versions are defined in freeze_appveyor\pinned
-  - xcopy freeze_appveyor\pinned %PYTHON%\conda-meta\ /Y
+  # Pinned versions are defined in .appveyor\pinned
+  - xcopy .appveyor\pinned %PYTHON%\conda-meta\ /Y
   - "conda install --yes --quiet numpy pip scipy wxpython"
   # PIP installs
   # Install the build dependencies of the project. 
@@ -88,7 +88,7 @@ build: off
 test_script:
   - 'python -c "import pycorrfit; print pycorrfit.__version__"'
   - "pip install coverage"
-  - "pip install coveralls"
+  - "pip install codecov"
   - "coverage run --source=pycorrfit ./setup.py test"
   - "coverage report -m"
   - "codecov || exit 0"
@@ -99,7 +99,7 @@ after_test:
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "%WITH_COMPILER% pyinstaller -y --log-level=WARN freeze_pyinstaller\\PyCorrFit_win7.spec"
+  - "%WITH_COMPILER% pyinstaller -y --log-level=WARN .appveyor\\PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"
