@@ -20,6 +20,7 @@ import warnings
 try:
     # contains e.g. update and icon, but no vital things.
     import misc
+    import update
 except ImportError:
     print " Some modules are not available."
     print " Update function will not work."
@@ -1676,7 +1677,7 @@ class MyFrame(wx.Frame):
 
 
     def OnUpdate(self, event):
-        misc.Update(self)
+        update.update(self)
 
 
     def OnWiki(self, e=None):
