@@ -28,7 +28,6 @@ def test_asc_all_open():
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
             continue
-        print(f)
         dn, fn = split(f)
         data = pycorrfit.readfiles.openAny(dn, fn)
         assert len(data)
@@ -37,7 +36,6 @@ def test_asc_all_open():
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_asc_alv7004usb():
     """Test alv7004/USB format"""
-    
     f1 = data_file_dl.get_data_file("ALV-7004USB_ac01_cc01_10.ASC")
     data = pycorrfit.readfiles.openAny(f1)
     assert data["Type"] == ["AC1", "AC2", "CC12", "CC21"]
@@ -88,7 +86,6 @@ def test_csv_all_open():
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
             continue
-        print(f)
         dn, fn = split(f)
         data = pycorrfit.readfiles.openAny(dn, fn)
         assert len(data)
@@ -102,7 +99,6 @@ def test_fcs_all_open():
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
             continue
-        print(f)
         dn, fn = split(f)
         data = pycorrfit.readfiles.openAny(dn, fn)
         assert len(data)
@@ -116,10 +112,24 @@ def test_pt3_all_open():
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
             continue
-        print(f)
         dn, fn = split(f)
         data = pycorrfit.readfiles.openAny(dn, fn)
         assert len(data)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_pt3_basic():
+    f1 = data_file_dl.get_data_file("PicoQuant_SymphoTime32_A42F-4jul2014/Point_1.pt3")
+    data = pycorrfit.readfiles.openAny(f1)
+    
+    trace = data["Trace"][0][0]
+    assert trace.shape == (600, 2)
+    assert np.allclose(trace[40], np.array([2037, 6.48]))
+    
+    corr = data["Correlation"][0]
+    assert corr.shape == (150, 2)
+    assert np.allclose(corr[40], np.array([0.000698, 0.58007174877053136]))
+    assert np.allclose(corr[100], np.array([0.72089, 0.019201608388821567]))
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
@@ -130,7 +140,6 @@ def test_sin_all_open():
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
             continue
-        print(f)
         dn, fn = split(f)
         data = pycorrfit.readfiles.openAny(dn, fn)
         assert len(data)
