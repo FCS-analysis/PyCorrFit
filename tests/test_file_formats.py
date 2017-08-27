@@ -21,7 +21,21 @@ NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
-def test_alv7004usb():
+def test_asc_all_open():
+    # get list of supported file extensions
+    ext = "alv"
+    files = data_file_dl.get_data_files_ext(ext)
+    for f in files:
+        if len([ex for ex in exclude if f.endswith(ex) ]):
+            continue
+        print(f)
+        dn, fn = split(f)
+        data = pycorrfit.readfiles.openAny(dn, fn)
+        assert len(data)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_asc_alv7004usb():
     """Test alv7004/USB format"""
     
     f1 = data_file_dl.get_data_file("ALV-7004USB_ac01_cc01_10.ASC")
@@ -67,20 +81,60 @@ def test_alv7004usb():
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
-def test_open():
-    """
-    Try to open all files supported files
-    """
+def test_csv_all_open():
     # get list of supported file extensions
-    for ext in pycorrfit.readfiles.get_supported_extensions():
-        files = data_file_dl.get_data_files_ext(ext)
-        for f in files:
-            if len([ex for ex in exclude if f.endswith(ex) ]):
-                continue
-            print(f)
-            dn, fn = split(f)
-            data = pycorrfit.readfiles.openAny(dn, fn)
-            assert len(data)
+    ext = "csv"
+    files = data_file_dl.get_data_files_ext(ext)
+    for f in files:
+        if len([ex for ex in exclude if f.endswith(ex) ]):
+            continue
+        print(f)
+        dn, fn = split(f)
+        data = pycorrfit.readfiles.openAny(dn, fn)
+        assert len(data)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_fcs_all_open():
+    # get list of supported file extensions
+    ext = "fcs"
+    files = data_file_dl.get_data_files_ext(ext)
+    for f in files:
+        if len([ex for ex in exclude if f.endswith(ex) ]):
+            continue
+        print(f)
+        dn, fn = split(f)
+        data = pycorrfit.readfiles.openAny(dn, fn)
+        assert len(data)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_pt3_all_open():
+    # get list of supported file extensions
+    ext = "pt3"
+    files = data_file_dl.get_data_files_ext(ext)
+    for f in files:
+        if len([ex for ex in exclude if f.endswith(ex) ]):
+            continue
+        print(f)
+        dn, fn = split(f)
+        data = pycorrfit.readfiles.openAny(dn, fn)
+        assert len(data)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_sin_all_open():
+    # get list of supported file extensions
+    ext = "sin"
+    files = data_file_dl.get_data_files_ext(ext)
+    for f in files:
+        if len([ex for ex in exclude if f.endswith(ex) ]):
+            continue
+        print(f)
+        dn, fn = split(f)
+        data = pycorrfit.readfiles.openAny(dn, fn)
+        assert len(data)
+
 
 
 if __name__ == "__main__":
