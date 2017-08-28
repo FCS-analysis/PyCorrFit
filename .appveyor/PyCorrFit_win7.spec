@@ -38,6 +38,7 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
+                 "simplejson",
                  ]
 
 
@@ -75,7 +76,7 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           icon=ICO,
-          console=False)
+          console=True)
 
 coll = COLLECT(exe,
                a.binaries,

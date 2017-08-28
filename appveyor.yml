@@ -42,7 +42,7 @@ install:
   # Install InnoSetup and add to path
   # Copied from
   # https://github.com/Phonations/Joker/blob/master/appveyor.yml
-  - choco install -y InnoSetup
+  - appveyor-retry choco install -y InnoSetup
 
   # Determine platform
   - '%PYTHON%/python -c "import platform; print platform.uname()"'
@@ -64,12 +64,11 @@ install:
   - "conda install --yes --quiet numpy pip scipy wxpython"
   # PIP installs
   # Install the build dependencies of the project. 
-  - "pip install cython"
-  - "pip install wheel"
+  - "pip install cython wheel"
   # Install package-specific libraries  
   - "pip install matplotlib==1.4.3"
-  - "pip install sympy"
-  # We force numpy to 1.8 b/c of wxpython issues and therefore
+  - "pip install simplejson sympy"
+  # We forced numpy to 1.8 b/c of wxpython issues and therefore
   # we have to stick to an old scipy version and thus, to an
   # old lmfit version:
   - "pip install lmfit==0.9.2"
