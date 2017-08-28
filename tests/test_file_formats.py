@@ -23,7 +23,7 @@ NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_asc_all_open():
     # get list of supported file extensions
-    ext = "alv"
+    ext = "asc"
     files = data_file_dl.get_data_files_ext(ext)
     for f in files:
         if len([ex for ex in exclude if f.endswith(ex) ]):
