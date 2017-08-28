@@ -3,13 +3,12 @@
 
 from distutils.version import LooseVersion # For version checking
 import os
-import simplejson
 import tempfile
 import traceback
 import urllib2
 import webbrowser
 
-
+import simplejson
 import wx.html
 import wx.lib.delayedresult as delayedresult
 
