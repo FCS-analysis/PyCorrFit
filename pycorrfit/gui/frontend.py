@@ -9,31 +9,13 @@ functions and modules are called from here.
 from distutils.version import LooseVersion # For version checking
 import os
 import webbrowser
-import wx.lib.agw.flatnotebook as fnb   # Flatnotebook (Tabs)
+import wx.lib.agw.flatnotebook as fnb
 import wx.py.shell
-import numpy as np                      # NumPy
+import numpy as np
 import platform
-import sys                              # System stuff
-import traceback                        # for Error handling
+import sys
+import traceback
 import warnings
-
-try:
-    # contains e.g. update and icon, but no vital things.
-    import misc
-except ImportError:
-    print " Some modules are not available."
-    print " Update function will not work."
-
-# PyCorrFit modules
-from . import doc                          # Documentation/some texts
-from . import edclasses
-
-try:
-    from . import plotting
-except ImportError:
-    warnings.warn("Submodule `pycorrfit.plotting` will not be "+\
-             "available. Reason: {}.".format(sys.exc_info()[1].message))
-
 
 from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
@@ -41,8 +23,14 @@ from pycorrfit import readfiles
 from pycorrfit import meta
 
 
+# PyCorrFit modules
+from . import doc
+from . import edclasses
+from . import misc
 from . import page
+from . import plotting
 from . import tools
+from . import update
 from . import usermodel
 
 
@@ -1676,7 +1664,7 @@ class MyFrame(wx.Frame):
 
 
     def OnUpdate(self, event):
-        misc.Update(self)
+        update.update(self)
 
 
     def OnWiki(self, e=None):

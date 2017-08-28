@@ -7,8 +7,12 @@ https://github.com/dwaithe/FCS_point_correlator
 - import_methods.py
 
 The following changes were performed:
-- fib4.pyx
+- `fib4.pyx`
   A doc string was inserted.
-- correlation_objects.py
+- `correlation_objects.py`
   Line 7 was commented out:
   #from lmfit import minimize, Parameters,report_fit,report_errors, fit_report
+- `correlation_methods.py`
+  Support for NumPy 0.13 was added:
+  - https://github.com/FCS-analysis/PyCorrFit/commit/132991c7a2950c0c380c6df6edf433f61911a6db
+  - https://github.com/dwaithe/FCS_point_correlator/issues/2

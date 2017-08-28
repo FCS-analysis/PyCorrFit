@@ -301,6 +301,7 @@ def openFCS_Single(dirname, filename):
     """
     openfile = open(os.path.join(dirname, filename), 'r')
     Alldata = openfile.readlines()
+    openfile.close()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
     # all the information we want.
@@ -366,8 +367,7 @@ def openFCS_Single(dirname, filename):
     # on mac OSx and potentially affects fitting.
     if corr[0][0] == 0:
         corr = corr[1:]
-    openfile.close()
-    dictionary = dict()
+    dictionary = {}
     dictionary["Correlation"] = [corr]
     dictionary["Trace"] = [newtrace]
     dictionary["Type"] = [""]

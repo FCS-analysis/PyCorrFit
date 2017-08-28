@@ -28,7 +28,6 @@ with warnings.catch_warnings():
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import lmfit
 import numpy
-import os
 import platform
 import scipy
 

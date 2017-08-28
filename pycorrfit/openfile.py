@@ -20,9 +20,8 @@ import warnings
 from .readfiles import Filetypes  # @UnusedImport
 from .readfiles import BGFiletypes  # @UnusedImport
 from .trace import Trace
-from . import meta
 
-__version__ = meta.get_version()
+from ._version import version as __version__
 
 
 def LoadSessionData(sessionfile, parameters_only=False):

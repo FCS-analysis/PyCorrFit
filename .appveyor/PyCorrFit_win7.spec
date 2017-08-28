@@ -18,12 +18,12 @@ with open(mplrc, "w") as fd:
     fd.writelines(data)
 
 
-if not os.path.exists("freeze_pyinstaller"):
+if not os.path.exists(".appveyor"):
     raise Exception("Please go to `PyCorrFit` directory.")
     
 name = "PycorrFit"
 DIR = os.path.realpath(".")
-PyInstDir = os.path.join(DIR, "freeze_pyinstaller")
+PyInstDir = os.path.join(DIR, ".appveyor")
 PCFDIR = os.path.join(DIR, "pycorrfit")
 ProgPy = os.path.join(PCFDIR,"PyCorrFit.py")
 ChLog = os.path.join(DIR,"ChangeLog.txt")
@@ -38,6 +38,7 @@ hiddenimports = ["scipy.io.matlab.streams",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
+                 "simplejson",
                  ]
 
 

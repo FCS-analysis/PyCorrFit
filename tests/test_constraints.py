@@ -19,12 +19,13 @@ import pycorrfit as pcf
 
 NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 
+examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
-    dfile = data_file_dl.get_data_file("019_cp_KIND+BFA.fcs")
+    dfile = data_file_dl.get_data_file(examplefile)
     data = pcf.readfiles.openAny(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
@@ -55,7 +56,7 @@ def test_fit_constraint_simple_inequality():
 def test_fit_constraint_sum_smaller_one():
     """ Check "a+b<c" relation during fitting.
     """
-    dfile = data_file_dl.get_data_file("019_cp_KIND+BFA.fcs")
+    dfile = data_file_dl.get_data_file(examplefile)
     data = pcf.readfiles.openAny(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],

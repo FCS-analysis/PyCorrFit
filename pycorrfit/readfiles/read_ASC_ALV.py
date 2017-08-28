@@ -19,8 +19,8 @@ def openASC(dirname, filename):
     
     # Open special format?
     filetype = Alldata[0].strip() 
-    if filetype in ["ALV-7004/USB"]:
-        return openASC_ALV_7004_USB(path)
+    if filetype.count("ALV-7004"):
+        return openASC_ALV_7004(path)
     else:
         # last resort
         return openASC_old(path)
@@ -336,7 +336,7 @@ def openASC_old(path):
     return dictionary
 
 
-def openASC_ALV_7004_USB(path):
+def openASC_ALV_7004(path):
     """
     Opens ALV file format with header information "ALV-7004/USB" 
     
@@ -381,61 +381,137 @@ def openASC_ALV_7004_USB(path):
     # Find the different arrays
     # correlation array: "  "
     # trace array: "       "
-    Allcorr = list()
-    Alltrac = list()
+    allcorr = []
+    alltrac = []
     i=0
     intrace = False
+    mode = False
     for item in Alldata:
-        if item.lower().strip().strip('"').replace(" ", "") == "countrate":
+        if item.lower().strip().strip('"') == "count rate":
             intrace = True
+            continue
+        elif item.count("Mode"):
+            mode = item.split(":")[1].strip().strip('" ').lower()
         i += 1
         if item.count("\t") == 4: 
             if intrace:
                 it = item.split("\t")
                 it = [ float(t.strip()) for t in it ]
-                Alltrac.append(it)
+                alltrac.append(it)
             else:
                 ic = item.split("\t")
                 ic = [ float(c.strip()) for c in ic ]
-                Allcorr.append(ic)
-    Allcorr = np.array(Allcorr)
-    Alltrac = np.array(Alltrac)
+                allcorr.append(ic)
+    allcorr = np.array(allcorr)
+    alltrac = np.array(alltrac)
+
+    tau = allcorr[:,0]
+    time = alltrac[:,0] * 1000
+    lenc = allcorr.shape[0]
+    lent = alltrac.shape[0]
+
+    # Traces
+    trace1 = np.zeros((lent, 2), dtype=np.float_)
+    trace1[:,0] = time
+    trace1[:,1] = alltrac[:,1]
+    trace2 = trace1.copy()
+    trace2[:,1] = alltrac[:,2]
+    trace3 = trace1.copy()
+    trace3[:,1] = alltrac[:,3]
+    trace4 = trace1.copy()
+    trace4[:,1] = alltrac[:,4]
+
+    # Correlations
+    corr1 = np.zeros((lenc, 2), dtype=np.float_)
+    corr1[:,0] = tau
+    corr1[:,1] = allcorr[:,1]
+    corr2 = corr1.copy()
+    corr2[:,1] = allcorr[:,2]
+    corr3 = corr1.copy()
+    corr3[:,1] = allcorr[:,3]
+    corr4 = corr1.copy()
+    corr4[:,1] = allcorr[:,4]
+
+    typelist = []
+    corrlist = []
+    tracelist = []
+    filelist = []
     
-    # Allcorr: lag time, ac1, ac2, cc12, cc21
-    # Alltrac: time, trace1, trace2, trace1, trace2
-    assert np.allclose(Alltrac[:,1], Alltrac[:,3], rtol=.01), "unknown ALV file format"
-    assert np.allclose(Alltrac[:,2], Alltrac[:,4], rtol=.01), "unknown ALV file format"
+    assert mode, "Could not determine ALV file mode: {}".format(path)
     
-    guesstypelist = ["AC1", "AC2", "CC12", "CC21"]
-    typelist = list()
-    corrlist = list()
-    tracelist = list()
-    filelist = list()
-    
-    lagtime = Allcorr[:,0]
-    time = Alltrac[:,0]*1000
-    trace1 = np.dstack((time, Alltrac[:,1]))[0]
-    trace2 = np.dstack((time, Alltrac[:,2]))[0]
-    
-    for i, typ in enumerate(guesstypelist):
-        corr = np.dstack((lagtime, Allcorr[:,i+1]))[0]
-        
-        if not np.allclose(corr[:,1], np.zeros_like(lagtime)):
-            # type
-            typelist.append(typ)
-            # correlation
-            corrlist.append(corr)
-            # trace
-            if typ.count("CC"):
-                tracelist.append([trace1, trace2])
-            elif typ.count("AC1"):
-                tracelist.append([trace1])
-            elif typ.count("AC2"):
-                tracelist.append([trace2])
-            else:
-                raise ValueError("Unknown ALV file format")
-            # filename
+    # Go through all modes
+    if mode == "a-ch0+1  c-ch0/1+1/0":
+        # For some reason, the traces columns show the values
+        # of channel 1 and 2 in channels 3 and 4.
+        assert np.allclose(trace1, trace3, rtol=.01)
+        assert np.allclose(trace2, trace4, rtol=.01)
+        if not np.allclose(corr1[:,1], 0):
+            corrlist.append(corr1)
             filelist.append(filename)
+            tracelist.append(trace1)
+            typelist.append("AC1")
+        if not np.allclose(corr2[:,1], 0):
+            corrlist.append(corr2)
+            filelist.append(filename)
+            tracelist.append(trace2)
+            typelist.append("AC2")
+        if not np.allclose(corr3[:,1], 0):
+            corrlist.append(corr3)
+            filelist.append(filename)
+            tracelist.append([trace1, trace2])
+            typelist.append("CC12")
+        if not np.allclose(corr4[:,1], 0):
+            corrlist.append(corr4)
+            filelist.append(filename)
+            tracelist.append([trace1, trace2])
+            typelist.append("CC21")
+    elif mode in ["a-ch0", "a-ch0 a-"]:
+        assert np.allclose(trace2[:,1], 0)
+        assert np.allclose(trace3[:,1], 0)
+        assert np.allclose(trace4[:,1], 0)
+        assert np.allclose(corr2[:,1], 0)
+        assert np.allclose(corr3[:,1], 0)
+        assert np.allclose(corr4[:,1], 0)
+        corrlist.append(corr1)
+        filelist.append(filename)
+        tracelist.append(trace1)
+        typelist.append("AC")
+    elif mode in ["a-ch1", "a-ch1 a-"]:
+        assert np.allclose(trace1[:,1], 0)
+        assert np.allclose(trace3[:,1], 0)
+        assert np.allclose(trace4[:,1], 0)
+        assert np.allclose(corr1[:,1], 0)
+        assert np.allclose(corr3[:,1], 0)
+        assert np.allclose(corr4[:,1], 0)
+        corrlist.append(corr2)
+        filelist.append(filename)
+        tracelist.append(trace2)
+        typelist.append("AC")
+    elif mode in ["a-ch2", "a- a-ch2"]:
+        assert np.allclose(trace1[:,1], 0)
+        assert np.allclose(trace2[:,1], 0)
+        assert np.allclose(trace4[:,1], 0)
+        assert np.allclose(corr1[:,1], 0)
+        assert np.allclose(corr2[:,1], 0)
+        assert np.allclose(corr4[:,1], 0)
+        corrlist.append(corr3)
+        filelist.append(filename)
+        tracelist.append(trace3)
+        typelist.append("AC")
+    elif mode in ["a-ch3", "a- a-ch3"]:
+        assert np.allclose(trace1[:,1], 0)
+        assert np.allclose(trace2[:,1], 0)
+        assert np.allclose(trace3[:,1], 0)
+        assert np.allclose(corr1[:,1], 0)
+        assert np.allclose(corr2[:,1], 0)
+        assert np.allclose(corr3[:,1], 0)
+        corrlist.append(corr4)
+        filelist.append(filename)
+        tracelist.append(trace4)
+        typelist.append("AC")
+    else:
+        msg = "ALV mode '{}' not implemented yet.".format(mode)
+        raise NotImplementedError(msg)
 
     dictionary = dict()
     dictionary["Correlation"] = corrlist

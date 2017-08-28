@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
-pip install coverage coveralls
+pip install coverage codecov
 coverage run --source=pycorrfit ./setup.py test
 coverage report -m
-# allow coveralls to fail
-coveralls || exit 0
+# allow codecov to fail
+codecov || exit 0
 
