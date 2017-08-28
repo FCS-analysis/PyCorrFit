@@ -106,7 +106,11 @@ setup(
         # If you need the GUI of this project in your project, add
         # "thisproject[GUI]" to your install_requires
         # Graphical User Interface
-        'GUI':  ["wxPython", "matplotlib >= 1.1.0", "sympy >= 0.7.2"],
+        'GUI':  ["wxPython",
+                 "matplotlib >= 1.1.0",
+                 "sympy >= 0.7.2",
+                 "simplejson", # for updates
+                 ],
         },
     install_requires=[
         "NumPy >= 1.5.1",

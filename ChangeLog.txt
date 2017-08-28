@@ -1,6 +1,10 @@
 1.0.1
 - Improved support for ALV ".ASC" file format (#169)
 - NumPy 0.13 support for ".ptu" file reader
+- Code cleanup:
+  - Fetch latest available version from GitHub releases
+  - New dependency for "simplejson" Python package
+  - Move appveyor recipe to separate folder 
 1.0.0
 - New confocal fitting models T+T+2D and T+T+3D
 - Fix regression: .sin files could not be opened (#167)
