@@ -8,11 +8,10 @@
 #  pip install wheel twine
 #  python setup.py bdist wheel
 from __future__ import print_function
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 import sys
 
 from os.path import join, dirname, realpath, exists
-from warnings import warn
 
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
@@ -87,18 +86,8 @@ setup(
     url='https://github.com/FCS-analysis/PyCorrFit',
     version=version,
     # data files
-    packages=['pycorrfit',
-              'pycorrfit.models',
-              'pycorrfit.readfiles',
-              'pycorrfit.gui',
-              'pycorrfit.gui.tools',
-              ],
-    package_dir={'pycorrfit': 'pycorrfit',
-                 'pycorrfit.models': 'pycorrfit/models',
-                 'pycorrfit.readfiles': 'pycorrfit/readfiles',
-                 'pycorrfit.gui': 'pycorrfit/gui',
-                 'pycorrfit.gui.tools': 'pycorrfit/gui/tools',
-                 },
+    packages=find_packages(include=(name+"*",)),
+    package_dir={name: name},
     # cython
     ext_modules = extensions,
     # requirements
@@ -106,18 +95,17 @@ setup(
         # If you need the GUI of this project in your project, add
         # "thisproject[GUI]" to your install_requires
         # Graphical User Interface
-        'GUI':  ["wxPython",
-                 "matplotlib >= 1.1.0",
-                 "sympy >= 0.7.2",
+        'GUI':  ["matplotlib >= 1.1.0",
                  "simplejson", # for updates
+                 "sympy >= 0.7.2",
+                 "wxPython",
                  ],
         },
-    install_requires=[
-        "NumPy >= 1.5.1",
-        "SciPy >= 0.8.0",
-        "PyYAML >= 3.09",
-        "lmfit >= 0.9.2",
-        ],
+    install_requires=["lmfit >= 0.9.2",
+                      "NumPy >= 1.5.1",
+                      "PyYAML >= 3.09",
+                      "SciPy >= 0.8.0",
+                      ],
     setup_requires=["Cython", 'pytest-runner', 'NumPy'],
     tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
