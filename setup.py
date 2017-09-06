@@ -110,7 +110,7 @@ setup(
     tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
     entry_points={
-       "gui_scripts": ["{name:s}={name:s}:Main".format(
-                                                       **{"name":name})]
+       "gui_scripts": ["{name:s}={name:s}.gui.main:Main".format(
+                       **{"name":name})]
        }
     )
