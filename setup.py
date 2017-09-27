@@ -66,7 +66,7 @@ except:
 setup(
     
     author=author,
-    author_email='paul.mueller@biotec.tu-dresden.de',
+    author_email='dev@craban.de',
     classifiers= [
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
