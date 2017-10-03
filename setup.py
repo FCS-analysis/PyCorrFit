@@ -67,19 +67,10 @@ setup(
     
     author=author,
     author_email='dev@craban.de',
-    classifiers= [
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Topic :: Scientific/Engineering :: Visualization',
-        'Intended Audience :: Science/Research'
-        ],
     data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
     long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,
-    keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
-              "tir", "fitting"
-              ],
     license="GPL v2",
     name=name,
     platforms=['ALL'],
@@ -112,5 +103,13 @@ setup(
     entry_points={
        "gui_scripts": ["{name:s}={name:s}.gui.main:Main".format(
                        **{"name":name})]
-       }
+       },
+    keywords=["fluorescence correlation spectroscopy",
+              ],
+    classifiers= [
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Intended Audience :: Science/Research'
+        ],
     )
