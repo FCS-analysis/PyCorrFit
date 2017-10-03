@@ -7,6 +7,10 @@ import csv
 import numpy as np
 
 
+class OpenSINError(BaseException):
+    pass
+
+
 def openSIN(dirname, filename):
     """Parse .sin files (correlator.com)"""
     path = os.path.join(dirname, filename)
@@ -52,7 +56,9 @@ def openSIN_integer_mode(path):
         if line.lower().startswith("mode"):
             mode = line.split("=")[1].strip().split()
             mode = [ int(m) for m in mode ]
-            assert len(mode) % 2 == 0, "mode must be multiples of two"
+            if len(mode) % 2 != 0:
+                msg = "mode must be multiples of two: {}".format(path)
+                raise OpenSINError(msg)
     
     # build up the lists
     corr_func = []

@@ -109,8 +109,10 @@ class Correlation(object):
         Channel must be 0 or 1.
         background must be instance of `Trace`
         """
-        assert channel in [0, 1]
-        assert isinstance(background, Trace)
+        if channel not in [0, 1]:
+            raise ValueError("`channel` must be '0' or '1'!")
+        if not isinstance(background, Trace):
+            raise ValueError("`background` must be instance of `Trace`")
         
         if self.is_ac:
             if channel == 1:
@@ -139,7 +141,8 @@ class Correlation(object):
         backgrounds = []
         if not isinstance(value, list):
             value = [value]
-        assert len(value) in [0,1,2], "Backgrounds must be list with up to two elements."
+        if len(value) > 2:
+            raise ValueError("Backgrounds length must not exceed 2.")
         for v in value:
             if isinstance(v, np.ndarray):
                 backgrounds.append(Trace(trace=v))
@@ -282,7 +285,8 @@ class Correlation(object):
     def fit_algorithm(self, value):
         # TODO:
         # - allow lower-case fitting algorithm
-        assert value in list(fit.Algorithms.keys()), "Invalid fit algorithm: "+value
+        if value not in list(fit.Algorithms.keys()):
+            raise ValueError("Invalid fit algorithm: {}".format(value))
         self._fit_algorithm = value
 
     @property
@@ -388,8 +392,12 @@ class Correlation(object):
     @fit_parameters_range.setter
     def fit_parameters_range(self, value):
         value = np.array(value)
-        assert value.shape[1] == 2
-        assert value.shape[0] == self.fit_parameters.shape[0]
+        expect_shape = (self.fit_parameters.shape[0], 2)
+        if value.shape != expect_shape:
+            msg = "Expected shape of fit parameters: {} (vs {})".format(
+                                        expect_shape, value.shape
+                                        )
+            raise ValueError(msg)
         self._fit_parameters_range = value
 
     @property
@@ -402,7 +410,11 @@ class Correlation(object):
     @fit_parameters_variable.setter
     def fit_parameters_variable(self, value):
         value = np.array(value, dtype=bool)
-        assert value.shape[0] == self.fit_parameters.shape[0]
+        expect_size = self.fit_parameters.shape[0]
+        if value.shape[0] != expect_size:
+            msg = "Fit parameter variables must have size {}!".format(
+                                                            expect_size)
+            raise ValueError(msg)
         self._fit_parameters_variable = value
 
     @property
@@ -517,7 +529,8 @@ class Correlation(object):
         traces = []
         if not isinstance(value, list):
             value = [value]
-        assert len(value) in [0,1,2], "Traces must be list with up to two elements."
+        if len(value) > 2:
+            raise ValueError("Traces length must not exceed 2.")
         for v in value:
             if isinstance(v, np.ndarray):
                 traces.append(Trace(trace=v))

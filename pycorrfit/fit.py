@@ -89,7 +89,8 @@ class Constraint(object):
         p1, p2 = self.parameters
         op = self.operator
         os = self.offset
-        assert op in ["<", ">"], "Constraint operator not supported"
+        if op not in ["<", ">"]:
+            raise ValueError("Unsupported operator: {}".format(op))
         
         
         if p1["bool"] and p2["bool"]:
@@ -151,7 +152,8 @@ class Constraint(object):
         p1, p2 = self.parameters
         op = self.operator
         ofs = self.offset
-        assert op in ["<", ">"], "Constraint operator not supported"
+        if op not in ["<", ">"]:
+            raise ValueError("Unsupported operator: {}".format(op))
         
         
         if p1["bool"] and p2["bool"]:
@@ -235,7 +237,8 @@ class Fit(object):
         uselatex: bool
             If verbose > 0, plotting will be performed with LaTeX.
         """
-        assert len(global_fit_variables)==0, "not implemented"
+        if len(global_fit_variables) != 0:
+            raise NotImplementedError("`global_fit_variables` not available!")
         
         if not isinstance(correlations, list):
             correlations = [correlations]
@@ -659,7 +662,9 @@ class Fit(object):
             # This means that the user knows the dataweights and already
             # gave it to us.
             weights = weight_data
-            assert weights is not None, "User defined weights not given: "+weight_type
+            if weights is None:
+                msg = "User defined weights not given: {}".format(weight_type)
+                raise ValueError(msg)
             
             # Check if these other weights have length of the cropped
             # or the full array.
@@ -810,7 +815,8 @@ class Fit(object):
         """ This will run the minimization process
       
         """
-        assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
+        if np.sum(self.fit_bool) == 0:
+            raise ValueError("No parameter selected for fitting!")
         
         # get all parameters for minimization
         params = self.get_lmfitparm()
