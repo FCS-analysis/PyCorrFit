@@ -61,7 +61,7 @@ install:
   # CONDA installs
   # Pinned versions are defined in .appveyor\pinned
   - xcopy .appveyor\pinned %PYTHON%\conda-meta\ /Y
-  - "conda install --yes --quiet numpy pip scipy wxpython"
+  - "appveyor-retry conda install --yes --quiet numpy pip scipy wxpython"
   # PIP installs
   # Install the build dependencies of the project. 
   - "pip install cython wheel"

@@ -75,3 +75,7 @@ nosetests.xml
 
 # test data
 tests/data
+
+.cache
+.eggs
+.env

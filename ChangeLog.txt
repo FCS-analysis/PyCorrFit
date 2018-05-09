@@ -1,8 +1,7 @@
-py3 dev:
-- Python:
-  - adapted the code to python 3 use.
+2.0.0
+- BREAKING CHANGE: Move to Python3
 - GUI:
-  - mice don't change the parameter box automaticly
+  - mice don't change the parameter box automatically
   - close the tools after use
   - add shortcuts:
     - Load data:        Ctrl + O
@@ -14,7 +13,8 @@ py3 dev:
     - Trace view:       Alt + V
     - Statistics view:  Alt + S
     - Fit curr. page:   Alt + F
-
+- Fix entry point for GUI (#172)
+- Refactor several asserts into raises
 1.0.1
 - Improved support for ALV ".ASC" file format (#169)
 - NumPy 0.13 support for ".ptu" file reader

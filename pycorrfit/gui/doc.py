@@ -4,41 +4,18 @@ PyCorrFit
 
 Documentation and program specific information
 """
-
-
+import platform
 import sys
 
-# This is a fake class for modules not available.
-class Fake(object):
-    def __init__(self):
-        self.__version__ = "N/A"
-        self.version = "N/A"
-        self.use = lambda x: None
-try:
-    import matplotlib
-except:
-    # Create fake opbject for matplotlib
-    matplotlib = Fake()
-
-# We do catch warnings about performing this before matplotlib.backends stuff
-#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
-import warnings
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+import matplotlib
 import lmfit
 import numpy
-import platform
 import scipy
-
-try:
-    import sympy
-except ImportError:
-    print(" Warning: module sympy not found!")
-    sympy = Fake()
-
+import simplejson
+import sympy
 import wx
 import yaml
+
 
 import pycorrfit
 from pycorrfit import readfiles, meta
@@ -125,6 +102,7 @@ def SoftwareUsed():
            "\n - NumPy "+numpy.__version__+\
            "\n - PyYAML "+yaml.__version__ +\
            "\n - SciPy "+scipy.__version__+\
+           "\n - simplejson "+simplejson.__version__+\
            "\n - sympy "+sympy.__version__ +\
            "\n - wxPython "+wx.__version__
     # Other software

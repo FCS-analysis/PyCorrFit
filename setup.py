@@ -7,11 +7,9 @@
 # To create wheels package and upload securely
 #  pip install wheel twine
 #  python setup.py bdist wheel
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 import sys
-from Cython.Build import cythonize
 from os.path import join, dirname, realpath, exists
-from warnings import warn
 
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
@@ -64,63 +62,52 @@ except:
     version = "unknown"
 
 setup(
-
     author=author,
-    author_email='paul.mueller@biotec.tu-dresden.de',
-    classifiers= [
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.6',
-        'Topic :: Scientific/Engineering :: Visualization',
-        'Intended Audience :: Science/Research'
-        ],
+    author_email='dev@craban.de',
     data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
     long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,
-    keywords=["fcs", "fluorescence", "correlation", "spectroscopy",
-              "tir", "fitting"
-              ],
     license="GPL v2",
     name=name,
     platforms=['ALL'],
     url='https://github.com/FCS-analysis/PyCorrFit',
     version=version,
     # data files
-    packages=['pycorrfit',
-              'pycorrfit.models',
-              'pycorrfit.readfiles',
-              'pycorrfit.gui',
-              'pycorrfit.gui.tools',
-              ],
-    package_dir={'pycorrfit': 'pycorrfit',
-                 'pycorrfit.models': 'pycorrfit/models',
-                 'pycorrfit.readfiles': 'pycorrfit/readfiles',
-                 'pycorrfit.gui': 'pycorrfit/gui',
-                 'pycorrfit.gui.tools': 'pycorrfit/gui/tools',
-                 },
+    packages=find_packages(include=(name+"*",)),
+    package_dir={name: name},
     # cython
     ext_modules = extensions,
     # requirements
-    extras_require = {
-        # If you need the GUI of this project in your project, add
-        # "thisproject[GUI]" to your install_requires
-        # Graphical User Interface
-        'GUI':  ["wxPython",
-                 "matplotlib >= 2.2.2",
-                 "sympy >= 1.1.1",
-                 "simplejson", # for updates
-                 ],
-        },
     install_requires=[
-        "NumPy >= 1.14.2",
-        "SciPy >= 1.0.1",
-        "PyYAML >= 3.12",
         "lmfit >= 0.9.2",
+        "numpy >= 1.14.2",
+        "pyyaml >= 3.12",
+        "scipy >= 1.0.1",
         ],
+    extras_require = {
+    # If you need the GUI of this project in your project, add
+    # "thisproject[GUI]" to your install_requires
+    # Graphical User Interface
+    'GUI':  ["matplotlib >= 2.2.2",
+             "sympy >= 1.1.1",
+             "simplejson",  # for updates
+             "wxPython >= 4.0.1",
+             ],
+    },
     setup_requires=["Cython", 'pytest-runner', 'NumPy'],
     tests_require=["pytest", "urllib3", "simplejson"],
+    python_requires='>=3.6, <4',
     # scripts
     entry_points={
        "gui_scripts": ["pycorrfit=pycorrfit.gui.main:Main"]
-       }
+       },
+    keywords=["fluorescence correlation spectroscopy",
+              ],
+    classifiers= [
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Intended Audience :: Science/Research'
+        ],
     )

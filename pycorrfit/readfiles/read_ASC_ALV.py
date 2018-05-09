@@ -8,6 +8,10 @@ import csv
 import numpy as np
 
 
+class LoadALVError(BaseException):
+    pass
+
+
 def openASC(dirname, filename):
     """
     Read data from a ALV .ASC files.
@@ -435,15 +439,15 @@ def openASC_ALV_7004(path):
     corrlist = []
     tracelist = []
     filelist = []
-
-    assert mode, "Could not determine ALV file mode: {}".format(path)
-
+    if mode == False:
+        raise LoadALVError("Undetermined ALV file mode: {}".format(path))
     # Go through all modes
     if mode == "a-ch0+1  c-ch0/1+1/0":
         # For some reason, the traces columns show the values
         # of channel 1 and 2 in channels 3 and 4.
-        assert np.allclose(trace1, trace3, rtol=.01)
-        assert np.allclose(trace2, trace4, rtol=.01)
+        if not (np.allclose(trace1, trace3, rtol=.01) and
+                np.allclose(trace2, trace4, rtol=.01)):
+            raise LoadALVError("Unexpected data format: {}".format(path))
         if not np.allclose(corr1[:,1], 0):
             corrlist.append(corr1)
             filelist.append(filename)
@@ -465,45 +469,49 @@ def openASC_ALV_7004(path):
             tracelist.append([trace1, trace2])
             typelist.append("CC21")
     elif mode in ["a-ch0", "a-ch0 a-"]:
-        assert np.allclose(trace2[:,1], 0)
-        assert np.allclose(trace3[:,1], 0)
-        assert np.allclose(trace4[:,1], 0)
-        assert np.allclose(corr2[:,1], 0)
-        assert np.allclose(corr3[:,1], 0)
-        assert np.allclose(corr4[:,1], 0)
+        if not (np.allclose(trace2[:,1], 0) and
+                np.allclose(trace3[:,1], 0) and
+                np.allclose(trace4[:,1], 0) and
+                np.allclose(corr2[:,1], 0) and
+                np.allclose(corr3[:,1], 0) and
+                np.allclose(corr4[:,1], 0)):
+            raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr1)
         filelist.append(filename)
         tracelist.append(trace1)
         typelist.append("AC")
     elif mode in ["a-ch1", "a-ch1 a-"]:
-        assert np.allclose(trace1[:,1], 0)
-        assert np.allclose(trace3[:,1], 0)
-        assert np.allclose(trace4[:,1], 0)
-        assert np.allclose(corr1[:,1], 0)
-        assert np.allclose(corr3[:,1], 0)
-        assert np.allclose(corr4[:,1], 0)
+        if not (np.allclose(trace1[:,1], 0) and
+                np.allclose(trace3[:,1], 0) and
+                np.allclose(trace4[:,1], 0) and
+                np.allclose(corr1[:,1], 0) and
+                np.allclose(corr3[:,1], 0) and
+                np.allclose(corr4[:,1], 0)):
+            raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr2)
         filelist.append(filename)
         tracelist.append(trace2)
         typelist.append("AC")
     elif mode in ["a-ch2", "a- a-ch2"]:
-        assert np.allclose(trace1[:,1], 0)
-        assert np.allclose(trace2[:,1], 0)
-        assert np.allclose(trace4[:,1], 0)
-        assert np.allclose(corr1[:,1], 0)
-        assert np.allclose(corr2[:,1], 0)
-        assert np.allclose(corr4[:,1], 0)
+        if not (np.allclose(trace1[:,1], 0) and
+                np.allclose(trace2[:,1], 0) and
+                np.allclose(trace4[:,1], 0) and
+                np.allclose(corr1[:,1], 0) and
+                np.allclose(corr2[:,1], 0) and
+                np.allclose(corr4[:,1], 0)):
+            raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr3)
         filelist.append(filename)
         tracelist.append(trace3)
         typelist.append("AC")
     elif mode in ["a-ch3", "a- a-ch3"]:
-        assert np.allclose(trace1[:,1], 0)
-        assert np.allclose(trace2[:,1], 0)
-        assert np.allclose(trace3[:,1], 0)
-        assert np.allclose(corr1[:,1], 0)
-        assert np.allclose(corr2[:,1], 0)
-        assert np.allclose(corr3[:,1], 0)
+        if not (np.allclose(trace1[:,1], 0) and
+                np.allclose(trace2[:,1], 0) and
+                np.allclose(trace3[:,1], 0) and
+                np.allclose(corr1[:,1], 0) and
+                np.allclose(corr2[:,1], 0) and
+                np.allclose(corr3[:,1], 0)):
+            raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr4)
         filelist.append(filename)
         tracelist.append(trace4)
