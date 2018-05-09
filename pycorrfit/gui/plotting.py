@@ -8,7 +8,7 @@ Be sure to install texlive-science and texlive-math-extra
 """
 
 
-import wx # b/c of pyinstaller
+import wx  # b/c of pyinstaller
 import codecs
 import numpy as np
 import matplotlib
@@ -16,7 +16,7 @@ import matplotlib
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
+    matplotlib.use('WXAgg')  # Tells matplotlib to use WxWidgets for dialogs
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 # Text rendering with matplotlib
@@ -46,15 +46,15 @@ def greek2tex(char):
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
     #string = codecs.decode(string, "UTF-8")
-    escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"] 
-    retstr = ur""
+    escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"]
+    retstr = r""
     for char in string:
         if char in escapechars:
             retstr += "\\"
             retstr += char
         elif char == "^":
             # Make a hat in latex without $$?
-            retstr += "$\widehat{~}$"
+            retstr += r"$\widehat{~}$"
         else:
             retstr += char
     return retstr
@@ -69,35 +69,35 @@ def latexmath(string):
         return r"\mathrm{SP}"
     #string = codecs.decode(string, "UTF-8")
     unicodechars = dict()
-    #unicodechars[codecs.decode("τ", "UTF-8")] = r"\tau"
-    #unicodechars[codecs.decode("µ", "UTF-8")] = r"\mu"
-    unicodechars[codecs.decode("²", "UTF-8")] = r"^2"
-    unicodechars[codecs.decode("³", "UTF-8")] = r"^3"
-    unicodechars[codecs.decode("₁", "UTF-8")] = r"_1"
-    unicodechars[codecs.decode("₂", "UTF-8")] = r"_2"
-    unicodechars[codecs.decode("₀", "UTF-8")] = r"_0"
-    #unicodechars[codecs.decode("α", "UTF-8")] = r"\alpha"
+    #unicodechars["τ"] = r"\tau"
+    #unicodechars["µ"] = r"\mu"
+    unicodechars["²"] = r"^2"
+    unicodechars["³"] = r"^3"
+    unicodechars["₁"] = r"_1"
+    unicodechars["₂"] = r"_2"
+    unicodechars["₀"] = r"_0"
+    #unicodechars["α"] = r"\alpha"
     # We need lambda in here, because unicode names it lamda sometimes.
-    unicodechars[codecs.decode("λ", "UTF-8")] = r"\lambda"
-    #unicodechars[codecs.decode("η", "UTF-8")] = r'\eta'
+    unicodechars["λ"] = r"\lambda"
+    #unicodechars["η"] = r'\eta'
     unitchars = dict()
-    unitchars[codecs.decode("µ", "UTF-8")] = r"\micro "
+    unitchars["µ"] = r"\micro "
     items = string.split(" ", 1)
     a = items[0]
     if len(items) > 1:
         b = items[1]
         if b.count(u"µ"):
             # Use siunitx with the upright µ
-            bnew = ur"[\SI{}{"
+            bnew = r"[\SI{}{"
             for char in b.strip("[]"):
                 if char in unitchars.keys():
                     bnew += unitchars[char]
                 else:
                     bnew += char
-            b = bnew+ur"}]"
+            b = bnew+r"}]"
     else:
         b = ""
-    anew = ur""
+    anew = r""
     for char in a:
         if char in unicodechars.keys():
             anew += unicodechars[char]
@@ -114,7 +114,7 @@ def latexmath(string):
 
 def savePlotCorrelation(parent, dirname, Page, uselatex=False,
                         verbose=False, show_weights=True):
-    """ Save plot from Page into file        
+    """ Save plot from Page into file
         Parameters:
         *parent*    the parent window
         *dirname*   directory to set on saving
@@ -139,7 +139,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     tabtitle = Page.tabtitle.GetValue()
     #fitlabel = ur"Fit model: "+str(mdls.modeldict[Page.modelid][0])
     fitlabel = Page.corr.fit_model.name
-    labelweights = ur"Weights of fit"
+    labelweights = r"Weights of fit"
     labels, parms = mdls.GetHumanReadableParms(Page.modelid,
                                                corr.fit_parameters)
     if dataexp is None:
@@ -151,7 +151,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         if tabtitle.strip() == "":
             tabtitle = "page"+str(Page.counter).strip().strip(":")
     if Page.corr.normparm is not None:
-        fitlabel += ur", normalized to "+Page.corr.fit_model.parameters[0][Page.corr.normparm]
+        fitlabel += r", normalized to "+Page.corr.fit_model.parameters[0][Page.corr.normparm]
 
     ## Check if we can use latex for plotting:
     r1 = find_program("latex")[0]
@@ -163,16 +163,16 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     if r1+r2+r3 < 3:
         uselatex = False
     if uselatex == True:
-        rcParams['text.usetex']=True
-        rcParams['text.latex.unicode']=True
-        rcParams['font.family']='serif'
+        rcParams['text.usetex'] = True
+        rcParams['text.latex.unicode'] = True
+        rcParams['font.family'] = 'serif'
         rcParams['text.latex.preamble']=[r"""\usepackage{amsmath}
                                             \usepackage[utf8x]{inputenc}
                                             \usepackage{amssymb}
-                                            \usepackage{siunitx}"""] 
-        fitlabel = ur"{\normalsize "+escapechars(fitlabel)+r"}"
-        tabtitle = ur"{\normalsize "+escapechars(tabtitle)+r"}"
-        labelweights = ur"{\normalsize "+escapechars(labelweights)+r"}"
+                                            \usepackage{siunitx}"""]
+        fitlabel = r"{\normalsize "+escapechars(fitlabel)+r"}"
+        tabtitle = r"{\normalsize "+escapechars(tabtitle)+r"}"
+        labelweights = r"{\normalsize "+escapechars(labelweights)+r"}"
     else:
         rcParams['text.usetex']=False
     # create plot
@@ -195,8 +195,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         plt.plot(dataexp[:,0], dataexp[:,1], '-', color="black",
                  alpha=.7, label=tabtitle, lw=1)
     else:
-        plt.xlabel(ur'lag time $\tau$ [ms]')
-    
+        plt.xlabel(r'lag time $\tau$ [ms]')
+
     if weights is not None and show_weights is True:
         plt.fill_between(weights[0][:,0],weights[0][:,1],weights[1][:,1],
                          color='cyan')
@@ -224,7 +224,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r'\begin{split}' # ...but they are all concatenated
         #                          by the interpreter :-)
         for i in np.arange(len(parms)):
-            text += ur' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
+            text += r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
@@ -234,7 +234,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r' \end{split} '
         text += r' \] '
     else:
-        text = ur""
+        text = r""
         for i in np.arange(len(parms)):
             text += u"{} = {:.3g}\n".format(labels[i], parms[i])
         ## According to issue #54, we remove fitting errors from plots
@@ -285,24 +285,24 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     fig.canvas.HACK_fig = fig
     fig.canvas.HACK_Page = Page
     fig.canvas.HACK_append = ".png"
-    
+
 
     # Legend outside of plot
     # Decrease size of plot to fit legend
     box = ax.get_position()
-    
+
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
-    
+
     if resid is not None:
         box2 = ax2.get_position()
         ax2.set_position([box2.x0, box2.y0 + box.height * 0.2,
                      box2.width, box2.height])
-    
+
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.55),
               prop={'size':9})
-    
-    
+
+
     if verbose == True:
         plt.show()
     else:
@@ -320,7 +320,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
 
 
 def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
-    """ Save trace plot from Page into file        
+    """ Save trace plot from Page into file
         Parameters:
         *parent*    the parent window
         *dirname*   directory to set on saving
@@ -343,7 +343,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
     # Intensity trace in kHz may stay the same
     if len(Page.corr.traces) == 0:
         return
-    
+
     traces = Page.corr.traces
     labels = list()
     for ii, tr in enumerate(traces):
@@ -362,9 +362,9 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         rcParams['text.usetex']=True
         rcParams['text.latex.unicode']=True
         rcParams['font.family']='serif'
-        rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"] 
+        rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
         for i in np.arange(len(labels)):
-            labels[i] = ur"{\normalsize "+escapechars(labels[i])+r"}"
+            labels[i] = r"{\normalsize "+escapechars(labels[i])+r"}"
     else:
         rcParams['text.usetex']=False
     # create plot
@@ -378,7 +378,7 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
         # Columns
         time = traces[i][:,0]*timefactor
         intensity = traces[i][:,1]
-        plt.plot(time, intensity, '-', 
+        plt.plot(time, intensity, '-',
                  label = labels[i],
                  lw=1)
     # set plot boundaries
@@ -391,17 +391,17 @@ def savePlotTrace(parent, dirname, Page, uselatex=False, verbose=False):
 
     plt.ylabel('count rate [kHz]')
     plt.xlabel('time [s]')
-    
+
     # Legend outside of plot
     # Decrease size of plot to fit legend
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height * 0.2,
                      box.width, box.height * 0.9])
-    plt.legend(loc='upper center', 
+    plt.legend(loc='upper center',
                bbox_to_anchor=(0.5, -0.35),
                prop={'size':9},
                )
-    
+
     ## Hack
     # We need this for hacking. See edclasses.
     fig.canvas.HACK_parent = parent

@@ -28,9 +28,9 @@ def parseString2Pagenum(parent, string, nodialog=False):
         for item in listFull:
             pagerange = item.split("-")
             start = pagerange[0].strip()
-            start = int(filter(type(start).isdigit, start))
+            start = int("".join(filter(type(start).isdigit, start)))
             end = pagerange[-1].strip()
-            end = int(filter(type(end).isdigit, end))
+            end = int("".join(filter(type(end).isdigit, end)))
             for i in np.arange(end-start+1)+start:
                 PageNumbers.append(i)
         PageNumbers.sort()
@@ -39,16 +39,16 @@ def parseString2Pagenum(parent, string, nodialog=False):
         if nodialog is False:
             errstring = "Invalid syntax in page selection: "+string+\
                         ". Please use a comma separated list with"+\
-                        " optional dashes, e.g. '1-3,6,8'." 
+                        " optional dashes, e.g. '1-3,6,8'."
             try:
-                wx.MessageDialog(parent, errstring, "Error", 
+                wx.MessageDialog(parent, errstring, "Error",
                                   style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             except:
                 raise ValueError(errstring)
         else:
             raise ValueError(errstring)
         return None
-        
+
 
 def parsePagenum2String(pagenumlist):
     """ Make a string with dashes and commas from a list of pagenumbers.
@@ -104,16 +104,16 @@ def removewrongUTF8(name):
         else:
             newname += char
     return newname
-    
+
 
 def getMainIcon(pxlength=32):
     """ *pxlength* is the side length in pixels of the icon """
     # Set window icon
     iconBMP = icon.getMainBitmap()
     # scale
-    image = wx.ImageFromBitmap(iconBMP)
+    image = wx.Bitmap.ConvertToImage(iconBMP)
     image = image.Scale(pxlength, pxlength, wx.IMAGE_QUALITY_HIGH)
-    iconBMP = wx.BitmapFromImage(image)
-    iconICO = wx.IconFromBitmap(iconBMP)
+    iconBMP = wx.Bitmap(image)
+    iconICO = wx.Icon(iconBMP)  # wx.Bitmap.ConvertToImage(iconBMP)
     return iconICO
 

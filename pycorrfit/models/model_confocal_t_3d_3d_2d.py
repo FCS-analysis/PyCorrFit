@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
 
 import numpy as np
 
@@ -118,7 +117,7 @@ parms = [   25,      # n
             0.001,   # tautrip
             0.01,    # T
             0.0      # offset
-            ] 
+            ]
 
 ## Boundaries
 # strictly positive
@@ -143,10 +142,10 @@ model_setup(
                             u"τ"+u"\u2082"+" [ms]",
                             u"τ"+u"\u2083"+" [ms]",
                             u"F"+u"\u2081",
-                            u"F"+u"\u2082", 
+                            u"F"+u"\u2082",
                             u"SP",
                             u"\u03b1\u2082\u2081",
-                            u"\u03b1\u2083\u2081", 
+                            u"\u03b1\u2083\u2081",
                             u"τ_trip [ms]",
                             u"T",
                             u"offset"
@@ -156,14 +155,14 @@ model_setup(
                        False, True, False, False,
                        False, False, True, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [3, ">", 2], [9, "<", 1], [5, 4, "<", "1"]],
+             par_constraints=[[2, ">", 1], [3, ">", 2], [9, "<", 1]],  # , [5, 4, "<", "1"]],
              par_hr_labels=[
                             u"n",
                             u"τ"+u"\u2081"+" [ms]",
                             u"τ"+u"\u2082"+" [ms]",
                             u"τ"+u"\u2083"+" [ms]",
                             u"F"+u"\u2081",
-                            u"F"+u"\u2082", 
+                            u"F"+u"\u2082",
                             u"SP",
                             u"\u03b1\u2082\u2081",
                             u"\u03b1\u2083\u2081",

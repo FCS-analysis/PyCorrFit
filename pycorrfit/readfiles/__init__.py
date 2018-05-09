@@ -3,7 +3,7 @@ u"""  PyCorrFit  - module "readfiles"
 
 Import correlation data from data files.
 """
-# This file is necessary for this folder to become a module that can be 
+# This file is necessary for this folder to become a module that can be
 # imported by PyCorrFit.
 
 import csv
@@ -14,6 +14,7 @@ import tempfile
 import yaml
 import warnings
 import zipfile
+import io
 
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.
@@ -23,7 +24,6 @@ from .read_SIN_correlator_com import openSIN
 from .read_FCS_Confocor3 import openFCS
 from .read_mat_ries import openMAT
 from .read_pt3_PicoQuant import openPT3
-
 
 
 def AddAllWildcard(Dictionary):
@@ -46,7 +46,7 @@ def AddAllWildcard(Dictionary):
 # knows how to open all files we know.
 def openAny(path, filename=None):
     """ Using the defined Filetypes and BGFiletypes, open the given file
-    
+
     Parameters
     ----------
     path : str
@@ -58,7 +58,7 @@ def openAny(path, filename=None):
         dirname, filename = os.path.split(path)
     else:
         dirname = path
-    
+
     wildcard = filename.split(".")[-1]
     for key in Filetypes.keys():
         # Recurse into the wildcards
@@ -72,7 +72,7 @@ def openAny(path, filename=None):
     # If we could not find the correct function in Filetypes, try again
     # in BGFiletypes:
     return openAnyBG(dirname, filename)
-    
+
     ## For convenience in openZIP
     #return None # already in openAnyBG
 
@@ -89,10 +89,10 @@ def openAnyBG(dirname, filename):
                     return BGFiletypes[key](dirname, filename)
     # For convenience in openZIP
     return None
-    
+
 
 def openZIP(dirname, filename):
-    """ 
+    """
         Get everything inside a .zip file that could be an FCS curve.
         Will use any wildcard in Filetypes dictionary.
     """
@@ -124,9 +124,9 @@ def openZIP(dirname, filename):
             number = str(Parms[i][0])
             expfilename = "data"+number[1:len(number)-2]+".csv"
             expfile = Arc.open(expfilename, 'r')
-            readdata = csv.reader(expfile, delimiter=',')
+            readdata = csv.reader(io.StringIO(expfile.read().decode()), delimiter=',')
             dataexp = list()
-            if str(readdata.next()[0]) == "# tau only":
+            if str(readdata.__next__()[0]) == "# tau only":
                 # We do not have a curve here
                 pass
             else:
@@ -141,7 +141,7 @@ def openZIP(dirname, filename):
             del readdata
             expfile.close()
         # Get the Traces
-        for i in ImportedNum:   
+        for i in ImportedNum:
             # Make sure we only import those traces that had a corresponding
             # correlation curve. (ImportedNum)
             #
@@ -171,7 +171,7 @@ def openZIP(dirname, filename):
                     pass
                 else:
                     tracefile = Arc.open(tracefilename, 'r')
-                    traceread = csv.reader(tracefile, delimiter=',')
+                    traceread = csv.reader(io.StringIO(tracefile.read().decode()), delimiter=',')
                     singletrace = list()
                     for row in traceread:
                         # Exclude commentaries
@@ -190,7 +190,7 @@ def openZIP(dirname, filename):
                 Trace.append(None)
     else:
         # We are not importing from a session but from a zip file with
-        # probably a mix of all filetypes we know. This works 
+        # probably a mix of all filetypes we know. This works
         # recursively (e.g. a zip file in a zipfile).
         allfiles = Arc.namelist()
         # Extract data to temporary folder
@@ -244,7 +244,7 @@ def get_supported_extensions():
     extlist = list(np.unique(extlist))
     extlist.sort()
     return extlist
-    
+
 
 # The string that is shown when opening all supported files
 # We add an empty space so it is listed first in the dialogs.
@@ -274,4 +274,4 @@ BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
                 "Zip file (*.zip)|*.zip" : openZIP,
                 "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
               }
-BGFiletypes = AddAllWildcard(BGFiletypes)   
+BGFiletypes = AddAllWildcard(BGFiletypes)

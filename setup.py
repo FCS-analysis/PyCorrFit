@@ -7,10 +7,9 @@
 # To create wheels package and upload securely
 #  pip install wheel twine
 #  python setup.py bdist wheel
-from __future__ import print_function
 from setuptools import setup, Extension
 import sys
-
+from Cython.Build import cythonize
 from os.path import join, dirname, realpath, exists
 from warnings import warn
 
@@ -31,13 +30,13 @@ except ImportError:
     extensions = []
 else:
     extensions = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
-                            sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
+                            sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.c"],
                             include_dirs=[np.get_include()]
-                            )
-                 ]
+                            )]
+
 
 try:
-    import urllib
+    import urllib.request
 except ImportError:
     pass
 else:
@@ -47,10 +46,10 @@ else:
     if not exists(pdfdoc):
         print("Downloading {} from {}".format(pdfdoc, webdoc))
         try:
-            urllib.urlretrieve(webdoc, pdfdoc)
+            urllib.request.urlretrieve(webdoc, pdfdoc)
         except:
             print("Failed to download documentation.")
-    
+
 # Parameters
 author = u"Paul Müller"
 authors = [author]
@@ -65,12 +64,12 @@ except:
     version = "unknown"
 
 setup(
-    
+
     author=author,
     author_email='paul.mueller@biotec.tu-dresden.de',
     classifiers= [
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Scientific/Engineering :: Visualization',
         'Intended Audience :: Science/Research'
         ],
@@ -107,22 +106,21 @@ setup(
         # "thisproject[GUI]" to your install_requires
         # Graphical User Interface
         'GUI':  ["wxPython",
-                 "matplotlib >= 1.1.0",
-                 "sympy >= 0.7.2",
+                 "matplotlib >= 2.2.2",
+                 "sympy >= 1.1.1",
                  "simplejson", # for updates
                  ],
         },
     install_requires=[
-        "NumPy >= 1.5.1",
-        "SciPy >= 0.8.0",
-        "PyYAML >= 3.09",
+        "NumPy >= 1.14.2",
+        "SciPy >= 1.0.1",
+        "PyYAML >= 3.12",
         "lmfit >= 0.9.2",
         ],
     setup_requires=["Cython", 'pytest-runner', 'NumPy'],
     tests_require=["pytest", "urllib3", "simplejson"],
     # scripts
     entry_points={
-       "gui_scripts": ["{name:s}={name:s}:Main".format(
-                                                       **{"name":name})]
+       "gui_scripts": ["pycorrfit=pycorrfit.gui.main:Main"]
        }
     )

@@ -38,7 +38,7 @@ class Tool(wx.Frame):
         self.topSizer.Add(btncopy)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.SetMinSize(self.topSizer.GetMinSize())
         # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -71,5 +71,5 @@ class Tool(wx.Frame):
             return
         self.panel.Enable()
         self.Page = page
-        
+
 

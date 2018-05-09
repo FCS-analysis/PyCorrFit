@@ -3,7 +3,6 @@
 
 Classes for FCS data evaluation.
 """
-from __future__ import print_function, division
 
 import copy
 import lmfit
@@ -29,7 +28,7 @@ class Constraint(object):
             The parameter boundaries for fitting.
         fit_values : list of floats
             The initial fitting values.
-        
+
         Notes
         -----
         - the first item in constraints must be an integer indexing a parameter
@@ -39,37 +38,37 @@ class Constraint(object):
         """
         if len(constraint) == 3:
             constraint.append("0")
-            
+
         self.constraint = constraint
         self.fit_bool = fit_bool
         self.fit_bounds = fit_bounds
         self.fit_values = fit_values
-    
+
     @property
     def parameters(self):
         """
         Returns list of dict for each parameter.
         """
-        parms = [ it for it in self.constraint if isinstance(it, (int, long))]
+        parms = [ it for it in self.constraint if isinstance(it, (int, float))]
         id2 = self.constraint.index(parms[1])
-        
+
         p1 = {"id": parms[0],
               "bool": self.fit_bool[parms[0]],
               "sign": +1,
               "value": self.fit_values[parms[0]]
               }
-        
+
         p2 = {"id": parms[1],
               "bool": self.fit_bool[parms[1]],
-              "sign": ( +1 if id2==2 else -1), 
+              "sign": ( +1 if id2==2 else -1),
               "value": self.fit_values[parms[1]]
               }
-        
+
         return p1, p2
 
     @property
     def operator(self):
-        strval = [ it for it in self.constraint if not isinstance(it, (int, long))]
+        strval = [ it for it in self.constraint if not isinstance(it, (int, float))]
         return strval[0]
 
     @property
@@ -80,7 +79,7 @@ class Constraint(object):
         """
         Update the bounds with the given constraint. This only applies
         if one of the parameters is not varied during fitting.
-        
+
         Notes
         -----
         The fitting boundaries are updated in-place (`fit_bounds` variable
@@ -90,8 +89,8 @@ class Constraint(object):
         op = self.operator
         os = self.offset
         assert op in ["<", ">"], "Constraint operator not supported"
-        
-        
+
+
         if p1["bool"] and p2["bool"]:
             # do nothing, this case is handled in `get_lmfit_parameter_kwargs`
             pass
@@ -152,8 +151,8 @@ class Constraint(object):
         op = self.operator
         ofs = self.offset
         assert op in ["<", ">"], "Constraint operator not supported"
-        
-        
+
+
         if p1["bool"] and p2["bool"]:
             if op == "<":
                 #p1 < (-)p2 + 1.2
@@ -162,12 +161,12 @@ class Constraint(object):
                 #-> d12 > 0
                 deltaname = "delta_{}_{}".format(p1["id"], p2["id"])
                 kwdelt = {}
-                kwdelt["name"] = deltaname            
-                kwdelt["value"] = p2["bool"]*self.fit_values[p2["id"]] - self.fit_values[p1["id"]] 
+                kwdelt["name"] = deltaname
+                kwdelt["value"] = p2["bool"]*self.fit_values[p2["id"]] - self.fit_values[p1["id"]]
                 kwdelt["vary"] = True
                 kwdelt["min"] = 0 # note: enforces "<=" (not "<")
                 kwdelt["max"] = np.inf
-                
+
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
                 # this condition deals with negative numbers
@@ -183,12 +182,12 @@ class Constraint(object):
                 #-> d12 > 0
                 deltaname = "delta_{}_{}".format(p1["id"], p2["id"])
                 kwdelt = {}
-                kwdelt["name"] = deltaname            
+                kwdelt["name"] = deltaname
                 kwdelt["value"] = self.fit_values[p1["id"]] - p2["bool"]*self.fit_values[p2["id"]]
                 kwdelt["vary"] = True
                 kwdelt["min"] = 0 # note: enforces ">=" (not ">")
                 kwdelt["max"] = np.inf #self.fit_bounds[p1["id"]][1] + max(-p2["sign"]*self.fit_bounds[p2["id"]]) - ofs
-                
+
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
                 # this condition deals with negative numbers
@@ -196,15 +195,15 @@ class Constraint(object):
                                 COMP="{}*parm{:04d}+{}+{:.14f}".format(p2["sign"], p2["id"], deltaname, ofs),
                                 MIN=self.fit_bounds[p1["id"]][0],
                                 MAX=self.fit_bounds[p1["id"]][1])
-                
+
                 kwargs = [kwdelt, kwp1]
-                
+
         else:
             kwargs = None
-        
+
         return kwargs
-            
-            
+
+
 
 class Fit(object):
     """ Used for fitting FCS data to models.
@@ -224,7 +223,7 @@ class Fit(object):
             to fit all parameters that are selected for
             fitting in each correlation. Parameters with
             the same name in different models are treated
-            as one global parameter. 
+            as one global parameter.
         global_fit_variables: list of list of strings
             Each item contains a list of strings that are names
             of parameters which will be treated as a common
@@ -236,16 +235,16 @@ class Fit(object):
             If verbose > 0, plotting will be performed with LaTeX.
         """
         assert len(global_fit_variables)==0, "not implemented"
-        
+
         if not isinstance(correlations, list):
             correlations = [correlations]
-        
+
         self.correlations = correlations
         self.global_fit_variables = global_fit_variables
         self.verbose = verbose
         self.uselatex = uselatex
         self.is_weighted_fit = False
-        
+
         if not global_fit:
             # Fit each correlation separately
             for corr in self.correlations:
@@ -313,7 +312,7 @@ class Fit(object):
             varidx.sort()
             varin = np.array(varin)[varidx]
             variv = np.array(variv)[varidx]
-            
+
             self.x = np.concatenate(xtemp)
             self.y = np.concatenate(ytemp)
             self.fit_bool = np.ones(len(variv), dtype=bool)
@@ -323,8 +322,8 @@ class Fit(object):
             self.fit_bound = varbound
             self.constraints = []
             warnings.warn("Constraints are not supported yet for global fitting.")
-            
-            
+
+
             def parameters_global_to_local(parameters, iicorr, varin=varin,
                                           initpar=initpar,
                                           correlations=correlations):
@@ -341,7 +340,7 @@ class Fit(object):
                         # edit that parameter
                         fit_parm[kk] = parameters[np.where(np.array(varin)==pn)[0]]
                 return fit_parm
-            
+
             def parameters_local_to_global(parameters, iicorr, fit_parm,
                                            varin=varin,
                                            correlations=correlations):
@@ -355,7 +354,7 @@ class Fit(object):
                         # edit that parameter
                         parameters[np.where(np.array(varin)==pn)[0]] = fit_parm[kk]
                 return parameters
-            
+
             # Create function for fitting using ids
             def global_func(parameters, tau,
                             glob2loc=parameters_global_to_local):
@@ -369,7 +368,7 @@ class Fit(object):
                 return np.concatenate(out)
 
             self.func = global_func
-            
+
             # Create function for checking
             def global_check_parms(parameters,
                                    glob2loc=parameters_global_to_local,
@@ -383,7 +382,7 @@ class Fit(object):
                     parameters = loc2glob(parameters, ii, fit_parm)
 
                 return parameters
-            
+
             self.check_parms = global_check_parms
 
             # Directly perform the fit and set the "fit" attribute
@@ -400,7 +399,7 @@ class Fit(object):
     def get_fit_results(self, correlation):
         """
         Return a dictionary with all information about the performed fit.
-        
+
         This function must be called immediately after `self.minimize`.
         """
         c = correlation
@@ -413,7 +412,7 @@ class Fit(object):
              "fit parameters" : 1*np.where(c.fit_parameters_variable)[0],
              "fit weights" : 1*self.compute_weights(c)
              }
-        
+
         if c.is_weighted_fit:
             d["weighted fit type"] = c.fit_weight_type
             if isinstance(c.fit_weight_data, (int, float)):
@@ -423,18 +422,18 @@ class Fit(object):
             d["fit error estimation"] = self.parmoptim_error
 
         return d
-        
+
 
     @property
     def chi_squared(self):
         """ Calculate displayed Chi²
-        
+
             Calculate reduced Chi² for the current class.
         """
         # Calculate degrees of freedom
         dof = len(self.x) - np.sum(self.fit_bool) - 1
         # This is exactly what is minimized by the scalar minimizers
-        
+
         if self.chi_squared_type == "reduced expected sum of squares":
             fitted = self.func(self.fit_parm, self.x)
             chi2 = np.sum((self.y-fitted)**2/np.abs(fitted)) / dof
@@ -448,15 +447,15 @@ class Fit(object):
             chi2 = np.sum((self.y-fitted)**2/variance) / dof
         else:
             chi2 = self.fit_function_scalar(self.fit_parm, self.x, self.y, self.fit_weights)
-        
-            
+
+
         return chi2
 
 
     @property
     def chi_squared_type(self):
         """ The type of Chi² that currently applies.
-        
+
         Returns
         -------
         "reduced" - if variance of data was used for fitting
@@ -475,9 +474,9 @@ class Fit(object):
 
     @staticmethod
     def compute_weights(correlation, verbose=0, uselatex=False):
-        """ computes and returns weights of the same length as 
+        """ computes and returns weights of the same length as
         `correlation.correlation_fit`
-        
+
         `correlation` is an instance of Correlation
         """
         corr = correlation
@@ -489,7 +488,7 @@ class Fit(object):
         #parameters = corr.fit_parameters
         #parameters_range = corr.fit_parameters_range
         #parameters_variable = corr.fit_parameters_variable
-        
+
         cdat = corr.correlation
         if cdat is None:
             raise ValueError("Cannot compute weights; No correlation given!")
@@ -498,7 +497,7 @@ class Fit(object):
         y_full = cdat[:,1]
         x_fit = cdatfit[:,0]
         #y_fit = cdatfit[:,1]
-        
+
         dataweights = np.ones_like(x_fit)
 
         try:
@@ -516,7 +515,7 @@ class Fit(object):
                 if verbose > 1:
                     print("Could not get knot number. Setting it to 5.")
                 knotnumber = 5
-            
+
             # Compute borders for spline fit.
             if ival[0] < weight_spread:
                 # optimal case
@@ -595,7 +594,7 @@ class Fit(object):
                 if offsetstart != 0:
                     reference = 2*weight_spread + 1
                     dividor = reference - offsetstart
-                    dataweights[i] *= reference/dividor   
+                    dataweights[i] *= reference/dividor
                 # Do not substitute len(y[start:end]) with end-start!
                 # It is not the same!
                 backset =  2*weight_spread + 1 - len(y[start:end]) - offsetstart
@@ -645,7 +644,7 @@ class Fit(object):
                 if offsetstart != 0:
                     reference = 2*weight_spread + 1
                     dividor = reference - offsetstart
-                    dataweights[i] *= reference/dividor   
+                    dataweights[i] *= reference/dividor
                 # Do not substitute len(diff[start:end]) with end-start!
                 # It is not the same!
                 backset =  2*weight_spread + 1 - len(diff[start:end]) - offsetstart
@@ -660,7 +659,7 @@ class Fit(object):
             # gave it to us.
             weights = weight_data
             assert weights is not None, "User defined weights not given: "+weight_type
-            
+
             # Check if these other weights have length of the cropped
             # or the full array.
             if weights.shape[0] == x_fit.shape[0]:
@@ -668,14 +667,14 @@ class Fit(object):
             elif weights.shape[0] == x_full.shape[0]:
                 dataweights = weights[ival[0]:ival[1]]
             else:
-                raise ValueError, \
-                  "`weights` must have length of full or cropped array."
-        
+                raise ValueError("`weights` must have length of full \
+or cropped array.")
+
         return dataweights
-        
+
 
     def fit_function(self, params, x, y, weights=1):
-        """ 
+        """
         objective function that returns the residual (difference between
         model and data) to be minimized in a least squares sense.
         """
@@ -684,7 +683,7 @@ class Fit(object):
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
         with np.errstate(divide='ignore'):
-            tominimize = np.where(weights!=0, 
+            tominimize = np.where(weights!=0,
                                   tominimize/weights, 0)
         ## There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
@@ -706,7 +705,7 @@ class Fit(object):
         self.x : 1d ndarray length N
         self.y : 1d ndarray length N
         self.fit_weights : 1d ndarray length N
-        
+
         self.fit_bool : 1d ndarray length P, bool
         self.fit_parm : 1d ndarray length P, float
         """
@@ -724,7 +723,7 @@ class Fit(object):
                                            max=self.fit_bound[pp][1],
                                             )
                                            )
-        
+
         # Second, summarize the constraints in a dictionary, where
         # keys are the parameter indexes of varied parameters.
         # The dictionary cstrnew only allows integer keys that are
@@ -776,10 +775,10 @@ class Fit(object):
         Convert lmfit parameters to a numpy array.
         Parameters are identified by name `parmid` which should
         be at the beginning of a parameters.
-        
+
         This method is necessary to separate artificial constraint parameters
         from the actual parameters.
-        
+
         Parameters
         ----------
         parms : lmfit.parameter.Parameters or ndarray
@@ -792,15 +791,15 @@ class Fit(object):
             The attribute to return, e.g.
             - "value" : return the current value of the parameter
             - "vary" : return if the parameter is varied during fitting
-        
+
         Returns:
         parr : ndarray
             If the input is an ndarray, the input will be returned.
         """
         if isinstance(parms, lmfit.parameter.Parameters):
             items = parms.items()
-            items.sort(key=lambda x: x[0])
-            parr = [getattr(p[1], attribute) for p in items if p[0].startswith(parmid)]
+            # items.sort(key=lambda x: x[0])
+            parr = [getattr(p[1], attribute) for p in sorted(items, key=lambda x: x[0]) if p[0].startswith(parmid)]
         else:
             parr = parms
 
@@ -808,13 +807,13 @@ class Fit(object):
 
     def minimize(self):
         """ This will run the minimization process
-      
+
         """
         assert (np.sum(self.fit_bool) != 0), "No parameter selected for fitting."
-        
+
         # get all parameters for minimization
         params = self.get_lmfitparm()
-        
+
         # Get algorithm
         method = Algorithms[self.fit_algorithm][0]
         methodkwargs = Algorithms[self.fit_algorithm][2]
@@ -899,7 +898,7 @@ def GetAlgorithmStringList():
         out1.append(key)
         out2.append(A[key][1])
     return out1, out2
-    
+
 
 # As of version 0.8.3, we support several minimization methods for
 # fitting data to experimental curves.
@@ -909,14 +908,14 @@ def GetAlgorithmStringList():
 Algorithms = dict()
 
 # the original one is the least squares fit "leastsq"
-Algorithms["Lev-Mar"] = ["leastsq", 
+Algorithms["Lev-Mar"] = ["leastsq",
                          "Levenberg-Marquardt",
                          {"ftol" : 1.49012e-08,
                           "xtol" : 1.49012e-08,
                           }
                         ]
 
-# simplex 
+# simplex
 Algorithms["Nelder-Mead"] = ["nelder",
                              "Nelder-Mead (downhill simplex)",
                              {}

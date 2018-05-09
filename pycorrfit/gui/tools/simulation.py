@@ -40,7 +40,7 @@ class Slide(wx.Frame):
         self.Page = self.parent.notebook.GetCurrentPage()
         ## Content
         self.panel = wx.Panel(self)
-        self.rbtnB = wx.RadioButton (self.panel, -1, 'Vary A and B', 
+        self.rbtnB = wx.RadioButton (self.panel, -1, 'Vary A and B',
                                         style = wx.RB_GROUP)
         self.rbtnOp = wx.RadioButton (self.panel, -1, 'Fix relation')
         self.btnreset = wx.Button(self.panel, wx.ID_ANY, 'Reset')
@@ -60,7 +60,7 @@ class Slide(wx.Frame):
                      wx.DefaultSize, self.oplist,
                      wx.CB_DROPDOWN|wx.CB_READONLY)
         self.dropop.SetSelection(0)
-        self.opfunc = self.opdict[self.opdict.keys()[0]]
+        self.opfunc = self.opdict[list(self.opdict.keys())[0]]
         self.Bind(wx.EVT_COMBOBOX, self.Ondrop, self.dropop)
         self.droppB = wx.ComboBox(self.panel, -1, self.labelB, (15, 30),
                      wx.DefaultSize, self.parmBlist,
@@ -325,12 +325,12 @@ class Slide(wx.Frame):
         idA = self.droppA.GetSelection()
         idB = self.droppB.GetSelection()
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
         # Convert from human readable to internal units
         # The easiest way is to make a copy of all parameters and
         # only write back those that have been changed:
-        # 
+        #
         parms_0 = 1.*np.array(mdls.valuedict[self.modelid][1])
         parms_0[idA] = self.valueA # human readable units
         parms_0[idB] = self.valueB # human readable units
@@ -363,7 +363,7 @@ class Slide(wx.Frame):
         # Calculation of variable A with fixed B
         self.opdict = dict()
         self.FillOpDict()
-        self.oplist = self.opdict.keys()
+        self.oplist = list(self.opdict.keys())
         self.oplist.sort()
         self.labelA = self.parmAlist[0]
         self.labelB = self.parmBlist[1]
@@ -371,14 +371,14 @@ class Slide(wx.Frame):
         self.opfunc = self.opdict[self.labelOp]
         self.valueA = ParmValues[0]
         self.valueB = ParmValues[1]
-        self.valueB, self.valueOp = self.CalcFct(self.valueA, 
+        self.valueB, self.valueOp = self.CalcFct(self.valueA,
                                                          self.valueB, 0)
 
 
     def SetValues(self, event=None):
         # Set the values for spin and slider
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
         #
         # Parameter A
@@ -398,7 +398,7 @@ class Slide(wx.Frame):
                    mdls.GetHumanReadableParms(self.modelid,
                                         self.Page.active_parms[1])[1]
         self.valueA = ParmValues[idA]
-        self.valueB = ParmValues[idB]                             
+        self.valueB = ParmValues[idB]
         # Operator
         idop = self.dropop.GetSelection()
         #keys = self.opdict.keys()

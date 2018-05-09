@@ -32,7 +32,7 @@ def fit_single_parameter(modelid, fullparms, parmid, parmval, noise=False):
     Returns the fitted value of the parameter with index `parmid`
     """
     corr = Correlation(fit_model=modelid, fit_algorithm=FITALG, verbose=0)
-    tau = np.exp(np.linspace(np.log(TAUMIN),np.log(TAUMAX), TAULEN))
+    tau = np.exp(np.linspace(np.log(TAUMIN), np.log(TAUMAX), TAULEN))
     # Create artificial data by using the current fit_model
     data = corr.fit_model(fullparms, tau)
     if noise:
@@ -61,10 +61,10 @@ def deviate_parameter(model, parmid):
     Performs model checks to ensure the new value is physical.
     """
     val = model.default_values[parmid]
-    if val==0:
-        val+=.1
+    if val == 0:
+        val += .1
     else:
-        val*=.9
+        val *= .9
     return val
 
 
@@ -75,17 +75,19 @@ def test_fit_single_parameter():
     allow_fail = [
                   [6082, "SP"],
                   ]
-    faillist=list()
+    faillist = list()
     for model in pycorrfit.models.models:
         fullparms = model.default_values
         for ii, val in enumerate(fullparms):
             newval = deviate_parameter(model, ii)
-            fitval = fit_single_parameter(model.id, fullparms, ii, newval, noise=False)
-            #print(val-fitval)
+            fitval = fit_single_parameter(model.id, fullparms, ii,
+                                          newval, noise=False)
+            # print(val-fitval)
             if not np.allclose([val], [fitval]):
                 if not [model.id, model.parameters[0][ii]] in allow_fail:
-                    faillist.append([model.id, model.parameters[0][ii], val, fitval])
-    if len(faillist) != 0:
+                    faillist.append([model.id, model.parameters[0][ii],
+                                     val, fitval])
+    if faillist:
         raise ValueError("Model tests failed for:\n", faillist)
 
 
@@ -93,17 +95,20 @@ def fit_single_parameter_with_noise(noise=0.005):
     """
     Deviate a single parameter and fit it back.
     """
-    faillist=list()
-    succlist=list()
+    faillist = list()
+    succlist = list()
     for model in pycorrfit.models.models:
         fullparms = model.default_values
         for ii, val in enumerate(fullparms):
             newval = deviate_parameter(model, ii)
-            fitval = fit_single_parameter(model.id, fullparms, ii, newval, noise=noise)
+            fitval = fit_single_parameter(model.id, fullparms, ii, newval,
+                                          noise=noise)
             if not np.allclose([val], [fitval], atol=.1, rtol=.1):
-                faillist.append([model.id, model.parameters[0][ii], val, fitval])
+                faillist.append([model.id, model.parameters[0][ii],
+                                 val, fitval])
             else:
-                succlist.append([model.id, model.parameters[0][ii], val, fitval])
+                succlist.append([model.id, model.parameters[0][ii],
+                                 val, fitval])
     return succlist, faillist
 
 
@@ -112,16 +117,18 @@ def test_fit_single_parameter_with_noise_one_permille():
     if len(faillist)/len(succlist) > .01:
         raise ValueError("Model tests failed for:\n", faillist)
 
+
 def test_fit_single_parameter_with_noise_two_percent():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.02)
     if len(faillist)/len(succlist) > .05:
         raise ValueError("Model tests failed for:\n", faillist)
 
+
 def test_fit_single_parameter_with_noise_five_percent():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.05)
     if len(faillist)/len(succlist) > .10:
         raise ValueError("Model tests failed for:\n", faillist)
-        
+
 
 if __name__ == "__main__":
     # Run all tests

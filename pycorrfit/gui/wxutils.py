@@ -37,7 +37,7 @@ def nice_string(string):
     """
     Convert a string of a float created by `float2string_nsf`
     to something nicer.
-    
+
     i.e.
     - 1.000000 -> 1
     - 1.010000 -> 1.010
@@ -51,7 +51,6 @@ def nice_string(string):
             string=newstring+"0"
         return string
 
-
 class PCFFloatValidator(wx.PyValidator):
     def __init__(self, flag=None, pyVar=None):
         wx.PyValidator.__init__(self)
@@ -64,7 +63,7 @@ class PCFFloatValidator(wx.PyValidator):
     def Validate(self, win):
         tc = self.GetWindow()
         val = tc.GetValue()
-        
+
         for x in val:
             if x not in string.digits:
                 return False
@@ -74,7 +73,7 @@ class PCFFloatValidator(wx.PyValidator):
     def OnChar(self, event):
         """
         Filter the characters that are put in the control.
-        
+
         TODO:
         - check for strings that do not make sense
           - 2e-4.4
@@ -92,7 +91,7 @@ class PCFFloatValidator(wx.PyValidator):
 
         char = chr(key)
         char = char.replace(",", ".")
-        
+
         onlyonce = [".", "e", "i", "n", "f"]
         if char in onlyonce and curval.count(char):
             # not allowed
@@ -115,8 +114,8 @@ class PCFFloatTextCtrl(wx.TextCtrl):
     def __init__(self, *args, **kwargs):
         wx.TextCtrl.__init__(self, *args, validator=PCFFloatValidator(), size=(110,-1),
                              style=wx.TE_PROCESS_ENTER, **kwargs)
-        self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
-        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
+        # self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
+        # self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
         self._PCFvalue = 0.0
 
     def OnMouseEnter(self, e):
@@ -131,7 +130,7 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         self._PCFvalue = value
         string = PCFFloatTextCtrl.float2string(value)
         wx.TextCtrl.SetValue(self, string)
-    
+
     def GetValue(self):
         string = wx.TextCtrl.GetValue(self)
         if string == PCFFloatTextCtrl.float2string(self._PCFvalue):
@@ -142,7 +141,7 @@ class PCFFloatTextCtrl(wx.TextCtrl):
             # new value
             #print("external", string)
             return PCFFloatTextCtrl.string2float(string)
-        
+
     @staticmethod
     def float2string(value):
         """
@@ -151,7 +150,7 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         value = float2string_nsf(value)
         value = nice_string(value)
         return value
-        
+
     @staticmethod
     def string2float(string):
         """

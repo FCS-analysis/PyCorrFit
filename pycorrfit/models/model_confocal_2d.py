@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
 
 import numpy as np
 
@@ -11,7 +10,7 @@ def CF_Gxy_gauss(parms, tau):
     u""" Two-dimensional diffusion with a Gaussian laser profile.
 
         G(τ) = offset + 1/( n * (1+τ/τ_diff) )
-    
+
         Calculation of diffusion coefficient and concentration
         from the effective radius of the detection profile (r₀ = 2*σ):
         D = r₀²/(4*τ_diff)
@@ -29,7 +28,7 @@ def CF_Gxy_gauss(parms, tau):
     dc = parms[2]
 
     BB = twod(tau=tau, taudiff=taudiff)
-    
+
     G = dc + 1/n * BB
     return G
 

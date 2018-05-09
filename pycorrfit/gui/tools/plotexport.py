@@ -35,7 +35,7 @@ class Tool(wx.Frame):
         self.topSizer.Add(btnexample)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.SetMinSize(self.topSizer.GetMinSize())
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)

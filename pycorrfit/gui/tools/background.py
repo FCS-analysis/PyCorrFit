@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" 
+"""
 PyCorrFit
 
 Module tools - background
@@ -13,7 +13,7 @@ import sys
 import traceback                        # for Error handling
 import wx
 from wx.lib.agw import floatspin        # Float numbers in spin fields
-import wx.lib.plot as plot    
+import wx.lib.plot as plot
 
 from pycorrfit import openfile as opf                  # How to treat an opened file
 from pycorrfit import readfiles
@@ -38,7 +38,7 @@ class BackgroundCorrection(wx.Frame):
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Current trace we are looking at
-        self.activetrace = None 
+        self.activetrace = None
         # Importet trace
         self.trace = None
         # Importet trace after user decides to cange radio buttons
@@ -57,7 +57,7 @@ class BackgroundCorrection(wx.Frame):
             "from a blank measurement or set manually.")
         textinit = wx.StaticText(panel, label=backgroundinit)
         # Radio buttons
-        self.rbtnfile = wx.RadioButton(panel, -1, 'Blank measurement: ', 
+        self.rbtnfile = wx.RadioButton(panel, -1, 'Blank measurement: ',
                                         style = wx.RB_GROUP)
         self.rbtnfile.SetValue(True)
         self.btnbrowse = wx.Button(panel, wx.ID_ANY, 'Browse ...')
@@ -86,7 +86,7 @@ class BackgroundCorrection(wx.Frame):
                      wx.DefaultSize, self.BGlist, wx.CB_DROPDOWN|wx.CB_READONLY)
         self.UpdateDropdown()
         # Radio buttons Channel1 and 2
-        self.rbtnCh1 = wx.RadioButton (panel, -1, 'Ch1 ', 
+        self.rbtnCh1 = wx.RadioButton (panel, -1, 'Ch1 ',
                                         style = wx.RB_GROUP)
         self.rbtnCh1.SetValue(True)
         self.rbtnCh2 = wx.RadioButton (panel, -1, 'Ch2')
@@ -100,7 +100,7 @@ class BackgroundCorrection(wx.Frame):
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         textyma   = wx.StaticText(panel, label="Shortcut - ")
@@ -148,7 +148,7 @@ class BackgroundCorrection(wx.Frame):
         allsizer.Add(self.btnapplyall)
         allsizer.Add(textor2)
         allsizer.Add(self.btnremyall)
-        
+
         topSizer.Add(textinit)
         topSizer.Add(text1sizer)
         topSizer.Add(text2sizer)
@@ -162,7 +162,7 @@ class BackgroundCorrection(wx.Frame):
         topSizer.Add(allsizer)
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
-        self.SetMinSize(topSizer.GetMinSizeTuple())
+        self.SetMinSize(topSizer.GetMinSize())
         self.Show(True)
         ## Canvas
         self.canvas = plot.PlotCanvas(self.sp)
@@ -203,7 +203,7 @@ class BackgroundCorrection(wx.Frame):
         # Apply to corresponding pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            j = filter(lambda x: x.isdigit(), Page.counter)
+            j = "".join(filter(lambda x: x.isdigit(), Page.counter))
             if int(j) in PageNumbers:
                 self.Apply(Page, item)
                 Page.OnAmplitudeCheck("init")
@@ -218,7 +218,7 @@ class BackgroundCorrection(wx.Frame):
         N = self.parent.notebook.GetPageCount()
         item = self.dropdown.GetSelection()
         for i in np.arange(N):
-            # Set Page 
+            # Set Page
             Page = self.parent.notebook.GetPage(i)
             try:
                 self.Apply(Page, item)
@@ -227,7 +227,7 @@ class BackgroundCorrection(wx.Frame):
             except OverflowError:
                 errstr = "Could not apply background to Page "+Page.counter+\
                  ". \n Check the value of the trace average and the background."
-                dlg = wx.MessageDialog(self, errstr, "Error", 
+                dlg = wx.MessageDialog(self, errstr, "Error",
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 dlg.ShowModal()
                 Page.bgselected = None
@@ -240,12 +240,12 @@ class BackgroundCorrection(wx.Frame):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-            
+
 
     def OnBrowse(self, event):
         # opf.BGFiletypes is a dictionary with filetypes that have some
         # trace signal information.
-        SupFiletypes = opf.BGFiletypes.keys()
+        SupFiletypes = list(opf.BGFiletypes.keys())
         SupFiletypes.sort()
         filters = ""
         for i in np.arange(len(SupFiletypes)):
@@ -254,7 +254,7 @@ class BackgroundCorrection(wx.Frame):
             if i+1 != len(SupFiletypes):
                 # Add a separator
                 filters = filters+"|"
-        dlg = wx.FileDialog(self, "Choose a data file", 
+        dlg = wx.FileDialog(self, "Choose a data file",
             self.parent.dirname, "", filters, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # Workaround since 0.7.5
@@ -275,7 +275,7 @@ class BackgroundCorrection(wx.Frame):
                 errstr += str(info[1])+"\n"
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
-                wx.MessageDialog(self, errstr, "Error", 
+                wx.MessageDialog(self, errstr, "Error",
                     style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
                 return
             # Usually we will get a bunch of traces. Let the user select which
@@ -296,7 +296,7 @@ class BackgroundCorrection(wx.Frame):
             # If we accidentally recorded a cross correlation curve
             # as the background, let the user choose which trace he wants:
             channelindex = None
-            if ( len(stuff["Type"][selindex]) >= 2 and 
+            if ( len(stuff["Type"][selindex]) >= 2 and
                  stuff["Type"][selindex][0:2] == "CC"       ):
                 choices = ["Channel 1", "Channel 2"]
                 label = "From which channel do you want to use the trace?"
@@ -310,7 +310,7 @@ class BackgroundCorrection(wx.Frame):
             else:
                 trace = stuff["Trace"][selindex]
             if trace is None:
-                print "WARNING: I did not find any trace data."
+                print("WARNING: I did not find any trace data.")
                 return
             # Display filename and some of the directory
             self.textfile.SetLabel("File: ..."+dirname[-10:]+"/"+filename)
@@ -319,7 +319,7 @@ class BackgroundCorrection(wx.Frame):
             if channelindex is not None:
                 name += " "+str(channelindex+1)
             self.bgname.SetValue(name)
-            
+
             self.trace = trace
             # Calculate average
             self.average = self.trace[:,1].mean()
@@ -339,7 +339,6 @@ class BackgroundCorrection(wx.Frame):
             dlg.Destroy()
             return
 
-
     def OnDraw(self, event=None):
         item = self.dropdown.GetSelection()
         if item < 0:
@@ -347,7 +346,7 @@ class BackgroundCorrection(wx.Frame):
             self.btnapply.Enable(False)
             self.btnapplyall.Enable(False)
             # Draw the trace that was just imported
-            if self.trace != None:
+            if self.trace and self.trace.all():  # It is enougth to check that you have an array
                 # Calculate average
                 self.average = self.trace[:,1].mean()
                 self.activetrace = self.trace
@@ -372,8 +371,8 @@ class BackgroundCorrection(wx.Frame):
         trace = 1.*self.activetrace
         trace[:,0] = trace[:,0]/1000
         linesig = plot.PolyLine(trace, legend='', colour='blue', width=1)
-        self.canvas.Draw(plot.PlotGraphics([linesig], 
-                         xLabel='time [s]', 
+        self.canvas.Draw(plot.PlotGraphics([linesig],
+                         xLabel='time [s]',
                          yLabel='background signal [kHz]'))
 
 
@@ -430,10 +429,10 @@ class BackgroundCorrection(wx.Frame):
             pagenumlist = list()
             for i in np.arange(self.parent.notebook.GetPageCount()):
                 Page = self.parent.notebook.GetPage(i)
-                pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+                pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
             valstring=misc.parsePagenum2String(pagenumlist)
             self.WXTextPages.SetValue(valstring)
-        
+
 
 
     def OnRadioFile(self, event):
@@ -485,7 +484,7 @@ class BackgroundCorrection(wx.Frame):
         # Apply to corresponding pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            j = filter(lambda x: x.isdigit(), Page.counter)
+            j = "".join(filter(lambda x: x.isdigit(), Page.counter))
             if int(j) in PageNumbers:
                 if self.rbtnCh1.GetValue() == True:
                     Page.bgselected = None
@@ -496,7 +495,7 @@ class BackgroundCorrection(wx.Frame):
                 Page.PlotAll()
         # Clean up unused backgrounds
         CleanupAutomaticBackground(self.parent)
-        
+
 
     def OnRemoveAll(self, event):
         N = self.parent.notebook.GetPageCount()
@@ -511,8 +510,8 @@ class BackgroundCorrection(wx.Frame):
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)
-    
-    
+
+
     def SpinCtrlChange(self, event=None):
         # Let user see the continuous trace we will generate
         self.average = self.spinctrl.GetValue()
@@ -536,7 +535,7 @@ def ApplyAutomaticBackground(page, bg, parent):
         Creates an "automatic" background with countrate in kHz *bg* and
         applies it to the given *page* object. If an automatic
         background with the same countrate exists, uses it.
-        
+
         Input:
         *page*   - page to which the background should be applied
         *bg*     - background that should be applied to that page
@@ -551,20 +550,20 @@ def ApplyAutomaticBackground(page, bg, parent):
     for b in range(len(bglist)):
         bgname = "AUTO: {:e} kHz \t".format(bglist[b])
         # Check if exists:
-        for i in xrange(len(parent.Background)):
-            if (parent.Background[i].countrate == bglist[b] and 
+        for i in range(len(parent.Background)):
+            if (parent.Background[i].countrate == bglist[b] and
                 parent.Background[i].name == bgname):
                 bgid[b] = i
         if bgid[b] == -1:
             # Add new background
             parent.Background.append(Trace(countrate=bglist[b], name=bgname, duration=1))
             bgid[b] = len(parent.Background) - 1
-    
+
     # Apply background to page
     # Last item is id of background
 
     page.bgselected = bgid[0]
-    
+
     if len(bgid) == 2:
         page.bg2selected = bgid[1]
     else:
@@ -592,14 +591,14 @@ def CleanupAutomaticBackground(parent):
     for i in range(parent.notebook.GetPageCount()):
         Page = parent.notebook.GetPage(i)
         if Page.bgselected is not None:
-            if not BGdict.has_key(Page.bgselected):
+            if Page.bgselected not in BGdict:
                 BGdict[Page.bgselected] = list()
             BGdict[Page.bgselected].append([Page, 1])
         if Page.bg2selected is not None:
-            if not BGdict.has_key(Page.bg2selected):
+            if Page.bg2selected not in BGdict:
                 BGdict[Page.bg2selected] = list()
             BGdict[Page.bg2selected].append([Page, 2])
-    
+
     oldBackground = parent.Background
     parent.Background = list()
     bgcounter = 0

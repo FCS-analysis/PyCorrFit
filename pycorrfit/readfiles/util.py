@@ -2,7 +2,6 @@
 """
 utility functions for reading data
 """
-from __future__ import division
 
 import numpy as np
 

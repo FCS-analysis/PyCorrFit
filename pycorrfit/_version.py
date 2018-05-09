@@ -8,10 +8,12 @@ present and if so, obtains the version from the git history using
 `_version_save.py` which is not versioned by git, but distributed
 along with e.g. pypi.
 """
-from __future__ import print_function
+
 
 # Put the entire script into a `True` statement and add the hint
 # `pragma: no cover` to ignore code coverage here.
+
+
 if True:  # pragma: no cover
     import imp
     import os

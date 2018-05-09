@@ -33,6 +33,20 @@ from pycorrfit import models as mdls
 from pycorrfit.models.control import append_model
 
 
+def myDecoding(string):
+    """
+        Read the string or the byte chain and return a string. It allows to
+        decode "µ" in the user models.
+    """
+    if isinstance(string, bytes):
+        try:
+            decode = string.decode()
+        except UnicodeError:
+            decode = "".join(chr(b) for b in string)
+        return decode
+    return string
+
+
 class CorrFunc(object):
     """
         Check the input code of a proposed user model function and
@@ -48,16 +62,15 @@ class CorrFunc(object):
         self.funcstring = funcstring
         for key in substitutes.keys():
             # Don't forget to insert the "(" and ")"'s
-            self.funcstring = self.funcstring.replace(key, 
+            self.funcstring = self.funcstring.replace(key,
                                                        "("+substitutes[key]+")")
             for otherkey in substitutes.keys():
-                substitutes[otherkey] = substitutes[otherkey].replace(key, 
+                substitutes[otherkey] = substitutes[otherkey].replace(key,
                                                        "("+substitutes[key]+")")
         # Convert the function string to a simpification object
         self.simpification = sympify(self.funcstring, sympyfuncdict)
         self.simstring = str(self.simpification)
         self.vardict = evalfuncdict
-
 
     def GetFunction(self):
         # Define the function that will be calculated later
@@ -67,10 +80,10 @@ class CorrFunc(object):
                 self.vardict[self.variables[i]] = float(parms[i])
             self.vardict["tau"] = tau
             # Function called with array/list
-            # The problem here might be 
-            #for key in vardict.keys():
+            # The problem here might be
+            # for key in vardict.keys():
             #    symstring = symstring.replace(key, str(vardict[key]))
-            #symstring = symstring.replace("####", "tau")
+            # symstring = symstring.replace("####", "tau")
             g = eval(self.funcstring, self.vardict)
             ## This would be a safer way to do this, but it is too slow!
             # Once simpy supports arrays, we can use these.
@@ -81,7 +94,6 @@ class CorrFunc(object):
             # g[i] = simpification.evalf(subs=vardict)
             return g
         return G
-
 
     def TestFunction(self):
         """ Test the function for parsibility with the given parameters.
@@ -115,8 +127,7 @@ class UserModel(object):
         # Parent is main PyCorrFit program
         self.parent = parent
         # The string that identifies the user model menu
-        self.UserStr="User"
-
+        self.UserStr = "User"
 
     def GetCode(self, filename=None):
         """ Get the executable code from the file.
@@ -140,7 +151,6 @@ class UserModel(object):
         self.AddModel(code)
         openedfile.close()
 
-
     def AddModel(self, code):
         """ *code* is a list with strings
              each string is one line.
@@ -157,6 +167,7 @@ class UserModel(object):
             # We deal with comments and empty lines
             # We need to check line length first and then we look for
             # a hash.
+            line = myDecoding(line)
             line = line.strip()
             if len(line) != 0 and line[0] != "#":
                 var, val = line.split("=")
@@ -167,16 +178,16 @@ class UserModel(object):
                     self.FuncClass = CorrFunc(labels, values, substitutes,
                                               funcstring)
                     func = self.FuncClass.GetFunction()
-                    doc = code[0].strip()
+                    doc = myDecoding(code[0]).strip()
                     # Add whitespaces in model string (looks nicer)
                     for olin in code[1:]:
-                        doc = doc + "\n       "+olin.strip()
-                    func.func_doc = codecs.decode(doc, "utf-8")
+                        doc = doc + "\n       " + myDecoding(olin).strip()
+                    func.__doc__ = doc
                 elif var[0] == "g":
                     substitutes[var] = val.strip()
                 else:
                     # Add value and variable to our lists
-                    labels.append(codecs.decode(var, "utf-8"))
+                    labels.append(var)
                     values.append(float(val))
         # Active Parameters we are using for the fitting
         # [0] labels
@@ -185,15 +196,14 @@ class UserModel(object):
         bools = list([False]*len(values))
         bools[0] = True
         # Create Modelarray
-        active_parms = [ labels, values, bools ]
+        active_parms = [labels, values, bools]
         self.SetCurrentID()
-        Modelname = code[0][1:].strip()
+        Modelname = myDecoding(code[0][1:]).strip()
         definitions = [self.CurrentID, Modelname, Modelname, func]
         model = dict()
         model["Parameters"] = active_parms
         model["Definitions"] = definitions
         self.modelarray.append(model)
-
 
     def ImportModel(self):
         """ Do everything that is necessarry to import the models into
@@ -226,11 +236,9 @@ class UserModel(object):
             self.parent.Bind(wx.EVT_MENU, self.parent.add_fitting_tab,
                              menuentry)
 
-
     def TestFunction(self):
         """ Convenience function to test self.FuncClass """
         self.FuncClass.TestFunction()
-
 
     def SetCurrentID(self):
         # Check last item or so of modelarray
@@ -251,6 +259,7 @@ class wixi(Function):
     """
     nargs = 1
     is_real = True
+
     @classmethod
     def eval(self, arg):
         return None
@@ -278,7 +287,6 @@ def evalwixi(x):
     return np.real_if_close(result)
 
 
-
 sympyfuncdict = dict()
 sympyfuncdict["wixi"] = wixi
 
@@ -297,5 +305,3 @@ for func in scipyfuncs:
 
 for func in numpyfuncs:
     evalfuncdict[func] = eval("np."+func)
-
-

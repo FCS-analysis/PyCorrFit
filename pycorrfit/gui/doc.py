@@ -13,13 +13,13 @@ class Fake(object):
     def __init__(self):
         self.__version__ = "N/A"
         self.version = "N/A"
-        self.use = lambda x: None        
+        self.use = lambda x: None
 try:
     import matplotlib
 except:
     # Create fake opbject for matplotlib
     matplotlib = Fake()
-    
+
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 import warnings
@@ -34,7 +34,7 @@ import scipy
 try:
     import sympy
 except ImportError:
-    print " Warning: module sympy not found!"
+    print(" Warning: module sympy not found!")
     sympy = Fake()
 
 import wx
@@ -89,7 +89,7 @@ def info(version):
     one = u"    PyCorrFit version "+version+"\n\n"
     two = u"\n\n    Supported file types:"
     keys = readfiles.Filetypes.keys()
-    keys.sort()
+    keys = sorted(list(keys))
     for item in keys:
         if item.split("|")[0] != readfiles.Allsupfilesstring:
             two = two + "\n     - "+item.split("|")[0]
@@ -98,19 +98,19 @@ def info(version):
         lizenz += "    "+line+"\n"
     return one + lizenz + texta + two
 
-    
+
 def licence():
     return """PyCorrFit is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published 
-by the Free Software Foundation, either version 2 of the License, 
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 2 of the License,
 or (at your option) any later version.
 
 PyCorrFit is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See the GNU General Public License for more details. 
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License 
+You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
@@ -146,7 +146,7 @@ HomePage = "http://pycorrfit.craban.de/"
 ChangeLog = "ChangeLog.txt"
 StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
 
-    
+
 # Github homepage
 GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/ChangeLog.txt"
 GitHome = "https://github.com/FCS-analysis/PyCorrFit"
