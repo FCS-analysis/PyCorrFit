@@ -1,3 +1,20 @@
+py3 dev:
+- Python:
+  - adapted the code to python 3 use.
+- GUI:
+  - mice don't change the parameter box automaticly
+  - close the tools after use
+  - add shortcuts:
+    - Load data:        Ctrl + O
+    - Load session:     Ctrl + Shift + O
+    - Clear Session:    Alt + C
+    - Save session:     Ctrl + Q
+    - Batch control:    Alt + B
+    - Average data:     Alt + A
+    - Trace view:       Alt + V
+    - Statistics view:  Alt + S
+    - Fit curr. page:   Alt + F
+
 1.0.1
 - Improved support for ALV ".ASC" file format (#169)
 - NumPy 0.13 support for ".ptu" file reader
