@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
+
 
 import numpy as np
 
@@ -69,6 +69,7 @@ def supplements(parms, countrate=None):
     # plotting the normalized curve. Countrate must come out last!
     Info.append([u"n\u2081", n*F1])
     Info.append([u"n\u2082", n*(1.-F1)])
+
     if countrate is not None:
         # CPP
         cpp = countrate/n
@@ -83,7 +84,7 @@ parms = [   25,      # n
             5,       # SP
             1.0,     # alpha
             0.0      # offset
-            ] 
+            ]
 
 ## Boundaries
 # strictly positive
@@ -103,9 +104,9 @@ model_setup(
                             u"n",
                             u"τ"+u"\u2081"+" [ms]",
                             u"τ"+u"\u2082"+" [ms]",
-                            u"F"+u"\u2081", 
+                            u"F"+u"\u2081",
                             u"SP",
-                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
+                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
                             u"offset"
                             ],
              par_values=parms,

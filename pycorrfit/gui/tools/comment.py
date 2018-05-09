@@ -26,35 +26,33 @@ class EditComment(wx.Frame):
         self.SetMinSize((400,300))
         ## Content
         self.panel = wx.Panel(self)
-        self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE, 
+        self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE,
                         size=initial_sizec, value=self.parent.SessionComment)
         self.Bind(wx.EVT_TEXT, self.OnTextChanged, self.control)
-        text = wx.StaticText(self.panel, 
+        text = wx.StaticText(self.panel,
                    label="Session comments will be saved in the  session file.")
         # buttons
         btnsave = wx.Button(self.panel, wx.ID_SAVE, 'Save Comment')
         self.Bind(wx.EVT_BUTTON, self.OnSave, btnsave)
-        #sizers
+        # sizers
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(text)
         self.topSizer.Add(self.control)
         self.topSizer.Add(btnsave, 1, wx.RIGHT | wx.EXPAND)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        #Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
         self.text_changed = False
 
-
     def OnSize(self, event):
         size = event.GetSize()
         sizec = (size[0], size[1]-50)
         self.panel.SetSize(size)
         self.control.SetSize(sizec)
-
 
     def OnClose(self, e=None):
         self.parent.filemenu.Check(self.parent.menuComm.GetId(), False)
@@ -76,4 +74,3 @@ class EditComment(wx.Frame):
         self.parent.SessionComment = self.control.GetValue()
         self.text_changed = False
         self.OnClose()
-

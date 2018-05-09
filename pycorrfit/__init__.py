@@ -5,6 +5,13 @@ PyCorrFit is a tool to fit fluorescence correlation spectroscopy
 data on a logarithmic scale.
 """
 
+from os import walk
+import sys
+
+for path, _, _ in walk('..'):
+    sys.path.append(path)
+
+
 from . import meta
 from . import models
 from . import openfile
@@ -17,4 +24,3 @@ from ._version import version as __version__
 
 __author__ = u"Paul Müller"
 __license__ = "GPL v2"
-

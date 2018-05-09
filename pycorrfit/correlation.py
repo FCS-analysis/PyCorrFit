@@ -3,7 +3,6 @@
 
 Classes for FCS data evaluation.
 """
-from __future__ import print_function, division
 
 import hashlib
 import numpy as np
@@ -14,14 +13,13 @@ from . import fit
 from .trace import Trace
 
 
-
 class Correlation(object):
     """ unifies correlation curve handling
     """
-    def __init__(self, backgrounds=[], correlation=None, corr_type="AC", 
+    def __init__(self, backgrounds=[], correlation=None, corr_type="AC",
                  filename=None, fit_algorithm="Lev-Mar",
-                 fit_model=6000, fit_ival=(0,0),
-                 fit_weight_data=None, fit_weight_type="none", 
+                 fit_model=6000, fit_ival=(0, 0),
+                 fit_weight_data=None, fit_weight_type="none",
                  normparm=None, title=None, traces=[], verbose=1):
         """
         Parameters
@@ -49,7 +47,7 @@ class Correlation(object):
                    and a spread of `fit_weight_data` bins.
              - "model function" : compute weights from difference
                    to model function
-             - user-defined : other weights (e.g. previously computed 
+             - user-defined : other weights (e.g. previously computed
                    averages given in fit_weight_data)
         normparm: int
             identifier of normalization parameter
@@ -63,7 +61,7 @@ class Correlation(object):
         # must be created before setting properties
         self._backgrounds = []
         self._correlation = None
-        self._fit_algorithm = None   
+        self._fit_algorithm = None
         self._fit_model = None
         self._fit_parameters = None
         self._fit_parameters_range = None
@@ -81,14 +79,14 @@ class Correlation(object):
         self.correlation = correlation
         self.corr_type = corr_type
         self.filename = filename
-        
+
         self.fit_algorithm = fit_algorithm
         self.fit_ival = fit_ival
         self.fit_model = fit_model
         # Do not change order:
         self.fit_weight_type = fit_weight_type
         self.fit_weight_parameters = fit_weight_data
-    
+
         self.normparm = normparm
         self.title = title
         self.traces = traces
@@ -102,7 +100,6 @@ class Correlation(object):
                 c, self.title, len(self._traces))
         return text
 
-
     def background_replace(self, channel, background):
         """
         Replace a background.
@@ -111,14 +108,15 @@ class Correlation(object):
         """
         assert channel in [0, 1]
         assert isinstance(background, Trace)
-        
+
         if self.is_ac:
             if channel == 1:
                 raise ValueError("Cannot set second background for AC.")
             self._backgrounds = [background]
         else:
             if len(self._backgrounds) == 0:
-                self._backgrounds = [Trace(countrate=0, duration=0), Trace(countrate=0, duration=0)]
+                self._backgrounds = [Trace(countrate=0, duration=0),
+                                     Trace(countrate=0, duration=0)]
             elif len(self._backgrounds) == 1:
                 self._backgrounds.append(Trace(countrate=0, duration=0))
             self._backgrounds[channel] = background
@@ -129,7 +127,7 @@ class Correlation(object):
         The background trace(s) of this correlation in a list.
         """
         return self._backgrounds
-    
+
     @backgrounds.setter
     def backgrounds(self, value):
         """
@@ -139,7 +137,7 @@ class Correlation(object):
         backgrounds = []
         if not isinstance(value, list):
             value = [value]
-        assert len(value) in [0,1,2], "Backgrounds must be list with up to two elements."
+        assert len(value) in [0, 1, 2], "Backgrounds must be list with up to two elements."
         for v in value:
             if isinstance(v, np.ndarray):
                 backgrounds.append(Trace(trace=v))
@@ -149,13 +147,12 @@ class Correlation(object):
                 raise ValueError("Each background must be instance of Trace or ndarray")
         self._backgrounds = backgrounds
 
-
     @property
     def bg_correction_factor(self):
         """
         Returns background correction factor for
         self._correlation
-        
+
         Notes
         -----
         Thompson, N. Lakowicz, J.;
@@ -197,7 +194,7 @@ class Correlation(object):
         """ Check parameters using self.fit_model.func_verification and the user defined
             boundaries self.fit_parameters_range for each parameter.
         """
-        p = 1.*np.array(parms)
+        p = 1. * np.array(parms)
         r = self.fit_parameters_range
         for i in range(len(p)):
             if r[i][0] == r[i][1]:
@@ -220,7 +217,7 @@ class Correlation(object):
         if self._correlation is not None:
             corr = self._correlation.copy()
             return corr
-    
+
     @correlation.setter
     def correlation(self, value):
         if value is None:
@@ -240,11 +237,10 @@ class Correlation(object):
         corr = self.correlation
         if corr is not None:
             # perform background correction
-            corr[:,1] *= self.bg_correction_factor
+            corr[:, 1] *= self.bg_correction_factor
             # perform parameter normalization
-            return corr[self.fit_ival[0]:self.fit_ival[1],:]
-        
-    
+            return corr[self.fit_ival[0]:self.fit_ival[1], :]
+
     @property
     def correlation_plot(self):
         """ returns correlation data for plotting (normalized, fit_ivald)
@@ -255,7 +251,7 @@ class Correlation(object):
         corr = self.correlation_fit
         if corr is not None:
             # perform parameter normalization
-            corr[:,1] *= self.normalize_factor
+            corr[:, 1] *= self.normalize_factor
             return corr
 
     @property
@@ -282,7 +278,7 @@ class Correlation(object):
     def fit_algorithm(self, value):
         # TODO:
         # - allow lower-case fitting algorithm
-        assert value in list(fit.Algorithms.keys()), "Invalid fit algorithm: "+value
+        assert value in list(fit.Algorithms.keys()), "Invalid fit algorithm: " + value
         self._fit_algorithm = value
 
     @property
@@ -293,7 +289,7 @@ class Correlation(object):
             if self._fit_ival[1] <= 0 or self._fit_ival[1] > lag.shape[0]:
                 self._fit_ival[1] = lag.shape[0]
         return self._fit_ival
-    
+
     @fit_ival.setter
     def fit_ival(self, value):
         value = list(value)
@@ -315,13 +311,13 @@ class Correlation(object):
     def fit_model(self, value):
         """set the fit model
         """
-        if isinstance(value, (int, long)):
+        if isinstance(value, (int, float)):
             newmodel = mdls.modeldict[value]
         elif isinstance(value, mdls.Model):
             newmodel = value
         else:
             raise NotImplementedError("Unknown model identifier")
-        
+
         if newmodel != self._fit_model :
             self._fit_model = newmodel
             # overwrite fitting parameters
@@ -382,7 +378,7 @@ class Correlation(object):
             if c[1] is not None and np.isnan(c[1]):
                 c[1] = np.inf
 
-            new.append(c)         
+            new.append(c)
         return np.array(new)
 
     @fit_parameters_range.setter
@@ -463,18 +459,18 @@ class Correlation(object):
             # get supplementary parameters
             alt = self.fit_model.get_supplementary_values(self.fit_parameters)
             nfactor = alt[self.normparm - self.fit_parameters.shape[0]]
-        
+
         return nfactor
 
     @property
     def residuals(self):
         """fit residuals, same shape as self.correlation"""
         if self.correlation is None:
-            raise ValueError("Cannot compute residuals; No correlation given!") 
+            raise ValueError("Cannot compute residuals; No correlation given!")
         residuals = self.correlation.copy()
         residuals[:,1] -= self.modeled[:,1]
-        return residuals 
-    
+        return residuals
+
     @property
     def residuals_fit(self):
         """fit residuals, same shape as self.correlation_fit"""
@@ -496,7 +492,7 @@ class Correlation(object):
         Add weights for fitting.
         example:
         type_name : "Average"
-        data : 1d ndarray with length self.lag_time 
+        data : 1d ndarray with length self.lag_time
         """
         if data is not None:
             self._fit_weight_memory[type_name] = data
@@ -507,7 +503,7 @@ class Correlation(object):
         The trace(s) of this correlation in a list.
         """
         return self._traces
-    
+
     @traces.setter
     def traces(self, value):
         """
@@ -526,7 +522,7 @@ class Correlation(object):
             else:
                 raise ValueError("Each trace must be instance of Trace or ndarray")
         self._traces = traces
-        
+
         if len(self._traces) == 2:
             if self._traces[0].duration != self._traces[1].duration:
                 warnings.warn("Unequal lenght of traces: {} and {}".format(
@@ -542,9 +538,9 @@ class Correlation(object):
         """
         if self._uid is None:
             hasher = hashlib.sha256()
-            hasher.update(str(np.random.random()))
-            hasher.update(str(self._correlation))
-            hasher.update(str(self.filename))
-            hasher.update(str(self.title))
+            hasher.update(str(np.random.random()).encode())
+            hasher.update(str(self._correlation).encode())
+            hasher.update(str(self.filename).encode())
+            hasher.update(str(self.title).encode())
             self._uid = hasher.hexdigest()
         return self._uid

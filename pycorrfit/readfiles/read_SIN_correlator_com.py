@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """methods to open correlator.com .sin files"""
-from __future__ import division
 
 import os
 import csv

@@ -42,11 +42,11 @@ class SelectChannels(wx.Frame):
         ##Spincontrols:
         FlexSpinSizer = wx.FlexGridSizer(rows=2, cols=4, vgap=5, hgap=5)
         FlexSpinSizer.Add(wx.StaticText(panel, label="Channels:"))
-        self.spinstart = wx.SpinCtrl(panel, -1, initial=self.left, 
+        self.spinstart = wx.SpinCtrl(panel, -1, initial=self.left,
                                      min=self.start0, max=self.end0-1)
         FlexSpinSizer.Add(self.spinstart)
         FlexSpinSizer.Add(wx.StaticText(panel, label=" - "))
-        self.spinend = wx.SpinCtrl(panel, -1, initial=self.right, 
+        self.spinend = wx.SpinCtrl(panel, -1, initial=self.right,
                                    min=self.start0+1, max=self.end0)
         FlexSpinSizer.Add(self.spinend)
         FlexSpinSizer.Add(wx.StaticText(panel, label="Times [ms]:"))
@@ -89,7 +89,7 @@ class SelectChannels(wx.Frame):
         topSizer.Add(buttonsizer)
         panel.SetSizer(topSizer)
         topSizer.Fit(self)
-        self.SetMinSize(topSizer.GetMinSizeTuple())
+        self.SetMinSize(topSizer.GetMinSize())
         # Get times.
         self.OnChangeChannels()
         #Icon
@@ -117,7 +117,7 @@ class SelectChannels(wx.Frame):
         self.lentau = len(taufull)
         self.start0 = 0                     # left border of interval
         # The interval starts at 0!
-        self.end0 = self.lentau - 1         # right border of interval 
+        self.end0 = self.lentau - 1         # right border of interval
         if self.left is None or self.left > self.end0:
             # This means, that either left = right = None
             # or the correlation-array is too small
@@ -137,7 +137,7 @@ class SelectChannels(wx.Frame):
     def OnApplyAll(self, event=None):
         N = self.parent.notebook.GetPageCount()
         for i in np.arange(N):
-            # Set Page 
+            # Set Page
             Page = self.parent.notebook.GetPage(i)
             # Find out maximal length
             self.SetValues(page=Page)
@@ -188,7 +188,7 @@ class SelectChannels(wx.Frame):
             self.ButtonApply.Enable()
             self.ButtonApplyAll.Enable()
         #self.OnPageChanged(self.Page)
-            
+
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)

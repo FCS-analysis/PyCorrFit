@@ -3,7 +3,6 @@
 
 Controls which fitting models are imported an in which order.
 """
-from __future__ import division
 import numpy as np
 
 from .classes import Model
@@ -62,7 +61,7 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
     available for PyCorrFit. The idea is that this method can be called from
     anywhere and thus we do not need to do the tedious work of adding models
     in the __init__.py file.
-    
+
     Parameters
     ----------
     modelid : int
@@ -80,7 +79,7 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
     par_labels : list-like, strings
         The labels of each parameter in PyCorrFit dimensionless
         representation, i.e.
-        
+
             unit of time        : 1 ms
             unit of inverse time: 1000 /s
             unit of distance    : 100 nm
@@ -120,37 +119,37 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
               ]:
         if p is not None:
             assert len(p) == len(par_values), "Number of parameters must match!"
-            
+
     if par_hr_factors is None or par_hr_labels is None:
         assert par_hr_factors is None, "human readable requires two parameter"
         assert par_hr_labels is None, "human readable requires two parameter"
-    
+
     if par_vary is None:
         # Set par_vary
         par_vary = np.zeros(len(par_values), dtype=bool)
         par_vary[0] = True
-    
+
     if par_hr_factors is None:
         # Set equal to labels
         par_hr_labels = par_labels
         par_hr_factors = np.ones_like(par_values)
-    
+
     model={}
-    
+
     model["Parameters"] = [par_labels, par_values, par_vary,
                            par_hr_labels, par_hr_factors]
-    
+
     model["Definitions"] = [modelid, comp, name, fctn, mtype]
-    
+
     if supplementary_method is not None:
         model["Supplements"] = supplementary_method
-    
+
     if par_boundaries is not None:
         model["Boundaries"] = par_boundaries
-    
+
     if par_constraints is not None:
         model["Constraints"] = par_constraints
-    
+
     append_model(model)
 
 

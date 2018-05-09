@@ -5,10 +5,10 @@ PyCorrFit
 
 A flexible tool for fitting and analyzing correlation curves.
 """
-from __future__ import print_function
 
 from distutils.version import LooseVersion
 import sys
+
 
 class Fake(object):
     """ Fake module.
@@ -57,7 +57,6 @@ from . import doc
 from . import frontend as gui              # The actual program
 
 
-
 def CheckVersion(given, required, name):
     """ For a given set of versions  str *required* and str *given*,
     where version are usually separated by dots, print whether for
@@ -87,13 +86,12 @@ def Main():
 
     ## Check important module versions
     print("\n\nChecking module versions...")
-    CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
-    CheckVersion(np.__version__, "1.5.1", "NumPy")
-    CheckVersion(yaml.__version__, "3.09", "PyYAML")
-    CheckVersion(scipy.__version__, "0.8.0", "SciPy")
-    CheckVersion(sympy.__version__, "0.7.2", "sympy")
-    CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
-
+    CheckVersion(matplotlib.__version__, "2.2.2", "matplotlib")
+    CheckVersion(np.__version__, "1.14.2", "NumPy")
+    CheckVersion(yaml.__version__, "3.12", "PyYAML")
+    CheckVersion(scipy.__version__, "1.0.1", "SciPy")
+    CheckVersion(sympy.__version__, "1.1.1", "sympy")
+    CheckVersion(gui.wx.__version__, "4.0.1", "wxPython")
 
     ## Start gui
     app = gui.MyApp(False)
@@ -121,7 +119,6 @@ def Main():
             pass
         else:
             print("Ignoring command line parameter: "+arg)
-
 
     app.MainLoop()
 

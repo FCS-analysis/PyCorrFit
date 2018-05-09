@@ -26,11 +26,11 @@ def csvimport(filepath):
     line_one = r_obj.next()
     if line_one.__len__()>1:
         if float(line_one[1]) == 2:
-            
+
             version = 2
         else:
-            print 'version not known:',line_one[1]
-    
+            print('version not known:',line_one[1])
+
     if version == 2:
         type =str(r_obj.next()[1])
         if type == "pt uncorrelated":
@@ -47,10 +47,10 @@ def csvimport(filepath):
                 line = r_obj.next()
             return np.array(chanArr), np.array(trueTimeArr), np.array(dTimeArr), Resolution
         else:
-            print 'type not recognised'
+            print('type not recognised')
             return None, None,None,None
 
-    
+
 
 def pt3import(filepath):
     """The file import for the .pt3 file"""
@@ -92,7 +92,7 @@ def pt3import(filepath):
         ParamStart.append(struct.unpack('i', f.read(4))[0]);
         ParamStep.append(struct.unpack('i', f.read(4))[0]);
         ParamEnd.append(struct.unpack('i', f.read(4))[0]);
-        
+
     RepeatMode = struct.unpack('i', f.read(4))[0]
     RepeatsPerCurve = struct.unpack('i', f.read(4))[0]
     RepeatTime = struct.unpack('i', f.read(4))[0]
@@ -174,32 +174,32 @@ def pt3import(filepath):
     #outfile stuff here.
     #fpout.
     #T3RecordArr = [];
-    
+
     chanArr = [0]*Records
     trueTimeArr =[0]*Records
     dTimeArr=[0]*Records
     #f1=open('./testfile', 'w+')
     for b in range(0,Records):
         T3Record = struct.unpack('I', f.read(4))[0];
-        
+
         #T3RecordArr.append(T3Record)
         nsync = T3Record & 65535
         chan = ((T3Record >> 28) & 15);
         chanArr[b]=chan
         #f1.write(str(i)+" "+str(T3Record)+" "+str(nsync)+" "+str(chan)+" ")
         dtime = 0;
-        
+
         if chan == 1:
             cnt_1 = cnt_1+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
-        elif chan == 2: 
+        elif chan == 2:
             cnt_2 = cnt_2+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
-        elif chan == 3: 
+        elif chan == 3:
             cnt_3 = cnt_3+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
-        elif chan == 4: 
+        elif chan == 4:
             cnt_4 = cnt_4+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
         elif chan == 15:
             markers = ((T3Record >> 16) & 15);
-            
+
             if markers ==0:
                 ofltime = ofltime +WRAPAROUND;
                 cnt_Ofl = cnt_Ofl+1
@@ -207,16 +207,16 @@ def pt3import(filepath):
             else:
                 cnt_M=cnt_M+1
                 #f1.write("MA:%1u "+markers+" ")
-            
+
         truensync = ofltime + nsync;
         truetime = (truensync * syncperiod) + (dtime*Resolution);
         trueTimeArr[b] = truetime
         dTimeArr[b] = dtime
-        
+
         #f1.write(str(truensync)+" "+str(truetime)+"\n")
     f.close();
     #f1.close();
-    
-    
-    
+
+
+
     return np.array(chanArr), np.array(trueTimeArr), np.array(dTimeArr), Resolution
