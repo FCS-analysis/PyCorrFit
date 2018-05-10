@@ -114,8 +114,8 @@ class PCFFloatTextCtrl(wx.TextCtrl):
     def __init__(self, *args, **kwargs):
         wx.TextCtrl.__init__(self, *args, validator=PCFFloatValidator(), size=(110,-1),
                              style=wx.TE_PROCESS_ENTER, **kwargs)
-        # self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
-        # self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
+        self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
         self._PCFvalue = 0.0
 
     def OnMouseEnter(self, e):

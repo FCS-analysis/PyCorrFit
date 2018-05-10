@@ -5,19 +5,19 @@ PyCorrFit - Module "frontend"
 The frontend displays the GUI (Graphic User Interface). All necessary
 functions and modules are called from here.
 """
-
-from distutils.version import LooseVersion # For version checking
+from distutils.version import LooseVersion  # For version checking
 import os
-import webbrowser
-import wx
-import wx.lib.agw.flatnotebook as fnb
-import wx.py.shell
-import wx.adv
-import numpy as np
+import pathlib
 import platform
 import sys
 import traceback
 import warnings
+import webbrowser
+
+import numpy as np
+import wx.adv
+import wx.lib.agw.flatnotebook as fnb
+import wx.py.shell
 
 from pycorrfit import models as mdls
 from pycorrfit import openfile as opf
@@ -90,9 +90,8 @@ class MyFrame(wx.Frame):
         ## Set initial variables that make sense
         self.version = version
 
-        ##Init of the superClass
-        # super(MyFrame, self).__init__(parent, anid, "PyCorrFit " + self.version)
-        wx.Frame.__init__(self, parent, anid, "PyCorrFit " + self.version)
+        ## Init of the superClass
+        super(MyFrame, self).__init__(parent, anid, "PyCorrFit " + self.version)
 
         self.CreateStatusBar() # A Statusbar in the bottom of the window
         self.StatusBar.SetStatusText("Find help and updates online:"+
@@ -305,6 +304,9 @@ class MyFrame(wx.Frame):
                            "Enables/Disables displaying weights of fit.",
                             kind=wx.ITEM_CHECK)
         self.MenuShowWeights.Check()
+        self.MenuAutocloseTools = prefmenu.Append(wx.ID_ANY, "Autoclose tools",
+                            "Automatically close tools after usage.",
+                            kind=wx.ITEM_CHECK)
         # toolmenu
         toolkeys = list(tools.ToolDict.keys())
         toolkeys.sort()
@@ -607,7 +609,7 @@ class MyFrame(wx.Frame):
             self.EditCommentDlg = tools.EditComment(self)
             self.EditCommentDlg.Bind(wx.EVT_CLOSE, self.EditCommentDlg.OnClose)
             self.filemenu.Check(self.menuComm.GetId(), True)
-        except RuntimeError as rte:
+        except RuntimeError:
             del self.EditCommentDlg
             self.OnCommSession()
         else:
@@ -634,23 +636,23 @@ class MyFrame(wx.Frame):
 
     def OnDocumentation(self, e=None):
         """ Get the documentation and view it with browser"""
-        filename = doc.GetLocationOfDocumentation()
-        if filename is None:
+        path = doc.GetLocationOfDocumentation()
+        if path is None:
             # Now we have to tell the user that there is no documentation
             self.StatusBar.SetStatusText("...documentation not found.")
         else:
-            self.StatusBar.SetStatusText("...documentation: "+filename)
+            path = pathlib.Path(path)
+            self.StatusBar.SetStatusText("...documentation: {}".format(path))
             if platform.system().lower() == 'windows':
-                path = '\\'.join(filename.split('\\')[:-1])
-                file = filename.split('\\')[-1]
-                os.system("start /d \"{}\" {}".format(path, file))
+                cmd = 'start /d "{}" {}'.format(path.parent, path.name)
             elif platform.system().lower() == 'linux':
-                os.system("xdg-open "+filename+" &")
+                cmd = 'xdg-open "{}" &'.format(path)
             elif platform.system().lower() == 'darwin':
-                os.system("open "+filename+" &")
+                cmd = 'open "{}" &'.format(path)
             else:
                 # defaults to linux style:
-                os.system("xdg-open "+filename+" &")
+                cmd = 'xdg-open "{}" &'.format(path)
+            os.system(cmd)
 
 
     def OnExit(self,e=None):

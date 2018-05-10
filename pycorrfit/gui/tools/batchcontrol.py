@@ -126,7 +126,11 @@ class BatchCtrl(wx.Frame):
                 fit_page_list.append(pageii)
 
         FitProgressDlg(self, fit_page_list, trigger="fit_batch")
-        self.OnClose()
+
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
+
 
     def OnPageChanged(self, Page=None, trigger=None):
         """

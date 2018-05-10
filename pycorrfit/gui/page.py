@@ -106,7 +106,7 @@ class FittingPanel(wx.Panel):
         self.canvascorr.SetSize((canvasx, cupsizey))
         # Lower Plot for plotting of the residuals
         self.canvaserr = plot.PlotCanvas(self.spcanvas)
-        self.canvaserr.logScale =(True, False)
+        self.canvaserr.logScale = (True, False)
         self.canvaserr.enableZoom = True
         self.canvaserr.SetSize((canvasx, size[1]-cupsizey))
         self.spcanvas.SplitHorizontally(self.canvascorr, self.canvaserr,

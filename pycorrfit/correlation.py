@@ -318,7 +318,7 @@ class Correlation(object):
     def fit_model(self, value):
         """set the fit model
         """
-        if isinstance(value, (int, float)):
+        if isinstance(value, int):
             newmodel = mdls.modeldict[value]
         elif isinstance(value, mdls.Model):
             newmodel = value

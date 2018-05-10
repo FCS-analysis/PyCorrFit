@@ -382,7 +382,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Save external functions
     for key in Infodict["External Functions"].keys():
         funcfilename = "model_"+str(key)+".txt"
-        funcfile =  codecs.open(funcfilename, 'w')
+        funcfile =  codecs.open(funcfilename, 'w', encoding="utf-8")
         funcfile.write(Infodict["External Functions"][key])
         funcfile.close()
         Arc.write(funcfilename)
@@ -430,8 +430,8 @@ def SaveSessionData(sessionfile, Infodict):
                 tracefilenamea = "trace"+number+"A.csv"
                 tracefile = open(tracefilenamea, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = [t[0] for t in Infodict["Traces"][pageid][0]]  # get the first column
-                rate = [r[1] for r in Infodict["Traces"][pageid][0]]  # get the secound column
+                time = Infodict["Traces"][pageid][0][:,0]
+                rate = Infodict["Traces"][pageid][0][:,1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
@@ -451,8 +451,8 @@ def SaveSessionData(sessionfile, Infodict):
                     tracefilenameb = "trace"+number+"B.csv"
                     tracefile = open(tracefilenameb, 'w')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = [t[0] for t in Infodict["Traces"][pageid][1]]
-                    rate = [r[1] for r in Infodict["Traces"][pageid][1]]
+                    time = Infodict["Traces"][pageid][1][:,0]
+                    rate = Infodict["Traces"][pageid][1][:,1]
                     # Names of Columns
                     traceWriter.writerow(['# time', 'count rate'])
                     # Actual Data
@@ -468,8 +468,8 @@ def SaveSessionData(sessionfile, Infodict):
                 tracefilename = "trace"+number+".csv"
                 tracefile = open(tracefilename, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = [t[0] for t in Infodict["Traces"][pageid][0]]
-                rate = [r[1] for r in Infodict["Traces"][pageid][0]]
+                time = Infodict["Traces"][pageid][0][:,0]
+                rate = Infodict["Traces"][pageid][0][:,1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
@@ -482,7 +482,7 @@ def SaveSessionData(sessionfile, Infodict):
                 os.remove(os.path.join(tempdir, tracefilename))
     # Save comments into txt file
     commentfilename = "comments.txt"
-    commentfile = codecs.open(commentfilename, 'w')
+    commentfile = codecs.open(commentfilename, 'w', encoding="utf-8")
     # Comments[-1] is comment on whole Session
     Ckeys = list(Infodict["Comments"].keys())
     try:
@@ -513,8 +513,8 @@ def SaveSessionData(sessionfile, Infodict):
             bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
             bgtraceWriter.writerow(['# time', 'count rate'])
             # Actual Data
-            time = [t[0] for t in Background[i]]
-            rate = [r[1] for r in Background[i]]
+            time = Background[i][:,0]
+            rate = Background[i][:,1]
             for j in np.arange(len(time)):
                 bgtraceWriter.writerow(["%.20e" % time[j],
                                         "%.20e" % rate[j]])
@@ -555,7 +555,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, WeightFilename))
     ## Preferences
     preferencesname = "preferences.cfg"
-    with codecs.open(preferencesname, 'w') as fd:
+    with codecs.open(preferencesname, 'w', encoding="utf-8") as fd:
         for key in Infodict["Preferences"]:
             value = Infodict["Preferences"][key]
             if isinstance(value, list):
@@ -567,7 +567,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, preferencesname))
     ## Readme
     rmfilename = "Readme.txt"
-    rmfile = codecs.open(rmfilename, 'w')
+    rmfile = codecs.open(rmfilename, 'w', encoding="utf-8")
     rmfile.write(ReadmeSession)
     rmfile.close()
     Arc.write(rmfilename)
@@ -621,9 +621,9 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
 
     if corr.correlation is not None:
         # Experimental data
-        tau = [c[0] for c in corr.correlation_plot]
-        exp = [c[1] for c in corr.correlation_plot]
-        res = [r[1] for r in corr.residuals_plot]
+        tau = corr.correlation_plot[:,0]
+        exp = corr.correlation_plot[:,1]
+        res = corr.residuals_plot[:,0]
 
         # Plotting! Because we only export plotted area.
         if corr.is_weighted_fit:
@@ -691,8 +691,8 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace
             openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
             # Columns
-            time = [t[0] * timefactor for t in corr.traces[0]]
-            intensity = [t[1] for t in corr.traces[0]]
+            time = corr.traces[0][:,0] * timefactor
+            intensity = corr.traces[0][:,1]
             # Write
             openedfile.write('# Time [s]'+"\t"
                                  'Intensity trace [kHz]'+" \r\n")
@@ -704,8 +704,8 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace B
             openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
             # Columns
-            time = [t[0] * timefactor for t in corr.traces[1]]
-            intensity = [t[1] for t in corr.traces[1]]
+            time = corr.traces[1][:,0] * timefactor
+            intensity = corr.traces[1][:,1]
 
             # Write
             openedfile.write('# Time [s]'+"\t"

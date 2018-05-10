@@ -118,7 +118,10 @@ check parameters on each page and start 'Global fit'.
             if int(j) in global_pages:
                 Page.apply_parameters_reverse()
                 Page.PlotAll()
-        self.OnClose()
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
+
 
     def OnPageChanged(self, page, trigger=None):
         """

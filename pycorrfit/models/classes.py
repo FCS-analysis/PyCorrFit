@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
 import copy
-import numpy as np
+import numbers
 import warnings
+
+import numpy as np
 
 
 class Model(object):
@@ -27,7 +28,11 @@ class Model(object):
             # larger than the last.
             newcc = []
             for cc in datadict["Constraints"]:
-                if cc[0] < cc[2]:
+                # check for integral numbers to avoid comparison to strings
+                # in e.g. confocal t_3d_3d_3d model.
+                if (isinstance(cc[0], numbers.Integral) and
+                    isinstance(cc[2], numbers.Integral) and
+                    cc[0] < cc[2]):
                     if cc[1] == ">":
                         cc = [cc[2], "<", cc[0]]
                     elif cc[1] == "<":

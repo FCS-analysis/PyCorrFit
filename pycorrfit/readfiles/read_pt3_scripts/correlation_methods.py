@@ -1,7 +1,6 @@
 import numpy as np
 from .fib4 import dividAndConquer
-import time
-import _thread
+
 
 """FCS Bulk Correlation Software
 

@@ -335,8 +335,9 @@ class Average(wx.Frame):
             self.AvgPage.apply_parameters()
             self.AvgPage.corr.set_weights(listname,  standarddev)
         self.AvgPage.PlotAll()
-        # Keep the average tool open.
-        self.OnClose()
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)

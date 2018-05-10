@@ -1,9 +1,8 @@
 2.0.0
 - BREAKING CHANGE: Move to Python3
 - GUI:
-  - mice don't change the parameter box automatically
-  - close the tools after use
-  - add shortcuts:
+  - Add option in Preferences to automatically close tools after usage
+  - Add keybord shortcuts:
     - Load data:        Ctrl + O
     - Load session:     Ctrl + Shift + O
     - Clear Session:    Alt + C

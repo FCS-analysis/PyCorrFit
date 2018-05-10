@@ -155,7 +155,7 @@ model_setup(
                        False, True, False, False,
                        False, False, True, False],
              par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [3, ">", 2], [9, "<", 1]],  # , [5, 4, "<", "1"]],
+             par_constraints=[[2, ">", 1], [3, ">", 2], [9, "<", 1], [5, 4, "<", "1"]],
              par_hr_labels=[
                             u"n",
                             u"τ"+u"\u2081"+" [ms]",

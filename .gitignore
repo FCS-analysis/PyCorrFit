@@ -79,3 +79,5 @@ tests/data
 .cache
 .eggs
 .env
+
+.pytest_cache

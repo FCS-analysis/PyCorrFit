@@ -49,7 +49,7 @@ class Constraint(object):
         """
         Returns list of dict for each parameter.
         """
-        parms = [ it for it in self.constraint if isinstance(it, (int, float))]
+        parms = [ it for it in self.constraint if isinstance(it, int)]
         id2 = self.constraint.index(parms[1])
 
         p1 = {"id": parms[0],
@@ -68,7 +68,7 @@ class Constraint(object):
 
     @property
     def operator(self):
-        strval = [ it for it in self.constraint if not isinstance(it, (int, float))]
+        strval = [ it for it in self.constraint if not isinstance(it, int)]
         return strval[0]
 
     @property
@@ -672,8 +672,8 @@ class Fit(object):
             elif weights.shape[0] == x_full.shape[0]:
                 dataweights = weights[ival[0]:ival[1]]
             else:
-                raise ValueError("`weights` must have length of full \
-or cropped array.")
+                msg = "`weights` must have length of full or cropped array."
+                raise ValueError(msg)
 
         return dataweights
 
@@ -803,8 +803,10 @@ or cropped array.")
         """
         if isinstance(parms, lmfit.parameter.Parameters):
             items = parms.items()
-            # items.sort(key=lambda x: x[0])
-            parr = [getattr(p[1], attribute) for p in sorted(items, key=lambda x: x[0]) if p[0].startswith(parmid)]
+            parr = []
+            for p in sorted(items, key=lambda x: x[0]):
+                if p[0].startswith(parmid):
+                    parr.append(getattr(p[1], attribute))
         else:
             parr = parms
 

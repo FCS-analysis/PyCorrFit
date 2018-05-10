@@ -1,15 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# To just compile the cython part in-place:
-#  python setup.py build_ext --inplace
-# To create a distribution package for pip or easy-install:
-#  python setup.py sdist
-# To create wheels package and upload securely
-#  pip install wheel twine
-#  python setup.py bdist wheel
+from os.path import join, dirname, realpath, exists
 from setuptools import setup, Extension, find_packages
 import sys
-from os.path import join, dirname, realpath, exists
 
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
@@ -18,8 +9,7 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 
-# We don't need cython if a .whl package is available.
-# Try to import cython and throw a warning if it does not work.
+# We don't need to cythonize if a .whl package is available.
 try:
     import numpy as np
 except ImportError:
@@ -28,7 +18,7 @@ except ImportError:
     extensions = []
 else:
     extensions = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
-                            sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.c"],
+                            sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
                             include_dirs=[np.get_include()]
                             )]
 
