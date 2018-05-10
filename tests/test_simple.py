@@ -1,12 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import sys
-from os.path import abspath, dirname
-
 import numpy as np
-
-# Add parent directory to beginning of path variable
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 import pycorrfit  # @UnusedImport
 from pycorrfit.correlation import Correlation

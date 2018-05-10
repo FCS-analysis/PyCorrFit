@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-"""methods to open correlator.com .sin files"""
-
-import os
+"""correlator.com .sin files"""
 import csv
+import os
+
 import numpy as np
 
 
@@ -46,8 +45,8 @@ def openSIN_integer_mode(path):
     
     would translate to AC11, AC22, CC04, and AC44.
     """
-    openfile = open(path, 'r')
-    data = openfile.readlines()
+    with open(path) as fd:
+        data = fd.readlines()
 
     # get mode (curve indices)
     for line in data:
@@ -230,8 +229,8 @@ def openSIN_old(path):
      A list with N elements, indicating, how many correlation
      curves we are importing.
     """
-    openfile = open(path, 'r')
-    Alldata = openfile.readlines()
+    with open(path) as fd:
+        Alldata = fd.readlines()
     # Find out where the correlation function and trace are
     for i in np.arange(len(Alldata)):
         if Alldata[i][0:4] == "Mode":
@@ -250,7 +249,7 @@ def openSIN_old(path):
     correlations = []
     traces = []
     # Get the correlation function
-    Truedata = Alldata.__getslice__(StartC, EndC)
+    Truedata = Alldata[StartC:EndC]
     timefactor = 1000 # because we want ms instead of s
     readcorr = csv.reader(Truedata, delimiter='\t')
     # Trace
@@ -259,11 +258,10 @@ def openSIN_old(path):
     # 2nd column: trace [Hz] 
     # 3rd column: trace [Hz] - Single Auto: equivalent to 2nd
     # Get the trace
-    Tracedata = Alldata.__getslice__(StartT, EndT)
+    Tracedata = Alldata[StartT:EndT]
     # timefactor = 1000 # because we want ms instead of s
     timedivfac = 1000 # because we want kHz instead of Hz
     readtrace = csv.reader(Tracedata, delimiter='\t')
-    openfile.close()
     # Process all Data:
     if Mode == "Single Auto":
         curvelist.append("AC")

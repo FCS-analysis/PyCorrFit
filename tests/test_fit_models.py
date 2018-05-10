@@ -1,17 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Go through each model, vary one parameter and fit it back to the
 default value of that model.
 """
-from __future__ import division, print_function
 import sys
 from os.path import abspath, dirname, split
 
 import numpy as np
-
-# Add parent directory to beginning of path variable
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 import pycorrfit
 from pycorrfit.correlation import Correlation

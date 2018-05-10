@@ -47,8 +47,9 @@ def openFCS_Multiple(dirname, filename):
     # match curves with their timestamp
     # (actimelist and cctimelist)
     #
-    openfile = open(os.path.join(dirname, filename), 'r')
-    Alldata = openfile.readlines()
+    path = os.path.join(dirname, filename)
+    with open(path, "r", encoding="iso8859_15") as fd:
+        Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
     # all the information we want.
@@ -122,6 +123,7 @@ def openFCS_Multiple(dirname, filename):
                     # Jump foward in the index
                     i = i + tracelength
                     readtrace = csv.reader(tracedata, delimiter='\t')
+
                     trace = list()
                     for row in readtrace:
                         # tau in ms, trace in kHz
@@ -176,8 +178,6 @@ def openFCS_Multiple(dirname, filename):
                 # We reached the end of this "FcsDataSet" section.
                 fcsset = False
         i = i + 1
-    # finished.
-    openfile.close()
     # We now have:
     #  aclist: a list of AC curve names mentioned in the file.
     #  cclist: a list of CC curve names mentioned in the file.
@@ -299,9 +299,9 @@ def openFCS_Single(dirname, filename):
         This works with files from the Confocor2, Confocor3 (AIM) and
         files created from the newer ZEN Software.
     """
-    openfile = open(os.path.join(dirname, filename), 'r')
-    Alldata = openfile.readlines()
-    openfile.close()
+    path = os.path.join(dirname, filename)
+    with open(path, "r", encoding="iso8859_15") as fd:
+        Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
     # all the information we want.

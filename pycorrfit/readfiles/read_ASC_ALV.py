@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-methods to open ALV .ASC files
-"""
-
-import os
+"""ALV .ASC files"""
 import csv
+import os
+
 import numpy as np
 
 
@@ -17,7 +14,7 @@ def openASC(dirname, filename):
     Read data from a ALV .ASC files.
     """
     path = os.path.join(dirname, filename)
-    with open(path, 'r') as openfile:
+    with open(path, "r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
 
     # Open special format?
@@ -109,7 +106,7 @@ def openASC_old(path):
          strings.
     """
     filename = os.path.basename(path)
-    with open(path, 'r') as openfile:
+    with open(path, "r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
     # End of trace
     EndT = Alldata.__len__()
@@ -378,7 +375,7 @@ def openASC_ALV_7004(path):
 
     """
     filename = os.path.basename(path)
-    with open(path, 'r') as openfile:
+    with open(path, "r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
 
     # Find the different arrays

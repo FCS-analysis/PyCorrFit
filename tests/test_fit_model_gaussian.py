@@ -1,16 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-Check known model parameters and cross-check across models.
-"""
-from __future__ import division, print_function
-import sys
+"""Check known model parameters and cross-check across models"""
+
 from os.path import abspath, dirname, split
+import sys
 
 import numpy as np
-
-# Add parent directory to beginning of path variable
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 import pycorrfit
 from pycorrfit import models as mdls

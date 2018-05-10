@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-Test if constraints work with model functions.
-"""
+"""Constraints of model functions"""
 
 import numpy as np
 import os
@@ -11,8 +7,6 @@ import pytest
 import sys
 
 
-# Add parent directory to beginning of path variable
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
 import data_file_dl
 import pycorrfit as pcf
 
