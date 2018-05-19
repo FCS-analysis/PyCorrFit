@@ -76,16 +76,14 @@ setup(
         "scipy >= 1.0.1",
         ],
     extras_require = {
-    # If you need the GUI of this project in your project, add
-    # "thisproject[GUI]" to your install_requires
-    # Graphical User Interface
+    # Graphical User Interface (pip install pycorrfit[GUI])
     'GUI':  ["matplotlib >= 2.2.2",
              "sympy >= 1.1.1",
              "simplejson",  # for updates
              "wxPython >= 4.0.1",
              ],
     },
-    setup_requires=["Cython", 'pytest-runner', 'NumPy'],
+    setup_requires=["cython", 'numpy', 'pytest-runner'],
     tests_require=["pytest", "urllib3", "simplejson"],
     python_requires='>=3.6, <4',
     # scripts
