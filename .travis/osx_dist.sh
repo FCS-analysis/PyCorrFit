@@ -3,7 +3,6 @@ set -e
 
 ## Pyinstaller
 python -m pip install pyinstaller
-export PATH=/usr/local/bin:$PATH
 
 python -m pyinstaller -y -F osx_pyinstaller.spec
 
