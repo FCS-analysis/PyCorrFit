@@ -30,8 +30,8 @@ matrix:
 
 install:
 - source ./.travis/${TRAVIS_OS_NAME}_install.sh
-- python setup.py develop
-- pip freeze
+- python -m pip install -e .
+- python -m pip freeze
 
 script:
 - source ./.travis/test.sh
