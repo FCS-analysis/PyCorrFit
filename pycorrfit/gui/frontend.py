@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit - Module "frontend"
+"""PyCorrFit - Module "frontend"
 
 The frontend displays the GUI (Graphic User Interface). All necessary
 functions and modules are called from here.

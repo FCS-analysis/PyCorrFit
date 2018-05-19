@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module tools - chooseimport
 
-Module tools - chooseimport
 Displays a window that lets the user choose what type
 of data (AC1, AC2, CC12, CC21) he wants to import.
 """
-
-
 import numpy as np
 import wx
 

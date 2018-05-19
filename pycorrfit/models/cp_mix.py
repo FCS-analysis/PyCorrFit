@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Mixed components for fitting models.
-"""
+"""Mixed components for fitting models"""
 
 
 def double_pnum(n,

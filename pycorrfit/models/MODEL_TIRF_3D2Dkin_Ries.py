@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ 
 This file contains a TIR-FCS kineteics model function according to:
 "Total Internal Reflection Fluorescence Correlation Spectroscopy: Effects
@@ -6,7 +5,7 @@ of Lateral Diffusion and Surface-Generated Fluorescence"
 Jonas Ries, Eugene P. Petrov, and Petra Schwille
 Biophysical Journal, Volume 95, July 2008, 390–399
 """
-import numpy as np                  # NumPy
+import numpy as np
 import scipy.special as sps
 import numpy.lib.scimath as nps
 

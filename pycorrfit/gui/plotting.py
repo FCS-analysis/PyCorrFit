@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module plotting
 
-Module plotting
 Everything about plotting with matplotlib is located here.
 Be sure to install texlive-science and texlive-math-extra
 """
-
-
-import wx  # b/c of pyinstaller
-import codecs
-import numpy as np
-import matplotlib
-# We do catch warnings about performing this before matplotlib.backends stuff
 import warnings
+
+import matplotlib
+import numpy as np
+
+# We do catch warnings about performing this before matplotlib.backends stuff
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg')  # Tells matplotlib to use WxWidgets for dialogs

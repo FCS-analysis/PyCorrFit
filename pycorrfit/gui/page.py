@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module frontend
 
-Module frontend
 The frontend displays the GUI (Graphic User Interface).
 All functions and modules are called from here.
 """
-import numpy as np                      # NumPy
+import numpy as np
 import warnings
-import wx                               # GUI interface wxPython
-import wx.lib.plot as plot              # Plotting in wxPython
+import wx
+import wx.lib.plot as plot
 import wx.lib.scrolledpanel as scrolled
 
 

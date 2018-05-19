@@ -1,12 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - info
-Open a text window with lots of information.
-"""
-
-
+"""Module tools - info: Open a text window with lots of information"""
 import wx
 import numpy as np
 

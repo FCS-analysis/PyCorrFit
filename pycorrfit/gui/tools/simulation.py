@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module tools - simulation
 
-Module tools - simulation
 Enables the user to change plotting parameters and replotting fast.
 Might be useful for better understanding model functions.
 """
-
-
+import numpy as np
 import wx
 from wx.lib.agw import floatspin
-import numpy as np
 
 from pycorrfit import models as mdls
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 PyCorrFit is a tool to fit fluorescence correlation spectroscopy
 data on a logarithmic scale.

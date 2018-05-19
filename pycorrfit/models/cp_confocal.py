@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Confocal fitting model components.
-"""
-
+"""Confocal fitting model components"""
 import numpy as np
 
 

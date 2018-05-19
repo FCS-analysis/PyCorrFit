@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - RangeSelector
+"""Module tools - RangeSelector
 Select the range in which the parameter should reside for fitting.
 """
-
-
-import wx
 import numpy as np
-
+import wx
 
 from pycorrfit import models as mdls
 from .. import wxutils

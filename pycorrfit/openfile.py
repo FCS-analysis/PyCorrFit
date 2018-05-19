@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit - Module openfile
+"""PyCorrFit - Module openfile
 
 This file contains definitions for opening PyCorrFit sessions and
 saving PyCorrFit correlation curves.
@@ -8,14 +6,15 @@ saving PyCorrFit correlation curves.
 
 import codecs
 import csv
-import numpy as np
+import io
 import os
 import shutil
 import tempfile
-import yaml
-import zipfile
 import warnings
-import io
+import zipfile
+
+import numpy as np
+import yaml
 
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport

@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Documentation and program specific information
-"""
+"""Documentation and program specific information"""
 import platform
 import sys
 
-import matplotlib
 import lmfit
+import matplotlib
 import numpy
 import scipy
 import simplejson
@@ -16,12 +11,13 @@ import sympy
 import wx
 import yaml
 
-
 import pycorrfit
 from pycorrfit import readfiles, meta
 from pycorrfit.readfiles import read_pt3_scripts
 
+
 __version__ = pycorrfit.__version__
+
 
 def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
     return meta.get_file_location(filename)

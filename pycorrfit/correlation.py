@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-""" PyCorrFit data set
-
-Classes for FCS data evaluation.
-"""
-
+"""PyCorrFit data set:  Classes for FCS data evaluation."""
 import hashlib
-import numpy as np
 import warnings
+
+import numpy as np
 
 from . import models as mdls
 from . import fit

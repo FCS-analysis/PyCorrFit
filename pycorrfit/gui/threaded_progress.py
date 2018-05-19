@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-A progress bar with an abort button that works for long running processes.
-"""
+"""A progress bar with an abort button that works for long running processes"""
 import time
 import threading
 import traceback as tb
-import wx
 import sys
 
+import wx
 
 
 class KThread(threading.Thread):

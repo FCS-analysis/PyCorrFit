@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Module tools - globalfit
+Perform global fitting on pages which share parameters
 """
-PyCorrFit
-
-Module tools - globalfit
-Perform global fitting on pages which share parameters.
-"""
-
-
-import wx
 import numpy as np
+import wx
 
 from pycorrfit import Fit
 from .. import misc

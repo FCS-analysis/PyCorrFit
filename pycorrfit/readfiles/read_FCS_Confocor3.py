@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-methods to open Confocor .fcs files
-"""
-import os
+"""Confocor .fcs files"""
 import csv
-import numpy as np
+import os
 import warnings
 
+import numpy as np
+
 from . import util
+
 
 def openFCS(dirname, filename):
     """

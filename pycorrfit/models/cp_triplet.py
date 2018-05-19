@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Triplet components.
-"""
-
+"""Triplet components"""
 import numpy as np
 
 

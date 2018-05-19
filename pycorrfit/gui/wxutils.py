@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module wxutils
-"""
-import numpy as np                      # NumPy
+"""Module wxutils"""
 import re
 import string
-import wx                               # GUI interface wxPython
+
+import numpy as np
+import wx
 
 
 def float2string_nsf(fval, n=7):

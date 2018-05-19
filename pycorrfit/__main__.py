@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Runs PyCorrFit
-"""
-
-
+"""Run PyCorrFit"""
 from .gui import main
+
 main.Main()

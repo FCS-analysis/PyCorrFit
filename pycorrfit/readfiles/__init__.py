@@ -1,20 +1,14 @@
-# -*- coding: utf-8 -*-
-u"""  PyCorrFit  - module "readfiles"
-
-Import correlation data from data files.
-"""
-# This file is necessary for this folder to become a module that can be
-# imported by PyCorrFit.
-
+"""Module readfiles: Import correlation data from data files"""
 import csv
-import numpy as np
+import io
 import os
 import sys
 import tempfile
-import yaml
 import warnings
 import zipfile
-import io
+
+import numpy as np
+import yaml
 
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.

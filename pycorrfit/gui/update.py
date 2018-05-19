@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """PyCorrFit - update checking"""
-
 from distutils.version import LooseVersion # For version checking
 import os
 import tempfile

@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - trace
-Show the trace of a file.
-"""
-
+"""Module tools - trace: Show the trace of a measurement"""
 import numpy as np
-
 import wx
 import wx.lib.plot as plot
 

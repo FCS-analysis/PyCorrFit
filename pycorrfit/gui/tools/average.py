@@ -1,12 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - average
-Creates an average of curves.
-"""
-
-
+"""Module tools - average: Creates an average of curves"""
 import numpy as np
 import wx
 
@@ -316,7 +308,7 @@ class Average(wx.Frame):
             # be sorted (for session saving).
             extTypes = list(self.AvgPage.corr._fit_weight_memory.keys())
             # TODO:
-            # find acleaner solution
+            # find a cleaner solution
             extTypes.remove("none")
             extTypes.sort() # sorting
             for key in extTypes:

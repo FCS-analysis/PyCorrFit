@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - example
+"""Module tools - example
 This is an example tool. You will need to edit __init__.py inside this
 folder to activate it.
 Add the filename (*example*) and class (*Tool*) to either of the lists
 *ImpA*  or *ImpB* in __init__.py.
 """
-
-
 import wx
-#import numpy as np
 
 
 class Tool(wx.Frame):

@@ -1,12 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-A flexible tool for fitting and analyzing correlation curves.
-"""
-
+"""Main execution script"""
 from distutils.version import LooseVersion
+import os
 import sys
 
 
@@ -32,7 +26,6 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import numpy as np                  # NumPy
-import os
 import scipy
 
 

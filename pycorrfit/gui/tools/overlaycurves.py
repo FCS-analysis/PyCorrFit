@@ -1,23 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - overlaycurves
+"""Module tools - overlaycurves
 Let the user choose which correlation curves to use.
 Contains wrappers for file import and tools.
 """
-
-try:
-    from matplotlib import cm  # @UnresolvedImport
-except:
-    mpl_available = False
-else:
-    mpl_available = True
-
-import numpy as np
 import platform
+
+from matplotlib import cm
+import numpy as np
 import wx
-import wx.lib.plot as plot              # Plotting in wxPython
+import wx.lib.plot as plot
 
 from .. import edclasses
 from .. import misc
@@ -390,18 +380,14 @@ class UserSelectCurves(wx.Frame):
             curves.append(self.curvedict[self.curvekeys[i]])
             legends.append(self.curvekeys[i])
         # Set color map
-        if mpl_available:
-            cmap = cm.get_cmap("gist_rainbow")
+        cmap = cm.get_cmap("gist_rainbow")
         # Clear Plot
         self.canvas.Clear()
         # Draw Plot
         lines = list()
         for i in np.arange(len(curves)):
-            if mpl_available:
-                color = cmap(1.*i/(len(curves)), bytes=True)
-                color = wx.Colour(color[0], color[1], color[2])
-            else:
-                color = "black"
+            color = cmap(1.*i/(len(curves)), bytes=True)
+            color = wx.Colour(color[0], color[1], color[2])
             line = plot.PolyLine(curves[i], legend=legends[i],
                                  colour=color, width=1)
             lines.append(line)

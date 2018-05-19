@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-methods to open CSV files
-"""
-import os
+"""CSV files"""
 import csv
+import os
+
 import numpy as np
 
 

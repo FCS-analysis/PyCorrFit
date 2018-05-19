@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-""" 
-This file contains a 3D+3D+T TIR FCS model.
-"""
-from __future__ import division
-
 import numpy as np
 import scipy.special as sps
 

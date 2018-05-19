@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Module misc: Non-science related code.
 """
-PyCorrFit
-
-Module misc
-Non-science related code.
-"""
-
 import codecs
-import numpy as np
 
+import numpy as np
 import wx
 
 # The icon file was created with

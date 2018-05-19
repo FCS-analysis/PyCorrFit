@@ -1,21 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - background
-perform background correction here.
-"""
-
-
-import numpy as np
+"""Module tools - background: perform background correction"""
 import os
 import sys
-import traceback                        # for Error handling
+import traceback
+
+import numpy as np
 import wx
-from wx.lib.agw import floatspin        # Float numbers in spin fields
+from wx.lib.agw import floatspin
 import wx.lib.plot as plot
 
-from pycorrfit import openfile as opf                  # How to treat an opened file
+from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import Trace
 

@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module: user model
 
-Module: user model:
 When the user wants to use his own functions.
 We are using sympy as function parser instead of writing our own,
 which might be safer.
 We only parse the function with sympy and test it once during
 import. After that, the function is evaluated using eval()!
 """
-
-import codecs
 import numpy as np
 import scipy.special as sps
 import sys

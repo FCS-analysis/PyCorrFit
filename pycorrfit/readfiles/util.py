@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-utility functions for reading data
-"""
-
+"""utility functions for reading data"""
 import numpy as np
+
 
 def downsample_trace(trace, bestlength=500):
     """

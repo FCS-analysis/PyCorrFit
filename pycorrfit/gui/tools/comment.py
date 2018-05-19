@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - comment
-Edit the sessions' comment.
-"""
-from __future__ import print_function
+"""Module tools - comment: Edit the session comment"""
 import wx
 
 

@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-u"""PyCorrFit - module "models"
+"""PyCorrFit - module "models"
 
 Define all models and set initial parameters.
 
@@ -18,15 +17,11 @@ unit of Diff.coeff  : 10 µm²/s
 unit of inverse area: 100 /µm²
 unit of inv. volume : 1000 /µm³
 """
-
-
-# This file is necessary for this folder to become a module that can be
-# imported from within Python/PyCorrFit.
-
 import copy
-import numpy as np
 import sys
 import warnings
+
+import numpy as np
 
 from .classes import Model
 from .control import values, valuedict, models, modeldict, modeltypes, supplement, boundaries, shorttype

@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-""" PyCorrFit data set
-
-Classes for FCS data evaluation.
-"""
-
-
+"""PyCorrFit data set: Classes for FCS data evaluation"""
 import hashlib
+
 import numpy as np
 import scipy.integrate as spintg
 

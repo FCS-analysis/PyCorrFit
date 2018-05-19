@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - datarange
-Let the user choose time domains.
-"""
-
-
-import wx
+"""Module tools - datarange: Let the user choose the disaplyed time range"""
 import numpy as np
+import wx
 
 
 # Menu entry name

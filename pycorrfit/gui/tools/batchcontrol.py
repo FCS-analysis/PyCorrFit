@@ -1,17 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - batch
-Stuff that concerns batch processing.
-"""
+"""Module tools - batch: batch processing"""
 
 
 import numpy as np
 import os
 import wx
 
-from pycorrfit import openfile as opf     # How to treat an opened file
+from pycorrfit import openfile as opf
 from pycorrfit import models as mdls
 from pycorrfit import Fit
 from pycorrfit.gui.threaded_progress import ThreadedProgressDlg

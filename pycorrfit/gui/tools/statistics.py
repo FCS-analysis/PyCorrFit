@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Provide the user with tab-separated statistics of their curves.
 
-Module tools - statistics
-Provide the user with tab-separated statistics of their curves.
 Values are sorted according to the page number.
 """
-from __future__ import division
-
 import codecs
+import re
+
+import numpy as np
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
-import numpy as np
-import re
 
 from pycorrfit import models as mdls
 

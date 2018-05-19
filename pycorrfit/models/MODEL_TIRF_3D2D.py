@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-This file contains 3D+2D TIR-FCS models.
-"""
-import numpy as np                  # NumPy
+import numpy as np
 import scipy.special as sps
 
 

@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - plotexport
-Let the user create nice plots of our data.
---currently not used
-"""
-
-
+"""Module tools - plotexport: Let the user create nice plots"""
 import wx
 
 

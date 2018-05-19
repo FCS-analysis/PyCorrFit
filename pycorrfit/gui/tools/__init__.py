@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit - module "tools"
+"""PyCorrFit - module "tools"
 
 This file contains tools, such as dialog boxes and other stuff,
 that we need in PyCorrFit.
@@ -22,11 +20,9 @@ Recognized triggers:
  page_add_batch     : when many pages are added at the same time
  page_add_finalize  : finished (batch) adding of pages
 """
-# This file is necessary for this folder to become a module that can be
-# imported by PyCorrFit or other people.
-
-import numpy as np                  # NumPy
 import sys
+
+import numpy as np
 
 from . import datarange
 from . import background
