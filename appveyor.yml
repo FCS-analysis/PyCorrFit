@@ -27,10 +27,10 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\.appveyor\\run_with_compiler.cmd"
   # https://github.com/appveyor/ci/issues/359
   matrix:
-    - PYTHON: "C:\\Miniconda"
+    - PYTHON: "C:\\Miniconda36"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "32"
-    - PYTHON: "C:\\Miniconda-x64"
+    - PYTHON: "C:\\Miniconda36-x64"
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
 
