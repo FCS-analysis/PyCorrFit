@@ -1,17 +1,8 @@
-2.0.0
-- BREAKING CHANGE: Move to Python3
+1.1.0
+- BREAKING CHANGE: Move to Python3 (thanks @toubol) (#173)
 - GUI:
   - Add option in Preferences to automatically close tools after usage
-  - Add keybord shortcuts:
-    - Load data:        Ctrl + O
-    - Load session:     Ctrl + Shift + O
-    - Clear Session:    Alt + C
-    - Save session:     Ctrl + Q
-    - Batch control:    Alt + B
-    - Average data:     Alt + A
-    - Trace view:       Alt + V
-    - Statistics view:  Alt + S
-    - Fit curr. page:   Alt + F
+  - Add keyboard shortcuts (thanks @toubol)
 - Fix entry point for GUI (#172)
 - Refactor several asserts into raises
 1.0.1

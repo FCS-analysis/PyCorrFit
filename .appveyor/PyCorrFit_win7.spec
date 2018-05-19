@@ -4,6 +4,8 @@ import os
 import platform
 import sys
 
+sys.setrecursionlimit(5000)
+
 ## Patch matplotlibrc
 # This patch is required so matplotlib does not try to start with
 # the "TkAgg" backend, resulting in import errors.
