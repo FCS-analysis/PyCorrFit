@@ -37,6 +37,7 @@ sys.path.append(DIR)
 hiddenimports = ["scipy.io.matlab.streams",
                  "sympy.assumptions.handlers",
                  "sympy.assumptions.handlers.common",
+                 "scipy._lib.messagestream",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
