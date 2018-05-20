@@ -4,11 +4,11 @@ set -e
 ## Pyinstaller
 python -m pip install pyinstaller
 
-python -m pyinstaller -y -F osx_pyinstaller.spec
+pyinstaller -y -F osx_pyinstaller.spec
 
 mkdir dmgsrc
-cp ../doc/*.pdf dmgsrc/ || exit 0
-cp ../ChangeLog.txt dmgsrc/  || exit 0
+cp doc/*.pdf dmgsrc/ || exit 0
+cp ChangeLog.txt dmgsrc/  || exit 0
 cp -r "PyCorrFit.app" dmgsrc/  || exit 0
 # hdiutil: create failed - error -5341
 # http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil
@@ -18,4 +18,4 @@ rm -rf dmgsrc/.DStore
 ls -la dmgsrc/
 # hdiutil create PyCorrFit.dmg -srcfolder dmgsrc/ -ov
 hdiutil create -volname "PyCorrFit_image" -megabytes 314m -format UDZO -imagekey zlib-level=9 -srcfolder dmgsrc -ov PyCorrFit.dmg
-cp PyCorrFit.dmg ../dist/
+cp PyCorrFit.dmg dist/
