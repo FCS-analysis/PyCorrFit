@@ -28,7 +28,7 @@ def test_simple_corr():
 
     res = oldparms - corr.fit_parameters
 
-    assert np.allclose(res, np.zeros_like(res), atol=0.009)
+    assert np.allclose(res, np.zeros_like(res), atol=0.010)
 
 
 if __name__ == "__main__":
