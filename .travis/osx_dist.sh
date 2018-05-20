@@ -1,15 +1,22 @@
 #!/bin/bash
 set -e
 
+python setup.py bdist_wheel
+
+# Stop here, because distribution with pyinstaller is not straight forward:
+# https://travis-ci.org/FCS-analysis/PyCorrFit/jobs/381300857
+exit 0
+
+
 ## Pyinstaller
 python -m pip install pyinstaller
 
 pyinstaller -y -F ./.travis/osx_pyinstaller.spec
 
 mkdir dmgsrc
-cp doc/*.pdf dmgsrc/ || exit 0
-cp ChangeLog.txt dmgsrc/  || exit 0
-cp -r "PyCorrFit.app" dmgsrc/  || exit 0
+cp doc/*.pdf dmgsrc/
+cp ChangeLog.txt dmgsrc/
+cp -r "PyCorrFit.app" dmgsrc/
 # hdiutil: create failed - error -5341
 # http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil
 # https://discussions.apple.com/thread/4712306
