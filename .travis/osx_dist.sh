@@ -4,7 +4,7 @@ set -e
 ## Pyinstaller
 python -m pip install pyinstaller
 
-pyinstaller -y -F osx_pyinstaller.spec
+pyinstaller -y -F ./.travis/osx_pyinstaller.spec
 
 mkdir dmgsrc
 cp doc/*.pdf dmgsrc/ || exit 0
