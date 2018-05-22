@@ -117,8 +117,8 @@ def SoftwareUsed():
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
-changelog = "CHANGELOG"
-StaticChangeLog = GetLocationOfChangeLog(changelog)
+ChangeLog = "CHANGELOG"
+StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
 
 
 # Github homepage
