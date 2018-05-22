@@ -15,7 +15,7 @@ pyinstaller -y -F ./.travis/osx_pyinstaller.spec
 
 mkdir dmgsrc
 cp doc/*.pdf dmgsrc/
-cp ChangeLog.txt dmgsrc/
+cp CHANGELOG dmgsrc/
 cp -r "PyCorrFit.app" dmgsrc/
 # hdiutil: create failed - error -5341
 # http://stackoverflow.com/questions/18621467/error-creating-disk-image-using-hdutil

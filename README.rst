@@ -69,7 +69,7 @@ If you want to do big changes, please (fork ShapeOut and) create a separate bran
 e.g. ``my_new_feature_dev``, and create a pull-request to *develop* once you are done making
 your changes.
 Please make sure to also update the 
-`changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/ChangeLog.txt>`__. 
+`changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/CHANGELOG>`__. 
 
 Tests
 -----

@@ -19,18 +19,18 @@ from pycorrfit.readfiles import read_pt3_scripts
 __version__ = pycorrfit.__version__
 
 
-def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
+def GetLocationOfChangeLog(filename="CHANGELOG"):
+    """Find location of CHANGELOG"""
     return meta.get_file_location(filename)
 
 
-def GetLocationOfDocumentation(filename = "PyCorrFit_doc.pdf"):
-    """ Returns the location of the documentation if there is any."""
+def GetLocationOfDocumentation(filename="PyCorrFit_doc.pdf"):
+    """Return the location of the documentation if there is any"""
     return meta.get_file_location(filename)
 
 
 def info(version):
-    """ Returns a little info about our program and what it can do.
-    """
+    """Return info about PyCorrFit and what it can do"""
     textwin = u"""
     Copyright 2011-2012 Paul Mueller, Biotec - TU Dresden
 
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 def SoftwareUsed():
-    """ Return some Information about the software used for this program """
+    """Return some Information about the software used for this program"""
     text = "Python "+sys.version+\
            "\n\nModules:"+\
            "\n - cython "+\
@@ -117,11 +117,11 @@ def SoftwareUsed():
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
-ChangeLog = "ChangeLog.txt"
-StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
+changelog = "CHANGELOG"
+StaticChangeLog = GetLocationOfChangeLog(changelog)
 
 
 # Github homepage
-GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/ChangeLog.txt"
+GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/CHANGELOG"
 GitHome = "https://github.com/FCS-analysis/PyCorrFit"
 GitWiki = "https://github.com/FCS-analysis/PyCorrFit/wiki"

@@ -54,7 +54,7 @@ except:
 setup(
     author=author,
     author_email='dev@craban.de',
-    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
+    data_files=[('pycorrfit_doc', ['CHANGELOG', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
     long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,

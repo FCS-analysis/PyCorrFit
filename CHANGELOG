@@ -1,0 +1,335 @@
+1.1.0
+- BREAKING CHANGE: Move to Python3 (thanks @toubol) (#173)
+- GUI:
+  - Add option in Preferences to automatically close tools after usage
+  - Add keyboard shortcuts (thanks @toubol)
+- Fix entry point for GUI (#172)
+- Refactor several asserts into raises
+1.0.1
+- Improved support for ALV ".ASC" file format (#169)
+- NumPy 0.13 support for ".ptu" file reader
+- Code cleanup:
+  - Fetch latest available version from GitHub releases
+  - New dependency for "simplejson" Python package
+  - Move appveyor recipe to separate folder 
+1.0.0
+- New confocal fitting models T+T+2D and T+T+3D
+- Fix regression: .sin files could not be opened (#167)
+0.9.9
+- Remove admin-requirement during install (Windows)
+- Support newer correlator.com .sin file format (experimental, #135)
+- Add smart progress dialog for fitting (#155)
+- Statistics: check "filename/title" by default (#151)
+- Documentation: fix bad LaTeX commands (#163)
+0.9.8
+- Bugfixes:
+  - Indexing error when saving sessions (#154)
+  - Page number truncated in csv export (#159)
+  - Export of csv files used incorrect normalization (#153)
+  - Normalization parameter was not displayed in the 'Info' tool
+0.9.7
+- Second triplet time is now larger than first triplet time
+  by default
+- Remove a hack that causes a run through all pages
+  e.g. when an average is created
+- Bugfixes:
+  - Opening sessions with user-defined models
+  - Saving sessions with comments containing non-ASCII characters
+  - Windows build: Graphical plot export was misconfigured
+    -> added matplotlibrc patch in .spec file
+0.9.6
+- Bugfixes:
+  - Fixed minor wx sizer problems for the tools
+  - Fixed `AttributeError` in page.py if no weights are present
+- New confocal fitting models (#111):
+  - 3D+3D, 2D+2D, 3D+2D; no triplet
+  - T+T+2D+2D, T+T+3D+2D; double triplet
+  - T+3D+3D+3D, T+3D+3D+2D (#40, #59)
+- Under the hood:
+  - Separation of core and GUI modules
+  - Include tests in distributions for PyPI
+  - Improve automated testing on Windows and Mac OS
+  - More constraint options for fitting
+0.9.5
+- Bugfixes
+  - Closing the batch control window causes segfault bug (#142)
+  - Closing page causes error when batch control is active (#143)
+  - Plot normalization causes "Save Session" to fail (#144)
+  - Plot normalization not loaded from session (#145)
+0.9.4
+- Batch control allows to select individual parameters (#108)
+- Allow to exclude pages from batch fitting (#107)
+- Bugfixes:
+  - Fix `ValueError` in parameter display
+  - Possibly fixed error with `yaml.safe_dump`
+    on Mac OSx 10.8.5
+  - Make sure background is lower than signal (#137)
+0.9.3
+- Fitting: migrate to lmfit
+  - This introduces a new dependency for building PyCorrFit.
+    (e.g. in Debian, the package "python-lmfit" is required)
+  - Improved fitting behavior at parameter boundaries
+  - Removed "Polak-Ribiere" fitting algorithm
+  - Added "Sequential Linear Squares Programming" algorithm
+- Heuristic fit (#109):
+  - Detect parameters that are stuck during fitting
+  - Fit each curve five times or less and check
+    whether the fit converges.
+  - If two diffusion time parameter exist in a model, always
+    make sure that one parameter is the larger one. This
+    feature can currently not be disabled (#110).
+- Allow infinity ("inf" and "-inf") parameters for models
+  and boundaries.
+- New model: confocal T+T+3D+3D
+- Bugfixes:
+  - Sessions saved with 64bit Windows were not opened (#136)
+  - Old sessions and "KeyError: 'chi2'"
+  - Old session file extension was not recognized (#106)
+0.9.2
+- Bugfixes:
+  - "Slider Simulation"/"Parm Range" broken (#133)
+  - Computation of average intensity did not work
+    correctly for unequally spaced traces
+- Update .pt3 reader to version 8399ff7401
+- Import traces of .pt3 files (experimental, #118)
+  Warning: Absolute values for intensity might be wrong
+0.9.1
+- Tool 'Overlay curves': improve UI (#117)
+- Tool 'Statistics view': improve UI (#113)
+- Tool 'Trace view': display countrate (#121)
+- Bugfixes:
+  - Unicode errors in statistics tool (#131)
+  - Load session errors with empty pages
+0.9.0
+- Improve parameter display (#52, #114)
+- Display Chi2 on each page (#115)
+- The displayed Chi2-value for non-weighted fits is now
+  normalized to the expected values of the fit. The
+  documentation has been updated accordingly.
+- Add "All files" option in save dialogs (#97)
+- Improved plot export dialog (#99)
+0.8.9
+- Improved support for "ALV-7004" files (#104)
+- Increase resolution for image export
+- Load weights from PyCorrFit csv files 
+- Tool 'Overlay Curves': show cropped correlation curves
+- Tool 'Trace view': increase size of window (#93)
+- Tool 'Global fitting': remove forced, joint weights
+- Session comment dialog: more intuitive behavior (#116)
+- Improve plot export (#95)
+- Bugfixes:
+   - Weighted fits at borders of fit interval were
+     computed incorrectly due to integer division
+   - Fitting algorithms did not work (#94)
+   - Creating averages did not work (#123)
+   - ASCII errors in statistics tool (#112)
+- Under the hood:
+   - Introduce new classes: Correlation, Fit, Trace
+   - Code cleanup and rewrite to support planned features
+   - In some cases support older versions of NumPy
+0.8.8
+- Improved support for "ALV-7004" files
+- If you install the GUI with pip, you now need to include
+  the `GUI` requirement: `pip install pycorrfit[GUI]`.
+  The GUI depends on matplotlib and wxPython which is not
+  required for scripting with the pycorrfit module.
+- Bugfix: missing version string on SuSe linux (#101)
+- Under the hood:
+   - Python entry point script replaces "bin/" script
+   - Windows build system hosted by appveyor.com
+   - MacOS X build system hosted by travis-ci.org
+   - New builds use wxPython3 (#85)
+   - Unicode support without `reload(sys)`
+   - Error messages are more verbose
+0.8.7
+- Removed unused fitting parameter d_eva from model 6022 and
+  secured backwards compatibility.
+- Improved support for ALV700X (#92)
+- Bugfix: Corrected false display of Unicode characters on Windows
+- Under the hood:
+   - Code cleanup with pyflakes
+   - Repo cleanup (#98)
+0.8.6
+- Bugfix: Opening .fcs files with only one AC curve works now
+- Zip files with measurements may now contain subfolders
+- Improved pt3-file support from
+  https://github.com/dwaithe/FCS_point_correlator (#89)
+0.8.5
+- Fixed bug that made it impossible to load data (#88)
+- Exceptions are now handled by wxPython
+- Under the hood:
+   - Pythonic repository structure
+   - Relative imports
+   - Windows build machine is now Windows 7
+   - Removed strict dependency on matplotlib
+0.8.4
+- Support for PicoQuant data file format
+  Many thanks to Dominic Waithe (@dwaithe)
+- Improved compatibility with Zeiss .fcs file format
+- PyCorrFit is now dependent on Cython
+- The module 'openfile' is now available from within Python
+- Installer for Windows
+0.8.3
+- New .pcfs (PyCorrFit Session) file format (#60)
+- Additional fitting algorithms: Nelder-Mead, BFGS, Powell, Polak-Ribiere (#71)
+- Improvements
+   - Massive speed-up when working with large data sets (#77)
+   - Plot export: legend position and displayed parameters (#54)
+   - Average tool: traces may now start at time points != 0
+   - Statistics tool: display on smaller screens
+   - ALV data files: updated parser to identify curve types and segment traces
+   - Zeiss ConfoCor3 data files: some files could not be opened due to dummy AC curves
+   - Models: default parameters were changed to prevent unstable fits
+   - Software: notification dialogs for missing modules or other software
+- Bugfixes
+   - User could accidently clear a session (#65)
+   - wxPython plotting problem on MacOSx (#64)
+   - Statistics view: some parameters were duplicated (#76)
+   - Caught zero-division warnings (models with triplet component)
+   - Corrected x-axis scaling of statistics view and trace view
+0.8.2
+- The documentation has been thoroughly reworked
+- The user is now warned if he does not have a TeX distribution installed
+- Improvements:
+   - Complete support for installing PyCorrFit with virtualenv and pip
+     (This is documented in the wiki)
+   - Statistics tool now displays average and SD (#43)
+- Bugfix: TeX did not work on Ubuntu due to missing imports
+0.8.1
+- Thanks to Alex Mestiashvili for providing initial setup.py files
+  and for debianizing PyCorrFit (@mestia)
+- Thanks to Thomas Weidemann for his contributions to the documentation (@weidemann)
+- Bugfixes
+   - Some ConfoCor files were not imported
+   - The cpp was not calculated correctly in case of background correction (#45)
+   - Enabled averaging of single pages (#58)
+   - Background correction for cross-correlation data is now computed (#46)
+- Improvements of the user interface
+   - The menus have been reordered (#47, #50)
+   - The fitting panel has been optimized (#49)
+   - the slider simulation got a reset button (#51)
+   - The Help menu contains documentation and wiki (#56)
+   - Model functions that are somehow redundant have been removed from the menu,
+     but are still supported
+   - The model doc strings were fully converted to Unicode
+   - Several text messages were modified for better coherence
+   - The background correction tool is more intuitive
+   - Statistics panel improvements (#43)
+   - Run information is included in the Data set title
+   - The page counter starts at "1" instead of "0" (#44)
+   - New handling of background correction (#46, #53)
+0.8.0
+- Filename/title of each tab now shows up in the notebook (#39)
+- Statistics tool can plot parameters and page selection with the Overlay
+  tool is possible (#31)
+0.7.9
+- Support for Mac OSx
+- Enhancements:
+   - Export file format (.csv) layout improved
+   - Model function info text in UTF-8
+   - Improved waring message when opening sessions from future versions
+   - New feature lets user set the range for the fitting parameters
+- Bugfixes:
+   - Cleaned minor tracebacks and exceptions created by the frontend
+   - Mac version now works as expected, but .app bundling failed
+   - Latex plotting features now support more characters such as "[]{}^"
+0.7.8
+- Enhancements:
+   - Averages can now be calculated from user-selected pages
+   - Pages selected in the Overlay tool are now automatically set
+     for computation of average and for global fitting
+   - Source pages are now displayed in average title
+   - Graph normalization with particle numbers is now possible
+- Bugfixes:
+   - Errors during fitting with weights equal to zero
+   - Overlay tool displayed last curve after all pages have been removed
+   - Global fit did not work with weights
+- Session saving now uses 20 digits accuracy
+- CSV export is now using tab-delimited data for easier Excel-import
+- Added version checking for session management
+0.7.7
+- Fixed: Tools windows could not be closed (or moved on MS Windows)
+- Fixed: .csv export failed in some cases where no weights were used
+- Enhancement: The user is now asked before a page is closed
+- Enhancement: Tool "Page Info" and in exported .csv files, variables and
+               values are now separated by a tab stop instead of a "="
+- Fixed: Opening a session with an empty page failed in some cases
+- Fixed: Tool "Statistics" missed to output the column "filename/title"
+         if that key value is empty - replaced empty strings with "NoName"
+- Enhancement: Tool "Overlay" now asks the user to check kept curves
+               instead of showing the curves to be removed
+- Enhancement: Tool "Overlay" now has a "Cancel" button
+0.7.6
+- Improved handling
+   - Tools are now sorted according to a standard work-flow
+   - Renamed "Curve selection" to "Overlay tool" - this is more intuitive
+   - Tools will now stay open or may be opened when there are no open pages (#25)
+   - Filenames and runs are now displayed on each page (also added filename/title tag) (#23)
+   - Notebook: moved close button to each tab to prevent accidental closing of tabs
+- Improved tool "Statistics" (#21)
+   - Fixed the case where "useless" data was produced - instead we write "NaN" data,
+     removed warning message accordingly
+   - Row-wise ordering according to page numbers (#22)
+   - Column-wise ordering is now more intuitive
+     (Fitted parameters with errors first)
+   - Some columns are now checked by default
+   - PyCorrFit remembers checked parameters for a page (not saved in session)
+- Improved tool "Overlay" (#23)
+   - New feature: Overlay shows run number of each file (upon import),
+     the run (or index) of an experimental file is unique to PyCorrFit
+   - Upon import, filenames and runs are displayed
+   - In a session, the filename/title is displayed
+- Web address of PyCorrFit changed
+  from "fcstools.dyndns.org/pycorrfit" to "pycorrfit.craban.de"
+- Minor bugfixes: Batch control, Global fitting, import dialog
+0.7.5
+ - Added model functions to documentation.
+ - Weights from fitting are now exported in .csv files.
+ - Rework of info panel for fitting
+ - Cleared unintuitive behavior of session saving:
+   The fitting parameters were read from the frontend. This could have
+   led to saving false fit meta data.
+ - During fitting, units are now displayed as "human readable" (#17).
+ - Slider simulation now also uses human readable units (#17).
+ - Secured support for Ubuntu 12.10 and 13.04
+ - Fixed: new line (\n) characters for LaTeX plotting on Windows
+0.7.4
+ - New tool: Colorful curve selection
+ - Import data: Curve selection possible
+ - Average: Crop average according to current page.
+ - Fixed: Page now displays Chi-squared of global fit.
+ - Fixed: Chi-squared and parameters of global fitting are now stored in sessions.
+0.7.3
+ - Issue closed. External weights from averages saved in session (#11).
+ - Solved minor bugs
+ - Added estimation of errors of fit (Issue #12/#14)
+ - Fixed: Some .fcs files containing averages were not imported.
+0.7.2
+ - Bugfix: Issue #10; we now have a goodness of the fit, if weighted
+    fitting is performed
+ - Bugfix: Weights for fitting not properly calculated (sqrt(std)).
+ - Bugfix: Batch control IndexError with Info window opened
+ - Tool Statistics: Sort values according to page numbers
+ - Tool global: Added weighted fitting
+ - Residuals: According to weighted fitting, weighted residuals are plotted
+ - Average: Variances from averaging can be used for weighted fitting
+0.7.1
+ - Feature: Added Python shell
+ - Bugfix: Saving image was not performed using WXAgg
+ - Bugfix: Notebook pages were drag'n'dropable
+ - Update function now works in its own thread
+ - Code cleanup: documentation of model functions
+ - Added program icon
+0.7.0
+ - File import dialog was enhanced (#4, #5 - subsequently #7, #8):
+   - Now there is only one "load data" dialog in the file menu.
+   - The model function is chosen for each type of data that is 
+      to be imported (AC, CC, etc.).
+   - Loading files that do not contain data a pointed out to the
+     user and the program continues with the other files.
+ - Bugfix: Channel selection window causes crash on file import (#1).
+ - Bugfix: Hidden feature changes fixed parameters during fitting (#2).
+ - Feature: Convert TIR model function parameters lambda and NA to sigma (#3).
+ - Code cleanup: Opening data files is now handled internally differently.
+0.6.9
+ - Initital GitHub commit
