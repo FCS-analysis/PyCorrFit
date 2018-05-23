@@ -1,4 +1,5 @@
 """Module tools - RangeSelector
+
 Select the range in which the parameter should reside for fitting.
 """
 import numpy as np
@@ -152,6 +153,7 @@ class RangeSelector(wx.Frame):
         parm1 = mdls.GetInternalFromHumanReadableParm(corr.fit_model.id,
                                                      self.parameter_range[:,1])[1]
         corr.fit_parameters_range = np.dstack((parm0, parm1))[0]
+
         if self.parent.MenuAutocloseTools.IsChecked():
             # Autoclose
             self.OnClose()

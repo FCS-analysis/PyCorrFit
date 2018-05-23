@@ -137,6 +137,9 @@ class SelectChannels(wx.Frame):
         # Page.PlorAll() calls this function. This results in the wrong data
         # being displayed in an open "View Info" Window. We call it again.
         self.parent.OnFNBPageChanged()
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
 
 
     def OnChangeTimes(self, e=None):
