@@ -708,6 +708,7 @@ class FittingPanel(wx.Panel):
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
                        xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
+        self.Refresh()
         self.parent.OnFNBPageChanged(trigger=trigger)
 
 
