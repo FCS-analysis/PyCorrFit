@@ -25,7 +25,7 @@ from ._version import version as __version__
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
-    """ Load PyCorrFit session data from a zip file (.pcfs)
+    """Load PyCorrFit session data from a zip file (.pcfs)
 
 
     Parameters
@@ -50,7 +50,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         "Traces", dict: page numbers, all traces of the pages
         "Version", str: the PyCorrFit version of the session
     """
-    Infodict = dict()
+    Infodict = {}
     # Get the version
     Arc = zipfile.ZipFile(sessionfile, mode='r')
     readmefile = Arc.open("Readme.txt")
@@ -285,7 +285,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
 
 
 def SaveSessionData(sessionfile, Infodict):
-    """ Session PyCorrFit session data to file.
+    """Session PyCorrFit session data to file.
 
 
     Parameters
@@ -375,7 +375,8 @@ def SaveSessionData(sessionfile, Infodict):
         chi2 = Sups[idsup]["Chi sq"]
         globalshare = Sups[idsup]["Global Share"]
         Suplist.append([idsup, error, chi2, globalshare])
-    yaml.safe_dump(Suplist, open(errsfilename, "w"))
+    with open(errsfilename, "w") as fd:
+        yaml.safe_dump(Suplist, fd)
     Arc.write(errsfilename)
     os.remove(os.path.join(tempdir, errsfilename))
     # Save external functions
@@ -582,7 +583,7 @@ def SaveSessionData(sessionfile, Infodict):
 
 
 def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
-    """ Write correlation data (as displayed in PyCorrFit) to a file
+    """Write correlation data (as displayed in PyCorrFit) to a file
 
 
     Parameters
@@ -612,7 +613,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     # The info
     for line in page_info.splitlines():
         openedfile.write("# "+line+"\r\n")
-    openedfile.write(u"#\r\n#\r\n")
+    openedfile.write("#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
     corr = correlation
@@ -719,7 +720,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
 session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]
 
 
-ReadmeCSV = u"""# This file was created using PyCorrFit version {}.
+ReadmeCSV = """# This file was created using PyCorrFit version {}.
 #
 # Lines starting with a '#' are treated as comments.
 # The data is stored as CSV below this comment section.
@@ -732,7 +733,7 @@ ReadmeCSV = u"""# This file was created using PyCorrFit version {}.
 """.format(__version__)
 
 
-ReadmeSession = u"""This file was created using PyCorrFit version {}.
+ReadmeSession = """This file was created using PyCorrFit version {}.
 The .zip archive you are looking at is a stored session of PyCorrFit.
 If you are interested in how the data is stored, you will find
 out here. Most important are the dimensions of units:
