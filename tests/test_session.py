@@ -86,7 +86,7 @@ def test_basic():
     assert corr.fit_model.id == ldt["Parameters"][0][1]
     assert np.allclose(corr.fit_parameters, ldt["Parameters"][0][2])
     assert np.allclose(corr.fit_parameters_variable, ldt["Parameters"][0][3])
-    assert np.allclose(corr.git_ival, ldt["Parameters"][0][4])
+    assert np.allclose(corr.fit_ival, ldt["Parameters"][0][4])
     
     shutil.rmtree(tmpdir, ignore_errors=True)
 
