@@ -27,6 +27,7 @@ matrix:
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
     - os: osx
+      language: generic
 
 install:
 - source ./.travis/${TRAVIS_OS_NAME}_install.sh
