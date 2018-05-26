@@ -81,3 +81,4 @@ tests/data
 .env
 
 .pytest_cache
+htmlcov

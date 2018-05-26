@@ -3,7 +3,6 @@
 This file contains definitions for opening PyCorrFit sessions and
 saving PyCorrFit correlation curves.
 """
-
 import codecs
 import csv
 import io
