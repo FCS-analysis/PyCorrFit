@@ -991,11 +991,10 @@ class MyFrame(wx.Frame):
             else:
                 text = ("Latex plotting features will not work.\n"+
                         "Make sure you have these packages installed:\n"+
-                        "  - latex\n"+
                         "  - dvipng\n"+
                         "  - ghostscript\n"+
                         "  - texlive-latex-base\n"+
-                        "  - texlive-math-extra\n")
+                        "  - texlive-science\n")
             dlg = wx.MessageDialog(None, text, 'Latex not found',
                             wx.OK | wx.ICON_EXCLAMATION)
             dlg.ShowModal()
