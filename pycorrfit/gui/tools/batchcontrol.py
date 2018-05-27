@@ -1,23 +1,18 @@
-# -*- coding: utf-8 -*-
-""" 
-PyCorrFit
-
-Module tools - batch
-Stuff that concerns batch processing.
-"""
+"""Module tools - batch: batch processing"""
 
 
 import numpy as np
 import os
 import wx
 
-from pycorrfit import openfile as opf     # How to treat an opened file
+from pycorrfit import openfile as opf
 from pycorrfit import models as mdls
 from pycorrfit import Fit
-from pycorrfit.gui.threaded_progress import ThreadedProgressDlg 
+from pycorrfit.gui.threaded_progress import ThreadedProgressDlg
 
 # Menu entry name
 MENUINFO = ["B&atch control", "Batch fitting."]
+
 
 class BatchCtrl(wx.Frame):
     def __init__(self, parent):
@@ -45,7 +40,6 @@ class BatchCtrl(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
-    
     def GetParameters(self):
         """ The parameters
         """
@@ -58,7 +52,7 @@ class BatchCtrl(wx.Frame):
             else:
                 Page = self.parent.notebook.GetPage(item-1)
             # First apply the parameters of the page
-            Page.apply_parameters()          
+            Page.apply_parameters()
             # Get all parameters
             Parms = self.parent.PackParameters(Page)
         else:
@@ -66,15 +60,13 @@ class BatchCtrl(wx.Frame):
             Parms = self.YamlParms[item]
         return Parms
 
-
     def GetProtectedParameterIDs(self):
         """ The model parameters that are protected from batch control
-        
+
         """
         pbool = [ not cb.GetValue() for cb in self.wxParameterCheckBoxes ]
         return np.array(pbool, dtype=bool)
-    
-    
+
     def OnApply(self, event):
         wx.BeginBusyCursor()
         Parms = self.GetParameters()
@@ -101,12 +93,10 @@ class BatchCtrl(wx.Frame):
         self.parent.OnFNBPageChanged(trigger="parm_finalize")
         wx.EndBusyCursor()
 
-
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnFit(self, event):
         item = self.dropdown.GetSelection()
@@ -131,6 +121,10 @@ class BatchCtrl(wx.Frame):
 
         FitProgressDlg(self, fit_page_list, trigger="fit_batch")
 
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
+
 
     def OnPageChanged(self, Page=None, trigger=None):
         """
@@ -153,9 +147,9 @@ class BatchCtrl(wx.Frame):
 
         oldpage = self.curpage
         self.curpage = self.parent.notebook.GetCurrentPage()
-                
+
         # redraw this tool if necessary
-        if oldpage is not None and not isinstance(oldpage, wx._core._wxPyDeadObject):
+        if oldpage is not None and oldpage:
             oldmodelid = oldpage.modelid
         else:
             oldmodelid = 0
@@ -173,13 +167,9 @@ class BatchCtrl(wx.Frame):
             self.dropdown.SetItems(DDlist)
             self.dropdown.SetSelection(0)
 
-        
-
-
     def OnRadioHere(self, event=None):
         self.OnPageChanged(trigger="view")
         self.RedrawParameterBox()
-
 
     def OnRadioThere(self, event=None):
         # If user clicks on pages in main program, we do not want the list
@@ -212,7 +202,6 @@ class BatchCtrl(wx.Frame):
         self.dropdown.SetSelection(0)
         self.RedrawParameterBox()
 
-
     def Redraw(self, e=None):
         panel = self.panel
         for child in panel.GetChildren():
@@ -221,7 +210,7 @@ class BatchCtrl(wx.Frame):
 
         ## Parameter source selection
         boxleft = wx.StaticBox(panel, label="Parameter source")
-        self.rbtnhere = wx.RadioButton(panel, -1, 'This session', 
+        self.rbtnhere = wx.RadioButton(panel, -1, 'This session',
                                         style = wx.RB_GROUP)
         self.rbtnhere.SetValue(True)
         self.rbtnthere = wx.RadioButton(panel, -1, 'Other session')
@@ -237,7 +226,7 @@ well as settings for fitting
 and background correction.
 To prevent batch modification
 of parameter values for an
-individual page, check its 
+individual page, check its
 "prevent batch modification"
 check box.""")
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadioHere, self.rbtnhere)
@@ -273,18 +262,16 @@ check box.""")
         horsizer.Add(btnapply)
         horsizer.Add(btnfit)
         sizer_bag.Add(horsizer, (1,0), span=wx.GBSpan(1,2))
-        
+
         panel.SetSizer(sizer_bag)
         sizer_bag.Fit(panel)
-        self.SetMinSize(sizer_bag.GetMinSizeTuple())
+        self.SetMinSize(sizer_bag.GetMinSize())
         # Check if we even have pages.
         self.OnPageChanged()
         panel.Layout()
         sizer_bag.Fit(self)
         self.mastersizer = sizer_bag
         self.mastersizer.Fit(self)
-        
-        
 
     def RedrawParameterBox(self, e=None):
         sizer = self.parameter_sizer
@@ -329,15 +316,13 @@ for batch modification.""")
         except:
             pass
 
-
-
 class FitProgressDlg(ThreadedProgressDlg):
     def __init__(self, parent, pages, trigger=None):
         """ A progress dialog for fitting in PyCorrFit
-        
+
         This is a convenience class that wraps around `ThreadedProgressDlg`
         and performs all necessary steps for fitting single pages in PyCorrFit.
-        
+
         Parameters
         ----------
         parent : wx object
@@ -355,12 +340,12 @@ class FitProgressDlg(ThreadedProgressDlg):
         messages = [ "Fitting page #{}.".format(pi.counter.strip("# :")) for pi in pages ]
         targets = [Fit]*len(pages)
         args = [pi.corr for pi in pages]
-        # write parameters from page instance to correlation 
+        # write parameters from page instance to correlation
         [ pi.apply_parameters() for pi in self.pages ]
         super(FitProgressDlg, self).__init__(parent, targets, args,
                                              title=title,
                                              messages=messages)
-    
+
     def finalize(self):
         """ Do everything that is required after fitting, including
         cleanup of non-fitted pages.

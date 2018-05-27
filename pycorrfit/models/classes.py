@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import division, print_function
-
 import copy
-import numpy as np
+import numbers
 import warnings
+
+import numpy as np
+
 
 class Model(object):
     """General class for handling FCS fitting models"""
@@ -28,7 +28,11 @@ class Model(object):
             # larger than the last.
             newcc = []
             for cc in datadict["Constraints"]:
-                if cc[0] < cc[2]:
+                # check for integral numbers to avoid comparison to strings
+                # in e.g. confocal t_3d_3d_3d model.
+                if (isinstance(cc[0], numbers.Integral) and
+                    isinstance(cc[2], numbers.Integral) and
+                    cc[0] < cc[2]):
                     if cc[1] == ">":
                         cc = [cc[2], "<", cc[0]]
                     elif cc[1] == "<":
@@ -40,7 +44,7 @@ class Model(object):
 
     def __call__(self, parameters, tau):
         return self.function(parameters, tau)
-    
+
     def __getitem__(self, key):
         """Emulate old list behavior of models"""
         return self._definitions[key]
@@ -52,7 +56,7 @@ class Model(object):
         return text
 
     def apply(self, parameters, tau):
-        """ 
+        """
         Apply the model with `parameters` and lag
         times `tau`
         """
@@ -61,7 +65,7 @@ class Model(object):
     @property
     def boundaries(self):
         return self._boundaries
-    
+
     @property
     def constraints(self):
         """ fitting constraints """
@@ -71,12 +75,12 @@ class Model(object):
     def components(self):
         """how many components does this model have"""
         return self._definitions[1]
-    
+
     @property
     def default_values(self):
         """default fitting values"""
         return np.array(self._parameters[1]).copy()
-    
+
     @property
     def default_variables(self):
         """indexes default variable fitting (bool)"""
@@ -86,12 +90,12 @@ class Model(object):
     def description_long(self):
         """long description"""
         return self._definitions[3].__doc__
-    
+
     @property
     def description_short(self):
         """short description"""
         return self._definitions[2]
-    
+
     @property
     def function(self):
         return self._definitions[3]
@@ -104,11 +108,11 @@ class Model(object):
     def func_verification(self):
         warnings.warn("`func_verification is deprecated: please do not use it!")
         return lambda x: x
-    
+
     def get_supplementary_parameters(self, values, countrate=None):
         """
         Compute additional information for the model
-        
+
         Parameters
         ----------
         values: list-like of same length as `self.default_values`
@@ -122,7 +126,7 @@ class Model(object):
         """
         Returns only the values of
         self.get_supplementary_parameters
-        
+
         Parameters
         ----------
         values: list-like of same length as `self.default_values`
@@ -138,7 +142,7 @@ class Model(object):
     @property
     def id(self):
         return self._definitions[0]
-    
+
     @property
     def name(self):
         return self.description_short

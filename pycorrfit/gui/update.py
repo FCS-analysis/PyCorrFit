@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 """PyCorrFit - update checking"""
-
 from distutils.version import LooseVersion # For version checking
 import os
 import tempfile
 import traceback
-import urllib2
+import urllib.request
 import webbrowser
 
 import simplejson
@@ -23,14 +21,14 @@ from . import misc
 
 class UpdateDlg(wx.Frame):
     def __init__(self, parent, valuedict):
-        
+
         description = valuedict["Description"]
         homepage = valuedict["Homepage"]
         githome = valuedict["Homepage_GIT"]
         changelog = valuedict["Changelog"]
         pos = parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update", 
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update",
                           size=(230,240), pos=pos)
         self.changelog = changelog
         # Fill html content
@@ -74,7 +72,7 @@ def get_gh_version(ghrepo="user/repo", timeout=20):
     """
     u = "https://api.github.com/repos/{}/releases/latest".format(ghrepo)
     try:
-        data = urllib2.urlopen(u, timeout=timeout).read()
+        data = urllib.request.urlopen(u, timeout=timeout).read()
     except:
         newversion = None
         try:
@@ -87,7 +85,7 @@ def get_gh_version(ghrepo="user/repo", timeout=20):
         newversion = LooseVersion(j["tag_name"])
 
     return newversion
-    
+
 
 def update(parent):
     """ This is a thread for _Update """
@@ -106,12 +104,12 @@ def _update_worker(parent):
     # Online changelog file
     cl_file = doc.GitChLog
     try:
-        responseVer = urllib2.urlopen(cl_file, timeout=2)
+        responseVer = urllib.request.urlopen(cl_file, timeout=2)
     except:
         changelog = ""
     else:
         changelog = responseVer.read()
-    
+
     ghrepo="FCS-analysis/PyCorrFit"
     if hasattr(pcf_version, "repo_tag"):
         old = LooseVersion(pcf_version.repo_tag)
@@ -119,7 +117,7 @@ def _update_worker(parent):
         old = LooseVersion(pcf_version.version)
 
     new = get_gh_version(ghrepo)
-    
+
     if new is not None:
         if new > old:
             action = "update available"
@@ -132,7 +130,7 @@ def _update_worker(parent):
         changelogfile = tempfile.mktemp()+"_PyCorrFit_CHANGELOG"+".txt"
         clfile = open(changelogfile, 'wb')
         clfile.write(changelog)
-        clfile.close()            
+        clfile.close()
     else:
         changelogfile=doc.StaticChangeLog
     results = dict()

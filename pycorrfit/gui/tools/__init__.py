@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit - module "tools"
+"""PyCorrFit - module "tools"
 
 This file contains tools, such as dialog boxes and other stuff,
 that we need in PyCorrFit.
 
-The tools work with triggers on page updates. Every tool has a 
+The tools work with triggers on page updates. Every tool has a
 function `OnPageChanged(self, page, trigger=None)` which is called
 when something in the frontend chages. In order to minimize user
 stall time, these functions are not executed for a certain list
 of triggers that is defined in that function. This e.g. dramatically
 speeds up tools like "Statistics view" when batch fitting.
-    
+
 Recognized triggers:
  tab_init           : initial stuff that is done for a new page
  tab_browse         : the tab has change and a new page is visible
@@ -22,11 +20,9 @@ Recognized triggers:
  page_add_batch     : when many pages are added at the same time
  page_add_finalize  : finished (batch) adding of pages
 """
-# This file is necessary for this folder to become a module that can be 
-# imported by PyCorrFit or other people.
-
-import numpy as np                  # NumPy
 import sys
+
+import numpy as np
 
 from . import datarange
 from . import background
@@ -41,11 +37,11 @@ from . import statistics
 from . import trace
 # Load all of the classes
 # This also defines the order of the tools in the menu
-ImpA = [ 
+ImpA = [
         ["datarange", "SelectChannels"],
         ["overlaycurves", "Wrapper_Tools"],
         ["batchcontrol", "BatchCtrl"],
-        ["globalfit", "GlobalFit"],        
+        ["globalfit", "GlobalFit"],
         ["average", "Average"],
         ["background", "BackgroundCorrection"]
        ]
@@ -61,13 +57,13 @@ ModuleActive = list()
 ToolsActive = list()
 for i in np.arange(len(ImpA)):
     # We have to add "tools." because this is a relative import
-    ModuleActive.append(__import__(ImpA[i][0], globals(), locals(), [ImpA[i][1]], -1))
+    ModuleActive.append(__import__(ImpA[i][0], globals(), locals(), [ImpA[i][1]], 1))
     ToolsActive.append(getattr(ModuleActive[i], ImpA[i][1]))
 
 ModulePassive = list()
 ToolsPassive = list()
 for i in np.arange(len(ImpB)):
-    ModulePassive.append(__import__(ImpB[i][0], globals(), locals(), [ImpB[i][1]], -1))
+    ModulePassive.append(__import__(ImpB[i][0], globals(), locals(), [ImpB[i][1]], 1))
     ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
     #ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
     #ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
@@ -88,7 +84,7 @@ ToolDict["P"] = ToolsPassive
 NameActive = list()
 for i in np.arange(len(ImpA)):
     NameActive.append(ModuleActive[i].MENUINFO)
-    
+
 NamePassive = list()
 for i in np.arange(len(ImpB)):
     NamePassive.append(ModulePassive[i].MENUINFO)

@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-u"""PyCorrFit - module "models"
+"""PyCorrFit - module "models"
 
 Define all models and set initial parameters.
 
@@ -18,15 +17,11 @@ unit of Diff.coeff  : 10 µm²/s
 unit of inverse area: 100 /µm²
 unit of inv. volume : 1000 /µm³
 """
-
-
-# This file is necessary for this folder to become a module that can be 
-# imported from within Python/PyCorrFit.
-
 import copy
-import numpy as np
 import sys
 import warnings
+
+import numpy as np
 
 from .classes import Model
 from .control import values, valuedict, models, modeldict, modeltypes, supplement, boundaries, shorttype
@@ -37,7 +32,7 @@ def GetHumanReadableParms(model, parameters):
         Calculate the parameters in human readable units e.g. [nm].
         Uses modeldict from this module.
         *model* - an integer ID of a model
-        *parameters* - a list/array of parameters 
+        *parameters* - a list/array of parameters
                        (all parameters of that model)
         Returns:
         New Units, New Parameters
@@ -76,7 +71,7 @@ def GetHumanReadableParameterDict(model, names, parameters):
         # This means we have extra information on the model
         # Return some human readable stuff
         # Check for list:
-        if isinstance(names, basestring):
+        if isinstance(names, str):
             names = [names]
             parameters = [parameters]
             retstring = True
@@ -103,7 +98,7 @@ def GetHumanReadableParameterDict(model, names, parameters):
 def GetInternalFromHumanReadableParm(model, parameters):
     """ This is the inverse of *GetHumanReadableParms*
         *model* - an integer ID of a model
-        *parameters* - a list/array of parameters 
+        *parameters* - a list/array of parameters
         Returns:
         New Units, New Parameters
     """
@@ -117,11 +112,11 @@ def GetInternalFromHumanReadableParm(model, parameters):
         NewUnits = stdparms[0]
         return NewUnits, NewParameters
     else:
-        # There is no info about human readable stuff. The given 
+        # There is no info about human readable stuff. The given
         # parameters have not been converted befor using
         # *GetHumanReadableParms*.
         return stdparms[0], parameters
-        
+
 
 def GetModelType(modelid):
     """ Given a modelid, get the type of model function
@@ -141,7 +136,7 @@ def GetModelType(modelid):
 
 def GetModelFunctionFromId(modelid):
     return modeldict[modelid][3]
-    
+
 
 def GetModelParametersFromId(modelid):
     return valuedict[modelid][1]

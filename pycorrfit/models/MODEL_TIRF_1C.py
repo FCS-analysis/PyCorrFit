@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-This file contains TIR one component models
-"""
-import numpy as np                  # NumPy
+import numpy as np
 import scipy.special as sps
+
 
 def wixi(x):
     """ Complex Error Function (Faddeeva/Voigt).

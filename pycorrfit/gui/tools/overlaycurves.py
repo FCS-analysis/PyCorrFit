@@ -1,23 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - overlaycurves
+"""Module tools - overlaycurves
 Let the user choose which correlation curves to use.
 Contains wrappers for file import and tools.
 """
-
-try:
-    from matplotlib import cm  # @UnresolvedImport
-except:
-    mpl_available = False
-else:
-    mpl_available = True
-    
-import numpy as np
 import platform
+
+from matplotlib import cm
+import numpy as np
 import wx
-import wx.lib.plot as plot              # Plotting in wxPython
+import wx.lib.plot as plot
 
 from .. import edclasses
 from .. import misc
@@ -41,14 +31,14 @@ class Wrapper_OnImport(object):
         self.Selector = UserSelectCurves(parent, curvedict, wrapper=self,
                                          selkeys=selkeys, labels=labels)
         self.Selector.Show()
-        self.Selector.MakeModal(True)
+        self.parent.Disable()
         self.Selector.Bind(wx.EVT_CLOSE, self.OnClose)
-        
+
     def OnClose(self, event=None):
-        self.Selector.MakeModal(False)
+        self.parent.Enable()
         self.Selector.Destroy()
 
-        
+
     def OnResults(self, keyskeep, keysrem):
         """ Here we will close (or disable?) pages that are not wanted
             by the user. It is important that we do not close pages that
@@ -57,8 +47,6 @@ class Wrapper_OnImport(object):
         """
         self.OnClose()
         self.onselected(keyskeep,keysrem)
-        
- 
 
 
 class Wrapper_Tools(object):
@@ -89,7 +77,7 @@ class Wrapper_Tools(object):
 
     def Enable(self, par=True):
         self.Selector.Enable(par)
-    
+
     def GetCurvedict(self, e=None):
         curvedict = dict()
         labels = dict()
@@ -103,7 +91,6 @@ class Wrapper_Tools(object):
                 labels[key] = Page.tabtitle.GetValue()
         return curvedict, labels
 
-        
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
@@ -178,8 +165,6 @@ class Wrapper_Tools(object):
                 self.parent.notebook.DeletePage(j)
             self.OnPageChanged()
         dlg.Destroy()
-        
-
 
     def OnSelectionChanged(self, keylist, trigger=None):
         if len(keylist) == 0:
@@ -206,8 +191,8 @@ class Wrapper_Tools(object):
                 # tool does not have this function and hence does not
                 # need numbers.
                 pass
-        
-        
+
+
 class UserSelectCurves(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent, curvedict, wrapper=None, selkeys=None,
@@ -223,8 +208,9 @@ class UserSelectCurves(wx.Frame):
            a list of keys as an argument.
         *selkeys* items in the list *curvedict* that are preelected.
         *labels* dictionary with same keys as *curvelist* - labels of the
-           entries in the list. If none, the keys of *curvedict* will be used.        
+           entries in the list. If none, the keys of *curvedict* will be used.
         """
+        super(UserSelectCurves, self).__init__()
         # parent is the main frame of PyCorrFit
         self.parent = parent
         self.wrapper = wrapper
@@ -300,19 +286,19 @@ class UserSelectCurves(wx.Frame):
         panel_bottom.SetSizer(self.boxSizer)
         self.upperSizer.Fit(panel_top)
         self.boxSizer.Fit(panel_bottom)
-        minsize = np.array(self.boxSizer.GetMinSizeTuple()) +\
-                  np.array(self.upperSizer.GetMinSizeTuple()) +\
-                  np.array((300,30))
+        minsize = (np.array(self.boxSizer.GetMinSize()) +
+                   np.array(self.upperSizer.GetMinSize()) +
+                   np.array((300, 30)))
         self.SetMinSize(minsize)
         #self.SetSize(minsize)
-        #self.SetMaxSize((9999, self.boxSizer.GetMinSizeTuple()[1]))
+        #self.SetMaxSize((9999, self.boxSizer.GetMinSize()[1]))
         # Canvas
         self.canvas = plot.PlotCanvas(self.bottom_sp)
-        self.canvas.setLogScale((True, False))  
-        self.canvas.SetEnableZoom(True)
+        self.canvas.logScale = (True, False)
+        self.canvas.enableZoom = True
         # Splitter window
         self.bottom_sp.SplitVertically(panel_bottom, self.canvas, sizepanelx)
-        sizetoppanel = self.upperSizer.GetMinSizeTuple()[1]
+        sizetoppanel = self.upperSizer.GetMinSize()[1]
         self.sp.SplitHorizontally(panel_top, self.bottom_sp, sizetoppanel)
         self.OnUpdatePlot()
         # Icon
@@ -320,7 +306,6 @@ class UserSelectCurves(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
-    
     def GetSelection(self):
         keyssel = list()
         for i in self.SelectBox.GetSelections():
@@ -330,12 +315,12 @@ class UserSelectCurves(wx.Frame):
             if keyssel.count(key) == 0:
                 keysnosel.append(key)
         return keyssel, keysnosel
-    
-    
+
+
     def ProcessDict(self, e=None):
         # Define the order of keys used.
         # We want to sort the keys, such that #10: is not before #1:
-        self.curvekeys = self.curvedict.keys()
+        self.curvekeys = list(self.curvedict.keys())
         # Sorting key function applied to each key before sorting:
         page_num = lambda counter: int(counter.strip().strip(":").strip("#"))
         try:
@@ -358,7 +343,7 @@ class UserSelectCurves(wx.Frame):
     def OnCancel(self, e=None):
         """ Close the tool """
         self.wrapper.OnClose()
-        
+
 
     def OnPushResultsRemove(self, e=None):
         # Get keys from selection
@@ -375,7 +360,7 @@ class UserSelectCurves(wx.Frame):
     def OnUpdatePlot(self, e=None, trigger=None):
         """ What should happen when the selection in *self.SelectBox*
             is changed?
-            
+
             This function will alsy try to call the function
             *self.parent.OnSelectionChanged* and hand over the list of
             currently selected curves. This is an addon for 0.7.8
@@ -395,25 +380,21 @@ class UserSelectCurves(wx.Frame):
             curves.append(self.curvedict[self.curvekeys[i]])
             legends.append(self.curvekeys[i])
         # Set color map
-        if mpl_available:
-            cmap = cm.get_cmap("gist_rainbow")
+        cmap = cm.get_cmap("gist_rainbow")
         # Clear Plot
         self.canvas.Clear()
         # Draw Plot
         lines = list()
         for i in np.arange(len(curves)):
-            if mpl_available:
-                color = cmap(1.*i/(len(curves)), bytes=True)
-                color = wx.Colour(color[0], color[1], color[2])
-            else:
-                color = "black"
+            color = cmap(1.*i/(len(curves)), bytes=True)
+            color = wx.Colour(color[0], color[1], color[2])
             line = plot.PolyLine(curves[i], legend=legends[i],
                                  colour=color, width=1)
             lines.append(line)
-        self.canvas.SetEnableLegend(True)
+        self.canvas.enableLegend = True
         if len(curves) != 0:
-            self.canvas.Draw(plot.PlotGraphics(lines, 
-                         xLabel=u'lag time τ [ms]', 
+            self.canvas.Draw(plot.PlotGraphics(lines,
+                         xLabel=u'lag time τ [ms]',
                          yLabel=u'G(τ)'))
         ## This is an addon for 0.7.8
         keyskeep = list()

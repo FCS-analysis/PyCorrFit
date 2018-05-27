@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-""" PyCorrFit data set
-
-Classes for FCS data evaluation.
-"""
-from __future__ import print_function, division
-
+"""PyCorrFit data set: Classes for FCS data evaluation"""
 import hashlib
+
 import numpy as np
 import scipy.integrate as spintg
 
@@ -64,9 +59,10 @@ class Trace(object):
     
     @countrate.setter
     def countrate(self, value):
-        assert value is not None, "Setting value with None forbidden!"
-        assert self._trace is None, "Setting value impossible, "+\
-                                    "if `self.trace` is set."
+        if value is None:
+            raise ValueError("Setting value to `None` not allowed!")
+        if self._trace is not None:
+            raise ValueError("Cannot set countrate; `self.trace` is set.")
         self._countrate = value
 
     @property
@@ -77,9 +73,10 @@ class Trace(object):
     
     @duration.setter
     def duration(self, value):
-        assert value is not None, "Setting value with None forbidden!"
-        assert self._trace is None, "Setting value impossible, "+\
-                                    "if `self.trace` is set."
+        if value is None:
+            raise ValueError("Setting value to `None` not allowed!")
+        if self._trace is not None:
+            raise ValueError("Cannot set duration; `self.trace` is set.")
         self._duration = value
     
     @property
@@ -102,8 +99,11 @@ class Trace(object):
     
     @trace.setter
     def trace(self, value):
-        assert value is not None, "Setting value with None forbidden!"
-        assert isinstance(value, np.ndarray), "value must be array!"
-        assert value.shape[1] == 2, "shape of array must be (N,2)!"
+        if value is None:
+            raise ValueError("Setting value to `None` not allowed!")
+        if not isinstance(value, np.ndarray):
+            raise ValueError("Trace data must be np.ndarray!")
+        if value.shape[1] != 2:
+            raise ValueError("Shape of array must be (N,2)!")
         self._trace = value
         # self.countrate is set automagically

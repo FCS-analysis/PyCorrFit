@@ -20,18 +20,13 @@ environment:
     secure: US5V2RWPr+toU2ZX8lyNs5IJIgfo2S1OwBQ0PUdqJMkDi4K4uJpTnZ2Ub1rda/j9
   GITHUB_API_TOKEN:
     secure: REdGxEyvL7z7Ohn1K6pdEPmLdCMme9rHZmRF7oItwYFb9VTBNUhCYyb+T4AeLY3M
-  global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\.appveyor\\run_with_compiler.cmd"
   # https://github.com/appveyor/ci/issues/359
   matrix:
-    - PYTHON: "C:\\Miniconda"
-      PYTHON_VERSION: "2.7"
+    - PYTHON: "C:\\Miniconda36"
+      PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "32"
-    - PYTHON: "C:\\Miniconda-x64"
-      PYTHON_VERSION: "2.7"
+    - PYTHON: "C:\\Miniconda36-x64"
+      PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
 
 
@@ -45,9 +40,8 @@ install:
   - appveyor-retry choco install -y InnoSetup
 
   # Determine platform
-  - '%PYTHON%/python -c "import platform; print platform.uname()"'
-  - '%PYTHON%/python -c "import sys; print sys.maxint"'
-  - '%PYTHON%/python -c "import sys; print sys.version"'
+  - '%PYTHON%/python -c "import platform; print(platform.uname())"'
+  - '%PYTHON%/python -c "import sys; print(sys.version)"'
 
   # Prepend newly installed Python to the PATH of this build (this cannot be
   # done from inside the powershell script as it would require to restart
@@ -61,23 +55,17 @@ install:
   # CONDA installs
   # Pinned versions are defined in .appveyor\pinned
   - xcopy .appveyor\pinned %PYTHON%\conda-meta\ /Y
-  - "conda install --yes --quiet numpy pip scipy wxpython"
+  - "appveyor-retry conda install --yes --quiet matplotlib numpy pip scipy wxpython"
   # PIP installs
   # Install the build dependencies of the project. 
   - "pip install cython wheel"
   # Install package-specific libraries  
-  - "pip install matplotlib==1.4.3"
   - "pip install simplejson sympy"
-  # We forced numpy to 1.8 b/c of wxpython issues and therefore
-  # we have to stick to an old scipy version and thus, to an
-  # old lmfit version:
   - "pip install lmfit==0.9.2"
   # Install pyinstaller (includes dependency for pywin32)
-  #- "%WITH_COMPILER% pip install pypiwin32"
-  #- "%WITH_COMPILER% pip install git+git://github.com/pyinstaller/pyinstaller.git@779d07b236a943a4bf9d2b1a0ae3e0ebcc914798"
-  - "%WITH_COMPILER% pip install pyinstaller==3.2.1"
+  - "pip install pyinstaller==3.3.1"
   # Run develop (installs yet missing packages and runs cython)
-  - "%WITH_COMPILER% %PYTHON%/python setup.py develop"
+  - "pip install -e ."
 
   # Show the installed packages
   - "pip freeze"
@@ -85,7 +73,7 @@ install:
 build: off
 
 test_script:
-  - 'python -c "import pycorrfit; print pycorrfit.__version__"'
+  - 'python -c "import pycorrfit; print(pycorrfit.__version__)"'
   - "pip install coverage"
   - "pip install codecov"
   - "coverage run --source=pycorrfit ./setup.py test"
@@ -94,11 +82,11 @@ test_script:
 
 after_test:
   # If tests are successful, create a whl package for the project.
-  - "%WITH_COMPILER% %PYTHON%/python setup.py bdist_wheel"
+  - "python setup.py bdist_wheel"
   - ps: "ls dist"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "%WITH_COMPILER% pyinstaller -y --log-level=WARN .appveyor\\PyCorrFit_win7.spec"
+  - "pyinstaller -y --log-level=WARN .appveyor\\PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"

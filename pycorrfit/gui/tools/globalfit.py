@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
+"""Module tools - globalfit
+Perform global fitting on pages which share parameters
 """
-PyCorrFit
-
-Module tools - globalfit
-Perform global fitting on pages which share parameters.
-"""
-
-
-import wx
 import numpy as np
+import wx
 
 from pycorrfit import Fit
 from .. import misc
@@ -42,7 +36,7 @@ class GlobalFit(wx.Frame):
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         textinit = """Fitting of multiple data sets with different models.
 Parameter names have to match. Select pages (e.g. 1,3-5,7),
-check parameters on each page and start 'Global fit'. 
+check parameters on each page and start 'Global fit'.
 """
         self.topSizer.Add(wx.StaticText(self.panel, label=textinit))
         ## Page selection
@@ -51,7 +45,7 @@ check parameters on each page and start 'Global fit'.
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         self.topSizer.Add(self.WXTextPages)
@@ -62,7 +56,7 @@ check parameters on each page and start 'Global fit'.
         self.topSizer.Add(btnfit)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.SetMinSize(self.topSizer.GetMinSize())
         self.OnPageChanged(self.Page)
         # Icon
         if parent.MainIcon is not None:
@@ -90,18 +84,18 @@ check parameters on each page and start 'Global fit'.
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             corr = Page.corr
-            j = filter(lambda x: x.isdigit(), Page.counter)
+            j = "".join(filter(lambda x: x.isdigit(), Page.counter))
             if int(j) in PageNumbers:
                 if corr.correlation is not None:
                     Page.apply_parameters()
                     corrs.append(corr)
                     global_pages.append(int(j))
                 else:
-                    print "No experimental data in page #"+j+"!"
+                    print("No experimental data in page #"+j+"!")
 
         if len(corrs) == 0:
             return
-        
+
         # Perform fit
         fitter = Fit(corrs, global_fit=True)
         fit_parm_names = [f.split()[0] for f in fitter.fit_parm_names]
@@ -110,14 +104,18 @@ check parameters on each page and start 'Global fit'.
         for corr in corrs:
             corr.fit_results["global parms"] = u", ".join(fit_parm_names)
             corr.fit_results["global pages"] = u", ".join([str(g) for g in global_pages])
-        
+
         # Plot resutls
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            j = filter(lambda x: x.isdigit(), Page.counter)
+            j = "".join(filter(lambda x: x.isdigit(), Page.counter))
             if int(j) in global_pages:
                 Page.apply_parameters_reverse()
                 Page.PlotAll()
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
+
 
     def OnPageChanged(self, page, trigger=None):
         """

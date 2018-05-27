@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-""" 
-PyCorrFit
+"""Module tools - chooseimport
 
-Module tools - chooseimport
 Displays a window that lets the user choose what type
 of data (AC1, AC2, CC12, CC21) he wants to import.
 """
-
-
 import numpy as np
 import wx
 
@@ -24,7 +19,7 @@ class ChooseImportTypes(wx.Dialog):
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
-        #super(ChooseImportTypes, self).__init__(parent=parent, 
+        #super(ChooseImportTypes, self).__init__(parent=parent,
         #    title="Choose types", size=(250, 200))
         wx.Dialog.__init__(self, parent, -1, "Choose models")
         self.keys = list()
@@ -38,7 +33,7 @@ class ChooseImportTypes(wx.Dialog):
                         "type(s) you would like to import.")
         textinit = wx.StaticText(self.panel, label=chooseimport)
         self.sizer.Add(textinit)
-        thekeys = curvedict.keys()
+        thekeys = list(curvedict.keys())
         thekeys.sort()
         for key in thekeys:
             label = key + " (" + str(len(curvedict[key])) + " curves)"
@@ -88,7 +83,7 @@ class ChooseImportTypesModel(wx.Dialog):
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # init
-        #super(ChooseImportTypesModel, self).__init__(parent=parent, 
+        #super(ChooseImportTypesModel, self).__init__(parent=parent,
         #    title="Choose types", size=(250, 200))
         wx.Dialog.__init__(self, parent, -1, "Choose models")
         self.curvedict = curvedict
@@ -106,13 +101,13 @@ class ChooseImportTypesModel(wx.Dialog):
         labelim = "Select a fitting model for each correlation channel (AC,CC)."
         textinit = wx.StaticText(self.panel, label=labelim)
         self.sizer.Add(textinit)
-        curvekeys = curvedict.keys()
+        curvekeys = list(curvedict.keys())
         curvekeys.sort()
         self.curvekeys = curvekeys
         # Dropdown model selections:
         DropdownList = ["No model selected"] # Contains string in model dropdown
         self.DropdownIndex = [None]          # Contains corresponsing model
-        modelkeys = mdls.modeltypes.keys()
+        modelkeys = list(mdls.modeltypes.keys())
         modelkeys.sort()
         for modeltype in modelkeys:
             for modelid in mdls.modeltypes[modeltype]:
@@ -160,7 +155,7 @@ class ChooseImportTypesModel(wx.Dialog):
         for i in np.arange(len(self.keepcurvesindex)):
             self.keepcurvesindex[i] = int(self.keepcurvesindex[i])
         self.EndModal(wx.ID_OK)
-        
+
         #self.Show
         #self.Destroy()
 
@@ -238,7 +233,7 @@ class ChooseImportTypesModel(wx.Dialog):
                     self.modelids[index] = modelid
         self.typekeys.sort()
 
-        
 
 
-        
+
+

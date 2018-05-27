@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Module frontend
 
-Module frontend
 The frontend displays the GUI (Graphic User Interface).
 All functions and modules are called from here.
 """
-import numpy as np                      # NumPy
+import numpy as np
 import warnings
-import wx                               # GUI interface wxPython
-import wx.lib.plot as plot              # Plotting in wxPython
+import wx
+import wx.lib.plot as plot
 import wx.lib.scrolledpanel as scrolled
 
 
@@ -31,7 +28,7 @@ class FittingPanel(wx.Panel):
         """ Initialize with given parameters. """
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
         self.parent = parent
-        
+
         self.corr = Correlation(fit_model=modelid)
         if tau is not None:
             self.corr.lag_time = tau
@@ -50,11 +47,11 @@ class FittingPanel(wx.Panel):
         self.weighted_fittype_id = 0 # integer (drop down item)
         self.weighted_nuvar = 3 # bins for std-dev. (left and rigth)
 
-        
+
         # The weights that are plotted in the page
         # This is set by the PlotAll function
         self.weights_plot_fill_area = None
-        
+
         # A list containing page numbers that share parameters with this page.
         # This parameter is defined by the global fitting tool and is saved in
         # sessions.
@@ -100,14 +97,14 @@ class FittingPanel(wx.Panel):
         self.apply_parameters_reverse()
         # Upper Plot for plotting of Correlation Function
         self.canvascorr = plot.PlotCanvas(self.spcanvas)
-        self.canvascorr.setLogScale((True, False))  
-        self.canvascorr.SetEnableZoom(True)
+        self.canvascorr.logScale = (True, False)
+        self.canvascorr.enableZoom = True
         self.PlotAll(event="init", trigger="tab_init")
         self.canvascorr.SetSize((canvasx, cupsizey))
         # Lower Plot for plotting of the residuals
         self.canvaserr = plot.PlotCanvas(self.spcanvas)
-        self.canvaserr.setLogScale((True, False))
-        self.canvaserr.SetEnableZoom(True)
+        self.canvaserr.logScale = (True, False)
+        self.canvaserr.enableZoom = True
         self.canvaserr.SetSize((canvasx, size[1]-cupsizey))
         self.spcanvas.SplitHorizontally(self.canvascorr, self.canvaserr,
                                         cupsizey)
@@ -126,19 +123,19 @@ class FittingPanel(wx.Panel):
     @property
     def IsCrossCorrelation(self):
         return self.corr.is_cc
-    
+
     @property
     def modelid(self):
         return self.corr.fit_model.id
-    
+
     @property
     def prevent_batch_modification(self):
         return self.wxCBPreventBatchParms.GetValue()
-    
+
     @prevent_batch_modification.setter
     def prevent_batch_modification(self, value):
         self.wxCBPreventBatchParms.SetValue(value)
-    
+
     @property
     def title(self):
         return self.tabtitle.GetValue()
@@ -147,12 +144,12 @@ class FittingPanel(wx.Panel):
     def title(self, title):
         self.tabtitle.SetValue(title.strip())
         self.corr.title = title.strip()
-    
+
     @property
     def traceavg(self):
         warnings.warn("Trace average always set to none!")
         return None
-    
+
     @property
     def tracecc(self):
         if self.corr.is_cc and len(self.corr.traces) != 0:
@@ -163,7 +160,7 @@ class FittingPanel(wx.Panel):
     @property
     def bgselected(self):
         return self._bgselected
-    
+
     @bgselected.setter
     def bgselected(self, value):
         if value is None:
@@ -177,7 +174,7 @@ class FittingPanel(wx.Panel):
     @property
     def bg2selected(self):
         return self._bg2selected
-    
+
     @bg2selected.setter
     def bg2selected(self, value):
         if value is None:
@@ -205,7 +202,7 @@ class FittingPanel(wx.Panel):
         self.corr.fit_parameters_variable = np.array(parameters_variable,
                                                      dtype=bool)
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
         # Here: Convert human readable units to program internal
         # units
@@ -215,15 +212,15 @@ class FittingPanel(wx.Panel):
 
         # Fitting parameters
         self.weighted_nuvar = self.Fitbox[5].GetValue()
-        
+
         self.weighted_fittype_id = self.Fitbox[1].GetSelection()
 
         fitbox_value = self.Fitbox[1].GetValue()
-        
+
         if self.weighted_fittype_id == -1:
             # User edited knot number
             Knots = fitbox_value
-            Knots = filter(lambda x: x.isdigit(), Knots)
+            Knots = "".join(filter(lambda x: x.isdigit(), Knots))
             if Knots == "":
                 Knots = "5"
             self.weighted_fittype_id = 1
@@ -232,7 +229,7 @@ class FittingPanel(wx.Panel):
             fit_weight_data = self.weighted_nuvar
         elif self.weighted_fittype_id == 1:
             Knots = fitbox_value
-            Knots = filter(lambda x: x.isdigit(), Knots)
+            Knots = "".join(filter(lambda x: x.isdigit(), Knots))
             self.FitKnots = int(Knots)
             fit_weight_type = "spline{}".format(self.FitKnots)
             fit_weight_data = self.weighted_nuvar
@@ -246,15 +243,15 @@ class FittingPanel(wx.Panel):
             fit_weight_type = fitbox_value
             self.corr.fit_weight_type = fitbox_value
             fit_weight_data = self.corr.fit_weight_data
-        
+
         # Fitting algorithm
         keys = fit.GetAlgorithmStringList()[0]
         idalg = self.AlgorithmDropdown.GetSelection()
-        
+
         self.corr.fit_algorithm = keys[idalg]
         self.corr.fit_weight_type = fit_weight_type
         self.corr.fit_weight_data = fit_weight_data
-        
+
         # If parameters have been changed because of the check_parms
         # function, write them back.
         self.apply_parameters_reverse()
@@ -267,9 +264,9 @@ class FittingPanel(wx.Panel):
         modelid = self.corr.fit_model.id
         #
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
-        # 
+        #
         # Here: Convert program internal units to
         # human readable units
         parameters = mdls.GetHumanReadableParms(modelid,
@@ -300,7 +297,7 @@ class FittingPanel(wx.Panel):
 
 
     def calculate_corr(self):
-        """ 
+        """
         Calculate model correlation function
         """
         return self.corr.modeled
@@ -317,16 +314,16 @@ class FittingPanel(wx.Panel):
         self.Fitbox[7].Enable()
         self.Fitbox[8].Enable()
 
-        
+
     def Fit_function(self, event=None, noplots=False, trigger=None):
         """ Calls the fit function.
-            
+
             `noplots=True` prevents plotting of spline fits
-        
+
             `trigger` is passed to page.PlotAll.
                       If trigger is "fit_batch", then `noplots` is set
                       to `True`.
-        
+
         """
         tools.batchcontrol.FitProgressDlg(self, self)
 
@@ -349,13 +346,13 @@ class FittingPanel(wx.Panel):
             # Sometimes parameters are just bad and
             # we still want the user to use the
             # program.
-            warnings.warn("Could not plot canvas.") 
+            warnings.warn("Could not plot canvas.")
         # update displayed chi2
         self.updateChi2()
 
 
     def Fit_WeightedFitCheck(self, event=None):
-        """ Enable Or disable variance calculation, dependent on 
+        """ Enable Or disable variance calculation, dependent on
             "Weighted Fit" checkbox
         """
         #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
@@ -376,7 +373,7 @@ class FittingPanel(wx.Panel):
 
 
     def MakeStaticBoxSizer(self, boxlabel):
-        """ Create a Box with check boxes (fit yes/no) and possibilities to 
+        """ Create a Box with check boxes (fit yes/no) and possibilities to
             change initial values for fitting.
 
             Parameters:
@@ -395,22 +392,22 @@ class FittingPanel(wx.Panel):
         spin = list()
         #
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
-        # 
+        #
         labels = mdls.GetHumanReadableParms(modelid,
                                             self.corr.fit_parameters)[0]
+        sizerh = wx.GridSizer(len(labels), 2, 2, 2)
         for label in labels:
-            sizerh = wx.BoxSizer(wx.HORIZONTAL)
             checkbox = wx.CheckBox(self.panelsettings, label=label)
             # We needed to "from wx.lib.agw import floatspin" to get this:
             spinctrl = wxutils.PCFFloatTextCtrl(self.panelsettings)
             sizerh.Add(spinctrl)
             sizerh.Add(checkbox)
-            sizer.Add(sizerh)
             # Put everything into lists to be able to refer to it later
             check.append(checkbox)
             spin.append(spinctrl)
+        sizer.Add(sizerh)
         return sizer, check, spin
 
 
@@ -447,7 +444,7 @@ class FittingPanel(wx.Panel):
         if normsel in [0, -1]:
             # init or no normalization selected
             self.corr.normparm = None
-            normsel = 0 
+            normsel = 0
         else:
             self.corr.normparm = parameterlist[normsel-1]
 
@@ -486,7 +483,7 @@ class FittingPanel(wx.Panel):
         else:
             self.AmplitudeInfo[1][0].SetValue(0)
             self.AmplitudeInfo[1][1].SetValue(0)
-        
+
         if len(self.corr.backgrounds) == 2:
             self.AmplitudeInfo[1][1].SetValue(
                         self.corr.backgrounds[1].countrate)
@@ -520,7 +517,7 @@ class FittingPanel(wx.Panel):
                         bg[ii] = .99*sig[ii]
                         self.AmplitudeInfo[1][ii].SetValue(bg[ii])
         else:
-            # Only update self.bgselected 
+            # Only update self.bgselected
             bg = float(self.AmplitudeInfo[1][0].GetValue())
             sig = float(self.AmplitudeInfo[0][0].GetValue())
             # Make sure bg < sig
@@ -532,7 +529,7 @@ class FittingPanel(wx.Panel):
                                                   self.parent)
         e.Skip()
 
-    
+
     def OnTitleChanged(self, e):
         modelid = self.corr.fit_model.id
         pid = self.parent.notebook.GetPageIndex(self)
@@ -542,9 +539,8 @@ class FittingPanel(wx.Panel):
             # How many characters of the the page title should be displayed
             # in the tab? We choose 9: AC1-012 plus 2 whitespaces
             text = self.counter + self.tabtitle.GetValue()[-9:]
-        self.parent.notebook.SetPageText(pid,text)        
+        self.parent.notebook.SetPageText(pid,text)
 
-        
     def OnSetRange(self, e):
         """ Open a new Frame where the parameter range can be set.
             Rewrites self.parameter_range
@@ -553,7 +549,7 @@ class FittingPanel(wx.Panel):
         """
         # TODO:
         # - make range selector work with new class
-        
+
         # We write a separate tool for that.
         # This tool does not show up in the Tools menu.
         if self.parent.RangeSelector is None:
@@ -566,7 +562,7 @@ class FittingPanel(wx.Panel):
             except:
                 pass
             self.parent.RangeSelector = None
-        
+
 
     def OnSize(self, event):
         """ Resize the fitting Panel, when Window is resized. """
@@ -584,11 +580,11 @@ class FittingPanel(wx.Panel):
         - Background correction
         - Apply Parameters (separate function)
         - Drawing of plots
-        
+
         The `event` is usually just an event from buttons or similar
         wx objects. It can be "init", then some initial plotting is
         done before the data is handled.
-        
+
         The `trigger` is passed to `self.parent.OnFNBPageChanged` so
         that tools can update their content accordingly. For more
         information on triggers, have a look at the doctring of the
@@ -608,15 +604,15 @@ class FittingPanel(wx.Panel):
         self.apply_parameters()
         # Calculate correlation function from parameters
         ## Drawing of correlation plot
-        # Plots corr.correlation_fit and the calcualted correlation function 
+        # Plots corr.correlation_fit and the calcualted correlation function
         # self.datacorr into the upper canvas.
         # Create a line @ y=zero:
         zerostart = self.corr.lag_time_fit[0]
         zeroend = self.corr.lag_time_fit[-1]
         datazero = [[zerostart, 0], [zeroend,0]]
         # Set plot colors
-        width = 1   
-        colexp = "grey"  
+        width = 1
+        colexp = "grey"
         colfit = "blue"
         colweight = "cyan"
         lines = list()
@@ -629,16 +625,16 @@ class FittingPanel(wx.Panel):
                     weights = self.corr.fit_results["fit weights"]
                 except:
                     weights = self.corr.fit_weight_data
-                
+
                 if isinstance(weights, np.ndarray):
                     # user might have selected a new weight type and
                     # presses apply, do not try to display weights
 
-                    # if weights are from average or other, make sure that the 
+                    # if weights are from average or other, make sure that the
                     # dimensions are correct
                     if weights.shape[0] == self.corr.correlation.shape[0]:
                         weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
-                        
+
                     # perform some checks
                     if np.allclose(weights, np.ones_like(weights)):
                         weights = 0
@@ -652,7 +648,7 @@ class FittingPanel(wx.Panel):
                     w = 1*self.corr.modeled_fit
                     w1 = 1*w
                     w2 = 1*w
-                    
+
                     w1[:, 1] = w[:, 1] + weights
                     w2[:, 1] = w[:, 1] - weights
                     # crop w1 and w2 if corr.correlation_fit does not include all
@@ -673,7 +669,7 @@ class FittingPanel(wx.Panel):
                     lines.append(lineweight2)
             else:
                 self.weights_plot_fill_area = None
-                
+
             ## Plot Correlation curves
             # Plot both, experimental and calculated data
             # Normalization with self.normfactor, new feature in 0.7.8
@@ -686,7 +682,7 @@ class FittingPanel(wx.Panel):
             # Draw linezero first, so it is in the background
             lines.append(lineexp)
             lines.append(linecorr)
-            PlotCorr = plot.PlotGraphics(lines, 
+            PlotCorr = plot.PlotGraphics(lines,
                                 xLabel=u'lag time τ [ms]', yLabel=u'G(τ)')
 
             self.canvascorr.Draw(PlotCorr)
@@ -694,13 +690,13 @@ class FittingPanel(wx.Panel):
             resid_norm = self.corr.residuals_plot
             lineres = plot.PolyLine(resid_norm, legend='', colour=colfit,
                                     width=width)
-            
+
             # residuals or weighted residuals?
             if self.corr.is_weighted_fit:
                 yLabelRes = "weighted \nresiduals"
             else:
                 yLabelRes = "residuals"
-            PlotRes = plot.PlotGraphics([linezero, lineres], 
+            PlotRes = plot.PlotGraphics([linezero, lineres],
                                    xLabel=u'lag time τ [ms]',
                                    yLabel=yLabelRes)
             self.canvaserr.Draw(PlotRes)
@@ -712,6 +708,7 @@ class FittingPanel(wx.Panel):
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
                        xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
+        self.Refresh()
         self.parent.OnFNBPageChanged(trigger=trigger)
 
 
@@ -731,10 +728,10 @@ class FittingPanel(wx.Panel):
         boxti = wx.StaticBox(self.panelsettings, label=titlelabel)
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         sizerti.SetMinSize((horizontalsize, -1))
-        self.tabtitle = wx.TextCtrl(self.panelsettings, value="", 
+        self.tabtitle = wx.TextCtrl(self.panelsettings, value="",
                                     size=(horizontalsize-20, -1))
         self.Bind(wx.EVT_TEXT, self.OnTitleChanged, self.tabtitle)
-        sizerti.Add(self.tabtitle)                       
+        sizerti.Add(self.tabtitle, 0, wx.EXPAND, 0)
         # Create StaticBoxSizer
         box1, check, spin = self.MakeStaticBoxSizer("Model parameters")
         # Make the check boxes and spin-controls available everywhere
@@ -742,20 +739,20 @@ class FittingPanel(wx.Panel):
         self.spincontrol = spin
         #
         # As of version 0.7.5: we want the units to be displayed
-        # human readable - the way they are displayed 
+        # human readable - the way they are displayed
         # in the Page info tool.
-        # 
+        #
         labels, parameters = mdls.GetHumanReadableParms(modelid,
                                                 self.active_parms[1])
         parameterstofit = self.active_parms[2]
         # Set initial values given by user/programmer for Diffusion Model
         for i in np.arange(len(labels)):
-            self.checkboxes[i].SetValue(parameterstofit[i]) 
+            self.checkboxes[i].SetValue(parameterstofit[i])
             self.spincontrol[i].SetValue(parameters[i])
         # Put everything together
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.panelsettings.sizer.Add(sizerti)
-        self.panelsettings.sizer.Add(box1)
+        self.panelsettings.sizer.Add(sizerti, 0, wx.EXPAND, 0)
+        self.panelsettings.sizer.Add(box1, 0, wx.EXPAND, 0)
         # checkbox "Protect from batch control"
         self.wxCBPreventBatchParms = wx.CheckBox(self.panelsettings,
                                                  -1,
@@ -810,7 +807,7 @@ class FittingPanel(wx.Panel):
                                [bgspin1, bgspin2],
                                 normtoNDropdown, textnor]
         self.WXAmplitudeCCOnlyStuff = [chtext2, intlabel2, bgspin2]
-        self.panelsettings.sizer.Add(miscsizer)
+        self.panelsettings.sizer.Add(miscsizer, 0, wx.EXPAND, 0)
         ## Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Fitting options")
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)
@@ -829,10 +826,10 @@ class FittingPanel(wx.Panel):
         # In order to do that, we need to know how many data points from left
         # and right of the interesting data point we want to include in that
         # calculation.
-        fittext = wx.StaticText(self.panelsettings, 
+        fittext = wx.StaticText(self.panelsettings,
                                 label="Calculation of the variance")
         fitsizer.Add(fittext)
-        fittext2 = wx.StaticText(self.panelsettings, 
+        fittext2 = wx.StaticText(self.panelsettings,
                                  label="from 2j+1 data points")
         fitsizer.Add(fittext2)
         fitsizerspin = wx.BoxSizer(wx.HORIZONTAL)
@@ -856,11 +853,17 @@ class FittingPanel(wx.Panel):
         buttonfit = wx.Button(self.panelsettings, label="Fit")
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
         fitbuttonsizer.Add(buttonfit)
+
+        ## add shortcut
+        acctbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('F'), buttonfit.GetId())])
+        self.SetAcceleratorTable(acctbl)
+        ##
+
         self.WXTextChi2 = wx.StaticText(self.panelsettings)
         # this StaticText is updated by `self.updateChi2()`
         fitbuttonsizer.Add(self.WXTextChi2, flag=wx.ALIGN_CENTER)
         fitsizer.Add(fitbuttonsizer)
-        self.panelsettings.sizer.Add(fitsizer)
+        self.panelsettings.sizer.Add(fitsizer, 0, wx.EXPAND, 0)
         # Squeeze everything into the sizer
         self.panelsettings.SetSizer(self.panelsettings.sizer)
         # This is also necessary in Windows
@@ -891,8 +894,3 @@ class FittingPanel(wx.Panel):
         # This does not work with wxPython 2.8.12:
         #self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
         self.WXTextChi2.SetLabel(u"{}".format(label))
-
-        
-        
-        
-        

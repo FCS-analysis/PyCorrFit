@@ -16,22 +16,23 @@ matrix:
     - os: linux
       dist: trusty
       language: python
-      python: 2.7
+      python: 3.6
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
       dist: trusty
       language: python
-      python: 2.7
+      python: 3.6
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
            PRE_CMD=linux32
     - os: osx
+      language: generic
 
 install:
 - source ./.travis/${TRAVIS_OS_NAME}_install.sh
-- python setup.py develop
-- pip freeze
+- python -m pip install -e .
+- python -m pip freeze
 
 script:
 - source ./.travis/test.sh

@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-meta data and methods for PyCorrFit
-"""
-
+"""meta data and methods for PyCorrFit"""
 import os
 import sys
 

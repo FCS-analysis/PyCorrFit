@@ -4,6 +4,8 @@ import os
 import platform
 import sys
 
+sys.setrecursionlimit(5000)
+
 ## Patch matplotlibrc
 # This patch is required so matplotlib does not try to start with
 # the "TkAgg" backend, resulting in import errors.
@@ -26,7 +28,7 @@ DIR = os.path.realpath(".")
 PyInstDir = os.path.join(DIR, ".appveyor")
 PCFDIR = os.path.join(DIR, "pycorrfit")
 ProgPy = os.path.join(PCFDIR,"PyCorrFit.py")
-ChLog = os.path.join(DIR,"ChangeLog.txt")
+ChLog = os.path.join(DIR,"CHANGELOG")
 DocPDF = os.path.join(DIR,"doc/PyCorrFit_doc.pdf")
 ICO = os.path.join(PyInstDir,"PyCorrFit.ico")
 
@@ -35,6 +37,7 @@ sys.path.append(DIR)
 hiddenimports = ["scipy.io.matlab.streams",
                  "sympy.assumptions.handlers",
                  "sympy.assumptions.handlers.common",
+                 "scipy._lib.messagestream",
                  "scipy.special._ufuncs_cxx",
                  "scipy.sparse.csgraph",
                  "scipy.sparse.csgraph._validation",
@@ -65,7 +68,7 @@ a = Analysis([ProgPy],
              pathex=[DIR],
              hiddenimports=hiddenimports,
              hookspath=None)
-a.datas += [('doc\\ChangeLog.txt', ChLog, 'DATA'),
+a.datas += [('doc\\CHANGELOG', ChLog, 'DATA'),
             ('doc\\PyCorrFit_doc.pdf', DocPDF, 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,

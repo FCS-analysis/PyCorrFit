@@ -1,14 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-A flexible tool for fitting and analyzing correlation curves.
-"""
-from __future__ import print_function
-
+"""Main execution script"""
 from distutils.version import LooseVersion
+import os
 import sys
+
 
 class Fake(object):
     """ Fake module.
@@ -32,7 +26,6 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
 import numpy as np                  # NumPy
-import os
 import scipy
 
 
@@ -55,7 +48,6 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from . import doc
 from . import frontend as gui              # The actual program
-
 
 
 def CheckVersion(given, required, name):
@@ -87,13 +79,12 @@ def Main():
 
     ## Check important module versions
     print("\n\nChecking module versions...")
-    CheckVersion(matplotlib.__version__, "1.0.0", "matplotlib")
-    CheckVersion(np.__version__, "1.5.1", "NumPy")
-    CheckVersion(yaml.__version__, "3.09", "PyYAML")
-    CheckVersion(scipy.__version__, "0.8.0", "SciPy")
-    CheckVersion(sympy.__version__, "0.7.2", "sympy")
-    CheckVersion(gui.wx.__version__, "2.8.10.1", "wxPython")
-
+    CheckVersion(matplotlib.__version__, "2.2.2", "matplotlib")
+    CheckVersion(np.__version__, "1.14.2", "NumPy")
+    CheckVersion(yaml.__version__, "3.12", "PyYAML")
+    CheckVersion(scipy.__version__, "1.0.1", "SciPy")
+    CheckVersion(sympy.__version__, "1.1.1", "sympy")
+    CheckVersion(gui.wx.__version__, "4.0.1", "wxPython")
 
     ## Start gui
     app = gui.MyApp(False)
@@ -121,7 +112,6 @@ def Main():
             pass
         else:
             print("Ignoring command line parameter: "+arg)
-
 
     app.MainLoop()
 

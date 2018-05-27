@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
+"""Provide the user with tab-separated statistics of their curves.
 
-Module tools - statistics
-Provide the user with tab-separated statistics of their curves.
 Values are sorted according to the page number.
 """
-from __future__ import division
-
 import codecs
+import re
+
+import numpy as np
 import wx
 import wx.lib.plot as plot              # Plotting in wxPython
 import wx.lib.scrolledpanel as scrolled
-import numpy as np
-import re
 
 from pycorrfit import models as mdls
 
@@ -78,12 +73,12 @@ class Stat(wx.Frame):
         else:
             self.panel.Disable()
         # A dropdown menu for the source Page:
-        text = wx.StaticText(self.panel, 
+        text = wx.StaticText(self.panel,
                     label="Create a table with all the selected\n"+
                           "variables below from pages with the\n"+
                           "same model as the current page.")
         ## Page selection as in average tool
-        Pagetext = wx.StaticText(self.panel, 
+        Pagetext = wx.StaticText(self.panel,
                              label="Curves ")
         Psize = text.GetSize()[0]/2
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
@@ -92,15 +87,15 @@ class Stat(wx.Frame):
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int(filter(lambda x: x.isdigit(),
-                                                        Page.counter)))
+            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(),
+                                          Page.counter))))
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         ## Plot parameter dropdown box
         self.PlotParms = self.GetListOfPlottableParms()
         Parmlist = self.PlotParms
         DDtext = wx.StaticText(self.panel, label="Plot parameter ")
-        self.WXDropdown = wx.ComboBox(self.panel, -1, "", 
+        self.WXDropdown = wx.ComboBox(self.panel, -1, "",
                                 size=(Psize,-1), choices=Parmlist,
                                 style=wx.CB_DROPDOWN|wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnDropDown, self.WXDropdown)
@@ -150,11 +145,11 @@ class Stat(wx.Frame):
         # Set size of window
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self.panel)
-        px = self.topSizer.GetMinSizeTuple()[0]
-        
+        px = self.topSizer.GetMinSize()[0]
+
         ## Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
-        self.canvas.SetEnableZoom(True)
+        self.canvas.enableZoom = True
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
         ## Icon
         if parent.MainIcon is not None:
@@ -175,7 +170,7 @@ class Stat(wx.Frame):
         # Now that we know our Page, we may change the available
         # parameter options.
         Infodict = self.InfoClass.GetCurInfo()
-        # We want to sort the information and have some prechecked 
+        # We want to sort the information and have some prechecked
         # values in the statistics window afterwards.
         # new iteration
         keys = Infodict.keys()
@@ -193,7 +188,7 @@ class Stat(wx.Frame):
         # Separate checkbox for fit errors
         if len(errparms) > 0:
             parms.append(("Fit errors", errparms))
-        
+
         Info = Stat.SortParameters(parms)
 
         # List of default checked parameters:
@@ -221,14 +216,14 @@ class Stat(wx.Frame):
             for checkitem in nochecklist:
                 if item[0].count(checkitem):
                     checked[i] = False
-        
-        
+
+
         if return_std_checked:
             return Info, checked
         else:
             return Info
 
-        
+
     def GetListOfPlottableParms(self, e=None, return_values=False,
                                 page=None):
         """ Returns list of parameters that can be plotted.
@@ -287,13 +282,12 @@ class Stat(wx.Frame):
         self.SaveInfo = list()
         # Some nasty iteration through the dictionaries.
         # Collect all checked variables.
-        pagekeys = AllInfo.keys()
+        pagekeys = list(AllInfo.keys())
         # If pagenumber is larger than 10,
         # pagekeys.sort will not work, because we have strings
         # Define new compare function
-        cmp_func = lambda a,b: cmp(int(a.strip().strip("#")),
-                                   int(b.strip().strip("#")))
-        pagekeys.sort(cmp=cmp_func)
+        cmp_func = lambda a: int(a.strip().strip("#"))
+        pagekeys.sort(key=cmp_func)
         #for Info in pagekeys:
         #    pageinfo = list()
         #    for item in AllInfo[Info]:
@@ -329,7 +323,7 @@ class Stat(wx.Frame):
     def OnCheckboxChecked(self, e="restore"):
         """
             Write boolean data of checked checkboxes to Page variable
-            *StatisticsCheckboxes*. If e=="restore", then we will 
+            *StatisticsCheckboxes*. If e=="restore", then we will
             attempt to get the info back from the page.
         """
         # What happens if a checkbox has been checked?
@@ -404,7 +398,7 @@ class Stat(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0 or self.Page is None:
             self.canvas.Clear()
             return
-        
+
         # Get valid pages
         strFull = self.WXTextPages.GetValue()
         try:
@@ -414,7 +408,7 @@ class Stat(wx.Frame):
             PageNumbers = self.PageNumbers
         else:
             self.PageNumbers = PageNumbers
-        
+
         # Get plot parameters
         DDselid = self.WXDropdown.GetSelection()
         #[label, key] = self.PlotParms[DDselid]
@@ -469,23 +463,23 @@ class Stat(wx.Frame):
             self.WXavg.SetValue(str(avg))
             self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:,1])))
         # Draw
-        # This causes a memory leak after this function has been 
+        # This causes a memory leak after this function has been
         # called several times with the same large data set.
         # This goes away if only linesig OR lineclear are plotted.
         #
-        #graphics = plot.PlotGraphics(plotlist, 
-        #                             xLabel='page number', 
+        #graphics = plot.PlotGraphics(plotlist,
+        #                             xLabel='page number',
         #                             yLabel=label)
-        graphics = plot.PlotGraphics([linesig], 
-                                     xLabel='page number', 
+        graphics = plot.PlotGraphics([linesig],
+                                     xLabel='page number',
                                      yLabel=label)
-        
+
         # Correctly set x-axis
         minticks = 2
         self.canvas.SetXSpec(max(maxpage-minpage, minticks))
         self.canvas.Draw(graphics, xAxis=(minpage,maxpage))
 
-        
+
     def OnPageChanged(self, page, trigger=None):
         """
             This function is called, when something in the panel
@@ -505,14 +499,14 @@ class Stat(wx.Frame):
             # Check if we have to replot for a new model
             if self.Page.corr.fit_model.id == page.corr.fit_model.id:
                 return
-        if (trigger in ["page_add_finalize"] and 
+        if (trigger in ["page_add_finalize"] and
             self.WXTextPages.GetValue() == "1"):
             # We probably imported data with statistics window open
             self.PageNumbers = range(1,
                                   1+self.parent.notebook.GetPageCount())
             setstring = misc.parsePagenum2String(self.PageNumbers)
             self.WXTextPages.SetValue(setstring)
-            
+
         #
         # Prevent this function to be run twice at once:
         #
@@ -522,8 +516,8 @@ class Stat(wx.Frame):
             pagenumlist = list()
             for i in np.arange(self.parent.notebook.GetPageCount()):
                 Page = self.parent.notebook.GetPage(i)
-                pagenumlist.append(int(filter(lambda x: x.isdigit(),
-                                                         Page.counter)))
+                pagenumlist.append(int("".join(filter(lambda x: x.isdigit(),
+                                              Page.counter))))
             valstring=misc.parsePagenum2String(pagenumlist)
             self.WXTextPages.SetValue(valstring)
         DDselection = self.WXDropdown.GetValue()
@@ -558,7 +552,7 @@ class Stat(wx.Frame):
         self.boxsizer.Layout()
         self.topSizer.Fit(self)
         (ax, ay) = self.GetSizeTuple()
-        (px, py) = self.topSizer.GetMinSizeTuple()
+        (px, py) = self.topSizer.GetMinSize()
         self.sp.SetSashPosition(px+5)
         self.SetMinSize((px+400, py))
         self.SetSize((np.max([px+400,ax,oldsize[0]]),
@@ -589,13 +583,16 @@ class Stat(wx.Frame):
                 linestring += u"{}\t".format(atuple[0])
             # remove trailing "\t"
             openedfile.write(u"{}\r\n".format(linestring.strip()))
-            # Write data         
+            # Write data
             for item in self.SaveInfo:
                 linestring = u""
                 for btuple in item:
                     linestring += u"{}\t".format(btuple[1])
                 openedfile.write(linestring.strip()+u"\r\n")
             openedfile.close()
+
+            # Close the stat:
+            self.OnClose()
         else:
             dirname = dlg.GetDirectory()
             dlg.Destroy()
@@ -610,7 +607,7 @@ class Stat(wx.Frame):
         u"""
         Sort a list of tuples according to the first item.
         The sorting convention was met in issue #113:
-        
+
         - at the beginning: avg. countrates and particle numbers
         - fast components go before slow components:
           e.g. [τ_trip, τ_diff]
@@ -621,7 +618,7 @@ class Stat(wx.Frame):
         - at end: other fitting parameters and mode information
 
         fitting parameters
-        
+
             intensities
             n
             tautrip1
@@ -636,9 +633,9 @@ class Stat(wx.Frame):
             F3
             alpha
             SP
-        
+
         non-fitting parameter
-        
+
             model name
             chisquare
             weighted fit
@@ -647,7 +644,7 @@ class Stat(wx.Frame):
             ...
             model id
         """
-        
+
         startswith_sort = [
                            u"avg. signal",
                            u"n",
@@ -673,17 +670,17 @@ class Stat(wx.Frame):
                         exists = True
                 if not exists:
                     otherparms.append(p)
-        
+
         # sort the other parameters by name
         otherparms.sort()
         # special offsets to distinguish "T" and "Type":
         special_off_start = ["Type", "Fit"]
-        
-        
+
+
         def rate_tuple(item):
             x = item[0]
             return rate(x)
-        
+
         def rate(x):
             """
             rate a parameter for sorting.
@@ -692,7 +689,7 @@ class Stat(wx.Frame):
             x = x.split("[")[0]
             # start at the top
             r = 0
-            
+
             # BLOCK OFFSET
             try:
                 intx = int(x[-1])
@@ -701,24 +698,24 @@ class Stat(wx.Frame):
             else:
                 # penalty: belongs to block
                 r += 3 + intx
-            
+
             # STARTSWITH PENALTY
             for p in startswith_sort:
                 if x.startswith(p):
                     r += 1 + 3*(startswith_sort.index(p))
                     break
-        
+
             # Block offset integer
             non_decimal = re.compile(r'[^\d]+')
             pnum = non_decimal.sub("", x)
             if len(pnum) > 0:
                 r += int(pnum)
-                
+
             if x.count("3D"):
                 r -= 3
             if x.count("2D"):
                 r -= 0
-        
+
             # Other Parameters
             for p in otherparms:
                 if p.startswith(x):
@@ -742,7 +739,7 @@ class Stat(wx.Frame):
             """
             rx = rate_tuple(x)
             ry = rate_tuple(y)
-            
+
             return rx-ry
 
-        return sorted(parms, cmp=compare)
+        return sorted(parms, key=rate_tuple)

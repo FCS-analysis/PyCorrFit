@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
-
 import numpy as np
 
 from .control import model_setup
@@ -84,7 +81,7 @@ parms = [
             0.5,     # F
             1.0,     # alpha
             0.0      # offset
-            ] 
+            ]
 
 ## Boundaries
 # strictly positive
@@ -104,7 +101,7 @@ model_setup(
                             u"n",
                             u"τ"+u"\u2081"+u" [ms]",
                             u"τ"+u"\u2082"+u" [ms]",
-                            u"F"+u"\u2081", 
+                            u"F"+u"\u2081",
                             u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")",
                             u"offset"
                             ],

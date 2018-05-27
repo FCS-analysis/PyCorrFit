@@ -1,31 +1,23 @@
-# -*- coding: utf-8 -*-
+"""Edited classes
+
+Contains classes edited specifically for PyCorrFit.
 """
-PyCorrFit
+import sys
+import traceback
+import warnings
 
-EditedClasses
-Contains classes that we edited.
-Should make our classes more useful.
-"""
+import matplotlib
+import wx 
 
 
-# Matplotlib plotting capabilities
-try:
-    import matplotlib
-except ImportError:
-    pass
 # We do catch warnings about performing this before matplotlib.backends stuff
 #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
-import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     try:
         matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
     except:
         pass
-
-import sys
-import traceback
-import wx 
 
 
 class ChoicesDialog(wx.Dialog):

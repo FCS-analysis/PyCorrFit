@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - example
+"""Module tools - example
 This is an example tool. You will need to edit __init__.py inside this
 folder to activate it.
 Add the filename (*example*) and class (*Tool*) to either of the lists
 *ImpA*  or *ImpB* in __init__.py.
 """
-
-
 import wx
-#import numpy as np
 
 
 class Tool(wx.Frame):
@@ -38,7 +31,7 @@ class Tool(wx.Frame):
         self.topSizer.Add(btncopy)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.SetMinSize(self.topSizer.GetMinSize())
         # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -71,5 +64,5 @@ class Tool(wx.Frame):
             return
         self.panel.Enable()
         self.Page = page
-        
+
 

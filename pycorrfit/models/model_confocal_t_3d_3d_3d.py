@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
-
 import numpy as np
 
 from .control import model_setup
@@ -119,7 +116,7 @@ parms = [   25,      # n
             0.001,   # tautrip
             0.01,    # T
             0.0      # offset
-            ] 
+            ]
 
 ## Boundaries
 # strictly positive
@@ -144,10 +141,10 @@ model_setup(
                             u"τ"+u"\u2082"+" [ms]",
                             u"τ"+u"\u2083"+" [ms]",
                             u"F"+u"\u2081",
-                            u"F"+u"\u2082", 
+                            u"F"+u"\u2082",
                             u"SP",
                             u"\u03b1\u2082\u2081",
-                            u"\u03b1\u2083\u2081", 
+                            u"\u03b1\u2083\u2081",
                             u"τ_trip [ms]",
                             u"T",
                             u"offset"
@@ -164,7 +161,7 @@ model_setup(
                             u"τ"+u"\u2082"+" [ms]",
                             u"τ"+u"\u2083"+" [ms]",
                             u"F"+u"\u2081",
-                            u"F"+u"\u2082", 
+                            u"F"+u"\u2082",
                             u"SP",
                             u"\u03b1\u2082\u2081",
                             u"\u03b1\u2083\u2081",
