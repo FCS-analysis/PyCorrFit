@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-
-""" Wrapper for Loading PicoQuant .pt3 data files
+"""Wrapper for Loading PicoQuant .pt3 data files
 
 Wraps around FCS_point_correlator by Dominic Waithe
 https://github.com/dwaithe/FCS_point_correlator
 """
-import numpy as np
 import os
-from .read_pt3_scripts.correlation_objects import picoObject
 
+import numpy as np
+
+from .read_pt3_scripts.correlation_objects import picoObject
 from . import util
+
 
 class ParameterClass():
     """Stores parameters for correlation """

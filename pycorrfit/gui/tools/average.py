@@ -1,12 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Module tools - average
-Creates an average of curves.
-"""
-
-
+"""Module tools - average: Creates an average of curves"""
 import numpy as np
 import wx
 
@@ -72,7 +64,7 @@ class Average(wx.Frame):
         self.topSizer.Add(btnavg)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        self.SetMinSize(self.topSizer.GetMinSizeTuple())
+        self.SetMinSize(self.topSizer.GetMinSize())
         #Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -106,7 +98,7 @@ class Average(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0:
             self.panel.Disable()
             return
-        
+
         #idsel = self.WXDropSelMod.GetSelection()
         self.SetValues()
         # Set back user selection:
@@ -139,12 +131,12 @@ class Average(wx.Frame):
             raise IndexError("PyCorrFit could not find the first"+
 							 " page for averaging.")
             return
-        
+
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             corr = Page.corr
             model = Page.corr.fit_model
-            j = filter(lambda x: x.isdigit(), Page.counter)
+            j = "".join(filter(lambda x: x.isdigit(), Page.counter))
             if int(j) in PageNumbers:
                 # Get all pages with the same model?
                 if self.WXCheckMono.GetValue() == True:
@@ -169,7 +161,7 @@ class Average(wx.Frame):
             if self.WXCheckMono.GetValue() == True:
                 texterr_a += " Note: You selected\n"+\
                  "to only use pages with same model as the first page."
-            wx.MessageDialog(self, texterr_a, "Error", 
+            wx.MessageDialog(self, texterr_a, "Error",
                               style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
             return
         # Now get all the experimental data
@@ -232,7 +224,7 @@ class Average(wx.Frame):
                     # We want about 500 bins
                     # We need to sum over intervals of length *teiler*
                     teiler = int(len(tracej)/500)
-                    newlength = len(tracej)/teiler
+                    newlength = len(tracej) // teiler
                     newsignal = np.zeros(newlength)
                     # Simultaneously sum over all intervals
                     for k in np.arange(teiler):
@@ -314,9 +306,9 @@ class Average(wx.Frame):
             WeightKinds = self.AvgPage.Fitbox[1].GetItems()
             # Attention! Average weights and other external weights should
             # be sorted (for session saving).
-            extTypes = self.AvgPage.corr._fit_weight_memory.keys()
+            extTypes = list(self.AvgPage.corr._fit_weight_memory.keys())
             # TODO:
-            # find acleaner solution
+            # find a cleaner solution
             extTypes.remove("none")
             extTypes.sort() # sorting
             for key in extTypes:
@@ -335,22 +327,23 @@ class Average(wx.Frame):
             self.AvgPage.apply_parameters()
             self.AvgPage.corr.set_weights(listname,  standarddev)
         self.AvgPage.PlotAll()
-        # Keep the average tool open.
-        # self.OnClose()
+        if self.parent.MenuAutocloseTools.IsChecked():
+            # Autoclose
+            self.OnClose()
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)
-        
+
     def SetValues(self, e=None):
         # Text input
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int(filter(lambda x: x.isdigit(), Page.counter)))
+            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
         valstring=misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         # Dropdown
-        modelkeys = mdls.modeltypes.keys()
+        modelkeys = list(mdls.modeltypes.keys())
         modelkeys.sort()
         try:
             current_model = self.parent.notebook.GetCurrentPage().corr.fit_model.id

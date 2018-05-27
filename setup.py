@@ -1,17 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# To just compile the cython part in-place:
-#  python setup.py build_ext --inplace
-# To create a distribution package for pip or easy-install:
-#  python setup.py sdist
-# To create wheels package and upload securely
-#  pip install wheel twine
-#  python setup.py bdist wheel
-from __future__ import print_function
+from os.path import join, dirname, realpath, exists
 from setuptools import setup, Extension, find_packages
 import sys
-
-from os.path import join, dirname, realpath, exists
 
 # The next three lines are necessary for setup.py install to include
 # ChangeLog and Documentation of PyCorrFit
@@ -20,8 +9,7 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 
-# We don't need cython if a .whl package is available.
-# Try to import cython and throw a warning if it does not work.
+# We don't need to cythonize if a .whl package is available.
 try:
     import numpy as np
 except ImportError:
@@ -32,11 +20,11 @@ else:
     extensions = [Extension("pycorrfit.readfiles.read_pt3_scripts.fib4",
                             sources=["pycorrfit/readfiles/read_pt3_scripts/fib4.pyx"],
                             include_dirs=[np.get_include()]
-                            )
-                 ]
+                            )]
+
 
 try:
-    import urllib
+    import urllib.request
 except ImportError:
     pass
 else:
@@ -46,10 +34,10 @@ else:
     if not exists(pdfdoc):
         print("Downloading {} from {}".format(pdfdoc, webdoc))
         try:
-            urllib.urlretrieve(webdoc, pdfdoc)
+            urllib.request.urlretrieve(webdoc, pdfdoc)
         except:
             print("Failed to download documentation.")
-    
+
 # Parameters
 author = u"Paul Müller"
 authors = [author]
@@ -64,10 +52,9 @@ except:
     version = "unknown"
 
 setup(
-    
     author=author,
     author_email='dev@craban.de',
-    data_files=[('pycorrfit_doc', ['ChangeLog.txt', 'doc/PyCorrFit_doc.pdf'])],
+    data_files=[('pycorrfit_doc', ['CHANGELOG', 'doc/PyCorrFit_doc.pdf'])],
     description=description,
     long_description=open('README.rst').read() if exists('README.rst') else '',
     include_package_data=True,
@@ -82,33 +69,32 @@ setup(
     # cython
     ext_modules = extensions,
     # requirements
+    install_requires=[
+        "lmfit >= 0.9.2",
+        "numpy >= 1.14.2",
+        "pyyaml >= 3.12",
+        "scipy >= 1.0.1",
+        ],
     extras_require = {
-        # If you need the GUI of this project in your project, add
-        # "thisproject[GUI]" to your install_requires
-        # Graphical User Interface
-        'GUI':  ["matplotlib >= 1.1.0",
-                 "simplejson", # for updates
-                 "sympy >= 0.7.2",
-                 "wxPython",
-                 ],
-        },
-    install_requires=["lmfit >= 0.9.2",
-                      "NumPy >= 1.5.1",
-                      "PyYAML >= 3.09",
-                      "SciPy >= 0.8.0",
-                      ],
-    setup_requires=["Cython", 'pytest-runner', 'NumPy'],
+    # Graphical User Interface (pip install pycorrfit[GUI])
+    'GUI':  ["matplotlib >= 2.2.2",
+             "sympy >= 1.1.1",
+             "simplejson",  # for updates
+             "wxPython >= 4.0.1",
+             ],
+    },
+    setup_requires=["cython", 'numpy', 'pytest-runner'],
     tests_require=["pytest", "urllib3", "simplejson"],
+    python_requires='>=3.4, <4',
     # scripts
     entry_points={
-       "gui_scripts": ["{name:s}={name:s}.gui.main:Main".format(
-                       **{"name":name})]
+       "gui_scripts": ["pycorrfit=pycorrfit.gui.main:Main"]
        },
     keywords=["fluorescence correlation spectroscopy",
               ],
     classifiers= [
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Topic :: Scientific/Engineering :: Visualization',
         'Intended Audience :: Science/Research'
         ],

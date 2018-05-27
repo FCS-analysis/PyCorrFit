@@ -79,3 +79,7 @@ tests/data
 .cache
 .eggs
 .env
+
+.pytest_cache
+htmlcov
+docs/_build

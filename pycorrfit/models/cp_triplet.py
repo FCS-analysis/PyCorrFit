@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Triplet components.
-"""
-
-from __future__ import division
+"""Triplet components"""
 import numpy as np
+
 
 def trip(tau, tautrip, T):
     if tautrip == 0 or T == 0:
         AA = 1
     else:
-        AA = 1 + T/(1-T) * np.exp(-tau/tautrip)
-    
+        AA = 1 + T/(1-T) * np.exp(-tau / tautrip)
+
     return AA

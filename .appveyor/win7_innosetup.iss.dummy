@@ -54,7 +54,7 @@ Source: "{#MyAppDir}*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs cr
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\{#MyAppName}_doc.pdf"
-Name: "{group}\Changelog"; Filename: "{app}\doc\Changelog.txt"
+Name: "{group}\Changelog"; Filename: "{app}\doc\CHANGELOG"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 

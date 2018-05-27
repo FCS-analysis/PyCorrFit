@@ -1,21 +1,16 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-A progress bar with an abort button that works for long running processes.
-"""
+"""A progress bar with an abort button that works for long running processes"""
 import time
 import threading
 import traceback as tb
-import wx
 import sys
 
+import wx
 
 
 class KThread(threading.Thread):
     """A subclass of threading.Thread, with a kill()
     method.
-    
+
     https://web.archive.org/web/20130503082442/http://mail.python.org/pipermail/python-list/2004-May/281943.html
 
     The KThread class works by installing a trace in the thread.  The trace
@@ -87,7 +82,7 @@ class ThreadedProgressDlg(object):
                  time_delay=2):
         """ This class implements a progress dialog that can abort during
         a function call, as opposed to the stock wx.ProgressDialog.
-        
+
         Parameters
         ----------
         parent : wx object
@@ -109,7 +104,7 @@ class ThreadedProgressDlg(object):
             is 2s, which means that a dialog is only displayed after 2s
             or earlier, if the overall progress seems to be taking longer
             than 2s.
-        
+
         Arguments
         ---------
         aborted : bool
@@ -119,35 +114,35 @@ class ThreadedProgressDlg(object):
         finalize : callable
             A method that will be called after fitting. Can be overriden
             by subclasses.
-        
+
         Notes
         -----
         The progress dialog is only displayed when `time_delay` is or
         seems shorter than the total running time of the progress. If
         the progress is not displayed, then a busy cursor is displayed.
-         
+
         """
         wx.BeginBusyCursor()
-        
+
         if hasattr(targets, "__call__"):
             targets = [targets]
 
         nums = len(targets)
-        
-        if args is None:
+
+        if not args:
             args = [()]*nums
         elif isinstance(args, list):
             # convenience-convert args to tuples
             if not isinstance(args[0], tuple):
                 args = [ (t,) for t in args ]
-        
+
         if isinstance(kwargs, dict):
             kwargs = [kwargs]*nums
-        
-        if messages is None:
+
+        if not messages:
             messages = [ "item {} of {}".format(a+1, nums) for a in range(nums) ]
-        
-        
+
+
         time1 = time.time()
         sty = wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
         if len(targets) > 1:
@@ -167,16 +162,17 @@ class ThreadedProgressDlg(object):
             while worker.is_alive() or init:
                 if (time.time()-time1 > time_delay or
                     (time.time()-time1)/(jj+1)*nums > time_delay
-                    ) and dlg is None:
+                    ) and not dlg:
                     dlg = wx.ProgressDialog(*dlgargs, **dlgkwargs)
                     wx.EndBusyCursor()
-                    
+
                 init=False
                 time.sleep(.01)
-                if dlg is not None:
+                if dlg:
                     if len(targets) == 1:
                         # no progress bar but pulse
-                        cont = dlg.UpdatePulse(messages[jj])[0]
+                        # cont = dlg.UpdatePulse(messages[jj])[0]
+                        cont = dlg.Update(0, messages[jj])[0]
                     else:
                         # show progress until end
                         cont = dlg.Update(jj+1, messages[jj])[0]
@@ -190,14 +186,14 @@ class ThreadedProgressDlg(object):
                 self.aborted = True
                 self.index_aborted = jj
                 break
-            
-            if worker.traceback is not None:
+
+            if worker.traceback:
                 dlg.Destroy()
                 self.aborted = True
                 self.index_aborted = jj
                 raise Exception(worker.traceback)
-        
-        if dlg is not None:
+
+        if dlg:
             dlg.Hide()
             dlg.Destroy()
         wx.EndBusyCursor()
@@ -219,13 +215,13 @@ if __name__ == "__main__":
         def __init__(self, parent, aid):
             """Create the MainFrame."""
             wx.Frame.__init__(self, parent, aid, 'Thread Test')
-    
+
             # Dumb sample frame with two buttons
             but = wx.Button(self, wx.ID_ANY, 'Start Progress', pos=(0,0))
-    
-            
+
+
             self.Bind(wx.EVT_BUTTON, self.OnStart, but)
-    
+
         def OnStart(self, event):
             """Start Computation."""
             # Trigger the worker thread unless it's already busy
@@ -236,8 +232,8 @@ if __name__ == "__main__":
             tp = ThreadedProgressDlg(self, [method]*len(arguments), arguments)
             print(tp.index_aborted)
             print([a.arg for a in arguments])
-    
-    
+
+
     class MainApp(wx.App):
         """Class Main App."""
         def OnInit(self):
@@ -246,11 +242,11 @@ if __name__ == "__main__":
             self.frame.Show(True)
             self.SetTopWindow(self.frame)
             return True
-    
+
     class test_class(object):
         def __init__(self, arg):
             self.arg = arg
-    
-    
+
+
     app = MainApp(0)
     app.MainLoop()

@@ -5,10 +5,10 @@ from os.path import abspath, join
 repo_dir = abspath("./")
 
 hiddenimports = [
- 		 "scipy.io.matlab.streams",
-		 "scipy.special",
-		 "scipy.special.specfun",
-		 "scipy.io.matlab.streams",
+         		 "scipy.io.matlab.streams",
+		         "scipy.special",
+		         "scipy.special.specfun",
+		         "scipy.io.matlab.streams",
                  "sympy.assumptions.handlers",
                  "sympy.assumptions.handlers.common",
                  "scipy.special._ufuncs_cxx",
@@ -19,7 +19,7 @@ hiddenimports = [
 a = Analysis([join(repo_dir, 'pycorrfit/PyCorrFit.py')],
              hiddenimports=hiddenimports,
              hookspath=None)
-a.datas += [('doc/ChangeLog.txt', join(repo_dir, 'ChangeLog.txt'), 'DATA'),
+a.datas += [('doc/CHANGELOG', join(repo_dir, 'CHANGELOG'), 'DATA'),
             ('doc/PyCorrFit_doc.pdf', join(repo_dir, 'doc/PyCorrFit_doc.pdf'), 'DATA')]
 pyz = PYZ(a.pure)
 exe = EXE(pyz,

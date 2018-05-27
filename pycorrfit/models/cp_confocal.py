@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Confocal fitting model components.
-"""
-
-from __future__ import division
+"""Confocal fitting model components"""
 import numpy as np
 
 

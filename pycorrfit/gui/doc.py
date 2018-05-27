@@ -1,48 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit
-
-Documentation and program specific information
-"""
+"""Documentation and program specific information"""
 import platform
 import sys
-import warnings
-
-# This is a fake class for modules not available.
-class Fake(object):
-    def __init__(self):
-        self.__version__ = "N/A"
-        self.version = "N/A"
-        self.use = lambda x: None        
-
-try:
-    import matplotlib
-except:
-    print " Warning: module matplotlib not found!"
-    matplotlib = Fake()
-else:
-    with warnings.catch_warnings():
-        # We do catch warnings about performing this before matplotlib.backends stuff
-        #matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
-        warnings.simplefilter("ignore")
-        matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
-
-try:
-    import simplejson
-except ImportError:
-    print " Warning: module simplejson not found!"
-    simplejson = Fake()
-
-try:
-    import sympy
-except ImportError:
-    print " Warning: module sympy not found!"
-    sympy = Fake()
-
 
 import lmfit
+import matplotlib
 import numpy
 import scipy
+import simplejson
+import sympy
 import wx
 import yaml
 
@@ -50,20 +15,22 @@ import pycorrfit
 from pycorrfit import readfiles, meta
 from pycorrfit.readfiles import read_pt3_scripts
 
+
 __version__ = pycorrfit.__version__
 
-def GetLocationOfChangeLog(filename = "ChangeLog.txt"):
+
+def GetLocationOfChangeLog(filename="CHANGELOG"):
+    """Find location of CHANGELOG"""
     return meta.get_file_location(filename)
 
 
-def GetLocationOfDocumentation(filename = "PyCorrFit_doc.pdf"):
-    """ Returns the location of the documentation if there is any."""
+def GetLocationOfDocumentation(filename="PyCorrFit_doc.pdf"):
+    """Return the location of the documentation if there is any"""
     return meta.get_file_location(filename)
 
 
 def info(version):
-    """ Returns a little info about our program and what it can do.
-    """
+    """Return info about PyCorrFit and what it can do"""
     textwin = u"""
     Copyright 2011-2012 Paul Mueller, Biotec - TU Dresden
 
@@ -95,7 +62,7 @@ def info(version):
     one = u"    PyCorrFit version "+version+"\n\n"
     two = u"\n\n    Supported file types:"
     keys = readfiles.Filetypes.keys()
-    keys.sort()
+    keys = sorted(list(keys))
     for item in keys:
         if item.split("|")[0] != readfiles.Allsupfilesstring:
             two = two + "\n     - "+item.split("|")[0]
@@ -104,25 +71,25 @@ def info(version):
         lizenz += "    "+line+"\n"
     return one + lizenz + texta + two
 
-    
+
 def licence():
     return """PyCorrFit is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published 
-by the Free Software Foundation, either version 2 of the License, 
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 2 of the License,
 or (at your option) any later version.
 
 PyCorrFit is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See the GNU General Public License for more details. 
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License 
+You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
 def SoftwareUsed():
-    """ Return some Information about the software used for this program """
+    """Return some Information about the software used for this program"""
     text = "Python "+sys.version+\
            "\n\nModules:"+\
            "\n - cython "+\
@@ -147,14 +114,49 @@ def SoftwareUsed():
     return text
 
 
+support = """
+PyCorrFit has no funding and a vanishingly small developer community.
+My personal objective is to keep PyCorrFit operational on Linux and
+Windows which is currently limited by the free time I have available.
+
+An active community is very important for an open source project such
+as PyCorrFit. You can help this community grow (and thus help improve
+PyCorrFit) in numerous ways:
+
+1. \tTell your colleagues and peers about PyCorrFit. One of them might
+   \tbe able to contribute to the project.
+
+2. \tIf you need a new feature in PyCorrFit, publicly announce a bounty
+   \tfor its implementation.
+
+3. \tIf your research heavily relies on FCS, please consider diverting
+   \tsome of your resources to the development of PyCorrFit.
+
+4. \tYou don't have to be a Python programmer to contribute. If you are
+   \tfamiliar with reStrucuredText or LaTeX, you might be able to help
+   \tout with the online documentation.
+
+5. \tPlease cite: Müller et al. Bioinformatics 30(17): 2532–2533, 2014
+
+If you are planning to contribute to PyCorrFit, please contact me via
+the PyCorrFit issue page on GitHub such that we may coordinate a pull
+request.
+
+
+Thank you!
+
+Paul Müller (May 2018)
+"""
+
+
 # Standard homepage
 HomePage = "http://pycorrfit.craban.de/"
 # Changelog filename
-ChangeLog = "ChangeLog.txt"
+ChangeLog = "CHANGELOG"
 StaticChangeLog = GetLocationOfChangeLog(ChangeLog)
 
-    
+
 # Github homepage
-GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/ChangeLog.txt"
+GitChLog = "https://raw.github.com/FCS-analysis/PyCorrFit/master/CHANGELOG"
 GitHome = "https://github.com/FCS-analysis/PyCorrFit"
 GitWiki = "https://github.com/FCS-analysis/PyCorrFit/wiki"

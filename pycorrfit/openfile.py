@@ -1,20 +1,19 @@
-# -*- coding: utf-8 -*-
-"""
-PyCorrFit - Module openfile
+"""PyCorrFit - Module openfile
 
 This file contains definitions for opening PyCorrFit sessions and
 saving PyCorrFit correlation curves.
 """
-
 import codecs
 import csv
-import numpy as np
+import io
 import os
 import shutil
 import tempfile
-import yaml
-import zipfile
 import warnings
+import zipfile
+
+import numpy as np
+import yaml
 
 # These imports are required for loading data
 from .readfiles import Filetypes  # @UnusedImport
@@ -25,7 +24,7 @@ from ._version import version as __version__
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
-    """ Load PyCorrFit session data from a zip file (.pcfs)
+    """Load PyCorrFit session data from a zip file (.pcfs)
 
 
     Parameters
@@ -34,8 +33,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
         File from which data will be loaded
     parameters_only : bool
         Only load the parameters from the YAML file
-    
-    
+
+
     Returns
     -------
     Infodict : dict
@@ -50,7 +49,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         "Traces", dict: page numbers, all traces of the pages
         "Version", str: the PyCorrFit version of the session
     """
-    Infodict = dict()
+    Infodict = {}
     # Get the version
     Arc = zipfile.ZipFile(sessionfile, mode='r')
     readmefile = Arc.open("Readme.txt")
@@ -77,7 +76,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         supdata = yaml.safe_load(supfile)
         Infodict["Supplements"] = dict()
         for idp in supdata:
-            Infodict["Supplements"][idp[0]] = dict() 
+            Infodict["Supplements"][idp[0]] = dict()
             Infodict["Supplements"][idp[0]]["FitErr"] = idp[1]
             if len(idp) > 2:
                 # As of version 0.7.4 we save chi2 and shared pages -global fit
@@ -117,10 +116,10 @@ def LoadSessionData(sessionfile, parameters_only=False):
         pageid = int(number)
         expfilename = "data"+number+".csv"
         expfile = Arc.open(expfilename, 'r')
-        readdata = csv.reader(expfile, delimiter=',')
+        readdata = csv.reader(io.StringIO(expfile.read().decode()), delimiter=',')
         dataexp = list()
         tau = list()
-        if str(readdata.next()[0]) == "# tau only":
+        if str(readdata.__next__()[0]) == "# tau only":
             for row in readdata:
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
@@ -164,7 +163,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 pass
             else:
                 tracefile = Arc.open(tracefilename, 'r')
-                traceread = csv.reader(tracefile, delimiter=',')
+                traceread = csv.reader(io.StringIO(tracefile.read().decode()), delimiter=',')
                 singletrace = list()
                 for row in traceread:
                     # Exclude commentaries
@@ -185,7 +184,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         # Raises KeyError, if file is not present:
         Arc.getinfo(commentfilename)
     except KeyError:
-        pass   
+        pass
     else:
         # Open the file
         commentfile = Arc.open(commentfilename, 'r')
@@ -195,11 +194,11 @@ def LoadSessionData(sessionfile, parameters_only=False):
             pageid = int(number)
             # Strip line ending characters for all the Pages.
             Infodict["Comments"][pageid] = commentfile.readline().strip()
-        # Now Add the Session Comment (the rest of the file). 
+        # Now Add the Session Comment (the rest of the file).
         ComList = commentfile.readlines()
         Infodict["Comments"]["Session"] = ''
         for line in ComList:
-            Infodict["Comments"]["Session"] += line
+            Infodict["Comments"]["Session"] += line.decode()
         commentfile.close()
     # Get the Backgroundtraces and data if they exist
     bgfilename = "backgrounds.csv"
@@ -212,12 +211,12 @@ def LoadSessionData(sessionfile, parameters_only=False):
         # Open the file
         Infodict["Backgrounds"] = list()
         bgfile = Arc.open(bgfilename, 'r')
-        bgread = csv.reader(bgfile, delimiter='\t')
+        bgread = csv.reader(io.StringIO(bgfile.read().decode()), delimiter='\t')
         i = 0
         for bgrow in bgread:
             bgtracefilename = "bg_trace"+str(i)+".csv"
             bgtracefile = Arc.open(bgtracefilename, 'r')
-            bgtraceread = csv.reader(bgtracefile, delimiter=',')
+            bgtraceread = csv.reader(io.StringIO(bgtracefile.read().decode()), delimiter=',')
             bgtrace = list()
             for row in bgtraceread:
                 # Exclude commentaries
@@ -237,7 +236,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         pass
     else:
         Wfile = Arc.open(WeightsFilename, 'r')
-        Wread = csv.reader(Wfile, delimiter='\t')
+        Wread = csv.reader(io.StringIO(Wfile.read().decode()), delimiter='\t')
         Weightsdict = dict()
         for wrow in Wread:
             Pkey = wrow[0]  # Page of weights
@@ -250,7 +249,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
             Nkey = wrow[1]  # Name of weights
             Wdatafilename = "externalweights_data"+Pkey+"_"+Nkey+".csv"
             Wdatafile = Arc.open(Wdatafilename, 'r')
-            Wdatareader = csv.reader(Wdatafile)
+            Wdatareader = csv.reader(io.StringIO(Wdatafile.read().decode()))
             Wdata = list()
             for row in Wdatareader:
                 # Exclude commentaries
@@ -270,7 +269,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         with Arc.open(preferencesname) as fd:
             data = fd.readlines()
         for line in data:
-            line = line.strip()
+            line = line.decode().strip()
             if len(line) == 0 or line.startswith("#"):
                 continue
             key, value = line.split("=")
@@ -285,9 +284,9 @@ def LoadSessionData(sessionfile, parameters_only=False):
 
 
 def SaveSessionData(sessionfile, Infodict):
-    """ Session PyCorrFit session data to file.
-    
-    
+    """Session PyCorrFit session data to file.
+
+
     Parameters
     ----------
     sessionfile : str
@@ -322,7 +321,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Parameters have to be floats in lists
     # in order for yaml.safe_load to work.
     Parms =  Infodict["Parameters"]
-    ParmsKeys = Parms.keys()
+    ParmsKeys = list(Parms.keys())
     ParmsKeys.sort()
     Parmlist = list()
     for idparm in ParmsKeys:
@@ -331,7 +330,7 @@ def SaveSessionData(sessionfile, Infodict):
         # Parameters
         Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
         # Parameter varied
-        Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist() 
+        Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
         # Channel selection
         Parms[idparm][4] = np.array(Parms[idparm][4],dtype="int").tolist()
         # Background selection
@@ -344,12 +343,12 @@ def SaveSessionData(sessionfile, Infodict):
         # Fit parameter range
         Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
         Parmlist.append(Parms[idparm])
-    
+
     try:
         # We would like to perform safe_dump, because in the
         # Windoes x64 version, some integers are exported
         # like this: `!!python/long '105'` using `yaml.dump`.
-        with open(parmsfilename, "wb") as yamlfd:
+        with open(parmsfilename, "w") as yamlfd:
             yaml.safe_dump(Parmlist, yamlfd)
     except yaml.representer.RepresenterError:
         # `RepresenterError: cannot represent an object: 0`
@@ -359,15 +358,15 @@ def SaveSessionData(sessionfile, Infodict):
         # for-loop we set the correct dtype for each parameter .
         if os.path.exists(parmsfilename):
             os.remove(parmsfilename)
-        with open(parmsfilename, "wb") as yamlfd:
+        with open(parmsfilename, "w") as yamlfd:
             yaml.dump(Parmlist, yamlfd)
-        
+
     Arc.write(parmsfilename)
     os.remove(os.path.join(tempdir, parmsfilename))
     # Supplementary data (errors of fit)
     errsfilename = "Supplements.yaml"
     Sups =  Infodict["Supplements"]
-    SupKeys = Sups.keys()
+    SupKeys = list(Sups.keys())
     SupKeys.sort()
     Suplist = list()
     for idsup in SupKeys:
@@ -375,7 +374,8 @@ def SaveSessionData(sessionfile, Infodict):
         chi2 = Sups[idsup]["Chi sq"]
         globalshare = Sups[idsup]["Global Share"]
         Suplist.append([idsup, error, chi2, globalshare])
-    yaml.safe_dump(Suplist, open(errsfilename, "wb"))
+    with open(errsfilename, "w") as fd:
+        yaml.safe_dump(Suplist, fd)
     Arc.write(errsfilename)
     os.remove(os.path.join(tempdir, errsfilename))
     # Save external functions
@@ -392,7 +392,7 @@ def SaveSessionData(sessionfile, Infodict):
         # we will identify the filename by the Page title number.
         number = str(pageid)
         expfilename = "data"+number+".csv"
-        expfile = open(expfilename, 'wb')
+        expfile = open(expfilename, 'w')
         tau = Infodict["Correlations"][pageid][0]
         exp = Infodict["Correlations"][pageid][1]
         dataWriter = csv.writer(expfile, delimiter=',')
@@ -420,14 +420,14 @@ def SaveSessionData(sessionfile, Infodict):
     for pageid in Infodict["Traces"].keys():
         number = str(pageid)
         # Since *Trace* and *Parms* are in the same order, which is the
-        # Page order, we will identify the filename by the Page title 
+        # Page order, we will identify the filename by the Page title
         # number.
         if Infodict["Traces"][pageid] is not None and len(Infodict["Traces"][pageid]) != 0:
             if Parms[pageid][7] is True:
                 # We have cross correlation: save two traces
                 ## A
                 tracefilenamea = "trace"+number+"A.csv"
-                tracefile = open(tracefilenamea, 'wb')
+                tracefile = open(tracefilenamea, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
                 time = Infodict["Traces"][pageid][0][:,0]
                 rate = Infodict["Traces"][pageid][0][:,1]
@@ -441,26 +441,31 @@ def SaveSessionData(sessionfile, Infodict):
                 # Add to archive
                 Arc.write(tracefilenamea)
                 os.remove(os.path.join(tempdir, tracefilenamea))
-                ## B
-                tracefilenameb = "trace"+number+"B.csv"
-                tracefile = open(tracefilenameb, 'wb')
-                traceWriter = csv.writer(tracefile, delimiter=',')
-                time = Infodict["Traces"][pageid][1][:,0]
-                rate = Infodict["Traces"][pageid][1][:,1]
-                # Names of Columns
-                traceWriter.writerow(['# time', 'count rate'])
-                # Actual Data
-                for j in np.arange(len(time)):
-                    traceWriter.writerow(["%.20e" % time[j],
-                                          "%.20e" % rate[j]])
-                tracefile.close()
-                # Add to archive
-                Arc.write(tracefilenameb)
-                os.remove(os.path.join(tempdir, tracefilenameb))
+                ## B (only if it exists...)
+                try:
+                    _ = Infodict["Traces"][pageid][1]
+                except IndexError:
+                    pass
+                else:
+                    tracefilenameb = "trace"+number+"B.csv"
+                    tracefile = open(tracefilenameb, 'w')
+                    traceWriter = csv.writer(tracefile, delimiter=',')
+                    time = Infodict["Traces"][pageid][1][:,0]
+                    rate = Infodict["Traces"][pageid][1][:,1]
+                    # Names of Columns
+                    traceWriter.writerow(['# time', 'count rate'])
+                    # Actual Data
+                    for j in np.arange(len(time)):
+                        traceWriter.writerow(["%.20e" % time[j],
+                                              "%.20e" % rate[j]])
+                    tracefile.close()
+                    # Add to archive
+                    Arc.write(tracefilenameb)
+                    os.remove(os.path.join(tempdir, tracefilenameb))
             else:
                 # Save one single trace
                 tracefilename = "trace"+number+".csv"
-                tracefile = open(tracefilename, 'wb')
+                tracefile = open(tracefilename, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
                 time = Infodict["Traces"][pageid][0][:,0]
                 rate = Infodict["Traces"][pageid][0][:,1]
@@ -478,7 +483,11 @@ def SaveSessionData(sessionfile, Infodict):
     commentfilename = "comments.txt"
     commentfile = codecs.open(commentfilename, 'w', encoding="utf-8")
     # Comments[-1] is comment on whole Session
-    Ckeys = Infodict["Comments"].keys()
+    Ckeys = list(Infodict["Comments"].keys())
+    try:
+        Ckeys.remove("Session")
+    except ValueError:
+        pass
     Ckeys.sort()
     for key in Ckeys:
         if key != "Session":
@@ -493,13 +502,13 @@ def SaveSessionData(sessionfile, Infodict):
         # We do not use a comma separated, but a tab separated file,
         # because a comma might be in the name of a bg.
         bgfilename = "backgrounds.csv"
-        bgfile = open(bgfilename, 'wb')
+        bgfile = open(bgfilename, 'w')
         bgwriter = csv.writer(bgfile, delimiter='\t')
         for i in np.arange(len(Background)):
             bgwriter.writerow([str(Background[i].countrate), Background[i].name])
             # Traces
             bgtracefilename = "bg_trace"+str(i)+".csv"
-            bgtracefile = open(bgtracefilename, 'wb')
+            bgtracefile = open(bgtracefilename, 'w')
             bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
             bgtraceWriter.writerow(['# time', 'count rate'])
             # Actual Data
@@ -516,14 +525,14 @@ def SaveSessionData(sessionfile, Infodict):
         Arc.write(bgfilename)
         os.remove(os.path.join(tempdir, bgfilename))
     ## Save External Weights information
-    WeightedPageID = Infodict["External Weights"].keys()
+    WeightedPageID = list(Infodict["External Weights"].keys())
     WeightedPageID.sort()
     WeightFilename = "externalweights.txt"
-    WeightFile = open(WeightFilename, 'wb')
+    WeightFile = open(WeightFilename, 'w')
     WeightWriter = csv.writer(WeightFile, delimiter='\t')
     for pageid in WeightedPageID:
         number = str(pageid)
-        NestWeights = Infodict["External Weights"][pageid].keys()
+        NestWeights = list(Infodict["External Weights"][pageid].keys())
         # The order of the types does not matter, since they are
         # sorted in the frontend and upon import. We sort them here, anyhow.
         NestWeights.sort()
@@ -532,7 +541,7 @@ def SaveSessionData(sessionfile, Infodict):
             # Add data to a File
             WeightDataFilename = "externalweights_data"+number+\
                                  "_"+str(Nkey).strip()+".csv"
-            WeightDataFile = open(WeightDataFilename, 'wb')
+            WeightDataFile = open(WeightDataFilename, 'w')
             WeightDataWriter = csv.writer(WeightDataFile)
             wdata = Infodict["External Weights"][pageid][Nkey]
             for jw in np.arange(len(wdata)):
@@ -545,7 +554,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, WeightFilename))
     ## Preferences
     preferencesname = "preferences.cfg"
-    with codecs.open(preferencesname, 'w',encoding="utf-8") as fd:
+    with codecs.open(preferencesname, 'w', encoding="utf-8") as fd:
         for key in Infodict["Preferences"]:
             value = Infodict["Preferences"][key]
             if isinstance(value, list):
@@ -565,7 +574,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Close the archive
     Arc.close()
     # Move archive to destination directory
-    shutil.move(os.path.join(tempdir, filename), 
+    shutil.move(os.path.join(tempdir, filename),
                 os.path.join(dirname, filename) )
     # Go to destination directory
     os.chdir(returnWD)
@@ -573,9 +582,9 @@ def SaveSessionData(sessionfile, Infodict):
 
 
 def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
-    """ Write correlation data (as displayed in PyCorrFit) to a file
-        
-    
+    """Write correlation data (as displayed in PyCorrFit) to a file
+
+
     Parameters
     ----------
     exportfile : str
@@ -587,7 +596,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
         will be written to the file as a comment
     savetrace : bool
         Append the trace to the file
-    
+
     Notes
     -----
     Note that this method exports the plotted data:
@@ -597,13 +606,13 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     which means that the data could be normalized to, for instance,
     the total particle number `n`.
     """
-    openedfile = codecs.open(exportfile, 'w', encoding="utf-8")
+    openedfile = codecs.open(exportfile, 'w', encoding='utf-8')
     ## First, some doc text
     openedfile.write(ReadmeCSV.replace('\n', '\r\n'))
     # The info
     for line in page_info.splitlines():
-        openedfile.write(u"# "+line+"\r\n")
-    openedfile.write(u"#\r\n#\r\n")
+        openedfile.write("# "+line+"\r\n")
+    openedfile.write("#\r\n#\r\n")
     # Get all the data we need from the Page
     # Modeled data
     corr = correlation
@@ -613,7 +622,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
         # Experimental data
         tau = corr.correlation_plot[:,0]
         exp = corr.correlation_plot[:,1]
-        res = corr.residuals_plot[:,1]
+        res = corr.residuals_plot[:,0]
 
         # Plotting! Because we only export plotted area.
         if corr.is_weighted_fit:
@@ -622,10 +631,10 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
                 weight = corr.fit_results["fit weights"]
             except KeyError:
                 weight = corr.fit_weight_data
-    
+
             if weight is None:
                 pass
-            
+
             elif len(weight) != len(exp):
                 text = "Weights have not been calculated for the "+\
                        "area you want to export. Pressing 'Fit' "+\
@@ -643,7 +652,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     # Include weights in data saving:
     # PyCorrFit thinks in [ms], but we will save as [s]
     timefactor = 0.001
-    tau = timefactor * tau
+    tau = [timefactor * t for t in tau]
     ## Now we want to write all that data into the file
     # This is for csv writing:
     ## Correlation curve
@@ -681,10 +690,10 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace
             openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
             # Columns
-            time = corr.traces[0][:,0]*timefactor
+            time = corr.traces[0][:,0] * timefactor
             intensity = corr.traces[0][:,1]
             # Write
-            openedfile.write('# Time [s]'+"\t" 
+            openedfile.write('# Time [s]'+"\t"
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
                 dataWriter.writerow(["{:.10e}".format(time[i]),
@@ -694,10 +703,11 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace B
             openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
             # Columns
-            time = corr.traces[1][:,0]*timefactor
+            time = corr.traces[1][:,0] * timefactor
             intensity = corr.traces[1][:,1]
+
             # Write
-            openedfile.write('# Time [s]'+"\t" 
+            openedfile.write('# Time [s]'+"\t"
                                  'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
                 dataWriter.writerow(["{:.10e}".format(time[i]),
@@ -709,7 +719,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
 session_wildcards = [".pcfs", ".pycorrfit-session.zip", ".fcsfit-session.zip"]
 
 
-ReadmeCSV = u"""# This file was created using PyCorrFit version {}.
+ReadmeCSV = """# This file was created using PyCorrFit version {}.
 #
 # Lines starting with a '#' are treated as comments.
 # The data is stored as CSV below this comment section.
@@ -720,9 +730,9 @@ ReadmeCSV = u"""# This file was created using PyCorrFit version {}.
 # columns will be imported as experimental data.
 #
 """.format(__version__)
-    
-    
-ReadmeSession = u"""This file was created using PyCorrFit version {}.
+
+
+ReadmeSession = """This file was created using PyCorrFit version {}.
 The .zip archive you are looking at is a stored session of PyCorrFit.
 If you are interested in how the data is stored, you will find
 out here. Most important are the dimensions of units:
@@ -736,7 +746,7 @@ Dimensionless representation:
 From there, the dimension of any parameter may be
 calculated.
 
-There are a number of files within this archive, 
+There are a number of files within this archive,
 depending on what was done during the session.
 
 backgrounds.csv
@@ -772,12 +782,12 @@ model_*ModelID*.txt
 Parameters.yaml
  - Contains all Parameters for each page
    Block format:
-    - - '#(Number of page): '       
+    - - '#(Number of page): '
       - (Internal model ID)
       - (List of parameters)
       - (List of checked parameters (for fitting))
       - [(Min channel selected), (Max channel selected)]
-      - [(Weighted fit method (0=None, 1=Spline, 2=Model function)), 
+      - [(Weighted fit method (0=None, 1=Spline, 2=Model function)),
          (No. of bins from left and right),
          (No. of knots (of e.g. spline)),
          (Type of fitting algorithm (e.g. "Lev-Mar", "Nelder-Mead")]
@@ -803,7 +813,7 @@ Supplements.yaml
      - [parameter id, error value]
     - Chi squared
     - [pages that share parameters] (from global fitting)
-     
+
 trace*.csv (where * is (Number of page) | appendix "A" or "B" point to
             the respective channels (only in cross-correlation mode))
  - Contains times [ms]

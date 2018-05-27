@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-methods to open CSV files
-"""
-import os
+"""CSV files"""
 import csv
+import os
+
 import numpy as np
 
 
 def openCSV(dirname, filename):
-    """ 
+    """
     Read relevant data from a file looking like this:
         [...]
         # Comment
@@ -67,16 +65,16 @@ def openCSV(dirname, filename):
        one correlation curve.
     """
     # Check if the file is correlation data
-    csvfile = open(os.path.join(dirname, filename), 'r')
+    csvfile = open(os.path.join(dirname, filename), 'r', encoding='utf-8')
     firstline = csvfile.readline()
     if firstline.lower().count("this is not correlation data") > 0:
         csvfile.close()
         return None
     csvfile.close()
-    
+
     # Define what will happen to the file
     timefactor = 1000 # because we want ms instead of s
-    csvfile = open(os.path.join(dirname, filename), 'r')
+    csvfile = open(os.path.join(dirname, filename), 'r', encoding='utf-8')
     readdata = csv.reader(csvfile, delimiter=',')
     data = list()
     weights = list()
@@ -101,7 +99,7 @@ def openCSV(dirname, filename):
                 DataType += corrtype[17:].strip()
             elif corrtype[0:15].lower() == "autocorrelation":
                 DataType="AC"
-                DataType += corrtype[15:].strip()         
+                DataType += corrtype[15:].strip()
         elif str(row[0])[0:13].upper() == '# BEGIN TRACE':
             # Correlation is over. We have a trace
             corr = np.array(data)
@@ -121,7 +119,7 @@ def openCSV(dirname, filename):
             ## separated values as well
             if len(row) == 1:
                 row = row[0].split()
-            data.append((np.float(row[0].strip())*timefactor, 
+            data.append((np.float(row[0].strip())*timefactor,
                          np.float(row[1].strip())))
             if len(row) == 5:
                 # this has to be correlation with weights
