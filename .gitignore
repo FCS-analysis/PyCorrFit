@@ -82,3 +82,4 @@ tests/data
 
 .pytest_cache
 htmlcov
+docs/_build
