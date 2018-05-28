@@ -33,40 +33,79 @@ the PyCorrFit issue page on GitHub such that we may coordinate a pull
 request.
 
 
+For documentation writers
+=========================
+To build this documentation, fork PyCorrFit, navigate
+to the `docs` (not `doc`) directory and run.
+
+- ``pip install -r requirements`` followed by
+- ``sphinx-build . _build``.
+
+This will create the html documentation on your computer. Syntax warnings and errors
+will be displayed during the build (there should be none). After making your
+changes to your forked branch, create a pull request in GitHub.
+
+If you only found a typo or wish to make text-only changes, you can also
+use the GitHub interface to edit the files (without testing the build
+step on your computer).
+
+
 For developers
 ==============
-If you would like to know how a contribution to PyCorrFit should look
-like, please create an issue on GitHub and I will update this part
-of the documentation.
-
 
 Running from source
 -------------------
-The easiest way to run PyCorrFit from source is to use
-`Anaconda <http://continuum.io/downloads>`_. PyCorrFit requires wxPython which is not
-available at the Python package index. Make sure you install a unicode version of wxPython.
-Detailed installation instructions are `here <https://github.com/FCS-analysis/PyCorrFit/wiki/Running-from-source>`_.
+It is recommended to work with
+`virtual environments <https://docs.python.org/3/tutorial/venv.html>`_.
 
+Windows
+~~~~~~~
+The easiest way to run PyCorrFit from source on Windows is
+`Anaconda <http://continuum.io/downloads>`_.
 
-Contributing
-------------
-The main branch for developing PyCorrFit is *develop*. Small changes that do not
-break anything can be submitted to this branch.
-If you want to do big changes, please (fork ShapeOut and) create a separate branch,
-e.g. ``my_new_feature_dev``, and create a pull-request to *develop* once you are done making
-your changes.
-Please make sure to also update the 
-`changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/CHANGELOG>`_. 
+- ``conda install matplotlib numpy pip scipy wxpython``
+- ``pip install cython wheel simplejson sympy lmfit``
+- ``pip install -e .  # in the root directory of the repository`` 
 
-Tests
------
+Ubuntu 17.10
+~~~~~~~~~~~~
+PyCorrFit requires wxPython >= 4.0.1 which is not available as a binary
+wheel on PyPI and thus must be built from the .tar.gz.
+Install all dependencies (https://github.com/wxWidgets/Phoenix/blob/master/README.rst):
+
+- ``pip install cython matplotlib lmfit numpy scipy sympy``
+- ``sudo apt-get install -qq libgtk2.0 libgtk2.0-dev libwebkitgtk-dev dpkg-dev build-essential python3.6-dev libjpeg-dev libtiff-dev libsdl1.2-dev libnotify-dev freeglut3 freeglut3-dev libsm-dev libgtk-3-dev libwebkit2gtk-4.0-dev libxtst-dev libgstreamer-plugins-base1.0-dev``
+- ``pip install wxPython  # this will take some time``
+- ``pip install -e .  # in the root directory of the repository`` 
+
+Testing
+-------
 PyCorrFit is tested using pytest. If you have the time, please write test
 methods for your code and put them in the ``tests`` directory. You may
-run the tests manually by issuing:
+run all tests by issuing:
 
 ::
 
     python setup.py test
+
+
+Pull request guidelines
+-----------------------
+Please fork PyCorrFit and create a pull request (PR) introducing your changes.
+
+- A new PR should always be made into the `develop` branch.
+- If a PR introduces a new functionality or fixes a bug, it should provide
+  a test case, i.e. a new file or function in the `tests` directory
+  (see `here <https://github.com/FCS-analysis/PyCorrFit/tree/develop/tests>`_
+  for examples).
+  Note that currently there is no recipe for testing the graphical user
+  interface code.
+- New code should follow the
+  `Style Guide for Python Code <https://www.python.org/dev/peps/pep-0008/>`_.
+  Please use `flake8 <http://flake8.pycqa.org/en/latest/index.html#quickstart>`_
+  to check the files you changed or created.
+- New code should be documented well.
+- Make sure to update the `changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/CHANGELOG>`_. 
 
 
 Windows test binaries
