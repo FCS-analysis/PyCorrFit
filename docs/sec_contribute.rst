@@ -38,12 +38,12 @@ For documentation writers
 To build this documentation, fork PyCorrFit, navigate
 to the `docs` (not `doc`) directory and run.
 
-- ``pip install -r requirements`` followed by
+- ``pip install -r requirements.txt`` followed by
 - ``sphinx-build . _build``.
 
 This will create the html documentation on your computer. Syntax warnings and errors
 will be displayed during the build (there should be none). After making your
-changes to your forked branch, create a pull request in GitHub.
+changes to your forked branch, create a pull request on GitHub.
 
 If you only found a typo or wish to make text-only changes, you can also
 use the GitHub interface to edit the files (without testing the build
@@ -101,7 +101,7 @@ Please fork PyCorrFit and create a pull request (PR) introducing your changes.
   Note that currently there is no recipe for testing the graphical user
   interface code.
 - New code should follow the
-  `Style Guide for Python Code <https://www.python.org/dev/peps/pep-0008/>`_.
+  `style guide for Python <https://www.python.org/dev/peps/pep-0008/>`_.
   Please use `flake8 <http://flake8.pycqa.org/en/latest/index.html#quickstart>`_
   to check the files you changed or created.
 - New code should be documented well.
@@ -113,5 +113,6 @@ Windows test binaries
 After each commit to the PyCorrFit repository, a binary installer is created
 by `Appveyor <https://ci.appveyor.com/project/paulmueller/PyCorrFit>`_. Click
 on a build and navigate to ``ARTIFACTS`` (upper right corner right under
-the running time of the build). From there you can download the Windows installer of the commit.
+the running time of the build). From there you can download the Windows
+installer for the commit.
 
