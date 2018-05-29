@@ -7,6 +7,7 @@ import warnings
 
 import matplotlib
 import numpy as np
+import re
 
 # We do catch warnings about performing this before matplotlib.backends stuff
 with warnings.catch_warnings():
@@ -70,6 +71,7 @@ def latexmath(string):
     unicodechars["³"] = r"^3"
     unicodechars["₁"] = r"_1"
     unicodechars["₂"] = r"_2"
+    unicodechars["₃"] = r"_3"
     unicodechars["₀"] = r"_0"
     #unicodechars["α"] = r"\alpha"
     # We need lambda in here, because unicode names it lamda sometimes.
@@ -105,6 +107,24 @@ def latexmath(string):
     if len(lcitems) > 1:
         anew = lcitems[0]+"_{\\text{"+lcitems[1]+"}}"
     return anew + r" \hspace{0.3em} \mathrm{"+b+r"}"
+
+
+def genLatexText(parm, labels):
+    """Generate the LaTeX text for the plot with handling multiple underscores
+    in the labels.
+    """
+    for i in np.arange(len(parm)):
+        line = r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parm[i])
+        match = re.search(r'\\text\{(.*?)\}', line)
+        if match:
+            if '_' in match.groups()[0]:
+                tmpstr = match.groups()[0].split('_')
+                if ''.join(tmpstr).isnumeric():
+                    line = line.replace(match.groups()[0], ''.join(tmpstr))
+                elif len(tmpstr) == 2:
+                    tmpstr = '$_'.join(tmpstr) + '$'
+                    line = line.replace(match.groups()[0], tmpstr)
+        yield line
 
 
 def savePlotCorrelation(parent, dirname, Page, uselatex=False,
@@ -218,8 +238,8 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
         text += r'\['            #every line is a separate raw string...
         text += r'\begin{split}' # ...but they are all concatenated
         #                          by the interpreter :-)
-        for i in np.arange(len(parms)):
-            text += r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parms[i])
+        for line in genLatexText(parms, labels):
+            text += line
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
