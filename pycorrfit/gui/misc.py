@@ -108,6 +108,6 @@ def getMainIcon(pxlength=32):
     image = wx.Bitmap.ConvertToImage(iconBMP)
     image = image.Scale(pxlength, pxlength, wx.IMAGE_QUALITY_HIGH)
     iconBMP = wx.Bitmap(image)
-    iconICO = wx.Icon(iconBMP)  # wx.Bitmap.ConvertToImage(iconBMP)
+    iconICO = wx.Icon(iconBMP)
     return iconICO
 

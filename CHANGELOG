@@ -1,3 +1,6 @@
+1.1.1
+ - Fix plotting error with LaTeX (thanks @toubol) (#179)
+ - Update documentation
 1.1.0
  - BREAKING CHANGE: Move to Python3 (thanks @toubol) (#173)
  - GUI:
