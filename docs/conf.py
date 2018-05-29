@@ -184,7 +184,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, project, project + ' Documentation',
-     author, project, 'Phase imaging analysis software.',
+     author, project, 'Curve fitting in FCS.',
      'Scientific'),
 ]
 
