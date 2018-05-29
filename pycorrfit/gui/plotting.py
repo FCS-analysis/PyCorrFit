@@ -113,6 +113,7 @@ def genLatexText(parm, labels):
     """Generate the LaTeX text for the plot with handling multiple underscores
     in the labels.
     """
+    text = r''
     for i in np.arange(len(parm)):
         line = r' {} &= {:.3g} \\'.format(latexmath(labels[i]), parm[i])
         match = re.search(r'\\text\{(.*?)\}', line)
@@ -124,7 +125,8 @@ def genLatexText(parm, labels):
                 elif len(tmpstr) == 2:
                     tmpstr = '$_'.join(tmpstr) + '$'
                     line = line.replace(match.groups()[0], tmpstr)
-        yield line
+        text += line
+    return text
 
 
 def savePlotCorrelation(parent, dirname, Page, uselatex=False,
@@ -235,11 +237,9 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     # Add some nice text:
     if uselatex == True and len(parms) != 0:
         text = r""
-        text += r'\['            #every line is a separate raw string...
-        text += r'\begin{split}' # ...but they are all concatenated
-        #                          by the interpreter :-)
-        for line in genLatexText(parms, labels):
-            text += line
+        text += r'\['
+        text += r'\begin{split}'
+        text += genLatexText(parms, labels)
         ## According to issue #54, we remove fitting errors from plots
         #if errparms is not None:
         #    keys = errparms.keys()
