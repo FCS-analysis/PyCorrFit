@@ -81,6 +81,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PyCorrFit'
+github_project = 'FCS-analysis/' + project
 copyright = '2014, Paul Müller'
 author = 'Paul Müller'
 
