@@ -4,7 +4,8 @@ Getting started
 
 Installation
 ------------
-- Installers for PyCorrFit are available at the `release page <https://github.com/FCS-analysis/PyCorrFit/releases>`_.
+- Windows installers for PyCorrFit are available at the `release page <https://github.com/FCS-analysis/PyCorrFit/releases>`_.
+- On Debian-based systems, install via ``apt-get install pycorrfit``.
 - If you have Python 3.6 installed, you may install PyCorrFit via ``pip install pycorrfit[GUI]``.
   After the installation, type ``pycorrfit`` in a command shell to start PyCorrFit.
 
