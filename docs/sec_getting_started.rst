@@ -13,7 +13,7 @@ Installation
 Documentation
 -------------
 The documentation is in the process of being transferred entirely to
-readthedocs.org. Currently, the it is scattered across several
+readthedocs.org. Currently, it is scattered across several
 places and it is most-likely outdated:
 
 - Original LaTeX-based PDF file (outdated): https://github.com/FCS-analysis/PyCorrFit/wiki/PyCorrFit_doc.pdf
