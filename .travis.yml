@@ -4,6 +4,10 @@ env:
   global:
     - GH_REF: github.com/FCS-analysis/PyCorrFit.git
 sudo: required
+cache:
+  directories:
+  # data files for testing
+  - tests/data
 matrix:
   allow_failures:
     - os: osx

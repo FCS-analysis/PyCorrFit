@@ -27,6 +27,9 @@ environment:
       PYTHON_VERSION: "3.6"
       PYTHON_ARCH: "64"
 
+cache:
+  # data files for testing
+  - tests\data
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
