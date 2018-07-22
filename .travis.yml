@@ -34,9 +34,9 @@ script:
 - source ./.travis/${TRAVIS_OS_NAME}_dist.sh
 deploy:
   provider: pypi
-  user: "ci_qpi"
+  user: "ci_fcs"
   password:
-    secure: "K11y6w6bw8pu1iCTXCSnZJ7H++aU4dud/qOl962SvI+LV+qn4JNQQ+MtD90p6RFejjQyZZF5xCuupVwwIyHDNJjauBmzrn7M4gPyKpoEyTPhh1ZVBlY5AK8CNUzMjaV6xNZwm4abSp+eJ+RE1JMdJNqH2H5urlpYfwqhOMCBa4U="
+    secure: "dKtIjzQ84Kcg1XhFzwkTwg7XdGkAH1ErHjOaKIL+0DuyGSAJ3qvhhlWReTCp0hKEhVt8Xk4HS5K2VHDTCcaRX5SKRvTmML+foaZSCqEbjjUBIhyn0EW3keSdL1jzP8vzD+0IQATBUvfbCwcSwQJ54ePtBSpZXbAeSOXcXloyBBU="
   on:
     tags: true
   skip_cleanup: true
