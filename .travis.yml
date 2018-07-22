@@ -1,8 +1,5 @@
 notifications:
   email: false
-env:
-  global:
-    - GH_REF: github.com/FCS-analysis/PyCorrFit.git
 sudo: required
 cache:
   directories:
