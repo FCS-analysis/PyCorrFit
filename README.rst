@@ -1,7 +1,7 @@
 |PyCorrFit|
 ===========
 
-|PyPI Version| |Build Status Win| |Build Status Travis| |Coverage Status|
+|PyPI Version| |Build Status Win| |Build Status Travis| |Coverage Status| |Docs Status|
 
 
 Documentation
@@ -25,3 +25,5 @@ at the `issues page <https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-n
    :target: https://travis-ci.org/FCS-analysis/PyCorrFit
 .. |Coverage Status| image:: https://img.shields.io/codecov/c/github/FCS-analysis/PyCorrFit/master.svg
    :target: https://codecov.io/gh/FCS-analysis/PyCorrFit
+.. |Docs Status| image:: https://readthedocs.org/projects/pycorrfit/badge/?version=latest
+   :target: https://readthedocs.org/projects/pycorrfit/builds/

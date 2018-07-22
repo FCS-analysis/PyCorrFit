@@ -81,6 +81,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PyCorrFit'
+github_project = 'FCS-analysis/' + project
 copyright = '2014, Paul Müller'
 author = 'Paul Müller'
 
@@ -184,7 +185,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, project, project + ' Documentation',
-     author, project, 'Phase imaging analysis software.',
+     author, project, 'Curve fitting in FCS.',
      'Scientific'),
 ]
 

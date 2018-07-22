@@ -52,5 +52,5 @@ How to cite
 Müller, P., Schwille, P., and Weidemann, T.
 *PyCorrFit - generic data evaluation for fluorescence correlation spectroscopy.*
 Bioinformatics 30(17):2532-2533 (2014).
-DOI:`10.1093/bioinformatics/btu328 <http://dx.doi.org/10.1093/bioinformatics/btu328>`_
+doi:`10.1093/bioinformatics/btu328 <http://dx.doi.org/10.1093/bioinformatics/btu328>`_
 

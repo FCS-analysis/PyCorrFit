@@ -29,13 +29,13 @@ class IncludeDirective(Directive):
 
     def run(self):
         full_path = self.arguments[0]
-        project = self.state.document.settings.env.config.project
+        project = self.state.document.settings.env.config.github_project
 
         def insert_github_link(reobj):
             line = reobj.string
             instr = line[reobj.start():reobj.end()]
             issue = instr.strip("#()")
-            link = "https://github.com/RI-imaging/{}/issues/".format(project)
+            link = "https://github.com/{}/issues/".format(project)
             rstlink = "(`#{issue} <{link}{issue}>`_)".format(issue=issue,
                                                              link=link)
             return rstlink
@@ -70,5 +70,6 @@ class IncludeDirective(Directive):
 
 
 def setup(app):
+    app.add_config_value('github_project', "user/project", 'html')
     app.add_directive('include_changelog', IncludeDirective)
     return {'version': '0.1'}   # identifies the version of our extension
