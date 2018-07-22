@@ -39,6 +39,5 @@ deploy:
     secure: "K11y6w6bw8pu1iCTXCSnZJ7H++aU4dud/qOl962SvI+LV+qn4JNQQ+MtD90p6RFejjQyZZF5xCuupVwwIyHDNJjauBmzrn7M4gPyKpoEyTPhh1ZVBlY5AK8CNUzMjaV6xNZwm4abSp+eJ+RE1JMdJNqH2H5urlpYfwqhOMCBa4U="
   on:
     tags: true
-  distributions: ""
   skip_cleanup: true
-
+  skip_existing: true

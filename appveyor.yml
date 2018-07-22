@@ -107,8 +107,8 @@ artifacts:
   - path: Output\*
 
 on_success:
-  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload dist\\*.whl"
-  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload dist\\*.tar.gz || exit 0"
+  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload --skip-existing dist\\*.whl"
+  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload --skip-existing dist\\*.tar.gz"
 
 deploy:
   provider: GitHub
