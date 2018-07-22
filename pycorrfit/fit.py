@@ -870,12 +870,18 @@ class Fit(object):
         # Only allow physically correct parameters
         self.fit_parm = self.check_parms(self.fit_parm)
         # Compute error estimates for fit (Only "Lev-Mar")
-        if self.fit_algorithm == "Lev-Mar" and result.success:
+        if (self.fit_algorithm == "Lev-Mar"
+            and result.success
+            # If the covariance matrix cannot be computed in
+            # - lmfit <= 0.9.10: result.covar is None
+            # - lmfit >= 0.9.11: result.covar is not set
+            and hasattr(result, "covar")
+            and result.covar is not None):
             # This is the standard way to minimize the data. Therefore,
             # we are a little bit more verbose.
-            self.covar = result.covar
+            covar = result.covar
             try:
-                self.parmoptim_error = np.diag(self.covar)
+                self.parmoptim_error = np.diag(covar)
             except:
                 warnings.warn("PyCorrFit Warning: Error estimate not "+\
                               "possible, because we could not "+\
