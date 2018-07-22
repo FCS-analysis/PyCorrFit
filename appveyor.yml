@@ -16,11 +16,9 @@ notifications:
     on_build_status_changed: false
 
 environment:
-  COVERALLS_REPO_TOKEN:
-    secure: US5V2RWPr+toU2ZX8lyNs5IJIgfo2S1OwBQ0PUdqJMkDi4K4uJpTnZ2Ub1rda/j9
-  GITHUB_API_TOKEN:
-    secure: REdGxEyvL7z7Ohn1K6pdEPmLdCMme9rHZmRF7oItwYFb9VTBNUhCYyb+T4AeLY3M
-  # https://github.com/appveyor/ci/issues/359
+  PYPI_USR: ci_fcs
+  PYPI_PWD:
+    secure: 4SIAE2AzZLvjiPvgPpU8VYI0pSksE+PZ5CrG3Wz0moMShiFtjXZSkQMe0RrgLvYp
   matrix:
     - PYTHON: "C:\\Miniconda36"
       PYTHON_VERSION: "3.6"
@@ -82,8 +80,15 @@ test_script:
 
 after_test:
   # If tests are successful, create a whl package for the project.
+  - "appveyor-retry pip install twine wheel"
+  # If tests are successful, create a whl package for the project.
   - "python setup.py bdist_wheel"
+  - "python setup.py sdist"
   - ps: "ls dist"
+  # Setup PyPI credentials
+  - cmd: "echo [pypi] > %USERPROFILE%\\.pypirc"
+  - cmd: "echo username: %PYPI_USR% >> %USERPROFILE%\\.pypirc"
+  - cmd: "echo password: %PYPI_PWD% >> %USERPROFILE%\\.pypirc"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
   - "pyinstaller -y --log-level=WARN .appveyor\\PyCorrFit_win7.spec"
@@ -98,11 +103,15 @@ artifacts:
   # InnoSetup files
   - path: Output\*
 
+on_success:
+  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload dist\\*.whl"
+  - cmd: "if [%APPVEYOR_REPO_TAG%]==[true] twine upload dist\\*.tar.gz || exit 0"
+
 deploy:
   provider: GitHub
   auth_token:
     secure: /b5SfmYssAfLaWi0qkPhxR5CruSVBZUurSQLEL3RAaRlHn6HTPrkIqvrLDk/8JxB
-  artifact: /.*\.exe/, /.*\.whl/
+  artifact: /.*\.exe/
   draft: true
   prerelease: true
   on:
