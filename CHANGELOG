@@ -1,3 +1,9 @@
+1.1.5
+ - docs: fix build with recent version of latex (#191)
+1.1.4
+ - maintenance release
+1.1.3
+ - maintenance release
 1.1.2
  - ci: Automated release to PyPI with appveyor and travis-ci
  - fix: support lmfit >= 0.9.11
