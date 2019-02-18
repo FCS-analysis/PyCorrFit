@@ -207,8 +207,15 @@ from . import model_confocal_tt_3d_2d
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 
-
-# Models
+# Old models
+from . import MODEL_TIRF_gaussian_1C
+from . import MODEL_TIRF_gaussian_3D2D
+from . import MODEL_TIRF_gaussian_3D3D
+from . import MODEL_TIRF_1C
+from . import MODEL_TIRF_2D2D
+from . import MODEL_TIRF_3D2D
+from . import MODEL_TIRF_3D3D
+from . import MODEL_TIRF_3D2Dkin_Ries
 
 # Load all models from the imported "MODEL_*" submodules
 # These are the models that were not imported using the `model_setup` method.
