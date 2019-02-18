@@ -7,6 +7,7 @@ import wx
 MENUINFO = ["&Data range",
             "Select an interval of lag times to be used for fitting."]
 
+
 class SelectChannels(wx.Frame):
     def __init__(self, parent):
         # parent is main frame
@@ -15,23 +16,23 @@ class SelectChannels(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Data range selection",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-        ## Start drawing
+        # Start drawing
         panel = wx.Panel(self)
         self.panel = panel
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
         self.Calc_init(self.Page)
-        text1 = wx.StaticText(panel, label=u"The lag times τ are stored as an "+
+        text1 = wx.StaticText(panel, label=u"The lag times τ are stored as an " +
                                            u"array of length ")
         self.textend = wx.StaticText(panel, label="%d." % self.lentau)
         text2 = wx.StaticText(panel,
-                              label=u"You may wish to confine this array. "+
+                              label=u"You may wish to confine this array. " +
                                     u"This can be done here.")
-        ##Spincontrols:
+        # Spincontrols:
         FlexSpinSizer = wx.FlexGridSizer(rows=2, cols=4, vgap=5, hgap=5)
         FlexSpinSizer.Add(wx.StaticText(panel, label="Channels:"))
         self.spinstart = wx.SpinCtrl(panel, -1, initial=self.left,
@@ -58,7 +59,7 @@ class SelectChannels(wx.Frame):
         self.Bind(wx.EVT_SPINCTRL, self.OnChangeChannels, self.spinstart)
         # Checkbox
         self.fixcheck = wx.CheckBox(panel, -1,
-             label="Fix current channel selection for all pages.")
+                                    label="Fix current channel selection for all pages.")
         self.Bind(wx.EVT_CHECKBOX, self.OnCheckbox, self.fixcheck)
         # Text
         channelsel = "Leave this window open for a fixed selection."
@@ -84,16 +85,15 @@ class SelectChannels(wx.Frame):
         self.SetMinSize(topSizer.GetMinSize())
         # Get times.
         self.OnChangeChannels()
-        #Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         # Show window
         self.Show(True)
         self.OnPageChanged(self.Page)
 
-
     def Calc_init(self, parent):
-        ## Variables
+        # Variables
         # Parent should be the fitting panel -
         # The tab, where the fitting is done.
         self.Page = parent
@@ -118,13 +118,11 @@ class SelectChannels(wx.Frame):
             # set the maximum possible value
             self.right = self.end0
         else:
-            self.right -=1
-
+            self.right -= 1
 
     def OnApply(self, event=None):
         self.SetValues()
         self.Page.PlotAll()
-
 
     def OnApplyAll(self, event=None):
         N = self.parent.notebook.GetPageCount()
@@ -141,14 +139,12 @@ class SelectChannels(wx.Frame):
             # Autoclose
             self.OnClose()
 
-
     def OnChangeTimes(self, e=None):
         """ Called, whenever data range in seconds is changed. This updates
             the data range in channels in the window.
             This function might be used in later versions of PyCorrFit.
         """
         pass
-
 
     def OnChangeChannels(self, e=None):
         """ Called, whenever data range in channels is changed. This updates
@@ -169,7 +165,6 @@ class SelectChannels(wx.Frame):
         self.TextTimesEnd.SetLabel("%.4e" % t2)
         self.OnCheckbox()
 
-
     def OnCheckbox(self, event=None):
         """ Set the correct value in the spincontrol, if the checkbox
             is not checked.
@@ -182,14 +177,12 @@ class SelectChannels(wx.Frame):
         else:
             self.ButtonApply.Enable()
             self.ButtonApplyAll.Enable()
-        #self.OnPageChanged(self.Page)
-
+        # self.OnPageChanged(self.Page)
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnPageChanged(self, page, trigger=None):
         # We do not need the *Range* Commands here yet.
@@ -219,14 +212,12 @@ class SelectChannels(wx.Frame):
                 self.textend.SetLabel("%d." % self.lentau)
                 self.OnChangeChannels()
 
-
-
     def SetValues(self, page=None):
         if page is None:
             page = self.Page
         # Get interval
         start = self.spinstart.GetValue()
-        end = self.spinend.GetValue() + 1 # +1, [sic]
+        end = self.spinend.GetValue() + 1  # +1, [sic]
         if start > end:
             # swap the variables, we are not angry at the user
             start, end = end, start
@@ -234,6 +225,6 @@ class SelectChannels(wx.Frame):
         maxlen = len(page.corr.lag_time)
         # Use the smaller one of both, so we do not get an
         # index out of bounds error
-        page.corr.fit_ival = [ start*(start < maxlen - 1 ),
-                               min(end, maxlen)
-                             ]
+        page.corr.fit_ival = [start*(start < maxlen - 1),
+                              min(end, maxlen)
+                              ]

@@ -15,6 +15,7 @@ from .. import misc
 # Menu entry name
 MENUINFO = ["&Overlay curves", "Select experimental curves."]
 
+
 class Wrapper_OnImport(object):
     """ Wrapper for import function.
         parent: wx.Frame
@@ -24,6 +25,7 @@ class Wrapper_OnImport(object):
                     curvedict.
         selkeys: preselected values for curves in curvedict
     """
+
     def __init__(self, parent, curvedict, onselected,
                  selkeys=None, labels=None):
         self.onselected = onselected
@@ -38,7 +40,6 @@ class Wrapper_OnImport(object):
         self.parent.Enable()
         self.Selector.Destroy()
 
-
     def OnResults(self, keyskeep, keysrem):
         """ Here we will close (or disable?) pages that are not wanted
             by the user. It is important that we do not close pages that
@@ -46,7 +47,7 @@ class Wrapper_OnImport(object):
             because we ignored those pages during import.
         """
         self.OnClose()
-        self.onselected(keyskeep,keysrem)
+        self.onselected(keyskeep, keysrem)
 
 
 class Wrapper_Tools(object):
@@ -57,10 +58,10 @@ class Wrapper_Tools(object):
         """
         # parent is the main frame of PyCorrFit
         self.parent = parent
-        ## MYID
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-        ## Wrapping
+        # Wrapping
         curvedict, labels = self.GetCurvedict()
         self.labels = labels
         self.Selector = UserSelectCurves(parent, curvedict,
@@ -70,7 +71,6 @@ class Wrapper_Tools(object):
         self.Bind = self.Selector.Bind
         if self.parent.notebook.GetPageCount() == 0:
             self.Selector.sp.Disable()
-
 
     def Disable(self):
         self.Selector.Disable()
@@ -97,7 +97,6 @@ class Wrapper_Tools(object):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Selector.Destroy()
-
 
     def OnPageChanged(self, page=None, trigger=None):
         """
@@ -128,11 +127,10 @@ class Wrapper_Tools(object):
             self.labels = labels
             if oldlabels != self.Selector.curvelabels:
                 self.Selector.SelectBox.SetItems(
-                                              self.Selector.curvelabels)
+                    self.Selector.curvelabels)
             for i in np.arange(len(self.Selector.curvekeys)):
                 self.Selector.SelectBox.SetSelection(i)
             self.Selector.OnUpdatePlot(trigger=trigger)
-
 
     def OnResults(self, keyskeep, keysrem):
         """ Here we will close (or disable?) pages that are not wanted
@@ -151,7 +149,7 @@ class Wrapper_Tools(object):
         for key in keyskeep:
             textlist += "- "+key+" "+self.labels[key]+"\n"
         dlg = edclasses.MyScrolledDialog(self.parent,
-                                          overtext, textlist, "Warning")
+                                         overtext, textlist, "Warning")
         if dlg.ShowModal() == wx.ID_OK:
             N = self.parent.notebook.GetPageCount()
             pagerem = list()
@@ -217,7 +215,7 @@ class UserSelectCurves(wx.Frame):
         self.curvedict = curvedict
         self.selkeys = selkeys
         self.labels = labels    # can be None
-        self.curvelabels = None # filled by self.ProcessDict()
+        self.curvelabels = None  # filled by self.ProcessDict()
         if self.selkeys is not None:
             newselkeys = list()
             for item in self.selkeys:
@@ -227,15 +225,16 @@ class UserSelectCurves(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Overlay curves",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
-                 size=(800,500))
-        ## Pre-process
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT,
+                          size=(800, 500))
+        # Pre-process
         self.ProcessDict()
-        ## Content
-        self.sp = wx.SplitterWindow(self, size=(500,500), style=wx.SP_NOBORDER)
+        # Content
+        self.sp = wx.SplitterWindow(
+            self, size=(500, 500), style=wx.SP_NOBORDER)
         self.sp.SetMinimumPaneSize(1)
         # Top panel
-        panel_top = wx.Panel(self.sp, size=(500,200))
+        panel_top = wx.Panel(self.sp, size=(500, 200))
         self.upperSizer = wx.BoxSizer(wx.VERTICAL)
         if platform.system().lower() == 'darwin':
             ctrl = "Apple"
@@ -246,14 +245,15 @@ class UserSelectCurves(wx.Frame):
                "to select groups."
         self.upperSizer.Add(wx.StaticText(panel_top, label=text))
         # Bottom Panel
-        self.bottom_sp = wx.SplitterWindow(self.sp, size=(500,300), style=wx.SP_NOBORDER)
+        self.bottom_sp = wx.SplitterWindow(
+            self.sp, size=(500, 300), style=wx.SP_NOBORDER)
         self.bottom_sp.SetMinimumPaneSize(1)
         sizepanelx = 250
-        panel_bottom = wx.Panel(self.bottom_sp, size=(sizepanelx,300))
+        panel_bottom = wx.Panel(self.bottom_sp, size=(sizepanelx, 300))
         self.boxSizer = wx.BoxSizer(wx.VERTICAL)
         # Box selection
         style = wx.LB_EXTENDED
-        self.SelectBox = wx.ListBox(panel_bottom, size=(sizepanelx,300),
+        self.SelectBox = wx.ListBox(panel_bottom, size=(sizepanelx, 300),
                                     style=style, choices=self.curvelabels)
         for i in np.arange(len(self.curvekeys)):
             self.SelectBox.SetSelection(i)
@@ -290,7 +290,7 @@ class UserSelectCurves(wx.Frame):
                    np.array(self.upperSizer.GetMinSize()) +
                    np.array((300, 30)))
         self.SetMinSize(minsize)
-        #self.SetSize(minsize)
+        # self.SetSize(minsize)
         #self.SetMaxSize((9999, self.boxSizer.GetMinSize()[1]))
         # Canvas
         self.canvas = plot.PlotCanvas(self.bottom_sp)
@@ -316,46 +316,43 @@ class UserSelectCurves(wx.Frame):
                 keysnosel.append(key)
         return keyssel, keysnosel
 
-
     def ProcessDict(self, e=None):
         # Define the order of keys used.
         # We want to sort the keys, such that #10: is not before #1:
         self.curvekeys = list(self.curvedict.keys())
         # Sorting key function applied to each key before sorting:
-        page_num = lambda counter: int(counter.strip().strip(":").strip("#"))
+        def page_num(counter): return int(
+            counter.strip().strip(":").strip("#"))
         try:
             for item in self.curvekeys:
                 page_num(item)
         except:
-            fstr = lambda x: x
+            def fstr(x): return x
         else:
             fstr = page_num
-        self.curvekeys.sort(key = fstr)
+        self.curvekeys.sort(key=fstr)
         if self.labels is None:
             self.curvelabels = self.curvekeys
         else:
             # Use given labels instead of curvekeys.
             self.curvelabels = list()
             for key in self.curvekeys:
-                self.curvelabels.append("#"+str(key).strip(":# ")+" "+self.labels[key])
-
+                self.curvelabels.append(
+                    "#"+str(key).strip(":# ")+" "+self.labels[key])
 
     def OnCancel(self, e=None):
         """ Close the tool """
         self.wrapper.OnClose()
-
 
     def OnPushResultsRemove(self, e=None):
         # Get keys from selection
         keysrem, keyskeep = self.GetSelection()
         self.wrapper.OnResults(keyskeep, keysrem)
 
-
     def OnPushResultsKeep(self, e=None):
         # Get keys from selection
         keyskeep, keysrem = self.GetSelection()
         self.wrapper.OnResults(keyskeep, keysrem)
-
 
     def OnUpdatePlot(self, e=None, trigger=None):
         """ What should happen when the selection in *self.SelectBox*
@@ -369,7 +366,7 @@ class UserSelectCurves(wx.Frame):
             If `trigger` is something that occurs during loading of
             data, then we will not replot everything.
         """
-        #if e is not None and e.GetEventType() == 10007:
+        # if e is not None and e.GetEventType() == 10007:
         #    return
 
         # Get selected curves
@@ -394,9 +391,9 @@ class UserSelectCurves(wx.Frame):
         self.canvas.enableLegend = True
         if len(curves) != 0:
             self.canvas.Draw(plot.PlotGraphics(lines,
-                         xLabel=u'lag time τ [ms]',
-                         yLabel=u'G(τ)'))
-        ## This is an addon for 0.7.8
+                                               xLabel=u'lag time τ [ms]',
+                                               yLabel=u'G(τ)'))
+        # This is an addon for 0.7.8
         keyskeep = list()
         for i in self.SelectBox.GetSelections():
             keyskeep.append(self.curvekeys[i])

@@ -17,7 +17,7 @@ try:
     from sympy.core.function import Function
     from sympy import sympify
 except ImportError:
-    warnings.warn("Importing sympy failed."+\
+    warnings.warn("Importing sympy failed." +
                   " Reason: {}.".format(sys.exc_info()[1].message))
     # Define Function, so PyCorrFit will start, even if sympy is not there.
     # wixi needs Function.
@@ -47,6 +47,7 @@ class CorrFunc(object):
         Check the input code of a proposed user model function and
         return a function for fitting via GetFunction.
     """
+
     def __init__(self, labels, values, substitutes, funcstring):
         self.values = values
         # a --> a
@@ -58,10 +59,10 @@ class CorrFunc(object):
         for key in substitutes.keys():
             # Don't forget to insert the "(" and ")"'s
             self.funcstring = self.funcstring.replace(key,
-                                                       "("+substitutes[key]+")")
+                                                      "("+substitutes[key]+")")
             for otherkey in substitutes.keys():
                 substitutes[otherkey] = substitutes[otherkey].replace(key,
-                                                       "("+substitutes[key]+")")
+                                                                      "("+substitutes[key]+")")
         # Convert the function string to a simpification object
         self.simpification = sympify(self.funcstring, sympyfuncdict)
         self.simstring = str(self.simpification)
@@ -80,7 +81,7 @@ class CorrFunc(object):
             #    symstring = symstring.replace(key, str(vardict[key]))
             # symstring = symstring.replace("####", "tau")
             g = eval(self.funcstring, self.vardict)
-            ## This would be a safer way to do this, but it is too slow!
+            # This would be a safer way to do this, but it is too slow!
             # Once simpy supports arrays, we can use these.
             #
             # g = np.zeros(len(tau))
@@ -106,6 +107,7 @@ class CorrFunc(object):
 class UserModel(object):
     """ Class for importing txt files as models into PyCorrFit.
     """
+
     def __init__(self, parent):
         " Define all important constants and variables. "
         # Current ID is the last model ID we gave away.

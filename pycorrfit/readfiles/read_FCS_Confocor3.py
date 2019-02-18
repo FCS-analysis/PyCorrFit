@@ -48,7 +48,7 @@ def openFCS_Multiple(path):
         files created from the newer ZEN Software.
     """
     filename = path.name
-    ### TODO:
+    # TODO:
     # match curves with their timestamp
     # (actimelist and cctimelist)
     #
@@ -96,14 +96,14 @@ def openFCS_Multiple(path):
                         aclist.append(FoundType)
                     else:
                         for ch2num in np.arange(4)+1:
-                            if FCStype == "Cross-correlation detector "+\
-                                          str(chnum)+" versus detector "+\
+                            if FCStype == "Cross-correlation detector " +\
+                                          str(chnum)+" versus detector " +\
                                           str(ch2num):
                                 FoundType = "CC"+str(chnum)+str(ch2num)
                                 cclist.append(FoundType)
-                            elif FCStype == "Cross-correlation detector Meta"+\
-                                          str(chnum)+" versus detector Meta"+\
-                                          str(ch2num):
+                            elif FCStype == "Cross-correlation detector Meta" +\
+                                    str(chnum)+" versus detector Meta" +\
+                                    str(ch2num):
                                 FoundType = "CC"+str(chnum)+str(ch2num)
                                 cclist.append(FoundType)
                 if FoundType is False:
@@ -121,9 +121,9 @@ def openFCS_Multiple(path):
                 # traces in those files are usually very large. We will bin
                 # the trace and import a lighter version of it.
                 tracelength = \
-                     int(Alldata[i].partition("=")[2].strip().partition(" ")[0])
+                    int(Alldata[i].partition("=")[2].strip().partition(" ")[0])
                 if tracelength != 0:
-                    tracedata = Alldata[i+1 : i+tracelength+1]
+                    tracedata = Alldata[i+1: i+tracelength+1]
                     # Jump foward in the index
                     i = i + tracelength
                     readtrace = csv.reader(tracedata, delimiter='\t')
@@ -132,8 +132,8 @@ def openFCS_Multiple(path):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append( (np.float(row[3])*1000,
-                                       np.float(row[4])/1000) )
+                        trace.append((np.float(row[3])*1000,
+                                      np.float(row[4])/1000))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -141,27 +141,27 @@ def openFCS_Multiple(path):
                     traces.append(newtrace)
                     if FoundType[:2] != "AC":
                         # For every trace there is an entry in aclist
-                        print("Trace data saved in CC section."+ \
+                        print("Trace data saved in CC section." +
                               "I cannot handle that.")
                     gottrace = True
             if Alldata[i].partition("=")[0].strip() == "CorrelationArraySize":
                 # Get the correlation information
                 corrlength = int(Alldata[i].partition("=")[2].strip())
-                if corrlength !=0:
+                if corrlength != 0:
                     # For cross correlation or something sometimes
                     # there is no trace information.
-                    if gottrace == False and FoundType[:2] =="AC":
+                    if gottrace == False and FoundType[:2] == "AC":
                         # We think we know that there is no trace in CC curves
                         traces.append(None)
-                    corrdata = Alldata[i + 2 : i + corrlength + 2]
+                    corrdata = Alldata[i + 2: i + corrlength + 2]
                     # Jump foward
                     i = i + corrlength
                     readcorr = csv.reader(corrdata, delimiter='\t')
                     corr = list()
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append( (np.float(row[3])*1000,
-                                      np.float(row[4])-1)    )
+                        corr.append((np.float(row[3])*1000,
+                                     np.float(row[4])-1))
                     if FoundType[:2] == "AC":
                         ac_correlations.append(np.array(corr))
                     elif FoundType[:2] == "CC":
@@ -203,7 +203,7 @@ def openFCS_Multiple(path):
     # These "None" type items should be at the end of these lists.
     # If the user created .fcs files with averages between the curves,
     # the *traces* contains *None* values at those positions.
-    ## We now create:
+    # We now create:
     #  curvelist: All actually used data
     #  tracelist: Traces brought into right form (also for CCs)
     #  corrlist: Correlation curves
@@ -233,7 +233,8 @@ def openFCS_Multiple(path):
                     corrlist.append(ac_correlations[actids[0]])
                 else:
                     if traces[actids[0]] is not None:
-                        warnings.warn("File {} curve {} does not contain AC data.".format(filename, tid))
+                        warnings.warn(
+                            "File {} curve {} does not contain AC data.".format(filename, tid))
             elif len(actids) == 2:
                 # Get AC data
                 if aclist[actids[0]] == "AC1":
@@ -247,16 +248,17 @@ def openFCS_Multiple(path):
                     acdat2 = ac_correlations[actids[0]]
                     trace2 = traces[actids[0]]
                 else:
-                    warnings.warn("File {} curve {}: unknown AC data.".format(filename, tid))
+                    warnings.warn(
+                        "File {} curve {}: unknown AC data.".format(filename, tid))
                     continue
 
                 if acdat1 is not None:
-                    #AC1
+                    # AC1
                     curvelist.append("AC1")
                     tracelist.append(trace1)
                     corrlist.append(acdat1)
                 if acdat2 is not None:
-                    #AC2
+                    # AC2
                     curvelist.append("AC2")
                     tracelist.append(trace2)
                     corrlist.append(acdat2)
@@ -270,17 +272,18 @@ def openFCS_Multiple(path):
                         ccdat12 = cc_correlations[cctids[1]]
                         ccdat21 = cc_correlations[cctids[0]]
                     else:
-                        warnings.warn("File {} curve {}: unknown CC data.".format(filename, tid))
+                        warnings.warn(
+                            "File {} curve {}: unknown CC data.".format(filename, tid))
                         continue
 
                     tracecc = [trace1, trace2]
                     if ccdat12 is not None:
-                        #CC12
+                        # CC12
                         curvelist.append("CC12")
                         tracelist.append(tracecc)
                         corrlist.append(ccdat12)
                     if ccdat21 is not None:
-                        #CC21
+                        # CC21
                         curvelist.append("CC21")
                         tracelist.append(tracecc)
                         corrlist.append(ccdat21)
@@ -318,7 +321,7 @@ def openFCS_Single(path):
         if Alldata[i].partition("=")[0].strip() == "##DATA TYPE":
             # Find out what type of correlation curve we have.
             # Might be interesting to the user.
-            Type  = Alldata[i].partition("=")[2].strip()
+            Type = Alldata[i].partition("=")[2].strip()
             if Type == "FCS Correlogram":
                 fcscurve = True
                 tracecurve = False
@@ -345,7 +348,7 @@ def openFCS_Single(path):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append( (np.float(row[0])*1000, np.float(row[1])) )
+                        trace.append((np.float(row[0])*1000, np.float(row[1])))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -355,7 +358,7 @@ def openFCS_Single(path):
                 # Get the correlation information
                 corrlength = int(Alldata[i].partition("=")[2].strip())
                 i = i + 2
-                if corrlength !=0:
+                if corrlength != 0:
                     corrdata = Alldata.__getslice__(i, i+corrlength)
                     # Jump foward
                     i = i + corrlength
@@ -363,7 +366,7 @@ def openFCS_Single(path):
                     corr = list()
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append( (np.float(row[0]), np.float(row[1])-1) )
+                        corr.append((np.float(row[0]), np.float(row[1])-1))
                     corr = np.array(corr)
                 fcscurve = False
 

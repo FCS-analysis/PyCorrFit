@@ -7,6 +7,7 @@ import numpy as np
 
 class Model(object):
     """General class for handling FCS fitting models"""
+
     def __init__(self, datadict):
         """datadict is an item in Modelarray"""
         self._parameters = datadict["Parameters"]
@@ -32,7 +33,7 @@ class Model(object):
                 # in e.g. confocal t_3d_3d_3d model.
                 if (isinstance(cc[0], numbers.Integral) and
                     isinstance(cc[2], numbers.Integral) and
-                    cc[0] < cc[2]):
+                        cc[0] < cc[2]):
                     if cc[1] == ">":
                         cc = [cc[2], "<", cc[0]]
                     elif cc[1] == "<":
@@ -51,8 +52,8 @@ class Model(object):
 
     def __repr__(self):
         text = "Model {} - {}".format(
-                self.id,
-                self.description_short)
+            self.id,
+            self.description_short)
         return text
 
     def apply(self, parameters, tau):
@@ -106,7 +107,8 @@ class Model(object):
 
     @property
     def func_verification(self):
-        warnings.warn("`func_verification is deprecated: please do not use it!")
+        warnings.warn(
+            "`func_verification is deprecated: please do not use it!")
         return lambda x: x
 
     def get_supplementary_parameters(self, values, countrate=None):
@@ -135,7 +137,7 @@ class Model(object):
             count rate in Hz
         """
         out = list()
-        for item in  self.get_supplementary_parameters(values, countrate):
+        for item in self.get_supplementary_parameters(values, countrate):
             out.append(item[1])
         return out
 

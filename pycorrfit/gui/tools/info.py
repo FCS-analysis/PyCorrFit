@@ -9,16 +9,17 @@ from pycorrfit import models as mdls
 MENUINFO = ["Page &info",
             "Display some information on the current page."]
 
+
 class InfoClass(object):
     """ This class get's all the Info possible from a Page and
         makes it available through a dictionary with headings as keys.
     """
-    def __init__(self, CurPage=None, Pagelist=None ):
+
+    def __init__(self, CurPage=None, Pagelist=None):
         # A list of all Pages currently available:
         self.Pagelist = Pagelist
         # The current page we are looking at:
         self.CurPage = CurPage
-
 
     def GetAllInfo(self):
         """ Get a dictionary with page titles and an InfoDict as value.
@@ -29,18 +30,15 @@ class InfoClass(object):
             MultiInfo[Page.counter[:-2]] = self.GetPageInfo(Page)
         return MultiInfo
 
-
     def GetCurInfo(self):
         """ Get all the information about the current Page.
             Added for convenience. You may use GetPageInfo.
         """
         return self.GetPageInfo(self.CurPage)
 
-
     def GetCurFancyInfo(self):
         """ For convenience. """
         return self.GetFancyInfo(self.CurPage)
-
 
     def GetFancyInfo(self, Page):
         """ Get a nice string representation of the Info """
@@ -50,16 +48,16 @@ class InfoClass(object):
         # Title
         Title = u"\n"
         for item in InfoDict["title"]:
-            Title = Title + item[0]+"\t"+ item[1]+"\n"
+            Title = Title + item[0]+"\t" + item[1]+"\n"
         # Parameters
         Parameters = u"\nParameters:\n"
         for item in InfoDict["parameters"]:
-            Parameters = Parameters + u"  "+item[0]+"\t"+ str(item[1])+"\n"
+            Parameters = Parameters + u"  "+item[0]+"\t" + str(item[1])+"\n"
         # Supplementary parameters
         Supplement = u"\nSupplementary parameters:\n"
         try:
             for item in InfoDict["supplement"]:
-                Supplement = Supplement + "  "+item[0]+"\t"+ str(item[1])+"\n"
+                Supplement = Supplement + "  "+item[0]+"\t" + str(item[1])+"\n"
         except KeyError:
             Supplement = ""
         # Fitting
@@ -84,10 +82,9 @@ class InfoClass(object):
             SupDoc = u"\n"+8*" "+InfoDict["modelsupdoc"][0]
         except:
             SupDoc = u""
-        PageInfo = Version+Title+Parameters+Supplement+Fitting+Background+\
-                   ModelDoc+SupDoc
+        PageInfo = Version+Title+Parameters+Supplement+Fitting+Background +\
+            ModelDoc+SupDoc
         return PageInfo
-
 
     def GetPageInfo(self, Page):
         """ Needs a Page and gets all information from it """
@@ -115,13 +112,13 @@ class InfoClass(object):
         Title.append(["Model ID", str(model.id)])
         Title.append(["Model function", fct])
         Title.append(["Page number", Page.counter[1:-2]])
-        ## Parameters
+        # Parameters
         Parameters = list()
         # Use this function to determine human readable parameters, if possible
         Units, Newparameters = mdls.GetHumanReadableParms(model.id, parms)
         # Add Parameters
         for i in np.arange(len(parms)):
-            Parameters.append([ Units[i], Newparameters[i] ])
+            Parameters.append([Units[i], Newparameters[i]])
         InfoDict["parameters"] = Parameters
         # Add some more information if available
         # Info is a dictionary or None
@@ -138,8 +135,7 @@ class InfoClass(object):
                 pass
             else:
                 InfoDict["modelsupdoc"] = [func_info.__doc__]
-        ## Fitting
-
+        # Fitting
 
         if hasattr(corr, "fit_results"):
             Fitting = list()
@@ -147,58 +143,63 @@ class InfoClass(object):
             if corr.correlation is not None:
                 # Mode AC vs CC
                 if corr.is_cc:
-                    Title.append(["Type AC/CC", "Cross-correlation" ])
+                    Title.append(["Type AC/CC", "Cross-correlation"])
                 else:
-                    Title.append(["Type AC/CC", "Autocorrelation" ])
+                    Title.append(["Type AC/CC", "Autocorrelation"])
                 if "chi2" in corr.fit_results:
-                    Fitting.append([ u"χ²", corr.fit_results["chi2"]])
+                    Fitting.append([u"χ²", corr.fit_results["chi2"]])
                 if weightedfit:
                     try:
-                        Fitting.append(["Weighted fit", corr.fit_results["weighted fit type"]])
+                        Fitting.append(
+                            ["Weighted fit", corr.fit_results["weighted fit type"]])
                     except KeyError:
-                        Fitting.append(["Weighted fit", u""+Page.Fitbox[1].GetValue()])
+                        Fitting.append(
+                            ["Weighted fit", u""+Page.Fitbox[1].GetValue()])
                 if "chi2 type" in corr.fit_results:
                     ChiSqType = corr.fit_results["chi2 type"]
                 else:
                     ChiSqType = "unknown"
-                Fitting.append([ u"χ²-type", ChiSqType])
-                Fitting.append([ "Algorithm", fit.Algorithms[corr.fit_algorithm][1]])
+                Fitting.append([u"χ²-type", ChiSqType])
+                Fitting.append(
+                    ["Algorithm", fit.Algorithms[corr.fit_algorithm][1]])
                 if len(Page.GlobalParameterShare) != 0:
                     shared = str(Page.GlobalParameterShare[0])
                     for item in Page.GlobalParameterShare[1:]:
                         shared += ", "+str(item)
                     Fitting.append(["Shared parameters with Pages", shared])
                 if "weighted fit bins" in corr.fit_results:
-                    Fitting.append(["Std. channels", 2*corr.fit_results["weighted fit bins"]+1])
+                    Fitting.append(
+                        ["Std. channels", 2*corr.fit_results["weighted fit bins"]+1])
                 # Fitting range:
                 t1 = 1.*corr.lag_time[corr.fit_ival[0]]
                 t2 = 1.*corr.lag_time[corr.fit_ival[1]-1]
-                Fitting.append([ "Ival start [ms]", "%.4e" % t1 ])
-                Fitting.append([ "Ival end [ms]", "%.4e" % t2 ])
+                Fitting.append(["Ival start [ms]", "%.4e" % t1])
+                Fitting.append(["Ival end [ms]", "%.4e" % t2])
                 # Fittet parameters
                 try:
                     fitparmsid = corr.fit_results["fit parameters"]
                 except:
                     fitparmsid = corr.fit_parameters_variable
                 fitparms = np.array(corr.fit_model.parameters[0])[fitparmsid]
-                fitparms_short = [ f.split()[0] for f in fitparms ]
+                fitparms_short = [f.split()[0] for f in fitparms]
                 fitparms_short = u", ".join(fitparms_short)
                 Fitting.append(["Fit parm.", fitparms_short])
                 # global fitting
                 for key in corr.fit_results.keys():
                     if key.startswith("global"):
-                        Fitting.append([key.capitalize(), corr.fit_results[key]])
+                        Fitting.append(
+                            [key.capitalize(), corr.fit_results[key]])
                 # Fit errors
                 if "fit error estimation" in corr.fit_results:
                     errors = corr.fit_results["fit error estimation"]
                     for err, par in zip(errors, fitparms):
                         nam, val = mdls.GetHumanReadableParameterDict(
-                                                model.id, [par], [err])
+                            model.id, [par], [err])
                         Fitting.append(["Err "+nam[0], val[0]])
 
                 InfoDict["fitting"] = Fitting
 
-        ## Normalization parameter id to name
+        # Normalization parameter id to name
         if corr.normparm is None:
             normparmtext = "None"
         elif corr.normparm < len(corr.fit_parameters):
@@ -209,29 +210,29 @@ class InfoClass(object):
             normparmtext = MoreInfo[supnum][0]
         Title.append(["Normalization", normparmtext])
 
-        ## Background
+        # Background
         Background = list()
         if corr.is_cc:
             if len(corr.backgrounds) == 2:
                 # Channel 1
-                Background.append([ "bg name Ch1",
-                                    corr.backgrounds[0].name])
-                Background.append([ "bg rate Ch1 [kHz]",
-                                    corr.backgrounds[0].countrate])
+                Background.append(["bg name Ch1",
+                                   corr.backgrounds[0].name])
+                Background.append(["bg rate Ch1 [kHz]",
+                                   corr.backgrounds[0].countrate])
                 # Channel 2
-                Background.append([ "bg name Ch2",
-                                    corr.backgrounds[1].name])
-                Background.append([ "bg rate Ch2 [kHz]",
-                                    corr.backgrounds[1].countrate])
+                Background.append(["bg name Ch2",
+                                   corr.backgrounds[1].name])
+                Background.append(["bg rate Ch2 [kHz]",
+                                   corr.backgrounds[1].countrate])
                 InfoDict["background"] = Background
         else:
             if len(corr.backgrounds) == 1:
-                Background.append([ "bg name",
-                                    corr.backgrounds[0].name])
-                Background.append([ "bg rate [kHz]",
-                                    corr.backgrounds[0].countrate])
+                Background.append(["bg name",
+                                   corr.backgrounds[0].name])
+                Background.append(["bg rate [kHz]",
+                                   corr.backgrounds[0].countrate])
                 InfoDict["background"] = Background
-        ## Function doc string
+        # Function doc string
         InfoDict["modeldoc"] = [corr.fit_model.description_long]
         InfoDict["title"] = Title
 
@@ -246,23 +247,24 @@ class ShowInfo(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Info",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
         # Size
-        initial_size = wx.Size(650,700)
+        initial_size = wx.Size(650, 700)
         initial_sizec = (initial_size[0]-6, initial_size[1]-30)
-        self.SetMinSize(wx.Size(200,200))
+        self.SetMinSize(wx.Size(200, 200))
         self.SetSize(initial_size)
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE,
-                        size=initial_sizec)
+                                   size=initial_sizec)
         self.control.SetEditable(False)
-        font1 = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
+        font1 = wx.Font(10, wx.MODERN, wx.NORMAL,
+                        wx.NORMAL, False, u'Monospace')
         self.control.SetFont(font1)
         btncopy = wx.Button(self.panel, wx.ID_CLOSE, 'Copy to clipboard')
         self.Bind(wx.EVT_BUTTON, self.OnCopy, btncopy)
@@ -271,13 +273,12 @@ class ShowInfo(wx.Frame):
         self.topSizer.Add(self.control)
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
-        #Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         wx.EVT_SIZE(self, self.OnSize)
         self.Content()
-
 
     def Content(self):
         # Fill self.control with content.
@@ -292,12 +293,10 @@ class ShowInfo(wx.Frame):
         PageInfo = InfoMan.GetCurFancyInfo()
         self.control.SetValue(PageInfo)
 
-
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnCopy(self, event):
         if not wx.TheClipboard.IsOpened():
@@ -308,7 +307,6 @@ class ShowInfo(wx.Frame):
             wx.TheClipboard.Close()
         else:
             print("Other application has lock on clipboard.")
-
 
     def OnPageChanged(self, page=None, trigger=None):
         """
@@ -323,7 +321,6 @@ class ShowInfo(wx.Frame):
         # When parent changes
         self.Page = page
         self.Content()
-
 
     def OnSize(self, event):
         size = event.GetSize()

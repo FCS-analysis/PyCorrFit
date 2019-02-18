@@ -21,25 +21,27 @@ import csv
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+
+
 def csvimport(filepath):
     r_obj = csv.reader(open(filepath, 'rb'))
     line_one = r_obj.next()
-    if line_one.__len__()>1:
+    if line_one.__len__() > 1:
         if float(line_one[1]) == 2:
 
             version = 2
         else:
-            print('version not known:',line_one[1])
+            print('version not known:', line_one[1])
 
     if version == 2:
-        type =str(r_obj.next()[1])
+        type = str(r_obj.next()[1])
         if type == "pt uncorrelated":
             Resolution = float(r_obj.next()[1])
             chanArr = []
             trueTimeArr = []
             dTimeArr = []
             line = r_obj.next()
-            while  line[0] != 'end':
+            while line[0] != 'end':
 
                 chanArr.append(int(line[0]))
                 trueTimeArr.append(float(line[1]))
@@ -48,8 +50,7 @@ def csvimport(filepath):
             return np.array(chanArr), np.array(trueTimeArr), np.array(dTimeArr), Resolution
         else:
             print('type not recognised')
-            return None, None,None,None
-
+            return None, None, None, None
 
 
 def pt3import(filepath):
@@ -80,18 +81,18 @@ def pt3import(filepath):
     DispTimeTo = struct.unpack('i', f.read(4))[0]
     DispCountFrom = struct.unpack('i', f.read(4))[0]
     DispCountTo = struct.unpack('i', f.read(4))[0]
-    DispCurveMapTo = [];
-    DispCurveShow =[];
-    for i in range(0,8):
-        DispCurveMapTo.append(struct.unpack('i', f.read(4))[0]);
-        DispCurveShow.append(struct.unpack('i', f.read(4))[0]);
-    ParamStart =[];
-    ParamStep =[];
-    ParamEnd =[];
-    for i in range(0,3):
-        ParamStart.append(struct.unpack('i', f.read(4))[0]);
-        ParamStep.append(struct.unpack('i', f.read(4))[0]);
-        ParamEnd.append(struct.unpack('i', f.read(4))[0]);
+    DispCurveMapTo = []
+    DispCurveShow = []
+    for i in range(0, 8):
+        DispCurveMapTo.append(struct.unpack('i', f.read(4))[0])
+        DispCurveShow.append(struct.unpack('i', f.read(4))[0])
+    ParamStart = []
+    ParamStep = []
+    ParamEnd = []
+    for i in range(0, 3):
+        ParamStart.append(struct.unpack('i', f.read(4))[0])
+        ParamStep.append(struct.unpack('i', f.read(4))[0])
+        ParamEnd.append(struct.unpack('i', f.read(4))[0])
 
     RepeatMode = struct.unpack('i', f.read(4))[0]
     RepeatsPerCurve = struct.unpack('i', f.read(4))[0]
@@ -99,7 +100,7 @@ def pt3import(filepath):
     RepeatWait = struct.unpack('i', f.read(4))[0]
     ScriptName = f.read(20)
 
-    #The next is a board specific header
+    # The next is a board specific header
 
     HardwareIdent = f.read(16)
     HardwareVersion = f.read(8)
@@ -113,41 +114,41 @@ def pt3import(filepath):
 
     Resolution = struct.unpack('f', f.read(4))[0]
 
-    #below is new in format version 2.0
+    # below is new in format version 2.0
 
-    RouterModelCode      = struct.unpack('i', f.read(4))[0]
-    RouterEnabled        = struct.unpack('i', f.read(4))[0]
+    RouterModelCode = struct.unpack('i', f.read(4))[0]
+    RouterEnabled = struct.unpack('i', f.read(4))[0]
 
-    #Router Ch1
-    RtChan1_InputType    = struct.unpack('i', f.read(4))[0]
-    RtChan1_InputLevel   = struct.unpack('i', f.read(4))[0]
-    RtChan1_InputEdge    = struct.unpack('i', f.read(4))[0]
-    RtChan1_CFDPresent   = struct.unpack('i', f.read(4))[0]
-    RtChan1_CFDLevel     = struct.unpack('i', f.read(4))[0]
+    # Router Ch1
+    RtChan1_InputType = struct.unpack('i', f.read(4))[0]
+    RtChan1_InputLevel = struct.unpack('i', f.read(4))[0]
+    RtChan1_InputEdge = struct.unpack('i', f.read(4))[0]
+    RtChan1_CFDPresent = struct.unpack('i', f.read(4))[0]
+    RtChan1_CFDLevel = struct.unpack('i', f.read(4))[0]
     RtChan1_CFDZeroCross = struct.unpack('i', f.read(4))[0]
-    #Router Ch2
-    RtChan2_InputType    = struct.unpack('i', f.read(4))[0]
-    RtChan2_InputLevel   = struct.unpack('i', f.read(4))[0]
-    RtChan2_InputEdge    = struct.unpack('i', f.read(4))[0]
-    RtChan2_CFDPresent   = struct.unpack('i', f.read(4))[0]
-    RtChan2_CFDLevel     = struct.unpack('i', f.read(4))[0]
+    # Router Ch2
+    RtChan2_InputType = struct.unpack('i', f.read(4))[0]
+    RtChan2_InputLevel = struct.unpack('i', f.read(4))[0]
+    RtChan2_InputEdge = struct.unpack('i', f.read(4))[0]
+    RtChan2_CFDPresent = struct.unpack('i', f.read(4))[0]
+    RtChan2_CFDLevel = struct.unpack('i', f.read(4))[0]
     RtChan2_CFDZeroCross = struct.unpack('i', f.read(4))[0]
-    #Router Ch3
-    RtChan3_InputType    = struct.unpack('i', f.read(4))[0]
-    RtChan3_InputLevel   = struct.unpack('i', f.read(4))[0]
-    RtChan3_InputEdge    = struct.unpack('i', f.read(4))[0]
-    RtChan3_CFDPresent   = struct.unpack('i', f.read(4))[0]
-    RtChan3_CFDLevel     = struct.unpack('i', f.read(4))[0]
+    # Router Ch3
+    RtChan3_InputType = struct.unpack('i', f.read(4))[0]
+    RtChan3_InputLevel = struct.unpack('i', f.read(4))[0]
+    RtChan3_InputEdge = struct.unpack('i', f.read(4))[0]
+    RtChan3_CFDPresent = struct.unpack('i', f.read(4))[0]
+    RtChan3_CFDLevel = struct.unpack('i', f.read(4))[0]
     RtChan3_CFDZeroCross = struct.unpack('i', f.read(4))[0]
-    #Router Ch4
-    RtChan4_InputType    = struct.unpack('i', f.read(4))[0]
-    RtChan4_InputLevel   = struct.unpack('i', f.read(4))[0]
-    RtChan4_InputEdge    = struct.unpack('i', f.read(4))[0]
-    RtChan4_CFDPresent   = struct.unpack('i', f.read(4))[0]
-    RtChan4_CFDLevel     = struct.unpack('i', f.read(4))[0]
+    # Router Ch4
+    RtChan4_InputType = struct.unpack('i', f.read(4))[0]
+    RtChan4_InputLevel = struct.unpack('i', f.read(4))[0]
+    RtChan4_InputEdge = struct.unpack('i', f.read(4))[0]
+    RtChan4_CFDPresent = struct.unpack('i', f.read(4))[0]
+    RtChan4_CFDLevel = struct.unpack('i', f.read(4))[0]
     RtChan4_CFDZeroCross = struct.unpack('i', f.read(4))[0]
 
-    #The next is a T3 mode specific header.
+    # The next is a T3 mode specific header.
     ExtDevices = struct.unpack('i', f.read(4))[0]
 
     Reserved1 = struct.unpack('i', f.read(4))[0]
@@ -158,65 +159,73 @@ def pt3import(filepath):
     StopAfter = struct.unpack('i', f.read(4))[0]
     StopReason = struct.unpack('i', f.read(4))[0]
     Records = struct.unpack('i', f.read(4))[0]
-    ImgHdrSize =struct.unpack('i', f.read(4))[0]
+    ImgHdrSize = struct.unpack('i', f.read(4))[0]
 
-    #Special Header for imaging.
+    # Special Header for imaging.
     if ImgHdrSize > 0:
         ImgHdr = struct.unpack('i', f.read(ImgHdrSize))[0]
-    ofltime = 0;
+    ofltime = 0
 
-    cnt_1=0; cnt_2=0; cnt_3=0; cnt_4=0; cnt_Ofl=0; cnt_M=0; cnt_Err=0; # just counters
-    WRAPAROUND=65536;
+    cnt_1 = 0
+    cnt_2 = 0
+    cnt_3 = 0
+    cnt_4 = 0
+    cnt_Ofl = 0
+    cnt_M = 0
+    cnt_Err = 0  # just counters
+    WRAPAROUND = 65536
 
-    #Put file Save info here.
+    # Put file Save info here.
 
-    syncperiod = 1e9/CntRate0;
-    #outfile stuff here.
-    #fpout.
+    syncperiod = 1e9/CntRate0
+    # outfile stuff here.
+    # fpout.
     #T3RecordArr = [];
 
     chanArr = [0]*Records
-    trueTimeArr =[0]*Records
-    dTimeArr=[0]*Records
+    trueTimeArr = [0]*Records
+    dTimeArr = [0]*Records
     #f1=open('./testfile', 'w+')
-    for b in range(0,Records):
-        T3Record = struct.unpack('I', f.read(4))[0];
+    for b in range(0, Records):
+        T3Record = struct.unpack('I', f.read(4))[0]
 
-        #T3RecordArr.append(T3Record)
+        # T3RecordArr.append(T3Record)
         nsync = T3Record & 65535
-        chan = ((T3Record >> 28) & 15);
-        chanArr[b]=chan
+        chan = ((T3Record >> 28) & 15)
+        chanArr[b] = chan
         #f1.write(str(i)+" "+str(T3Record)+" "+str(nsync)+" "+str(chan)+" ")
-        dtime = 0;
+        dtime = 0
 
         if chan == 1:
-            cnt_1 = cnt_1+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
+            cnt_1 = cnt_1+1
+            dtime = ((T3Record >> 16) & 4095)  # f1.write(str(dtime)+" ")
         elif chan == 2:
-            cnt_2 = cnt_2+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
+            cnt_2 = cnt_2+1
+            dtime = ((T3Record >> 16) & 4095)  # f1.write(str(dtime)+" ")
         elif chan == 3:
-            cnt_3 = cnt_3+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
+            cnt_3 = cnt_3+1
+            dtime = ((T3Record >> 16) & 4095)  # f1.write(str(dtime)+" ")
         elif chan == 4:
-            cnt_4 = cnt_4+1;dtime = ((T3Record >> 16) & 4095);#f1.write(str(dtime)+" ")
+            cnt_4 = cnt_4+1
+            dtime = ((T3Record >> 16) & 4095)  # f1.write(str(dtime)+" ")
         elif chan == 15:
-            markers = ((T3Record >> 16) & 15);
+            markers = ((T3Record >> 16) & 15)
 
-            if markers ==0:
-                ofltime = ofltime +WRAPAROUND;
+            if markers == 0:
+                ofltime = ofltime + WRAPAROUND
                 cnt_Ofl = cnt_Ofl+1
                 #f1.write("Ofl "+" ")
             else:
-                cnt_M=cnt_M+1
+                cnt_M = cnt_M+1
                 #f1.write("MA:%1u "+markers+" ")
 
-        truensync = ofltime + nsync;
-        truetime = (truensync * syncperiod) + (dtime*Resolution);
+        truensync = ofltime + nsync
+        truetime = (truensync * syncperiod) + (dtime*Resolution)
         trueTimeArr[b] = truetime
         dTimeArr[b] = dtime
 
         #f1.write(str(truensync)+" "+str(truetime)+"\n")
-    f.close();
-    #f1.close();
-
-
+    f.close()
+    # f1.close();
 
     return np.array(chanArr), np.array(trueTimeArr), np.array(dTimeArr), Resolution

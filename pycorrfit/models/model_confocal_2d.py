@@ -4,6 +4,8 @@ from .control import model_setup
 from .cp_confocal import twod
 
 # 2D simple gauss
+
+
 def CF_Gxy_gauss(parms, tau):
     u""" Two-dimensional diffusion with a Gaussian laser profile.
 
@@ -44,21 +46,21 @@ def supplements(parms, countrate=None):
 
 parms = [4.0, 0.4, 0.0]
 
-## boundaries
+# boundaries
 boundaries = [[0, np.inf]]*len(parms)
 boundaries[-1] = [-np.inf, np.inf]
 
 model_setup(
-             modelid=6001,
-             name="2D diffusion (confocal)",
-             comp="2D",
-             mtype="Confocal (Gaussian)",
-             fctn=CF_Gxy_gauss,
-             par_labels=[  u"n",
-                           u"τ_diff [ms]",
-                           u"offset"],
-             par_values=parms,
-             par_vary=[True, True, False],
-             par_boundaries=boundaries,
-             supplementary_method=supplements
-            )
+    modelid=6001,
+    name="2D diffusion (confocal)",
+    comp="2D",
+    mtype="Confocal (Gaussian)",
+    fctn=CF_Gxy_gauss,
+    par_labels=[u"n",
+                u"τ_diff [ms]",
+                u"offset"],
+    par_values=parms,
+    par_vary=[True, True, False],
+    par_boundaries=boundaries,
+    supplementary_method=supplements
+)

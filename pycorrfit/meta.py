@@ -27,16 +27,16 @@ def get_file_location(filename):
     """
     dirname = os.path.dirname(os.path.abspath(__file__))
     locations = ["/./", "/pycorrfit_doc/", "/doc/"]
-    locations += [ "/.."+l for l in locations]
-    locations = [ os.path.realpath(dirname+l) for l in locations]
+    locations += ["/.."+l for l in locations]
+    locations = [os.path.realpath(dirname+l) for l in locations]
 
     for i in range(len(locations)):
         # check /usr/lib64/32 -> /usr/lib
         for larch in ["lib32", "lib64"]:
             if dirname.count(larch):
                 locations.append(locations[i].replace(larch, "lib", 1))
-    
-    ## freezed binaries:
+
+    # freezed binaries:
     if hasattr(sys, 'frozen'):
         try:
             adir = sys._MEIPASS + "/doc/"  # @UndefinedVariable
@@ -44,10 +44,9 @@ def get_file_location(filename):
             adir = "./"
         locations.append(os.path.realpath(adir))
     for loc in locations:
-        thechl = os.path.join(loc,filename)
+        thechl = os.path.join(loc, filename)
         if os.path.exists(thechl):
             return thechl
             break
     # if this does not work:
     return None
-

@@ -29,29 +29,30 @@ def CF_Gxyz_gauss_3D3D(parms, tau):
         [6] offset
         *tau* - lag time
     """
-    n=parms[0]
-    taud1=parms[1]
-    taud2=parms[2]
-    F=parms[3]
-    SP=parms[4]
-    alpha=parms[5]
-    off=parms[6]
+    n = parms[0]
+    taud1 = parms[1]
+    taud2 = parms[2]
+    F = parms[3]
+    SP = parms[4]
+    alpha = parms[5]
+    off = parms[6]
 
     g = double_pnum(n=n,
                     F1=F,
                     alpha=alpha,
                     comp1=threed,
                     comp2=threed,
-                    kwargs1={"tau":tau,
-                             "taudiff":taud1,
-                             "SP":SP},
-                    kwargs2={"tau":tau,
-                             "taudiff":taud2,
-                             "SP":SP},
+                    kwargs1={"tau": tau,
+                             "taudiff": taud1,
+                             "SP": SP},
+                    kwargs2={"tau": tau,
+                             "taudiff": taud2,
+                             "SP": SP},
                     )
 
     G = off + g
     return G
+
 
 def supplements(parms, countrate=None):
     u"""Supplementary parameters:
@@ -74,41 +75,41 @@ def supplements(parms, countrate=None):
     return Info
 
 
-parms = [   25,      # n
-            5,       # taud1
-            1000,    # taud2
-            0.5,     # F
-            5,       # SP
-            1.0,     # alpha
-            0.0      # offset
-            ]
+parms = [25,      # n
+         5,       # taud1
+         1000,    # taud2
+         0.5,     # F
+         5,       # SP
+         1.0,     # alpha
+         0.0      # offset
+         ]
 
-## Boundaries
+# Boundaries
 # strictly positive
 boundaries = [[0, np.inf]]*len(parms)
 # F
-boundaries[3] = [0,.9999999999999]
+boundaries[3] = [0, .9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6035,
-             name="Separate 3D diffusion (confocal)",
-             comp="3D+3D",
-             mtype="Confocal (Gaussian)",
-             fctn=CF_Gxyz_gauss_3D3D,
-             par_labels=[
-                            u"n",
-                            u"τ"+u"\u2081"+" [ms]",
-                            u"τ"+u"\u2082"+" [ms]",
-                            u"F"+u"\u2081",
-                            u"SP",
-                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
-                            u"offset"
-                            ],
-             par_values=parms,
-             par_vary=[True, True, True, True, False, False, False],
-             par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1]],
-             supplementary_method=supplements
-            )
+    modelid=6035,
+    name="Separate 3D diffusion (confocal)",
+    comp="3D+3D",
+    mtype="Confocal (Gaussian)",
+    fctn=CF_Gxyz_gauss_3D3D,
+    par_labels=[
+        u"n",
+        u"τ"+u"\u2081"+" [ms]",
+        u"τ"+u"\u2082"+" [ms]",
+        u"F"+u"\u2081",
+        u"SP",
+        u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+        u"offset"
+    ],
+    par_values=parms,
+    par_vary=[True, True, True, True, False, False, False],
+    par_boundaries=boundaries,
+    par_constraints=[[2, ">", 1]],
+    supplementary_method=supplements
+)

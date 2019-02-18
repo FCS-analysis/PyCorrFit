@@ -20,6 +20,7 @@ class KThread(threading.Thread):
     thread will not actually be killed until the next Python statement is
     executed.
     """
+
     def __init__(self, *args, **keywords):
         threading.Thread.__init__(self, *args, **keywords)
         self.killed = False
@@ -53,9 +54,9 @@ class KThread(threading.Thread):
         self.killed = True
 
 
-
 class WorkerThread(KThread):
     """Worker Thread Class."""
+
     def __init__(self, target, args, kwargs):
         """Init Worker Thread Class."""
         KThread.__init__(self)
@@ -134,21 +135,20 @@ class ThreadedProgressDlg(object):
         elif isinstance(args, list):
             # convenience-convert args to tuples
             if not isinstance(args[0], tuple):
-                args = [ (t,) for t in args ]
+                args = [(t,) for t in args]
 
         if isinstance(kwargs, dict):
             kwargs = [kwargs]*nums
 
         if not messages:
-            messages = [ "item {} of {}".format(a+1, nums) for a in range(nums) ]
-
+            messages = ["item {} of {}".format(a+1, nums) for a in range(nums)]
 
         time1 = time.time()
-        sty = wx.PD_SMOOTH|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT
+        sty = wx.PD_SMOOTH | wx.PD_AUTO_HIDE | wx.PD_CAN_ABORT
         if len(targets) > 1:
-            sty = sty|wx.PD_REMAINING_TIME
+            sty = sty | wx.PD_REMAINING_TIME
         dlgargs = [title, "initializing..."]
-        dlgkwargs = {"maximum":nums, "parent":parent, "style":sty }
+        dlgkwargs = {"maximum": nums, "parent": parent, "style": sty}
         dlg = None
 
         self.aborted = False
@@ -166,7 +166,7 @@ class ThreadedProgressDlg(object):
                     dlg = wx.ProgressDialog(*dlgargs, **dlgkwargs)
                     wx.EndBusyCursor()
 
-                init=False
+                init = False
                 time.sleep(.01)
                 if dlg:
                     if len(targets) == 1:
@@ -207,25 +207,25 @@ class ThreadedProgressDlg(object):
         pass
 
 
-
 if __name__ == "__main__":
     # GUI Frame class that spins off the worker thread
     class MainFrame(wx.Frame):
         """Class MainFrame."""
+
         def __init__(self, parent, aid):
             """Create the MainFrame."""
             wx.Frame.__init__(self, parent, aid, 'Thread Test')
 
             # Dumb sample frame with two buttons
-            but = wx.Button(self, wx.ID_ANY, 'Start Progress', pos=(0,0))
-
+            but = wx.Button(self, wx.ID_ANY, 'Start Progress', pos=(0, 0))
 
             self.Bind(wx.EVT_BUTTON, self.OnStart, but)
 
         def OnStart(self, event):
             """Start Computation."""
             # Trigger the worker thread unless it's already busy
-            arguments = [ test_class(a) for a in range(10) ]
+            arguments = [test_class(a) for a in range(10)]
+
             def method(x):
                 x.arg *= 1.1
                 time.sleep(1)
@@ -233,9 +233,9 @@ if __name__ == "__main__":
             print(tp.index_aborted)
             print([a.arg for a in arguments])
 
-
     class MainApp(wx.App):
         """Class Main App."""
+
         def OnInit(self):
             """Init Main App."""
             self.frame = MainFrame(None, -1)
@@ -246,7 +246,6 @@ if __name__ == "__main__":
     class test_class(object):
         def __init__(self, arg):
             self.arg = arg
-
 
     app = MainApp(0)
     app.MainLoop()

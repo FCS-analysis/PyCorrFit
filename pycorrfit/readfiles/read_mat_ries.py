@@ -68,10 +68,10 @@ def openMAT(path, filename=None):
                 # Another workaround
                 # Sometimes, there's just one curve, which
                 # means that corr[0] has no length.
-                if len( np.atleast_1d(corr[0]) ) == 1:
+                if len(np.atleast_1d(corr[0])) == 1:
                     final = np.zeros((len(corr), 2))
-                    final[:,0] = times
-                    final[:,1] = corr
+                    final[:, 0] = times
+                    final[:, 1] = corr
                     correlations.append(final)
                     curvelist.append("AC"+str(i+1))
                     try:
@@ -81,18 +81,17 @@ def openMAT(path, filename=None):
                         # No trace
                         traces.append(None)
                     else:
-                        trace = np.zeros((2,2))
-                        trace[1,0] = 1.0
-                        trace[:,1] = traceavg
+                        trace = np.zeros((2, 2))
+                        trace[1, 0] = 1.0
+                        trace[:, 1] = traceavg
                         traces.append(trace)
-
 
                 elif len(corr) == len(times):
                     for j in np.arange(len(corr[0])):
 
                         final = np.zeros((len(corr), 2))
-                        final[:,0] = times
-                        final[:,1] = corr[:,j]
+                        final[:, 0] = times
+                        final[:, 1] = corr[:, j]
                         correlations.append(final)
                         curvelist.append("AC"+str(i+1))
                         try:
@@ -102,9 +101,9 @@ def openMAT(path, filename=None):
                             # No trace
                             traces.append(None)
                         else:
-                            trace = np.zeros((2,2))
-                            trace[1,0] = 1.0
-                            trace[:,1] = traceavg
+                            trace = np.zeros((2, 2))
+                            trace[1, 0] = 1.0
+                            trace[:, 1] = traceavg
                             traces.append(trace)
     # Get dc "dual color" functions
     try:
@@ -123,8 +122,8 @@ def openMAT(path, filename=None):
                     for j in np.arange(len(corr[0])):
 
                         final = np.zeros((len(corr), 2))
-                        final[:,0] = times
-                        final[:,1] = corr[:,j]
+                        final[:, 0] = times
+                        final[:, 1] = corr[:, j]
                         correlations.append(final)
                         curvelist.append("CC dual color "+str(i+1))
                         traces.append(None)
@@ -145,8 +144,8 @@ def openMAT(path, filename=None):
                     for j in np.arange(len(corr[0])):
 
                         final = np.zeros((len(corr), 2))
-                        final[:,0] = times
-                        final[:,1] = corr[:,j]
+                        final[:, 0] = times
+                        final[:, 1] = corr[:, j]
                         correlations.append(final)
                         curvelist.append("CC two foci "+str(i+1))
                         traces.append(None)
@@ -167,8 +166,8 @@ def openMAT(path, filename=None):
                     for j in np.arange(len(corr[0])):
 
                         final = np.zeros((len(corr), 2))
-                        final[:,0] = times
-                        final[:,1] = corr[:,j]
+                        final[:, 0] = times
+                        final[:, 1] = corr[:, j]
                         correlations.append(final)
                         curvelist.append("CC dual color two foci "+str(i+1))
                         traces.append(None)
@@ -202,7 +201,8 @@ def _check_keys(adict):
     for key in adict:
         if isinstance(adict[key], mat_struct):
             adict[key] = _todict(adict[key])
-    return adict        
+    return adict
+
 
 def _todict(matobj):
     '''

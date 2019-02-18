@@ -10,51 +10,52 @@ from .. import misc
 # Menu entry name
 MENUINFO = ["&Average data", "Create an average curve from whole session."]
 
+
 class Average(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
         # Define a unique name that identifies this tool
         # Do not change this value. It is important for the Overlay tool
         # (selectcurves.py, *Wrapper_Tools*).
-        self.MyName="AVERAGE"
+        self.MyName = "AVERAGE"
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Average curves",
-            pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         textinit = wx.StaticText(self.panel,
-                    label="Create an average from the following pages:")
+                                 label="Create an average from the following pages:")
         self.topSizer.Add(textinit)
-        ## Page selection
+        # Page selection
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
-                                       size=(textinit.GetSize()[0],-1))
+                                       size=(textinit.GetSize()[0], -1))
         self.topSizer.Add(self.WXTextPages)
-        ## Chechbox asking for Mono-Model
+        # Chechbox asking for Mono-Model
         self.WXCheckMono = wx.CheckBox(self.panel,
-         label="Only use pages with the same model as the first page.")
+                                       label="Only use pages with the same model as the first page.")
         self.WXCheckMono.SetValue(True)
         self.topSizer.Add(self.WXCheckMono)
-        ## Model selection Dropdown
+        # Model selection Dropdown
         textinit2 = wx.StaticText(self.panel,
-                                label="Select a model for the average:")
+                                  label="Select a model for the average:")
         self.topSizer.Add(textinit2)
-        self.WXDropSelMod = wx.ComboBox(self.panel, -1, "", (15,30),
-               wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
+        self.WXDropSelMod = wx.ComboBox(self.panel, -1, "", (15, 30),
+                                        wx.DefaultSize, [], wx.CB_DROPDOWN | wx.CB_READONLY)
         self.topSizer.Add(self.WXDropSelMod)
         textinit3 = wx.StaticText(self.panel,
-         label="This tool averages only over pages with the same type"+\
-               "\n(auto- or cross-correlation). Intensity data are"+\
-               "\nappended sequentially.")
+                                  label="This tool averages only over pages with the same type" +
+                                  "\n(auto- or cross-correlation). Intensity data are" +
+                                  "\nappended sequentially.")
         self.topSizer.Add(textinit3)
         # Set all values of Text and Strin
         self.SetValues()
@@ -65,12 +66,11 @@ class Average(wx.Frame):
         self.panel.SetSizer(self.topSizer)
         self.topSizer.Fit(self)
         self.SetMinSize(self.topSizer.GetMinSize())
-        #Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         self.OnPageChanged(self.Page)
-
 
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
@@ -78,7 +78,6 @@ class Average(wx.Frame):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnPageChanged(self, page, trigger=None):
         """
@@ -102,11 +101,10 @@ class Average(wx.Frame):
         #idsel = self.WXDropSelMod.GetSelection()
         self.SetValues()
         # Set back user selection:
-        #self.WXDropSelMod.SetSelection(idsel)
+        # self.WXDropSelMod.SetSelection(idsel)
 
         self.panel.Enable()
         self.Page = page
-
 
     def OnAverage(self, evt=None):
         strFull = self.WXTextPages.GetValue()
@@ -128,8 +126,8 @@ class Average(wx.Frame):
 
         if referencePage is None:
             # If that did not work, we have to raise an error.
-            raise IndexError("PyCorrFit could not find the first"+
-							 " page for averaging.")
+            raise IndexError("PyCorrFit could not find the first" +
+                             " page for averaging.")
             return
 
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -141,8 +139,8 @@ class Average(wx.Frame):
                 # Get all pages with the same model?
                 if self.WXCheckMono.GetValue() == True:
                     if (model.id == referencePage.corr.fit_model.id and
-                       corr.is_cc == referencePage.corr.is_cc):
-                        ## Check if the page has experimental data:
+                            corr.is_cc == referencePage.corr.is_cc):
+                        # Check if the page has experimental data:
                         # If there is an empty page somewhere, don't bother
                         if corr.correlation is not None:
                             pages.append(Page)
@@ -155,14 +153,14 @@ class Average(wx.Frame):
                             UsedPagenumbers.append(int(j))
         # If there are no pages in the list, exit gracefully
         if len(pages) <= 0:
-            texterr_a = "At least one page with experimental data is\n"+\
-                        "required for averaging. Please check the pages\n"+\
+            texterr_a = "At least one page with experimental data is\n" +\
+                        "required for averaging. Please check the pages\n" +\
                         "that you selected for averaging."
             if self.WXCheckMono.GetValue() == True:
-                texterr_a += " Note: You selected\n"+\
-                 "to only use pages with same model as the first page."
+                texterr_a += " Note: You selected\n" +\
+                    "to only use pages with same model as the first page."
             wx.MessageDialog(self, texterr_a, "Error",
-                              style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                             style=wx.ICON_ERROR | wx.OK | wx.STAY_ON_TOP)
             return
         # Now get all the experimental data
         explist = list()
@@ -170,7 +168,7 @@ class Average(wx.Frame):
         tracetime = [np.array([]), np.array([])]
         tracerate = [np.array([]), np.array([])]
         TraceNumber = 0
-        TraceAvailable = False # turns True, if pages contain traces
+        TraceAvailable = False  # turns True, if pages contain traces
         for page in pages:
             corr = page.corr
             # experimental correlation curve
@@ -191,35 +189,35 @@ class Average(wx.Frame):
                         # we assume that the first two points in a
                         # trace are equidistant and we will use their
                         # difference as an offset
-                        offset = trace[j][:,0][1] - 2*trace[j][:,0][0]
-                        newtracetime = 1.*trace[j][:,0] + offset
+                        offset = trace[j][:, 0][1] - 2*trace[j][:, 0][0]
+                        newtracetime = 1.*trace[j][:, 0] + offset
                         newtracetime = newtracetime + oldend
                         tracetime[j] = np.append(tracetime[j], newtracetime)
                         del newtracetime
-                        tracerate[j] = np.append(tracerate[j], trace[j][:,1])
+                        tracerate[j] = np.append(tracerate[j], trace[j][:, 1])
                     else:
                         # Initiate the trace
-                        tracetime[j] = 1.*trace[j][:,0]
-                        tracerate[j] = 1.*trace[j][:,1]
+                        tracetime[j] = 1.*trace[j][:, 0]
+                        tracerate[j] = 1.*trace[j][:, 1]
         # Now check if the length of the correlation arrays are the same:
         len0 = len(explist[0])
         for item in explist[1:]:
             if len(item) != len0:
                 # print an error  message
                 wx.MessageDialog(self,
-                "Averaging over curves with different lengths is not"+\
-                "\nsupported. When measuring, please make sure that"+\
-                "\nthe measurement time for all curves is the same.",
-                "Error", style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                                 "Averaging over curves with different lengths is not" +
+                                 "\nsupported. When measuring, please make sure that" +
+                                 "\nthe measurement time for all curves is the same.",
+                                 "Error", style=wx.ICON_ERROR | wx.OK | wx.STAY_ON_TOP)
                 return
         # Now shorten the trace, because we want as little memory usage as
         # possible. I used this algorithm in read_FCS_Confocor3.py as well.
         newtraces = list()
         if TraceAvailable:
             for j in np.arange(TraceNumber):
-                tracej = np.zeros((len(tracetime[j]),2))
-                tracej[:,0] = tracetime[j]
-                tracej[:,1] = tracerate[j]
+                tracej = np.zeros((len(tracetime[j]), 2))
+                tracej[:, 0] = tracetime[j]
+                tracej[:, 1] = tracerate[j]
                 if len(tracej) >= 500:
                     # We want about 500 bins
                     # We need to sum over intervals of length *teiler*
@@ -229,43 +227,43 @@ class Average(wx.Frame):
                     # Simultaneously sum over all intervals
                     for k in np.arange(teiler):
                         newsignal = \
-                                newsignal+tracej[k:newlength*teiler:teiler][:,1]
-                    newsignal = 1.* newsignal / teiler
-                    newtimes = tracej[teiler-1:newlength*teiler:teiler][:,0]
-                    if len(tracej)%teiler != 0:
+                            newsignal+tracej[k:newlength*teiler:teiler][:, 1]
+                    newsignal = 1. * newsignal / teiler
+                    newtimes = tracej[teiler-1:newlength*teiler:teiler][:, 0]
+                    if len(tracej) % teiler != 0:
                         # We have a rest signal
                         # We average it and add it to the trace
-                        rest = tracej[newlength*teiler:][:,1]
+                        rest = tracej[newlength*teiler:][:, 1]
                         lrest = len(rest)
                         rest = np.array([sum(rest)/lrest])
                         newsignal = np.concatenate((newsignal, rest), axis=0)
                         timerest = np.array([tracej[-1][0]])
                         newtimes = np.concatenate((newtimes, timerest), axis=0)
-                    newtrace=np.zeros((len(newtimes),2))
-                    newtrace[:,0] = newtimes
-                    newtrace[:,1] = newsignal
+                    newtrace = np.zeros((len(newtimes), 2))
+                    newtrace[:, 0] = newtimes
+                    newtrace[:, 1] = newsignal
                 else:
                     # Declare newtrace -
                     # otherwise we have a problem down three lines ;)
                     newtrace = tracej
                 newtraces.append(newtrace)
         else:
-            newtraces=[None,None]
+            newtraces = [None, None]
         # Everything is cleared for averaging
         exparray = np.array(explist)
-        averagedata = exparray.sum(axis=0)[:,1]/len(exparray)
+        averagedata = exparray.sum(axis=0)[:, 1]/len(exparray)
         # Create a copy from the first page
         average = 1*exparray[0]
         # Set average data
-        average[:,1] = averagedata
+        average[:, 1] = averagedata
         # create new page
         self.IsCrossCorrelation = self.Page.corr.is_cc
         interval = self.Page.corr.fit_ival
         # Obtain the model ID from the dropdown selection.
         idsel = self.WXDropSelMod.GetSelection()
         modelid = self.DropdownIndex[idsel]
-        self.AvgPage = self.parent.add_fitting_tab(modelid = modelid,
-                                                   select = True)
+        self.AvgPage = self.parent.add_fitting_tab(modelid=modelid,
+                                                   select=True)
         self.AvgPage.corr.fit_ival = interval
         self.AvgPage.corr.correlation = average
         if self.IsCrossCorrelation is False:
@@ -287,12 +285,13 @@ class Average(wx.Frame):
             newtabti = referencePage.tabtitle.GetValue()
         else:
             # Create a new tab title
-            newtabti = "Average ["+misc.parsePagenum2String(UsedPagenumbers)+"]"
+            newtabti = "Average [" + \
+                misc.parsePagenum2String(UsedPagenumbers)+"]"
         self.AvgPage.tabtitle.SetValue(newtabti)
         # Set the addition information about the variance from averaging
         Listname = "Average"
         listname = Listname.lower()
-        standarddev = exparray.std(axis=0)[:,1]
+        standarddev = exparray.std(axis=0)[:, 1]
         if np.sum(np.abs(standarddev)) == 0:
             # The average sd is zero. We probably made an average
             # from only one page. In this case we do not enable
@@ -310,7 +309,7 @@ class Average(wx.Frame):
             # TODO:
             # find a cleaner solution
             extTypes.remove("none")
-            extTypes.sort() # sorting
+            extTypes.sort()  # sorting
             for key in extTypes:
                 try:
                     WeightKinds.remove(key)
@@ -339,8 +338,9 @@ class Average(wx.Frame):
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
-        valstring=misc.parsePagenum2String(pagenumlist)
+            pagenumlist.append(
+                int("".join(filter(lambda x: x.isdigit(), Page.counter))))
+        valstring = misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         # Dropdown
         modelkeys = list(mdls.modeltypes.keys())
@@ -351,7 +351,7 @@ class Average(wx.Frame):
             current_model = -1
         i = 0
         DropdownList = list()
-        self.DropdownIndex = list() # Contains model ids with same index
+        self.DropdownIndex = list()  # Contains model ids with same index
         current_index = 0
         for modeltype in modelkeys:
             for modelid in mdls.modeltypes[modeltype]:
@@ -359,6 +359,6 @@ class Average(wx.Frame):
                 self.DropdownIndex.append(str(modelid))
                 if str(current_model) == str(modelid):
                     current_index = i
-                i+=1
+                i += 1
         self.WXDropSelMod.SetItems(DropdownList)
         self.WXDropSelMod.SetSelection(current_index)

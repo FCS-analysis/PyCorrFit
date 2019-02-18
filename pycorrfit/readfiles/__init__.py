@@ -43,7 +43,7 @@ def get_supported_extensions():
     for kf in list(filetypes_dict.keys()):
         ext = kf.split("|")[-1]
         ext = ext.split(";")
-        ext = [ e.lower().strip("*. ") for e in ext]
+        ext = [e.lower().strip("*. ") for e in ext]
         ext = list(np.unique(ext))
         extlist += ext
     extlist = list(np.unique(extlist))
@@ -119,13 +119,13 @@ def openZIP(path, filename=None):
         path = path / filename
     filename = path.name
 
-    ## Open the archive:
+    # Open the archive:
     Arc = zipfile.ZipFile(path, mode='r')
-    Correlations = [] # Correlation information
+    Correlations = []  # Correlation information
     Curvelist = []    # Type information
     Filelist = []     # List of filenames corresponding to *Curvelist*
     Trace = []        # Corresponding traces
-    ## First test, if we are opening a session file
+    # First test, if we are opening a session file
     sessionwc = [".fcsfit-session.zip", ".pcfs"]
     if filename.endswith(sessionwc[0]) or filename.endswith(sessionwc[1]):
         # Get the yaml parms dump:
@@ -142,7 +142,8 @@ def openZIP(path, filename=None):
             number = str(Parms[i][0])
             expfilename = "data"+number[1:len(number)-2]+".csv"
             expfile = Arc.open(expfilename, 'r')
-            readdata = csv.reader(io.StringIO(expfile.read().decode()), delimiter=',')
+            readdata = csv.reader(io.StringIO(
+                expfile.read().decode()), delimiter=',')
             dataexp = list()
             if str(readdata.__next__()[0]) == "# tau only":
                 # We do not have a curve here
@@ -178,7 +179,7 @@ def openZIP(path, filename=None):
             else:
                 # Cross correlation uses two traces
                 tracefilenames = ["trace"+number[1:len(number)-2]+"A.csv",
-                                  "trace"+number[1:len(number)-2]+"B.csv" ]
+                                  "trace"+number[1:len(number)-2]+"B.csv"]
                 Curvelist.append("CC")
             thistrace = list()
             for tracefilename in tracefilenames:
@@ -189,7 +190,8 @@ def openZIP(path, filename=None):
                     pass
                 else:
                     tracefile = Arc.open(tracefilename, 'r')
-                    traceread = csv.reader(io.StringIO(tracefile.read().decode()), delimiter=',')
+                    traceread = csv.reader(io.StringIO(
+                        tracefile.read().decode()), delimiter=',')
                     singletrace = list()
                     for row in traceread:
                         # Exclude commentaries
@@ -221,7 +223,7 @@ def openZIP(path, filename=None):
                 Trace += data["Trace"]
                 Curvelist += data["Type"]
                 fnames = data["Filename"]
-                Filelist += [ filename+"/"+fs for fs in fnames ]
+                Filelist += [filename+"/"+fs for fs in fnames]
         shutil.rmtree(path=tempdir, ignore_errors=True)
     Arc.close()
     dictionary = {}
@@ -232,32 +234,31 @@ def openZIP(path, filename=None):
     return dictionary
 
 
-
 # The string that is shown when opening all supported files
 # We add an empty space so it is listed first in the dialogs.
 ALL_SUP_STRING = " All supported files"
 
 # Dictionary with filetypes that we can open
 # The wildcards point to the appropriate functions.
-filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-                  "ALV (*.ASC)|*.ASC;*.asc" : openASC,
-                  "PyCorrFit (*.csv)|*.csv" : openCSV,
-                  "Matlab 'Ries (*.mat)|*.mat" : openMAT,
-                  "PicoQuant (*.pt3)|*.pt3" : openPT3,
-                  "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
-                  "Zip file (*.zip)|*.zip" : openZIP,
-                  "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
+filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
+                  "ALV (*.ASC)|*.ASC;*.asc": openASC,
+                  "PyCorrFit (*.csv)|*.csv": openCSV,
+                  "Matlab 'Ries (*.mat)|*.mat": openMAT,
+                  "PicoQuant (*.pt3)|*.pt3": openPT3,
+                  "Zeiss ConfoCor3 (*.fcs)|*.fcs": openFCS,
+                  "Zip file (*.zip)|*.zip": openZIP,
+                  "PyCorrFit session (*.pcfs)|*.pcfs": openZIP
                   }
 # For user comfort, add "All supported files" wildcard:
 add_all_supported_filetype_entry(filetypes_dict)
 
 # Dictionary with filetypes we can open that have intensity traces in them.
-filetypes_bg_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-                     "ALV (*.ASC)|*.ASC" : openASC,
-                     "PyCorrFit (*.csv)|*.csv" : openCSV,
-                     "PicoQuant (*.pt3)|*.pt3" : openPT3,
-                     "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
-                     "Zip file (*.zip)|*.zip" : openZIP,
-                     "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
+filetypes_bg_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
+                     "ALV (*.ASC)|*.ASC": openASC,
+                     "PyCorrFit (*.csv)|*.csv": openCSV,
+                     "PicoQuant (*.pt3)|*.pt3": openPT3,
+                     "Zeiss ConfoCor3 (*.fcs)|*.fcs": openFCS,
+                     "Zip file (*.zip)|*.zip": openZIP,
+                     "PyCorrFit session (*.pcfs)|*.pcfs": openZIP
                      }
 add_all_supported_filetype_entry(filetypes_bg_dict)

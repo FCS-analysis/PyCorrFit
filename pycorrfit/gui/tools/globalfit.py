@@ -12,26 +12,27 @@ from .. import misc
 MENUINFO = ["&Global fitting",
             "Interconnect parameters from different measurements."]
 
+
 class GlobalFit(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
         # Define a unique name that identifies this tool
         # Do not change this value. It is important for the Overlay tool
         # (selectcurves.py, *Wrapper_Tools*).
-        self.MyName="GLOBALFIT"
+        self.MyName = "GLOBALFIT"
         # parent is the main frame of PyCorrFit
         self.parent = parent
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Gobal fitting",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         textinit = """Fitting of multiple data sets with different models.
@@ -39,17 +40,18 @@ Parameter names have to match. Select pages (e.g. 1,3-5,7),
 check parameters on each page and start 'Global fit'.
 """
         self.topSizer.Add(wx.StaticText(self.panel, label=textinit))
-        ## Page selection
-        self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330,-1))
+        # Page selection
+        self.WXTextPages = wx.TextCtrl(self.panel, value="", size=(330, -1))
         # Set initial value in text control
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
-            pagenumlist.append(int("".join(filter(lambda x: x.isdigit(), Page.counter))))
-        valstring=misc.parsePagenum2String(pagenumlist)
+            pagenumlist.append(
+                int("".join(filter(lambda x: x.isdigit(), Page.counter))))
+        valstring = misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
         self.topSizer.Add(self.WXTextPages)
-        ## Button
+        # Button
         btnfit = wx.Button(self.panel, wx.ID_ANY, 'Global fit')
         # Binds the button to the function - close the tool
         self.Bind(wx.EVT_BUTTON, self.OnFit, btnfit)
@@ -79,7 +81,7 @@ check parameters on each page and start 'Global fit'.
             # Something went wrong and parseString2Pagenum already displayed
             # an error message.
             return
-        ## Get the correlations
+        # Get the correlations
         corrs = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
@@ -103,7 +105,8 @@ check parameters on each page and start 'Global fit'.
         # update fit results
         for corr in corrs:
             corr.fit_results["global parms"] = u", ".join(fit_parm_names)
-            corr.fit_results["global pages"] = u", ".join([str(g) for g in global_pages])
+            corr.fit_results["global pages"] = u", ".join(
+                [str(g) for g in global_pages])
 
         # Plot resutls
         for i in np.arange(self.parent.notebook.GetPageCount()):
@@ -115,7 +118,6 @@ check parameters on each page and start 'Global fit'.
         if self.parent.MenuAutocloseTools.IsChecked():
             # Autoclose
             self.OnClose()
-
 
     def OnPageChanged(self, page, trigger=None):
         """
@@ -136,7 +138,6 @@ check parameters on each page and start 'Global fit'.
             return
         self.panel.Enable()
         self.Page = page
-
 
     def SetPageNumbers(self, pagestring):
         self.WXTextPages.SetValue(pagestring)

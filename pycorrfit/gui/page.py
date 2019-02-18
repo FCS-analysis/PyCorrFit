@@ -19,11 +19,11 @@ from . import tools
 from . import wxutils
 
 
-
 class FittingPanel(wx.Panel):
     """
     Those are the Panels that show the fitting dialogs with the Plots.
     """
+
     def __init__(self, parent, counter, modelid, active_parms, tau=None):
         """ Initialize with given parameters. """
         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
@@ -42,11 +42,10 @@ class FittingPanel(wx.Panel):
         self._bgselected = None
         self._bg2selected = None
 
-        self.FitKnots = 5 # number of knots for spline fit or similiars
+        self.FitKnots = 5  # number of knots for spline fit or similiars
 
-        self.weighted_fittype_id = 0 # integer (drop down item)
-        self.weighted_nuvar = 3 # bins for std-dev. (left and rigth)
-
+        self.weighted_fittype_id = 0  # integer (drop down item)
+        self.weighted_nuvar = 3  # bins for std-dev. (left and rigth)
 
         # The weights that are plotted in the page
         # This is set by the PlotAll function
@@ -66,7 +65,7 @@ class FittingPanel(wx.Panel):
 
         # Tool statistics uses this list:
         self.StatisticsCheckboxes = None
-        ### Splitter window
+        # Splitter window
         # Sizes
         size = parent.notebook.GetSize()
         tabsize = 33
@@ -78,11 +77,11 @@ class FittingPanel(wx.Panel):
         self.sp = wx.SplitterWindow(self, size=size, style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.sp.SetMinimumPaneSize(1)
-        ## Settings Section (left side)
+        # Settings Section (left side)
         #self.panelsettings = wx.Panel(self.sp, size=sizepanel)
         self.panelsettings = scrolled.ScrolledPanel(self.sp, size=sizepanel)
         self.panelsettings.SetupScrolling(scroll_x=False)
-        ## Setting up Plot (correlation + chi**2)
+        # Setting up Plot (correlation + chi**2)
         self.spcanvas = wx.SplitterWindow(self.sp, size=sizecanvas,
                                           style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
@@ -164,7 +163,7 @@ class FittingPanel(wx.Panel):
     @bgselected.setter
     def bgselected(self, value):
         if value is None:
-            self.corr.backgrounds=[]
+            self.corr.backgrounds = []
             return
         # check paren.Background and get id
         background = self.parent.Background[value]
@@ -179,7 +178,7 @@ class FittingPanel(wx.Panel):
     def bg2selected(self, value):
         if value is None:
             if self.corr.is_cc:
-                self.corr.backgrounds=[]
+                self.corr.backgrounds = []
             return
         # check paren.Background and get id
         background = self.parent.Background[value]
@@ -207,7 +206,7 @@ class FittingPanel(wx.Panel):
         # Here: Convert human readable units to program internal
         # units
         parmsconv = mdls.GetInternalFromHumanReadableParm(
-                        modelid, np.array(parameters))[1]
+            modelid, np.array(parameters))[1]
         self.corr.fit_parameters = parmsconv
 
         # Fitting parameters
@@ -239,7 +238,7 @@ class FittingPanel(wx.Panel):
         elif self.weighted_fittype_id == 2:
             fit_weight_type = "model function"
             fit_weight_data = self.weighted_nuvar
-        else: # fitbox_selection > 2:
+        else:  # fitbox_selection > 2:
             fit_weight_type = fitbox_value
             self.corr.fit_weight_type = fitbox_value
             fit_weight_data = self.corr.fit_weight_data
@@ -256,7 +255,6 @@ class FittingPanel(wx.Panel):
         # function, write them back.
         self.apply_parameters_reverse()
 
-
     def apply_parameters_reverse(self, event=None):
         """ Read the values from the pages parameters and write
             it to the GUI form.
@@ -270,7 +268,7 @@ class FittingPanel(wx.Panel):
         # Here: Convert program internal units to
         # human readable units
         parameters = mdls.GetHumanReadableParms(modelid,
-                                        self.corr.fit_parameters)[1]
+                                                self.corr.fit_parameters)[1]
         parameters_variable = self.corr.fit_parameters_variable
         # Write parameters to the form on the Page
         for i in np.arange(len(self.active_parms[1])):
@@ -295,17 +293,15 @@ class FittingPanel(wx.Panel):
         self.AlgorithmDropdown.SetSelection(idalg)
         self.updateChi2()
 
-
     def calculate_corr(self):
         """
         Calculate model correlation function
         """
         return self.corr.modeled
 
-
     def Fit_enable_fitting(self):
         """ Enable the fitting button and the weighted fit control"""
-        #self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
+        # self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
         #                fittextvar, fitspin, buttonfit, textalg,
         #                self.AlgorithmDropdown]
         self.Fitbox[0].Enable()
@@ -313,7 +309,6 @@ class FittingPanel(wx.Panel):
         self.Fitbox[6].Enable()
         self.Fitbox[7].Enable()
         self.Fitbox[8].Enable()
-
 
     def Fit_function(self, event=None, noplots=False, trigger=None):
         """ Calls the fit function.
@@ -326,7 +321,6 @@ class FittingPanel(wx.Panel):
 
         """
         tools.batchcontrol.FitProgressDlg(self, self)
-
 
     def Fit_finalize(self, trigger):
         """ Things that need be done after fitting
@@ -350,12 +344,11 @@ class FittingPanel(wx.Panel):
         # update displayed chi2
         self.updateChi2()
 
-
     def Fit_WeightedFitCheck(self, event=None):
         """ Enable Or disable variance calculation, dependent on
             "Weighted Fit" checkbox
         """
-        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
+        # self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2, fittextvar,
         #                fitspin, buttonfit ]
         weighted = (self.Fitbox[1].GetSelection() != 0)
         # In the case of "Average" we do not enable the
@@ -370,7 +363,6 @@ class FittingPanel(wx.Panel):
             self.Fitbox[3].Disable()
             self.Fitbox[4].Disable()
             self.Fitbox[5].Disable()
-
 
     def MakeStaticBoxSizer(self, boxlabel):
         """ Create a Box with check boxes (fit yes/no) and possibilities to
@@ -410,26 +402,25 @@ class FittingPanel(wx.Panel):
         sizer.Add(sizerh)
         return sizer, check, spin
 
-
     def OnAmplitudeCheck(self, event=None):
         """ Enable/Disable BG rate text line.
             New feature introduced in 0.7.8
         """
         modelid = self.corr.fit_model.id
-        ## Normalization to a certain parameter in plots
+        # Normalization to a certain parameter in plots
         # Find all parameters that start with an "N"
         # ? and "C" ?
         # Create List
         normlist = list()
         normlist.append("None")
-        ## Add parameters
+        # Add parameters
         parameterlist = list()
         for i in np.arange(len(self.active_parms[0])):
             label = self.active_parms[0][i]
             if label[0].lower() == "n":
                 normlist.append("*"+label)
                 parameterlist.append(i)
-        ## Add supplementary parameters
+        # Add supplementary parameters
         # Get them from models
         supplement = mdls.GetMoreInfo(modelid, self)
         if supplement is not None:
@@ -457,9 +448,9 @@ class FittingPanel(wx.Panel):
         # Set dropdown values
         self.AmplitudeInfo[2].SetItems(normlist)
         self.AmplitudeInfo[2].SetSelection(normsel)
-        ## Plot intensities
+        # Plot intensities
         # Quick reminder:
-        #self.AmplitudeInfo = [ [intlabel1, intlabel2],
+        # self.AmplitudeInfo = [ [intlabel1, intlabel2],
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
         # Signal
@@ -473,20 +464,20 @@ class FittingPanel(wx.Panel):
         else:
             self.AmplitudeInfo[0][1].Disable()
         # Background
-        ## self.parent.Background[self.bgselected][i]
-        ## [0] average signal [kHz]
-        ## [1] signal name (edited by user)
-        ## [2] signal trace (tuple) ([ms], [kHz])
+        # self.parent.Background[self.bgselected][i]
+        # [0] average signal [kHz]
+        # [1] signal name (edited by user)
+        # [2] signal trace (tuple) ([ms], [kHz])
         if len(self.corr.backgrounds) >= 1:
             self.AmplitudeInfo[1][0].SetValue(
-                        self.corr.backgrounds[0].countrate)
+                self.corr.backgrounds[0].countrate)
         else:
             self.AmplitudeInfo[1][0].SetValue(0)
             self.AmplitudeInfo[1][1].SetValue(0)
 
         if len(self.corr.backgrounds) == 2:
             self.AmplitudeInfo[1][1].SetValue(
-                        self.corr.backgrounds[1].countrate)
+                self.corr.backgrounds[1].countrate)
         else:
             self.AmplitudeInfo[1][1].SetValue(0)
         # Disable the second line in amplitude correction, if we have
@@ -495,13 +486,12 @@ class FittingPanel(wx.Panel):
         for item in self.WXAmplitudeCCOnlyStuff:
             item.Enable(boolval)
 
-
     def OnBGSpinChanged(self, e):
         """ Calls tools.background.ApplyAutomaticBackground
             to update background information
         """
         # Quick reminder:
-        #self.AmplitudeInfo = [ [intlabel1, intlabel2],
+        # self.AmplitudeInfo = [ [intlabel1, intlabel2],
         #                       [bgspin1, bgspin2],
         #                       normtoNDropdown, textnor]
         if self.corr.is_cc:
@@ -509,7 +499,7 @@ class FittingPanel(wx.Panel):
             bg = [float(self.AmplitudeInfo[1][0].GetValue()),
                   float(self.AmplitudeInfo[1][1].GetValue())]
             sig = [float(self.AmplitudeInfo[0][0].GetValue()),
-                  float(self.AmplitudeInfo[0][1].GetValue())]
+                   float(self.AmplitudeInfo[0][1].GetValue())]
             # Make sure bg < sig
             for ii in range(len(bg)):
                 if sig[ii] != 0:
@@ -529,7 +519,6 @@ class FittingPanel(wx.Panel):
                                                   self.parent)
         e.Skip()
 
-
     def OnTitleChanged(self, e):
         modelid = self.corr.fit_model.id
         pid = self.parent.notebook.GetPageIndex(self)
@@ -539,7 +528,7 @@ class FittingPanel(wx.Panel):
             # How many characters of the the page title should be displayed
             # in the tab? We choose 9: AC1-012 plus 2 whitespaces
             text = self.counter + self.tabtitle.GetValue()[-9:]
-        self.parent.notebook.SetPageText(pid,text)
+        self.parent.notebook.SetPageText(pid, text)
 
     def OnSetRange(self, e):
         """ Open a new Frame where the parameter range can be set.
@@ -563,14 +552,12 @@ class FittingPanel(wx.Panel):
                 pass
             self.parent.RangeSelector = None
 
-
     def OnSize(self, event):
         """ Resize the fitting Panel, when Window is resized. """
         size = self.parent.notebook.GetSize()
         tabsize = 33
         size[1] = size[1] - tabsize
         self.sp.SetSize(size)
-
 
     def PlotAll(self, event=None, trigger=None):
         """
@@ -598,18 +585,18 @@ class FittingPanel(wx.Panel):
                 return
             else:
                 self.InitialPlot = True
-        ## Enable/Disable, set values frontend normalization
+        # Enable/Disable, set values frontend normalization
         self.OnAmplitudeCheck()
-        ## Apply parameters
+        # Apply parameters
         self.apply_parameters()
         # Calculate correlation function from parameters
-        ## Drawing of correlation plot
+        # Drawing of correlation plot
         # Plots corr.correlation_fit and the calcualted correlation function
         # self.datacorr into the upper canvas.
         # Create a line @ y=zero:
         zerostart = self.corr.lag_time_fit[0]
         zeroend = self.corr.lag_time_fit[-1]
-        datazero = [[zerostart, 0], [zeroend,0]]
+        datazero = [[zerostart, 0], [zeroend, 0]]
         # Set plot colors
         width = 1
         colexp = "grey"
@@ -633,14 +620,15 @@ class FittingPanel(wx.Panel):
                     # if weights are from average or other, make sure that the
                     # dimensions are correct
                     if weights.shape[0] == self.corr.correlation.shape[0]:
-                        weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
+                        weights = weights[self.corr.fit_ival[0]                                          :self.corr.fit_ival[1]]
 
                     # perform some checks
                     if np.allclose(weights, np.ones_like(weights)):
                         weights = 0
                     elif weights.shape[0] != self.corr.modeled_fit.shape[0]:
                         # non-matching weigths
-                        warnings.warn("Unmatching weights found. Probably from previous data set.")
+                        warnings.warn(
+                            "Unmatching weights found. Probably from previous data set.")
                         weights = 0
 
                     # Add the weights to the graph.
@@ -653,24 +641,25 @@ class FittingPanel(wx.Panel):
                     w2[:, 1] = w[:, 1] - weights
                     # crop w1 and w2 if corr.correlation_fit does not include all
                     # data points.
-                    if np.all(w[:,0] == self.corr.correlation_fit[:,0]):
+                    if np.all(w[:, 0] == self.corr.correlation_fit[:, 0]):
                         pass
                     else:
-                        raise ValueError("This should not have happened: size of weights is wrong.")
-                    ## Normalization with self.normfactor
-                    w1[:,1] *= self.corr.normalize_factor
-                    w2[:,1] *= self.corr.normalize_factor
-                    self.weights_plot_fill_area = [w1,w2]
+                        raise ValueError(
+                            "This should not have happened: size of weights is wrong.")
+                    # Normalization with self.normfactor
+                    w1[:, 1] *= self.corr.normalize_factor
+                    w2[:, 1] *= self.corr.normalize_factor
+                    self.weights_plot_fill_area = [w1, w2]
                     lineweight1 = plot.PolyLine(w1, legend='',
-                                              colour=colweight, width=width)
+                                                colour=colweight, width=width)
                     lines.append(lineweight1)
                     lineweight2 = plot.PolyLine(w2, legend='',
-                                              colour=colweight, width=width)
+                                                colour=colweight, width=width)
                     lines.append(lineweight2)
             else:
                 self.weights_plot_fill_area = None
 
-            ## Plot Correlation curves
+            # Plot Correlation curves
             # Plot both, experimental and calculated data
             # Normalization with self.normfactor, new feature in 0.7.8
             datacorr_norm = self.corr.modeled_plot
@@ -683,10 +672,10 @@ class FittingPanel(wx.Panel):
             lines.append(lineexp)
             lines.append(linecorr)
             PlotCorr = plot.PlotGraphics(lines,
-                                xLabel=u'lag time τ [ms]', yLabel=u'G(τ)')
+                                         xLabel=u'lag time τ [ms]', yLabel=u'G(τ)')
 
             self.canvascorr.Draw(PlotCorr)
-            ## Calculate residuals
+            # Calculate residuals
             resid_norm = self.corr.residuals_plot
             lineres = plot.PolyLine(resid_norm, legend='', colour=colfit,
                                     width=width)
@@ -697,8 +686,8 @@ class FittingPanel(wx.Panel):
             else:
                 yLabelRes = "residuals"
             PlotRes = plot.PlotGraphics([linezero, lineres],
-                                   xLabel=u'lag time τ [ms]',
-                                   yLabel=yLabelRes)
+                                        xLabel=u'lag time τ [ms]',
+                                        yLabel=yLabelRes)
             self.canvaserr.Draw(PlotRes)
         else:
             # Amplitude normalization, new feature in 0.7.8
@@ -706,11 +695,10 @@ class FittingPanel(wx.Panel):
             linecorr = plot.PolyLine(datacorr_norm, legend='', colour='blue',
                                      width=1)
             PlotCorr = plot.PlotGraphics([linezero, linecorr],
-                       xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
+                                         xLabel=u'Lag time τ [ms]', yLabel=u'G(τ)')
             self.canvascorr.Draw(PlotCorr)
         self.Refresh()
         self.parent.OnFNBPageChanged(trigger=trigger)
-
 
     def settings(self):
         """ Here we define, what should be displayed at the left side
@@ -724,7 +712,7 @@ class FittingPanel(wx.Panel):
         mddat = mdls.modeldict[modelid]
         modelshort = mdls.GetModelType(modelid)
         titlelabel = u"Data set {} ({} {})".format(
-                       self.counter.strip(" :"), modelshort, mddat[1])
+            self.counter.strip(" :"), modelshort, mddat[1])
         boxti = wx.StaticBox(self.panelsettings, label=titlelabel)
         sizerti = wx.StaticBoxSizer(boxti, wx.VERTICAL)
         sizerti.SetMinSize((horizontalsize, -1))
@@ -743,7 +731,7 @@ class FittingPanel(wx.Panel):
         # in the Page info tool.
         #
         labels, parameters = mdls.GetHumanReadableParms(modelid,
-                                                self.active_parms[1])
+                                                        self.active_parms[1])
         parameterstofit = self.active_parms[2]
         # Set initial values given by user/programmer for Diffusion Model
         for i in np.arange(len(labels)):
@@ -769,17 +757,18 @@ class FittingPanel(wx.Panel):
         box1.Add(horzs)
         # Set horizontal size
         box1.SetMinSize((horizontalsize, -1))
-        ## More info
-        normbox = wx.StaticBox(self.panelsettings, label="Amplitude corrections")
+        # More info
+        normbox = wx.StaticBox(
+            self.panelsettings, label="Amplitude corrections")
         miscsizer = wx.StaticBoxSizer(normbox, wx.VERTICAL)
         miscsizer.SetMinSize((horizontalsize, -1))
         # Intensities and Background
         sizeint = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
         sizeint.Add(wx.StaticText(self.panelsettings, label="[kHz]"))
         sizeint.Add(wx.StaticText(self.panelsettings,
-                    label="Intensity"))
+                                  label="Intensity"))
         sizeint.Add(wx.StaticText(self.panelsettings,
-                    label="Background"))
+                                  label="Background"))
         sizeint.Add(wx.StaticText(self.panelsettings, label="Ch1"))
         intlabel1 = wx.TextCtrl(self.panelsettings)
         bgspin1 = wxutils.PCFFloatTextCtrl(self.panelsettings)
@@ -797,18 +786,18 @@ class FittingPanel(wx.Panel):
         sizeint.Add(intlabel2)
         sizeint.Add(bgspin2)
         miscsizer.Add(sizeint)
-        ## Normalize to n?
+        # Normalize to n?
         textnor = wx.StaticText(self.panelsettings, label="Plot normalization")
         miscsizer.Add(textnor)
         normtoNDropdown = wx.ComboBox(self.panelsettings)
         self.Bind(wx.EVT_COMBOBOX, self.PlotAll, normtoNDropdown)
         miscsizer.Add(normtoNDropdown)
-        self.AmplitudeInfo = [ [intlabel1, intlabel2],
-                               [bgspin1, bgspin2],
-                                normtoNDropdown, textnor]
+        self.AmplitudeInfo = [[intlabel1, intlabel2],
+                              [bgspin1, bgspin2],
+                              normtoNDropdown, textnor]
         self.WXAmplitudeCCOnlyStuff = [chtext2, intlabel2, bgspin2]
         self.panelsettings.sizer.Add(miscsizer, 0, wx.EXPAND, 0)
-        ## Add fitting Box
+        # Add fitting Box
         fitbox = wx.StaticBox(self.panelsettings, label="Fitting options")
         fitsizer = wx.StaticBoxSizer(fitbox, wx.VERTICAL)
         fitsizer.SetMinSize((horizontalsize, -1))
@@ -834,7 +823,8 @@ class FittingPanel(wx.Panel):
         fitsizer.Add(fittext2)
         fitsizerspin = wx.BoxSizer(wx.HORIZONTAL)
         fittextvar = wx.StaticText(self.panelsettings, label="j = ")
-        fitspin = wx.SpinCtrl(self.panelsettings, -1, initial=3, min=1, max=100)
+        fitspin = wx.SpinCtrl(self.panelsettings, -1,
+                              initial=3, min=1, max=100)
         fitsizerspin.Add(fittextvar)
         fitsizerspin.Add(fitspin)
         fitsizer.Add(fitsizerspin)
@@ -854,8 +844,9 @@ class FittingPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.Fit_function, buttonfit)
         fitbuttonsizer.Add(buttonfit)
 
-        ## add shortcut
-        acctbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('F'), buttonfit.GetId())])
+        # add shortcut
+        acctbl = wx.AcceleratorTable(
+            [(wx.ACCEL_CTRL, ord('F'), buttonfit.GetId())])
         self.SetAcceleratorTable(acctbl)
         ##
 
@@ -870,15 +861,14 @@ class FittingPanel(wx.Panel):
         self.panelsettings.Layout()
         self.panelsettings.Show()
         # Make all the stuff available for everyone
-        self.Fitbox = [ fitbox, weightedfitdrop, fittext, fittext2,
-                        fittextvar, fitspin, buttonfit, textalg,
-                        self.AlgorithmDropdown]
+        self.Fitbox = [fitbox, weightedfitdrop, fittext, fittext2,
+                       fittextvar, fitspin, buttonfit, textalg,
+                       self.AlgorithmDropdown]
         # Disable Fitting since no data has been loaded yet
         for element in self.Fitbox:
             element.Disable()
         self.panelsettings.sizer.Fit(self.panelsettings)
         self.parent.Layout()
-
 
     def updateChi2(self):
         """
@@ -892,5 +882,5 @@ class FittingPanel(wx.Panel):
                 chi2str = wxutils.nice_string(chi2str)
                 label = u"  χ²={}".format(chi2str)
         # This does not work with wxPython 2.8.12:
-        #self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
+        # self.WXTextChi2.SetLabelMarkup(u"<b>{}</b>".format(label))
         self.WXTextChi2.SetLabel(u"{}".format(label))

@@ -9,7 +9,7 @@ from .cp_mix import double_pnum
 def CF_Gxyz_3d2d_gauss(parms, tau):
     u""" Two-component, two- and three-dimensional diffusion
         with a Gaussian laser profile.
-        
+
         particle2D = (1-F)/ (1+τ/τ_2D) 
         particle3D = α²*F/( (1+τ/τ_3D) * sqrt(1+τ/(τ_3D*SP²)))
         norm = (1-F + α*F)²
@@ -30,28 +30,29 @@ def CF_Gxyz_3d2d_gauss(parms, tau):
         [6] offset
         *tau* - lag time
     """
-    n=parms[0]
-    taud2D=parms[1]
-    taud3D=parms[2]
-    F=parms[3]
-    SP=parms[4]
-    alpha=parms[5]
-    off=parms[6]
+    n = parms[0]
+    taud2D = parms[1]
+    taud3D = parms[2]
+    F = parms[3]
+    SP = parms[4]
+    alpha = parms[5]
+    off = parms[6]
 
     g = double_pnum(n=n,
                     F1=1-F,
                     alpha=alpha,
                     comp1=twod,
                     comp2=threed,
-                    kwargs1={"tau":tau,
-                             "taudiff":taud2D},
-                    kwargs2={"tau":tau,
-                             "taudiff":taud3D,
-                             "SP":SP},
+                    kwargs1={"tau": tau,
+                             "taudiff": taud2D},
+                    kwargs2={"tau": tau,
+                             "taudiff": taud3D,
+                             "SP": SP},
                     )
 
     G = off + g
     return G
+
 
 def supplements(parms, countrate=None):
     u"""Supplementary parameters:
@@ -75,42 +76,42 @@ def supplements(parms, countrate=None):
     return Info
 
 
-parms = [   
-            25,      # n
-            240,     # taud2D
-            0.1,     # taud3D
-            0.5,     # F3D
-            7,       # SP
-            1.0,     # alpha
-            0.0      # offset
-            ] 
+parms = [
+    25,      # n
+    240,     # taud2D
+    0.1,     # taud3D
+    0.5,     # F3D
+    7,       # SP
+    1.0,     # alpha
+    0.0      # offset
+]
 
-## Boundaries
+# Boundaries
 # strictly positive
 boundaries = [[0, np.inf]]*len(parms)
 # F
-boundaries[3] = [0,.9999999999999]
+boundaries[3] = [0, .9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6036,
-             name="Separate 3D and 2D diffusion (confocal)",
-             comp="3D+2D",
-             mtype="Confocal (Gaussian)",
-             fctn=CF_Gxyz_3d2d_gauss,
-             par_labels=[
-                            u"n",
-                            u"τ_2D [ms]",
-                            u"τ_3D [ms]",
-                            u"F_3D", 
-                            u"SP",
-                            u"\u03b1"+" (q_3D/q_2D)",
-                            u"offset"
-                            ],
-             par_values=parms,
-             par_vary=[True, True, True, True, False, False, False],
-             par_boundaries=boundaries,
-             par_constraints=[[2, "<", 1]],
-             supplementary_method=supplements
-            )
+    modelid=6036,
+    name="Separate 3D and 2D diffusion (confocal)",
+    comp="3D+2D",
+    mtype="Confocal (Gaussian)",
+    fctn=CF_Gxyz_3d2d_gauss,
+    par_labels=[
+        u"n",
+        u"τ_2D [ms]",
+        u"τ_3D [ms]",
+        u"F_3D",
+        u"SP",
+        u"\u03b1"+" (q_3D/q_2D)",
+        u"offset"
+    ],
+    par_values=parms,
+    par_vary=[True, True, True, True, False, False, False],
+    par_boundaries=boundaries,
+    par_constraints=[[2, "<", 1]],
+    supplementary_method=supplements
+)

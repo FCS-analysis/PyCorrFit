@@ -6,7 +6,7 @@ from .cp_mix import double_pnum
 
 
 # 2D + 2D Gauß
-    # Model 6037
+# Model 6037
 def CF_Gxyz_gauss_2D2D(parms, tau):
     u""" Two-component, two-dimensional diffusion with a Gaussian laser
         profile, including a triplet component.
@@ -32,22 +32,22 @@ def CF_Gxyz_gauss_2D2D(parms, tau):
         [5] offset
         *tau* - lag time
     """
-    n=parms[0]
-    taud1=parms[1]
-    taud2=parms[2]
-    F=parms[3]
-    alpha=parms[4]
-    off=parms[5]
+    n = parms[0]
+    taud1 = parms[1]
+    taud2 = parms[2]
+    F = parms[3]
+    alpha = parms[4]
+    off = parms[5]
 
     g = double_pnum(n=n,
                     F1=F,
                     alpha=alpha,
                     comp1=twod,
                     comp2=twod,
-                    kwargs1={"tau":tau,
-                             "taudiff":taud1},
-                    kwargs2={"tau":tau,
-                             "taudiff":taud2},
+                    kwargs1={"tau": tau,
+                             "taudiff": taud1},
+                    kwargs2={"tau": tau,
+                             "taudiff": taud2},
                     )
 
     G = off + g
@@ -75,39 +75,39 @@ def supplements(parms, countrate=None):
 
 
 parms = [
-            25,      # n
-            5,       # taud1
-            1000,    # taud2
-            0.5,     # F
-            1.0,     # alpha
-            0.0      # offset
-            ]
+    25,      # n
+    5,       # taud1
+    1000,    # taud2
+    0.5,     # F
+    1.0,     # alpha
+    0.0      # offset
+]
 
-## Boundaries
+# Boundaries
 # strictly positive
 boundaries = [[0, np.inf]]*len(parms)
 # F
-boundaries[3] = [0,.9999999999999]
+boundaries[3] = [0, .9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6037,
-             name="Separate 2D diffusion (confocal)",
-             comp="2D+2D",
-             mtype="Confocal (Gaussian)",
-             fctn=CF_Gxyz_gauss_2D2D,
-             par_labels=[
-                            u"n",
-                            u"τ"+u"\u2081"+u" [ms]",
-                            u"τ"+u"\u2082"+u" [ms]",
-                            u"F"+u"\u2081",
-                            u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")",
-                            u"offset"
-                            ],
-             par_values=parms,
-             par_vary=[True, True, True, True, False, False],
-             par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1]],
-             supplementary_method=supplements
-            )
+    modelid=6037,
+    name="Separate 2D diffusion (confocal)",
+    comp="2D+2D",
+    mtype="Confocal (Gaussian)",
+    fctn=CF_Gxyz_gauss_2D2D,
+    par_labels=[
+        u"n",
+        u"τ"+u"\u2081"+u" [ms]",
+        u"τ"+u"\u2082"+u" [ms]",
+        u"F"+u"\u2081",
+        u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+        u"offset"
+    ],
+    par_values=parms,
+    par_vary=[True, True, True, True, False, False],
+    par_boundaries=boundaries,
+    par_constraints=[[2, ">", 1]],
+    supplementary_method=supplements
+)

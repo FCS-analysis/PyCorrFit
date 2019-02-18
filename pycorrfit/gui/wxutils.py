@@ -15,19 +15,20 @@ def float2string_nsf(fval, n=7):
     Returns:
     String with only n s.f. and trailing zeros.
     """
-    #sgn=np.sign(fval)
+    # sgn=np.sign(fval)
     try:
         if fval == 0:
-            npoint=n
+            npoint = n
         else:
-            q=abs(fval)
-            k=int(np.ceil(np.log10(q/n)))
+            q = abs(fval)
+            k = int(np.ceil(np.log10(q/n)))
             # prevent negative significant digits
             npoint = max(0, n-k)
-        string="{:.{}f}".format(fval, npoint)
+        string = "{:.{}f}".format(fval, npoint)
     except:
-        string="{}".format(fval)
+        string = "{}".format(fval)
     return string
+
 
 def nice_string(string):
     """
@@ -44,8 +45,9 @@ def nice_string(string):
         olen = len(string)
         newstring = string.rstrip("0")
         if olen > len(newstring):
-            string=newstring+"0"
+            string = newstring+"0"
         return string
+
 
 class PCFFloatValidator(wx.PyValidator):
     def __init__(self, flag=None, pyVar=None):
@@ -93,8 +95,8 @@ class PCFFloatValidator(wx.PyValidator):
             # not allowed
             return
 
-        if ( char in string.digits or
-             char in ["+", "-"]+onlyonce):
+        if (char in string.digits or
+                char in ["+", "-"]+onlyonce):
             event.Skip()
             return
 
@@ -108,7 +110,7 @@ class PCFFloatValidator(wx.PyValidator):
 
 class PCFFloatTextCtrl(wx.TextCtrl):
     def __init__(self, *args, **kwargs):
-        wx.TextCtrl.__init__(self, *args, validator=PCFFloatValidator(), size=(110,-1),
+        wx.TextCtrl.__init__(self, *args, validator=PCFFloatValidator(), size=(110, -1),
                              style=wx.TE_PROCESS_ENTER, **kwargs)
         self.Bind(wx.EVT_ENTER_WINDOW, self.OnMouseEnter)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseLeave)
@@ -116,10 +118,10 @@ class PCFFloatTextCtrl(wx.TextCtrl):
 
     def OnMouseEnter(self, e):
         self.SetFocus()
-        self.SetSelection(-1,0)
+        self.SetSelection(-1, 0)
 
     def OnMouseLeave(self, e):
-        self.SetSelection(0,0)
+        self.SetSelection(0, 0)
         self.SetInsertionPoint(0)
 
     def SetValue(self, value):
@@ -155,7 +157,7 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         value.
         """
         if string.count("inf"):
-            if string[0]=="-":
+            if string[0] == "-":
                 return -np.inf
             else:
                 return np.inf

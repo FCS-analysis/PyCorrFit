@@ -26,7 +26,7 @@ def openSIN(path, filename=None):
         if line.lower().startswith("mode"):
             mode = line.split("=")[1].strip().split()
             # Find out what kind of mode it is
-            
+
             # The rationale is that when the mode
             # consists of single characters separated
             # by empty spaces, then we have integer mode.
@@ -38,17 +38,17 @@ def openSIN(path, filename=None):
 
 def openSIN_integer_mode(path):
     """Integer mode file format of e.g. flex03lq-1 correlator (correlator.com)
-    
+
     This is a file format where the type (AC/CC) of the curve is
     determined using integers in the "Mode=" line, e.g.
-    
+
          Mode= 2    3    3    2    0    1    1    0
-    
+
     which means the first correlation is CC23, the second CC32,
     the third CC01, and the fourth CC10. Similarly, 
-    
+
         Mode= 1    1    2    2    0    4    4    4
-    
+
     would translate to AC11, AC22, CC04, and AC44.
     """
     with path.open() as fd:
@@ -59,16 +59,16 @@ def openSIN_integer_mode(path):
         line = line.strip()
         if line.lower().startswith("mode"):
             mode = line.split("=")[1].strip().split()
-            mode = [ int(m) for m in mode ]
+            mode = [int(m) for m in mode]
             if len(mode) % 2 != 0:
                 msg = "mode must be multiples of two: {}".format(path)
                 raise OpenSINError(msg)
-    
+
     # build up the lists
     corr_func = []
     intensity = []
     section = ""
-    
+
     # loop through lines
     for line in data:
         line = line.strip().lower()
@@ -89,49 +89,49 @@ def openSIN_integer_mode(path):
     corr_func = np.array(corr_func, dtype=float)
     intensity = np.array(intensity, dtype=float)
 
-    timefactor = 1000 # because we want ms instead of s
-    timedivfac = 1000 # because we want kHz instead of Hz
-    intensity[:,0] *= timefactor
-    corr_func[:,0] *= timefactor
-    intensity[:,1:] /= timedivfac
-    
+    timefactor = 1000  # because we want ms instead of s
+    timedivfac = 1000  # because we want kHz instead of Hz
+    intensity[:, 0] *= timefactor
+    corr_func[:, 0] *= timefactor
+    intensity[:, 1:] /= timedivfac
+
     # correlator.com correlation is normalized to 1, not to 0
-    corr_func[:,1:] -= 1
+    corr_func[:, 1:] -= 1
 
     # Now sort the information for pycorrfit
     correlations = []
     traces = []
     curvelist = []
-    
+
     for ii in range(len(mode)//2):
         modea = mode[2*ii]
         modeb = mode[2*ii+1]
-        
+
         if modea == modeb:
             # curve type AC
             curvelist.append("AC{}".format(modea))
             # trace
-            atrace = np.zeros((intensity.shape[0],2), dtype=float)
-            atrace[:,0] = intensity[:, 0]
-            atrace[:,1] = intensity[:, modea+1]
+            atrace = np.zeros((intensity.shape[0], 2), dtype=float)
+            atrace[:, 0] = intensity[:, 0]
+            atrace[:, 1] = intensity[:, modea+1]
             traces.append(atrace)
         else:
             # curve type CC
-            curvelist.append("CC{}{}".format(modea,modeb))
+            curvelist.append("CC{}{}".format(modea, modeb))
             # trace
             modmin = min(modea, modeb)
             modmax = max(modea, modeb)
-            tracea = np.zeros((intensity.shape[0],2), dtype=float)
-            tracea[:,0] = intensity[:, 0]
-            tracea[:,1] = intensity[:, modmin+1]
-            traceb = np.zeros((intensity.shape[0],2), dtype=float)
-            traceb[:,0] = intensity[:, 0]
-            traceb[:,1] = intensity[:, modmax+1]            
+            tracea = np.zeros((intensity.shape[0], 2), dtype=float)
+            tracea[:, 0] = intensity[:, 0]
+            tracea[:, 1] = intensity[:, modmin+1]
+            traceb = np.zeros((intensity.shape[0], 2), dtype=float)
+            traceb[:, 0] = intensity[:, 0]
+            traceb[:, 1] = intensity[:, modmax+1]
             traces.append([tracea, traceb])
         # correlation
-        corr = np.zeros((corr_func.shape[0],2), dtype=float)
-        corr[:,0] = corr_func[:, 0]
-        corr[:,1] = corr_func[:, ii+1]
+        corr = np.zeros((corr_func.shape[0], 2), dtype=float)
+        corr[:, 0] = corr_func[:, 0]
+        corr[:, 1] = corr_func[:, ii+1]
         correlations.append(corr)
 
     dictionary = {}
@@ -147,7 +147,7 @@ def openSIN_integer_mode(path):
 
 def openSIN_old(path):
     """Parses the simple sin file format (correlator.com)
-    
+
     Read data from a .SIN file, usually created by
     the software using correlators from correlator.com.
 
@@ -240,7 +240,7 @@ def openSIN_old(path):
     # Find out where the correlation function and trace are
     for i in np.arange(len(Alldata)):
         if Alldata[i][0:4] == "Mode":
-         
+
             Mode = Alldata[i].split("=")[1].strip()
         if Alldata[i][0:21] == "[CorrelationFunction]":
             StartC = i+1
@@ -248,7 +248,7 @@ def openSIN_old(path):
             EndC = i-2
         if Alldata[i][0:18] == "[IntensityHistory]":
             # plus 2, because theres a line with the trace length
-            StartT = i+2 
+            StartT = i+2
         if Alldata[i][0:11] == "[Histogram]":
             EndT = i-2
     curvelist = []
@@ -256,17 +256,17 @@ def openSIN_old(path):
     traces = []
     # Get the correlation function
     Truedata = Alldata[StartC:EndC]
-    timefactor = 1000 # because we want ms instead of s
+    timefactor = 1000  # because we want ms instead of s
     readcorr = csv.reader(Truedata, delimiter='\t')
     # Trace
     # Trace is stored in three columns
     # 1st column: time [s]
-    # 2nd column: trace [Hz] 
+    # 2nd column: trace [Hz]
     # 3rd column: trace [Hz] - Single Auto: equivalent to 2nd
     # Get the trace
     Tracedata = Alldata[StartT:EndT]
     # timefactor = 1000 # because we want ms instead of s
-    timedivfac = 1000 # because we want kHz instead of Hz
+    timedivfac = 1000  # because we want kHz instead of Hz
     readtrace = csv.reader(Tracedata, delimiter='\t')
     # Process all Data:
     if Mode == "Single Auto":
@@ -280,7 +280,7 @@ def openSIN_old(path):
         for row in readtrace:
             # tau in ms, corr-function minus "1"
             trace.append((np.float(row[0])*timefactor,
-                         np.float(row[1])/timedivfac))
+                          np.float(row[1])/timedivfac))
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
         curvelist.append("CC")
@@ -353,8 +353,10 @@ def openSIN_old(path):
             # tau in ms, corr-function minus "1"
             corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
             corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
-            corrdata12.append((np.float(row[0])*timefactor, np.float(row[3])-1))
-            corrdata21.append((np.float(row[0])*timefactor, np.float(row[4])-1))
+            corrdata12.append(
+                (np.float(row[0])*timefactor, np.float(row[3])-1))
+            corrdata21.append(
+                (np.float(row[0])*timefactor, np.float(row[4])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         correlations.append(np.array(corrdata12))
@@ -373,9 +375,9 @@ def openSIN_old(path):
         traces.append([np.array(trace1), np.array(trace2)])
     else:
         raise NotImplemented(
-                    "'Mode' type '{}' in {} not supported by this method!".
-                    Mode, format(path))
-        
+            "'Mode' type '{}' in {} not supported by this method!".
+            Mode, format(path))
+
     dictionary = {}
     dictionary["Correlation"] = correlations
     dictionary["Trace"] = traces

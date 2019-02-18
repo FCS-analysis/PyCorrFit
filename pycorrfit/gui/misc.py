@@ -31,12 +31,12 @@ def parseString2Pagenum(parent, string, nodialog=False):
         return PageNumbers
     except:
         if nodialog is False:
-            errstring = "Invalid syntax in page selection: "+string+\
-                        ". Please use a comma separated list with"+\
+            errstring = "Invalid syntax in page selection: "+string +\
+                        ". Please use a comma separated list with" +\
                         " optional dashes, e.g. '1-3,6,8'."
             try:
                 wx.MessageDialog(parent, errstring, "Error",
-                                  style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                                 style=wx.ICON_ERROR | wx.OK | wx.STAY_ON_TOP)
             except:
                 raise ValueError(errstring)
         else:
@@ -110,4 +110,3 @@ def getMainIcon(pxlength=32):
     iconBMP = wx.Bitmap(image)
     iconICO = wx.Icon(iconBMP)
     return iconICO
-

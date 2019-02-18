@@ -14,11 +14,13 @@ def wixi(x):
     wixi = sps.wofz(z)
     # We should have a real solution. Make sure nobody complains about
     # some zero-value imaginary numbers.
-    
-    return np.real_if_close(wixi)  
+
+    return np.real_if_close(wixi)
 
 # 3D + 3D + T
 # model 6034
+
+
 def CF_Gxyz_3D3DT_gauss(parms, tau):
     u""" Two-component three-dimensional diffusion with a Gaussian
         lateral detection profile and an exponentially decaying profile
@@ -64,26 +66,25 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
         [9] offset
         *tau* - lag time
     """
-    n=parms[0]
-    D1=parms[1]
-    D2=parms[2]
-    F=parms[3]
-    r0=parms[4]
-    deva=parms[5]
-    alpha=parms[6]
-    tautrip=parms[7]
-    T=parms[8]
-    off=parms[9]
+    n = parms[0]
+    D1 = parms[1]
+    D2 = parms[2]
+    F = parms[3]
+    r0 = parms[4]
+    deva = parms[5]
+    alpha = parms[6]
+    tautrip = parms[7]
+    T = parms[8]
+    off = parms[9]
 
     kappa = 1/deva
 
-
-    ### 1st species
+    # 1st species
     tauD1 = r0**2/(4*D1)
     # 2D gauss component
-    g2D1 = 1 / ( (1.+tau/tauD1) )
+    g2D1 = 1 / ((1.+tau/tauD1))
     # 1d TIR component
-    # Axial correlation    
+    # Axial correlation
     x1 = np.sqrt(D1*tau)*kappa
     w_ix1 = wixi(x1)
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
@@ -91,12 +92,12 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
                    (2*D1*tau*kappa**2 - 1)/(2*kappa) * w_ix1)
     particle1 = F * g2D1 * gz1
 
-    ### 2nd species
+    # 2nd species
     tauD2 = r0**2/(4*D2)
     # 2D gauss component
-    g2D2 = 1 / ( (1.+tau/tauD2) )
+    g2D2 = 1 / ((1.+tau/tauD2))
     # 1d TIR component
-    # Axial correlation    
+    # Axial correlation
     x2 = np.sqrt(D2*tau)*kappa
     w_ix2 = wixi(x2)
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
@@ -104,16 +105,16 @@ def CF_Gxyz_3D3DT_gauss(parms, tau):
                    (2*D2*tau*kappa**2 - 1)/(2*kappa) * w_ix2)
     particle2 = alpha**2*(1-F) * g2D2 * gz2
 
-    ### triplet
+    # triplet
     if tautrip == 0 or T == 0:
         triplet = 1
     else:
         triplet = 1 + T/(1-T) * np.exp(-tau/tautrip)
 
-    ### Norm
+    # Norm
     norm = (F + alpha*(1-F))**2
 
-    ### Correlation function
+    # Correlation function
     G = 1/n*(particle1 + particle2)*triplet/norm
     return G + off
 
@@ -146,15 +147,15 @@ def MoreInfo(parms, countrate=None):
         [15] C₂ [nM] = n₂/V_eff
     """
     # We can only give you the effective particle number
-    n=parms[0]
-    #D1=parms[1]
-    #D2=parms[2]
-    F=parms[3]
-    r0=parms[4]
-    deva=parms[5]
-    #alpha=parms[6]
+    n = parms[0]
+    # D1=parms[1]
+    # D2=parms[2]
+    F = parms[3]
+    r0 = parms[4]
+    deva = parms[5]
+    # alpha=parms[6]
 
-    Info=list()
+    Info = list()
     # The enumeration of these parameters is very important for
     # plotting the normalized curve. Countrate must come out last!
     Info.append([u"n\u2081", n*F])
@@ -179,57 +180,58 @@ def MoreInfo(parms, countrate=None):
 
 # 3D + 3D + T model gauss
 m_gauss_3d_3d_t = [6034, "T+3D+3D",
-                            "Combined 3D diffusion + triplet w/ TIR",
-                            CF_Gxyz_3D3DT_gauss]
-labels  = [u"n",
-           u"D"+u"\u2081"+u" [10 µm²/s]",
-           u"D"+u"\u2082"+u" [10 µm²/s]",
-           u"F"+u"\u2081", 
-           u"r₀ [100 nm]",
-           u"d_eva [100 nm]",
-           u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-           u"τ_trip [ms]",
-           u"T",
-           u"offset"
-                ]
-values = [ 
-                25,      # n
-                0.9,     # D1
-                25.0,    # D2
-                0.5,     # F1
-                9.44,    # r0
-                1.0,     # deva
-                1.0,     # alpha
-                0.001,   # tautrip
-                0.01,    # T
-                0.0      # offset
-                ]    
+                   "Combined 3D diffusion + triplet w/ TIR",
+                   CF_Gxyz_3D3DT_gauss]
+labels = [u"n",
+          u"D"+u"\u2081"+u" [10 µm²/s]",
+          u"D"+u"\u2082"+u" [10 µm²/s]",
+          u"F"+u"\u2081",
+          u"r₀ [100 nm]",
+          u"d_eva [100 nm]",
+          u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+          u"τ_trip [ms]",
+          u"T",
+          u"offset"
+          ]
+values = [
+    25,      # n
+    0.9,     # D1
+    25.0,    # D2
+    0.5,     # F1
+    9.44,    # r0
+    1.0,     # deva
+    1.0,     # alpha
+    0.001,   # tautrip
+    0.01,    # T
+    0.0      # offset
+]
 # Human readable stuff
-labelshr  = [   u"n",
-                u"D"+u"\u2081"+u" [µm²/s]",
-                u"D"+u"\u2082"+u" [µm²/s]",
-                u"F"+u"\u2081", 
-                u"r₀ [nm]",
-                u"d_eva [nm]",
-                u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                u"τ_trip [µs]",
-                u"T",
-                u"offset"
-                ]
-valueshr = [ 
-                1.,      # n
-                10.,       # D1
-                10.,    # D2
-                1.,     # F1
-                100.,       # r0
-                100.,       # deva
-                1.,     # alpha
-                1000.,       # tautrip
-                1.,       # T
-                1.      # offset
-                ]   
-    
-valuestofit = [True, True, True, True, False, False, False, False, False, False]
+labelshr = [u"n",
+            u"D"+u"\u2081"+u" [µm²/s]",
+            u"D"+u"\u2082"+u" [µm²/s]",
+            u"F"+u"\u2081",
+            u"r₀ [nm]",
+            u"d_eva [nm]",
+            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+            u"τ_trip [µs]",
+            u"T",
+            u"offset"
+            ]
+valueshr = [
+    1.,      # n
+    10.,       # D1
+    10.,    # D2
+    1.,     # F1
+    100.,       # r0
+    100.,       # deva
+    1.,     # alpha
+    1000.,       # tautrip
+    1.,       # T
+    1.      # offset
+]
+
+valuestofit = [True, True, True, True,
+               False, False, False, False, False, False]
 parms = [labels, values, valuestofit, labelshr, valueshr]
 
 

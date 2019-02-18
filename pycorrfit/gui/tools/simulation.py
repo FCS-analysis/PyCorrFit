@@ -13,6 +13,7 @@ from pycorrfit import models as mdls
 MENUINFO = ["S&lider simulation",
             "Fast plotting for different parameters."]
 
+
 class Slide(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
@@ -22,44 +23,44 @@ class Slide(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Simulation",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
         # Starting positions/factors for spinctrls and sliders
         self.slidemax = 1000
         self.slidestart = 500
         self.spinstartfactor = 0.1
         self.spinendfactor = 1.9
-        ## MYID
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
-        self.rbtnB = wx.RadioButton (self.panel, -1, 'Vary A and B',
-                                        style = wx.RB_GROUP)
-        self.rbtnOp = wx.RadioButton (self.panel, -1, 'Fix relation')
+        self.rbtnB = wx.RadioButton(self.panel, -1, 'Vary A and B',
+                                    style=wx.RB_GROUP)
+        self.rbtnOp = wx.RadioButton(self.panel, -1, 'Fix relation')
         self.btnreset = wx.Button(self.panel, wx.ID_ANY, 'Reset')
         # Set starting variables
         self.SetStart()
         # Populate panel
         dropsizer = wx.FlexGridSizer(rows=2, cols=3, vgap=5, hgap=5)
-        dropsizer.Add( wx.StaticText(self.panel, label="Parameter A"))
-        dropsizer.Add( wx.StaticText(self.panel, label="Operator"))
-        dropsizer.Add( wx.StaticText(self.panel, label="Parameter B"))
+        dropsizer.Add(wx.StaticText(self.panel, label="Parameter A"))
+        dropsizer.Add(wx.StaticText(self.panel, label="Operator"))
+        dropsizer.Add(wx.StaticText(self.panel, label="Parameter B"))
         self.droppA = wx.ComboBox(self.panel, -1, self.labelA, (15, 20),
-                     wx.DefaultSize, self.parmAlist,
-                     wx.CB_DROPDOWN|wx.CB_READONLY)
+                                  wx.DefaultSize, self.parmAlist,
+                                  wx.CB_DROPDOWN | wx.CB_READONLY)
         self.droppA.SetSelection(0)
         self.Bind(wx.EVT_COMBOBOX, self.Ondrop, self.droppA)
         self.dropop = wx.ComboBox(self.panel, -1, "", (10, 20),
-                     wx.DefaultSize, self.oplist,
-                     wx.CB_DROPDOWN|wx.CB_READONLY)
+                                  wx.DefaultSize, self.oplist,
+                                  wx.CB_DROPDOWN | wx.CB_READONLY)
         self.dropop.SetSelection(0)
         self.opfunc = self.opdict[list(self.opdict.keys())[0]]
         self.Bind(wx.EVT_COMBOBOX, self.Ondrop, self.dropop)
         self.droppB = wx.ComboBox(self.panel, -1, self.labelB, (15, 30),
-                     wx.DefaultSize, self.parmBlist,
-                     wx.CB_DROPDOWN|wx.CB_READONLY)
+                                  wx.DefaultSize, self.parmBlist,
+                                  wx.CB_DROPDOWN | wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.Ondrop, self.droppB)
         self.droppB.SetSelection(1)
         dropsizer.Add(self.droppA)
@@ -79,7 +80,7 @@ class Slide(wx.Frame):
         slidesizer.Add(self.sliderA)
         self.endspinA = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinA)
-        self.textvalueA = wx.StaticText(self.panel, label= "%.5e" % self.valueA)
+        self.textvalueA = wx.StaticText(self.panel, label="%.5e" % self.valueA)
         slidesizer.Add(self.textvalueA)
         # Parameter B
         self.textstartB = wx.StaticText(self.panel, label=self.labelB)
@@ -92,7 +93,7 @@ class Slide(wx.Frame):
         slidesizer.Add(self.sliderB)
         self.endspinB = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinB)
-        self.textvalueB = wx.StaticText(self.panel, label= "%.5e" % self.valueB)
+        self.textvalueB = wx.StaticText(self.panel, label="%.5e" % self.valueB)
         slidesizer.Add(self.textvalueB)
         # Result of operation
         self.textstartOp = wx.StaticText(self.panel, label=self.labelOp)
@@ -106,7 +107,7 @@ class Slide(wx.Frame):
         self.endspinOp = floatspin.FloatSpin(self.panel, digits=7)
         slidesizer.Add(self.endspinOp)
         self.textvalueOp = wx.StaticText(self.panel,
-                                         label= "%.5e" % self.valueOp)
+                                         label="%.5e" % self.valueOp)
         slidesizer.Add(self.textvalueOp)
         # Bindings for slider
         self.Bind(wx.EVT_SLIDER, self.OnSlider, self.sliderA)
@@ -133,7 +134,7 @@ class Slide(wx.Frame):
         self.Bind(wx.EVT_SPINCTRL, self.OnSlider, self.endspinOp)
         # Set values
         self.SetValues()
-        ## Sizers
+        # Sizers
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
         self.topSizer.Add(dropsizer)
         self.topSizer.Add(self.rbtnB)
@@ -145,17 +146,16 @@ class Slide(wx.Frame):
         self.topSizer.Fit(self)
         self.OnRadio()
         self.OnPageChanged(self.Page, init=True)
-        #Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
-
 
     def CalcFct(self, A, B, C):
         if self.rbtnB.Value == True:
             func = self.opfunc[0]
             try:
-                C = func(A,B)
+                C = func(A, B)
             except ZeroDivisionError:
                 pass
             else:
@@ -163,25 +163,23 @@ class Slide(wx.Frame):
         else:
             func = self.opfunc[1]
             try:
-                B = func(A,C)
+                B = func(A, C)
             except ZeroDivisionError:
                 pass
             else:
                 return B, C
 
-
     def FillOpDict(self):
         # Dictionaries: [Calculate C, Calculate B)
-        self.opdict["A/B"] = [lambda A,B: A/B, lambda A,C: A/C]
-        self.opdict["B/A"] = [lambda A,B: B/A, lambda A,C: C*A]
-        self.opdict["A*B"] = [lambda A,B: A*B, lambda A,C: C/A]
-        self.opdict["A+B"] = [lambda A,B: A+B, lambda A,C: C-A]
-        self.opdict["A-B"] = [lambda A,B: A-B, lambda A,C: A-C]
-        self.opdict["A*exp(B)"] = [lambda A,B: A*np.exp(B),
-                                   lambda A,C: np.log(C/A)]
-        self.opdict["B*exp(A)"] = [lambda A,B: B*np.exp(A),
-                                   lambda A,C: C/np.exp(A)]
-
+        self.opdict["A/B"] = [lambda A, B: A/B, lambda A, C: A/C]
+        self.opdict["B/A"] = [lambda A, B: B/A, lambda A, C: C*A]
+        self.opdict["A*B"] = [lambda A, B: A*B, lambda A, C: C/A]
+        self.opdict["A+B"] = [lambda A, B: A+B, lambda A, C: C-A]
+        self.opdict["A-B"] = [lambda A, B: A-B, lambda A, C: A-C]
+        self.opdict["A*exp(B)"] = [lambda A, B: A*np.exp(B),
+                                   lambda A, C: np.log(C/A)]
+        self.opdict["B*exp(A)"] = [lambda A, B: B*np.exp(A),
+                                   lambda A, C: C/np.exp(A)]
 
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
@@ -189,7 +187,6 @@ class Slide(wx.Frame):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def Ondrop(self, event=None):
         self.labelOp = self.oplist[self.dropop.GetSelection()]
@@ -206,7 +203,6 @@ class Slide(wx.Frame):
         self.SetValues()
         self.OnSize()
 
-
     def OnPageChanged(self, page=None, trigger=None, init=False):
         """
             This function is called, when something in the panel
@@ -216,7 +212,7 @@ class Slide(wx.Frame):
             `tools`.
             'init' is used by this tool only.
         """
-        #if init:
+        # if init:
         #    # Get the parameters of the current page.
         #    self.SavedParms = self.parent.PackParameters(self.Page)
         # When parent changes
@@ -249,7 +245,6 @@ class Slide(wx.Frame):
             self.Page = page
         self.panel.Enable()
 
-
     def OnRadio(self, event=None):
         if self.rbtnB.Value == True:
             # Parameter B is vaiable
@@ -269,11 +264,10 @@ class Slide(wx.Frame):
             self.endspinB.Enable(False)
         self.Ondrop()
 
-
     def OnReset(self, e=None):
         self.parent.UnpackParameters(self.SavedParms, self.Page)
         self.Page.apply_parameters_reverse()
-        #self.OnPageChanged(self.Page)
+        # self.OnPageChanged(self.Page)
         self.SetStart()
         self.Ondrop()
 
@@ -284,15 +278,14 @@ class Slide(wx.Frame):
         self.topSizer.Fit(self)
         self.panel.SetSize(self.GetSize())
 
-
     def OnSlider(self, event=None):
-        ## Set the slider vlaues
+        # Set the slider vlaues
         idmax = self.sliderA.GetMax()
         slideA = self.sliderA.GetValue()
         startA = self.startspinA.GetValue()
         endA = self.endspinA.GetValue()
         self.valueA = startA + (endA-startA)*slideA/idmax
-        self.textvalueA.SetLabel( "%.5e" % self.valueA)
+        self.textvalueA.SetLabel("%.5e" % self.valueA)
         if self.rbtnB.Value == True:
             slideB = self.sliderB.GetValue()
             startB = self.startspinB.GetValue()
@@ -306,11 +299,10 @@ class Slide(wx.Frame):
             self.valueOp = startOp + (endOp-startOp)*slideOp/idmax
         self.valueB, self.valueOp = self.CalcFct(self.valueA, self.valueB,
                                                  self.valueOp)
-        self.textvalueB.SetLabel( "%.5e" % self.valueB)
-        self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
+        self.textvalueB.SetLabel("%.5e" % self.valueB)
+        self.textvalueOp.SetLabel("%.5e" % self.valueOp)
         self.SetResult()
         self.OnSize()
-
 
     def SetResult(self, event=None):
         if self.parent.notebook.GetPageCount() == 0:
@@ -327,8 +319,8 @@ class Slide(wx.Frame):
         # only write back those that have been changed:
         #
         parms_0 = 1.*np.array(mdls.valuedict[self.modelid][1])
-        parms_0[idA] = self.valueA # human readable units
-        parms_0[idB] = self.valueB # human readable units
+        parms_0[idA] = self.valueA  # human readable units
+        parms_0[idB] = self.valueB  # human readable units
         parms_i =\
             mdls.GetInternalFromHumanReadableParm(self.modelid, parms_0)[1]
         self.Page.active_parms[1][idA] = parms_i[idA]
@@ -336,21 +328,20 @@ class Slide(wx.Frame):
         self.Page.apply_parameters_reverse()
         self.Page.PlotAll()
 
-
     def SetStart(self):
         # Sets first and second variable of a page to
         # Parameters A and B respectively.
         if self.parent.notebook.GetPageCount() == 0:
             self.modelid = 6000
             ParmLabels, ParmValues = \
-                   mdls.GetHumanReadableParms(self.modelid,
-                                              mdls.valuedict[6000][1])
+                mdls.GetHumanReadableParms(self.modelid,
+                                           mdls.valuedict[6000][1])
         else:
             self.SavedParms = self.parent.PackParameters(self.Page)
             self.modelid = self.Page.modelid
             ParmLabels, ParmValues = \
-                   mdls.GetHumanReadableParms(self.modelid,
-                                              self.Page.active_parms[1])
+                mdls.GetHumanReadableParms(self.modelid,
+                                           self.Page.active_parms[1])
 
         self.parmAlist = ParmLabels
         self.parmBlist = ParmLabels
@@ -367,8 +358,7 @@ class Slide(wx.Frame):
         self.valueA = ParmValues[0]
         self.valueB = ParmValues[1]
         self.valueB, self.valueOp = self.CalcFct(self.valueA,
-                                                         self.valueB, 0)
-
+                                                 self.valueB, 0)
 
     def SetValues(self, event=None):
         # Set the values for spin and slider
@@ -385,13 +375,13 @@ class Slide(wx.Frame):
         if self.parent.notebook.GetPageCount() == 0:
             self.modelid = 6000
             ParmValues = \
-                   mdls.GetHumanReadableParms(self.modelid,
-                                        mdls.valuedict[6000][1])[1]
+                mdls.GetHumanReadableParms(self.modelid,
+                                           mdls.valuedict[6000][1])[1]
         else:
             self.modelid = self.Page.modelid
             ParmValues = \
-                   mdls.GetHumanReadableParms(self.modelid,
-                                        self.Page.active_parms[1])[1]
+                mdls.GetHumanReadableParms(self.modelid,
+                                           self.Page.active_parms[1])[1]
         self.valueA = ParmValues[idA]
         self.valueB = ParmValues[idB]
         # Operator
@@ -416,8 +406,7 @@ class Slide(wx.Frame):
         self.startspinOp.SetValue(startOp)
         self.endspinOp.SetValue(endOp)
         # Set text
-        self.textvalueA.SetLabel( "%.5e" % self.valueA)
-        self.textvalueB.SetLabel( "%.5e" % self.valueB)
-        self.textvalueOp.SetLabel( "%.5e" % self.valueOp)
+        self.textvalueA.SetLabel("%.5e" % self.valueA)
+        self.textvalueB.SetLabel("%.5e" % self.valueB)
+        self.textvalueOp.SetLabel("%.5e" % self.valueOp)
         self.SetResult()
-
