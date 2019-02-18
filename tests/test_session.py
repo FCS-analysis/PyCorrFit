@@ -19,7 +19,7 @@ examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 def test_basic():
     """This is a very rudimentary test for the session handling"""
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],

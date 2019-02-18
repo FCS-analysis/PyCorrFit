@@ -16,8 +16,6 @@ import numpy as np
 import yaml
 
 # These imports are required for loading data
-from .readfiles import Filetypes  # @UnusedImport
-from .readfiles import BGFiletypes  # @UnusedImport
 from .trace import Trace
 
 from ._version import version as __version__

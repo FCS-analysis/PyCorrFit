@@ -26,7 +26,7 @@ def test_asc_all_open():
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
         dn, fn = split(f)
-        data = pycorrfit.readfiles.openAny(dn, fn)
+        data = pycorrfit.readfiles.open_any(dn, fn)
         assert data
 
 
@@ -34,7 +34,7 @@ def test_asc_all_open():
 def test_asc_alv7004usb():
     """Test alv7004/USB format"""
     f1 = data_file_dl.get_data_file("ALV-7004USB_ac01_cc01_10.ASC")
-    data = pycorrfit.readfiles.openAny(f1)
+    data = pycorrfit.readfiles.open_any(f1)
     assert data["Type"] == ["AC1", "AC2", "CC12", "CC21"]
     assert np.allclose(data["Correlation"][0][10], np.array([0.000275, 0.11208]))
     assert np.allclose(data["Correlation"][1][12], np.array([0.000325, 0.0900233]))
@@ -52,7 +52,7 @@ def test_asc_alv7004usb():
     assert np.allclose(data["Trace"][1][100], np.array([11835.94, 94.68225]))
 
     f2 = data_file_dl.get_data_file("ALV-7004USB_dia10_cen10_0001.ASC")
-    data2 = pycorrfit.readfiles.openAny(f2)
+    data2 = pycorrfit.readfiles.open_any(f2)
     # There are empty AC2 and CC12/CC21 curves in this file that should be removed
     # by pycorrfit.
     assert data2["Type"] == ["AC1"]
@@ -61,7 +61,7 @@ def test_asc_alv7004usb():
     assert np.allclose(data2["Trace"][0][210], np.array([49453.13, 165.41434]))
 
     f3 = data_file_dl.get_data_file("ALV-7004.ASC")
-    data3 = pycorrfit.readfiles.openAny(f3)
+    data3 = pycorrfit.readfiles.open_any(f3)
     assert len(data3["Type"]) == 1
     assert len(data3["Trace"][0]) == 66
     assert data3["Type"][0] == "AC"
@@ -69,7 +69,7 @@ def test_asc_alv7004usb():
     assert np.allclose(data3["Trace"][0][60], np.array([1.21523440e5, 5.11968700e1]))
 
     f4 = data_file_dl.get_data_file("ALV-7004USB_ac3.ASC")
-    data4 = pycorrfit.readfiles.openAny(f4)
+    data4 = pycorrfit.readfiles.open_any(f4)
     assert len(data4["Type"]) == 1
     assert data4["Type"][0] == "AC"
     assert len(data4["Trace"][0]) == 254
@@ -84,7 +84,7 @@ def test_csv_all_open():
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
         dn, fn = split(f)
-        data = pycorrfit.readfiles.openAny(dn, fn)
+        data = pycorrfit.readfiles.open_any(dn, fn)
         assert data
 
 
@@ -97,7 +97,7 @@ def test_fcs_all_open():
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
         dn, fn = split(f)
-        data = pycorrfit.readfiles.openAny(dn, fn)
+        data = pycorrfit.readfiles.open_any(dn, fn)
         assert data
 
 
@@ -110,14 +110,14 @@ def test_pt3_all_open():
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
         dn, fn = split(f)
-        data = pycorrfit.readfiles.openAny(dn, fn)
+        data = pycorrfit.readfiles.open_any(dn, fn)
         assert data
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_pt3_basic():
     f1 = data_file_dl.get_data_file("PicoQuant_SymphoTime32_A42F-4jul2014/Point_1.pt3")
-    data = pycorrfit.readfiles.openAny(f1)
+    data = pycorrfit.readfiles.open_any(f1)
 
     trace = data["Trace"][0][0]
     assert trace.shape == (600, 2)
@@ -141,7 +141,7 @@ def test_sin_all_open():
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
         dn, fn = split(f)
-        data = pycorrfit.readfiles.openAny(dn, fn)
+        data = pycorrfit.readfiles.open_any(dn, fn)
         assert data
 
 

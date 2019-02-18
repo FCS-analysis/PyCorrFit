@@ -1,6 +1,7 @@
 """ALV .ASC files"""
 import csv
-import os
+import pathlib
+import warnings
 
 import numpy as np
 
@@ -9,16 +10,20 @@ class LoadALVError(BaseException):
     pass
 
 
-def openASC(dirname, filename):
+def openASC(path, filename=None):
     """
     Read data from a ALV .ASC files.
     """
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as openfile:
-        Alldata = openfile.readlines()
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+
+    with path.open("r", encoding="iso8859_15") as openfile:
+        first = openfile.readline()
 
     # Open special format?
-    filetype = Alldata[0].strip()
+    filetype = first.strip()
     if filetype.count("ALV-7004"):
         return openASC_ALV_7004(path)
     else:
@@ -105,8 +110,8 @@ def openASC_old(path):
          from the file. Elements can be names and must be convertible to
          strings.
     """
-    filename = os.path.basename(path)
-    with open(path, "r", encoding="iso8859_15") as openfile:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
     # End of trace
     EndT = Alldata.__len__()
@@ -374,8 +379,8 @@ def openASC_ALV_7004(path):
 
 
     """
-    filename = os.path.basename(path)
-    with open(path, "r", encoding="iso8859_15") as openfile:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
 
     # Find the different arrays

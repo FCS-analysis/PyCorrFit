@@ -1,7 +1,8 @@
 """Module readfiles: Import correlation data from data files"""
 import csv
 import io
-import os
+import pathlib
+import shutil
 import sys
 import tempfile
 import warnings
@@ -20,9 +21,9 @@ from .read_mat_ries import openMAT
 from .read_pt3_PicoQuant import openPT3
 
 
-def AddAllWildcard(Dictionary):
+def add_all_supported_filetype_entry(adict):
     wildcard = ""
-    keys = Dictionary.keys()
+    keys = adict.keys()
     N = len(keys)
     i = 0
     for key in keys:
@@ -31,15 +32,29 @@ def AddAllWildcard(Dictionary):
         i = i + 1
         if i != N:
             wildcard = wildcard + ";"
+    adict[ALL_SUP_STRING+"|"+wildcard] = open_any
 
-    Dictionary[Allsupfilesstring+"|"+wildcard] = openAny
-    return Dictionary
+
+def get_supported_extensions():
+    """
+    Returns list of extensions of currently supported file types.
+    """
+    extlist = []
+    for kf in list(filetypes_dict.keys()):
+        ext = kf.split("|")[-1]
+        ext = ext.split(";")
+        ext = [ e.lower().strip("*. ") for e in ext]
+        ext = list(np.unique(ext))
+        extlist += ext
+    extlist = list(np.unique(extlist))
+    extlist.sort()
+    return extlist
 
 
 # To increase user comfort, we will now create a file opener thingy that
 # knows how to open all files we know.
-def openAny(path, filename=None):
-    """ Using the defined Filetypes and BGFiletypes, open the given file
+def open_any(path, filename=None):
+    """Open a supported data file
 
     Parameters
     ----------
@@ -48,62 +63,71 @@ def openAny(path, filename=None):
     filename : str
         The name of the file if not given in path (optional).
     """
-    if filename is None:
-        dirname, filename = os.path.split(path)
-    else:
-        dirname = path
-
-    wildcard = filename.split(".")[-1]
-    for key in Filetypes.keys():
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+    wildcard = path.suffix
+    for key in filetypes_dict.keys():
         # Recurse into the wildcards
         wildcardstring = key.split("|")
         # We do not want to recurse
-        if wildcardstring[0] != Allsupfilesstring:
+        if wildcardstring[0] != ALL_SUP_STRING:
             otherwcs = wildcardstring[1].split(";")
-            for string in otherwcs:
-                if string.strip(" .*") == wildcard:
-                    return Filetypes[key](dirname, filename)
-    # If we could not find the correct function in Filetypes, try again
-    # in BGFiletypes:
-    return openAnyBG(dirname, filename)
-
-    ## For convenience in openZIP
-    #return None # already in openAnyBG
+            for wc in otherwcs:
+                if wc.strip("*") == wildcard:
+                    return filetypes_dict[key](path)
+    else:
+        # If we could not find the correct function in filetypes_dict,
+        # try again in filetypes_bg_dict:
+        return open_any_bg(path)
 
 
-def openAnyBG(dirname, filename):
-    wildcard = filename.split(".")[-1]
-    for key in BGFiletypes.keys():
+def open_any_bg(path, filename=None):
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+
+    wildcard = path.suffix
+    for key in filetypes_bg_dict.keys():
+        # Recurse into the wildcards
         wildcardstring = key.split("|")
         # We do not want to recurse
-        if wildcardstring[0] != Allsupfilesstring:
+        if wildcardstring[0] != ALL_SUP_STRING:
             otherwcs = wildcardstring[1].split(";")
-            for string in otherwcs:
-                if string.strip(" .*") == wildcard:
-                    return BGFiletypes[key](dirname, filename)
-    # For convenience in openZIP
-    return None
+            for wc in otherwcs:
+                if wc.strip("*") == wildcard:
+                    return filetypes_bg_dict[key](path)
+    else:
+        # For convenience in openZIP
+        return None
 
 
-def openZIP(dirname, filename):
-    """
-        Get everything inside a .zip file that could be an FCS curve.
-        Will use any wildcard in Filetypes dictionary.
+def openZIP(path, filename=None):
+    """Load everything inside a .zip file that could be an FCS curve.
+
+    Will use any wildcard in `filetypes_dict`.
     """
     #    It's a rather lengthy import of the session file. The code is copied
     #    from openfile.OpenSession. The usual zip file packed curves are
     #    imported on the few code lines after the else statement.
 
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+    filename = path.name
+
     ## Open the archive:
-    Arc = zipfile.ZipFile(os.path.join(dirname, filename), mode='r')
-    Correlations = list() # Correlation information
-    Curvelist = list()    # Type information
-    Filelist = list()     # List of filenames corresponding to *Curvelist*
-    Trace = list()        # Corresponding traces
+    Arc = zipfile.ZipFile(path, mode='r')
+    Correlations = [] # Correlation information
+    Curvelist = []    # Type information
+    Filelist = []     # List of filenames corresponding to *Curvelist*
+    Trace = []        # Corresponding traces
     ## First test, if we are opening a session file
     sessionwc = [".fcsfit-session.zip", ".pcfs"]
-    if ( filename.endswith(sessionwc[0]) or
-         filename.endswith(sessionwc[1])     ):
+    if filename.endswith(sessionwc[0]) or filename.endswith(sessionwc[1]):
         # Get the yaml parms dump:
         yamlfile = Arc.open("Parameters.yaml")
         # Parms: Fitting and drawing parameters of the correlation curve
@@ -188,84 +212,52 @@ def openZIP(dirname, filename):
         # recursively (e.g. a zip file in a zipfile).
         allfiles = Arc.namelist()
         # Extract data to temporary folder
-        tempdir = tempfile.mkdtemp()
-        rmdirs = list()
+        tempdir = pathlib.Path(tempfile.mkdtemp())
         for afile in allfiles:
-            apath = Arc.extract(afile, path=tempdir)
-            if os.path.isdir(apath):
-                rmdirs.append(apath)
-                continue
-            ReturnValue = openAny(tempdir, afile)
-            if ReturnValue is not None:
-                Correlations += ReturnValue["Correlation"]
-                Trace += ReturnValue["Trace"]
-                Curvelist += ReturnValue["Type"]
-                fnames = ReturnValue["Filename"]
+            Arc.extract(afile, path=tempdir)
+            data = open_any(tempdir / afile)
+            if data is not None:
+                Correlations += data["Correlation"]
+                Trace += data["Trace"]
+                Curvelist += data["Type"]
+                fnames = data["Filename"]
                 Filelist += [ filename+"/"+fs for fs in fnames ]
-            # Delte file
-            try:
-                os.remove(os.path.join(tempdir, afile))
-            except:
-                warnings.warn("{}".format(sys.exc_info()[1]))
-        for rmd in rmdirs:
-            try:
-                os.removedirs(rmd)
-            except:
-                    warnings.warn("{}".format(sys.exc_info()[1]))
-        try:
-            os.removedirs(tempdir)
-        except:
-                warnings.warn("{}".format(sys.exc_info()[1]))
+        shutil.rmtree(path=tempdir, ignore_errors=True)
     Arc.close()
-    dictionary = dict()
+    dictionary = {}
     dictionary["Correlation"] = Correlations
     dictionary["Trace"] = Trace
     dictionary["Type"] = Curvelist
     dictionary["Filename"] = Filelist
     return dictionary
 
-def get_supported_extensions():
-    """
-    Returns list of extensions of currently supported file types.
-    """
-    extlist = []
-    for kf in list(Filetypes.keys()):
-        ext = kf.split("|")[-1]
-        ext = ext.split(";")
-        ext = [ e.lower().strip("*. ") for e in ext]
-        ext = list(np.unique(ext))
-        extlist += ext
-    extlist = list(np.unique(extlist))
-    extlist.sort()
-    return extlist
 
 
 # The string that is shown when opening all supported files
 # We add an empty space so it is listed first in the dialogs.
-Allsupfilesstring = " All supported files"
+ALL_SUP_STRING = " All supported files"
 
 # Dictionary with filetypes that we can open
 # The wildcards point to the appropriate functions.
-Filetypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-              "ALV (*.ASC)|*.ASC;*.asc" : openASC,
-              "PyCorrFit (*.csv)|*.csv" : openCSV,
-              "Matlab 'Ries (*.mat)|*.mat" : openMAT,
-              "PicoQuant (*.pt3)|*.pt3" : openPT3,
-              "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
-              "Zip file (*.zip)|*.zip" : openZIP,
-              "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
-            }
+filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
+                  "ALV (*.ASC)|*.ASC;*.asc" : openASC,
+                  "PyCorrFit (*.csv)|*.csv" : openCSV,
+                  "Matlab 'Ries (*.mat)|*.mat" : openMAT,
+                  "PicoQuant (*.pt3)|*.pt3" : openPT3,
+                  "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
+                  "Zip file (*.zip)|*.zip" : openZIP,
+                  "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
+                  }
 # For user comfort, add "All supported files" wildcard:
-Filetypes = AddAllWildcard(Filetypes)
-
+add_all_supported_filetype_entry(filetypes_dict)
 
 # Dictionary with filetypes we can open that have intensity traces in them.
-BGFiletypes = { "Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
-                "ALV (*.ASC)|*.ASC" : openASC,
-                "PyCorrFit (*.csv)|*.csv" : openCSV,
-                "PicoQuant (*.pt3)|*.pt3" : openPT3,
-                "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
-                "Zip file (*.zip)|*.zip" : openZIP,
-                "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
-              }
-BGFiletypes = AddAllWildcard(BGFiletypes)
+filetypes_bg_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin" : openSIN,
+                     "ALV (*.ASC)|*.ASC" : openASC,
+                     "PyCorrFit (*.csv)|*.csv" : openCSV,
+                     "PicoQuant (*.pt3)|*.pt3" : openPT3,
+                     "Zeiss ConfoCor3 (*.fcs)|*.fcs" : openFCS,
+                     "Zip file (*.zip)|*.zip" : openZIP,
+                     "PyCorrFit session (*.pcfs)|*.pcfs" : openZIP
+                     }
+add_all_supported_filetype_entry(filetypes_bg_dict)

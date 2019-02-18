@@ -733,13 +733,13 @@ class MyFrame(wx.Frame):
 
     def OnImportData(self,e=None):
         """Import experimental data from all filetypes specified in
-           *opf.Filetypes*.
+           *readfiles.filetypes_dict*.
            Is called by the curmenu and applies to currently opened model.
            Calls self.ImportData.
         """
         # Open a data file
         # Get Data
-        SupFiletypes = list(opf.Filetypes.keys())
+        SupFiletypes = list(readfiles.filetypes_dict.keys())
         SupFiletypes.sort()
         filters = ""
         for i in np.arange(len(SupFiletypes)):
@@ -758,7 +758,7 @@ class MyFrame(wx.Frame):
             #self.filename = dlg.GetFilename()
             #self.dirname = dlg.GetDirectory()
             try:
-                Stuff = readfiles.openAny(self.dirname, self.filename)
+                Stuff = readfiles.open_any(self.dirname, self.filename)
             except:
                 # The file format is not supported.
                 info = sys.exc_info()
@@ -1007,7 +1007,7 @@ class MyFrame(wx.Frame):
         """
         if dataname is None:
             ## Browse the file system
-            SupFiletypes = list(opf.Filetypes.keys())
+            SupFiletypes = list(readfiles.filetypes_dict.keys())
             # Sort them so we have "All suported filetypes" up front
             SupFiletypes.sort()
             filters = ""
@@ -1073,7 +1073,7 @@ class MyFrame(wx.Frame):
                 return
             #Stuff = readfiles.openAny(self.dirname, afile)
             try:
-                Stuff = readfiles.openAny(self.dirname, afile)
+                Stuff = readfiles.open_any(self.dirname, afile)
             except Exception as excpt:
                 # The file does not seem to be what it seems to be.
                 BadFiles.append(afile)

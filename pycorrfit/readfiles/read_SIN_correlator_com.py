@@ -1,6 +1,7 @@
 """correlator.com .sin files"""
 import csv
-import os
+import pathlib
+import warnings
 
 import numpy as np
 
@@ -9,12 +10,17 @@ class OpenSINError(BaseException):
     pass
 
 
-def openSIN(dirname, filename):
+def openSIN(path, filename=None):
     """Parse .sin files (correlator.com)"""
-    path = os.path.join(dirname, filename)
-    with open(path) as fd:
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+    filename = path.name
+
+    with path.open() as fd:
         data = fd.readlines()
-    
+
     for line in data:
         line = line.strip()
         if line.lower().startswith("mode"):
@@ -45,7 +51,7 @@ def openSIN_integer_mode(path):
     
     would translate to AC11, AC22, CC04, and AC44.
     """
-    with open(path) as fd:
+    with path.open() as fd:
         data = fd.readlines()
 
     # get mode (curve indices)
@@ -134,7 +140,7 @@ def openSIN_integer_mode(path):
     dictionary["Type"] = curvelist
     filelist = []
     for _i in curvelist:
-        filelist.append(os.path.basename(path))
+        filelist.append(path.name)
     dictionary["Filename"] = filelist
     return dictionary
 
@@ -229,7 +235,7 @@ def openSIN_old(path):
      A list with N elements, indicating, how many correlation
      curves we are importing.
     """
-    with open(path) as fd:
+    with path.open() as fd:
         Alldata = fd.readlines()
     # Find out where the correlation function and trace are
     for i in np.arange(len(Alldata)):
@@ -376,7 +382,7 @@ def openSIN_old(path):
     dictionary["Type"] = curvelist
     filelist = []
     for i in curvelist:
-        filelist.append(os.path.basename(path))
+        filelist.append(path.name)
     dictionary["Filename"] = filelist
 
     return dictionary

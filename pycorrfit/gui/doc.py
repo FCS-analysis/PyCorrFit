@@ -61,10 +61,10 @@ def info(version):
         texta = textlin
     one = u"    PyCorrFit version "+version+"\n\n"
     two = u"\n\n    Supported file types:"
-    keys = readfiles.Filetypes.keys()
+    keys = readfiles.filetypes_dict.keys()
     keys = sorted(list(keys))
     for item in keys:
-        if item.split("|")[0] != readfiles.Allsupfilesstring:
+        if item.split("|")[0] != readfiles.ALL_SUP_STRING:
             two = two + "\n     - "+item.split("|")[0]
     lizenz = ""
     for line in licence().splitlines():

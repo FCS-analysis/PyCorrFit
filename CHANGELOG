@@ -1,3 +1,5 @@
+1.1.6
+ - ref: make pathlib.Path a standard in readfiles
 1.1.5
  - docs: fix build with recent version of latex (#191)
 1.1.4

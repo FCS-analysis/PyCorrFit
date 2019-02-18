@@ -3,7 +3,8 @@
 Wraps around FCS_point_correlator by Dominic Waithe
 https://github.com/dwaithe/FCS_point_correlator
 """
-import os
+import pathlib
+import warnings
 
 import numpy as np
 
@@ -60,15 +61,21 @@ def getTrace(picoObject, number):
     
 
 
-def openPT3(dirname, filename):
+def openPT3(path, filename=None):
     """ Retreive correlation curves from PicoQuant data files 
     
     This function is a wrapper around the PicoQuant capability of
     FCS_Viewer by Dominic Waithe.
     """
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+    filename = path.name
+
     par_obj = ParameterClass()
     
-    pt3file = picoObject(os.path.join(dirname, filename), par_obj, None)
+    pt3file = picoObject(str(path), par_obj, None)
 
     po = pt3file
 

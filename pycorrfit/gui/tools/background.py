@@ -8,7 +8,6 @@ import wx
 from wx.lib.agw import floatspin
 import wx.lib.plot as plot
 
-from pycorrfit import openfile as opf
 from pycorrfit import readfiles
 from pycorrfit import Trace
 
@@ -236,9 +235,9 @@ class BackgroundCorrection(wx.Frame):
 
 
     def OnBrowse(self, event):
-        # opf.BGFiletypes is a dictionary with filetypes that have some
+        # filetypes_bg_dict is a dictionary with filetypes that have some
         # trace signal information.
-        SupFiletypes = list(opf.BGFiletypes.keys())
+        SupFiletypes = list(readfiles.filetypes_bg_dict.keys())
         SupFiletypes.sort()
         filters = ""
         for i in np.arange(len(SupFiletypes)):
@@ -258,7 +257,7 @@ class BackgroundCorrection(wx.Frame):
             self.parent.dirname = dirname
             try:
                 # [data, trace, curvelist]
-                stuff = readfiles.openAnyBG(dirname, filename)
+                stuff = readfiles.open_any_bg(dirname, filename)
             except:
                 # The file does not seem to be what it seems to be.
                 info = sys.exc_info()

@@ -1,6 +1,6 @@
 """Confocor .fcs files"""
 import csv
-import os
+import pathlib
 import warnings
 
 import numpy as np
@@ -8,7 +8,7 @@ import numpy as np
 from . import util
 
 
-def openFCS(dirname, filename):
+def openFCS(path, filename=None):
     """
         Load data from Zeiss Confocor3
         Data is imported sequenially from the file.
@@ -24,16 +24,21 @@ def openFCS(dirname, filename):
         This function is a wrapper combining *openFCS_Single* and
         *openFCS_Multiple*
     """
-    openfile = open(os.path.join(dirname, filename), 'r')
-    identitystring = openfile.readline().strip()[:20]
-    openfile.close()
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+
+    with path.open('r') as fd:
+        identitystring = fd.readline().strip()[:20]
+
     if identitystring == "Carl Zeiss ConfoCor3":
-        return openFCS_Multiple(dirname, filename)
+        return openFCS_Multiple(path)
     else:
-        return openFCS_Single(dirname, filename)
+        return openFCS_Single(path)
 
 
-def openFCS_Multiple(dirname, filename):
+def openFCS_Multiple(path):
     """ Load data from Zeiss Confocor3
         Data is imported sequenially from the file.
         PyCorrFit will give each curve an id which corresponds to the
@@ -42,12 +47,12 @@ def openFCS_Multiple(dirname, filename):
         This works with files from the Confocor2, Confocor3 (AIM) and
         files created from the newer ZEN Software.
     """
+    filename = path.name
     ### TODO:
     # match curves with their timestamp
     # (actimelist and cctimelist)
     #
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as fd:
+    with path.open("r", encoding="iso8859_15") as fd:
         Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
@@ -291,15 +296,15 @@ def openFCS_Multiple(dirname, filename):
     return dictionary
 
 
-def openFCS_Single(dirname, filename):
+def openFCS_Single(path):
     """
         Load data from Zeiss Confocor3 files containing only one curve.
 
         This works with files from the Confocor2, Confocor3 (AIM) and
         files created from the newer ZEN Software.
     """
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as fd:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as fd:
         Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain

@@ -20,7 +20,7 @@ def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],
@@ -54,7 +54,7 @@ def test_fit_constraint_sum_smaller_one():
     """ Check "a+b<c" relation during fitting.
     """
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],

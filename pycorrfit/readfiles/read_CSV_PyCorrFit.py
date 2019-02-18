@@ -1,11 +1,12 @@
 """CSV files"""
 import csv
-import os
+import pathlib
+import warnings
 
 import numpy as np
 
 
-def openCSV(dirname, filename):
+def openCSV(path, filename=None):
     """
     Read relevant data from a file looking like this:
         [...]
@@ -64,17 +65,20 @@ def openCSV(dirname, filename):
     3. A list with one element, indicating, that we are opening only
        one correlation curve.
     """
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+    filename = path.name
     # Check if the file is correlation data
-    csvfile = open(os.path.join(dirname, filename), 'r', encoding='utf-8')
-    firstline = csvfile.readline()
-    if firstline.lower().count("this is not correlation data") > 0:
-        csvfile.close()
-        return None
-    csvfile.close()
+    with path.open("r", encoding='utf-8') as fd:
+        firstline = fd.readline()
+        if firstline.lower().count("this is not correlation data") > 0:
+            return None
 
     # Define what will happen to the file
     timefactor = 1000 # because we want ms instead of s
-    csvfile = open(os.path.join(dirname, filename), 'r', encoding='utf-8')
+    csvfile = path.open('r', encoding='utf-8')
     readdata = csv.reader(csvfile, delimiter=',')
     data = list()
     weights = list()
