@@ -1,6 +1,5 @@
 import numpy as np
 
-import pycorrfit  # @UnusedImport
 from pycorrfit.correlation import Correlation
 from pycorrfit.fit import Fit
 

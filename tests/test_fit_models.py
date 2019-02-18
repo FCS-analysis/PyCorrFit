@@ -2,11 +2,7 @@
 Go through each model, vary one parameter and fit it back to the
 default value of that model.
 """
-import sys
-from os.path import abspath, dirname, split
-
 import numpy as np
-
 import pycorrfit
 from pycorrfit.correlation import Correlation
 from pycorrfit.fit import Fit
@@ -67,8 +63,8 @@ def test_fit_single_parameter():
     Deviate a single parameter and fit it back.
     """
     allow_fail = [
-                  [6082, "SP"],
-                  ]
+        [6082, "SP"],
+    ]
     faillist = list()
     for model in pycorrfit.models.models:
         fullparms = model.default_values

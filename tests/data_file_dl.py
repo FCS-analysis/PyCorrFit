@@ -46,7 +46,7 @@ def dl_file(url, dest, chunk_size=6553,
     with open(dest, 'wb') as out:
         while True:
             data = r.read(chunk_size)
-            if data is None or len(data)==0:
+            if data is None or len(data) == 0:
                 break
             out.write(data)
 
@@ -112,8 +112,10 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
         ext = "."+ext
     try:
         # Get file list and download
-        files = get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin)
-        extfiles = [ f for f in files if f.lower().startswith(ext[1:]+"/") and f.lower().endswith(ext)]
+        files = get_data_tree_remote(
+            pool_manager=pool_manager, api_origin=api_origin)
+        extfiles = [f for f in files if f.lower().startswith(
+            ext[1:]+"/") and f.lower().endswith(ext)]
         extfiles.sort()
 
         dl_files = []
@@ -126,10 +128,10 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
 
     except (urllib3.exceptions.MaxRetryError, KeyError):
         # e.g. no internet connection
-        warnings.warn("No connection, using previuously downloaded files only.")
+        warnings.warn(
+            "No connection, using previuously downloaded files only.")
         files = get_data_tree_local(dldir=dldir)
-        dl_files = [ f for f in files if f.lower().endswith(ext)]
-
+        dl_files = [f for f in files if f.lower().endswith(ext)]
 
     return dl_files
 
@@ -169,7 +171,8 @@ def get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin):
         #
         # Add the result to env in travis.yml.
         if "GITHUB_API_TOKEN" in os.environ:
-            headers["Authorization"] = "token {}".format(os.environ["GITHUB_API_TOKEN"])
+            headers["Authorization"] = "token {}".format(
+                os.environ["GITHUB_API_TOKEN"])
             r = pool_manager.request("GET", url, headers=headers, retries=10)
             jd = json.loads(r.data)
             tree = jd["tree"]
@@ -177,5 +180,5 @@ def get_data_tree_remote(pool_manager=pool_manager, api_origin=api_origin):
             r = pool_manager.request("GET", url, headers=headers, retries=10)
             jd = json.loads(r.data)
             tree = jd["tree"]
-        fcs_data_tree = [ t["path"] for t in tree ]
+        fcs_data_tree = [t["path"] for t in tree]
     return fcs_data_tree
