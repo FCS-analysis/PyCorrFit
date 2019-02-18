@@ -1,9 +1,3 @@
-from pycorrfit import models as mdls
-from pycorrfit.meta import find_program
-import unicodedata
-from matplotlib import rcParams
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 """Module plotting
 
 Everything about plotting with matplotlib is located here.
@@ -20,8 +14,15 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     matplotlib.use('WXAgg')  # Tells matplotlib to use WxWidgets for dialogs
 # Text rendering with matplotlib
+from matplotlib import rcParams
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 # For finding latex tools
+import unicodedata
+
+from .. import models as mdls
+from ..meta import find_program
 
 
 def greek2tex(char):

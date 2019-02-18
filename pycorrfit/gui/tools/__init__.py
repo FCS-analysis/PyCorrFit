@@ -1,7 +1,3 @@
-from .parmrange import RangeSelector
-from .comment import EditComment
-from .chooseimport import ChooseImportTypesModel
-from .chooseimport import ChooseImportTypes
 """PyCorrFit - module "tools"
 
 This file contains tools, such as dialog boxes and other stuff,
@@ -27,6 +23,11 @@ Recognized triggers:
 import sys
 
 import numpy as np
+
+from .parmrange import RangeSelector
+from .comment import EditComment
+from .chooseimport import ChooseImportTypesModel
+from .chooseimport import ChooseImportTypes
 
 from . import datarange
 from . import background
@@ -73,9 +74,6 @@ for i in np.arange(len(ImpB)):
     ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
     # ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
     #ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
-
-# This is in the file menu and not needed in the dictionaries below.
-# the "special" tool RangeSelector
 
 ToolDict = dict()
 ToolDict["A"] = ToolsActive

@@ -1,13 +1,11 @@
-from . import frontend as gui              # The actual program
-from . import doc
-import yaml
-import scipy
-import numpy as np                  # NumPy
-import warnings
 """Main execution script"""
 from distutils.version import LooseVersion
-import os
 import sys
+import warnings
+
+import yaml
+import numpy as np
+import scipy
 
 
 class Fake(object):
@@ -42,12 +40,14 @@ except ImportError:
     # We create a fake module sympy with a __version__ property.
     # This way users can run PyCorrFit without having installed sympy.
     sympy = Fake()
+
 # We must not import wx here. frontend/gui does that. If we do import wx here,
 # somehow unicode characters will not be displayed correctly on windows.
 # import wx
 
 # Continue with the import:
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+from . import frontend as gui  # noqa: E402
+from . import doc  # noqa: E402
 
 
 def CheckVersion(given, required, name):
