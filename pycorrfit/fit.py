@@ -7,6 +7,10 @@ import numpy as np
 import scipy.interpolate as spintp
 
 
+class StuckParameterWarning(UserWarning):
+    pass
+
+
 class Constraint(object):
     """ Class to translate fit constraints to lmfit syntax.
     """
@@ -865,7 +869,8 @@ class Fit(object):
                               u"detected a stuck parameter, multiplied " +
                               u"it by {}, and fitted again. ".format(multby) +
                               u"The stuck parameters are: {}".format(
-                                  np.array(self.fit_parm_names)[parmstuck]))
+                                  np.array(self.fit_parm_names)[parmstuck]),
+                              StuckParameterWarning)
             elif diff < 1e-8:
                 # Experience tells us this is good enough.
                 break

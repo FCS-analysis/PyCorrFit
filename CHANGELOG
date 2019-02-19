@@ -1,4 +1,6 @@
 1.1.6
+ - fix: improve support for Confocor FCS file format
+   (see discussion in #37)
  - ref: make pathlib.Path a standard in readfiles
  - code cleanup
  - drop support for Python<3.6

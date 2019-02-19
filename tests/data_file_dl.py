@@ -63,7 +63,6 @@ def get_data_file(filename, dldir=dldir, pool_manager=pool_manager,
     fbase = filename
     fdir = os.path.join(dldir, extp)
     fpath = os.path.join(fdir, fbase)
-
     if not os.path.exists(fpath):
         # download file if it does not exist
         url = raw_origin+extp+"/"+fbase

@@ -16,6 +16,7 @@ examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_basic():
     """This is a very rudimentary test for the session handling"""
     dfile = data_file_dl.get_data_file(examplefile)

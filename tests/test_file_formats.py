@@ -107,6 +107,30 @@ def test_fcs_all_open():
         assert data
 
 
+def test_fcs_channel_names():
+    """Test arbitrary channel names (instead of just "1" and "2"
+
+    The file '001_A488_channel_names.fcs' was created manually.
+    """
+    fref = data_file_dl.get_data_file("Zeiss_Confocor3_A488+GFP/001_A488.fcs")
+    fed = data_file_dl.get_data_file("001_A488_channel_names.fcs")
+
+    dataref = pycorrfit.readfiles.open_any(fref)
+    dataed = pycorrfit.readfiles.open_any(fed)
+    assert np.all(dataref["Correlation"][0] == dataed["Correlation"][0])
+    assert np.all(dataref["Correlation"][1] == dataed["Correlation"][1])
+    assert np.all(dataref["Correlation"][2] == dataed["Correlation"][2])
+    assert np.all(dataref["Correlation"][3] == dataed["Correlation"][3])
+    assert np.all(dataref["Trace"][0] == dataed["Trace"][0])
+    assert np.all(dataref["Trace"][1] == dataed["Trace"][1])
+    assert np.all(dataref["Trace"][2][0] == dataed["Trace"][2][0])
+    assert np.all(dataref["Trace"][2][1] == dataed["Trace"][2][1])
+    assert np.all(dataref["Trace"][3][0] == dataed["Trace"][3][0])
+    assert np.all(dataref["Trace"][3][1] == dataed["Trace"][3][1])
+    assert dataref["Type"] == dataed["Type"]
+    assert dataref["Filename"] != dataed["Filename"]
+
+
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_pt3_all_open():
     # get list of supported file extensions

@@ -13,6 +13,7 @@ examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
@@ -47,6 +48,7 @@ multiplying by two to see if relation holds")
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_constraint_sum_smaller_one():
     """ Check "a+b<c" relation during fitting.
     """
