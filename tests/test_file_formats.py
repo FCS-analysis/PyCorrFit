@@ -1,5 +1,4 @@
 """Test support for FCS file formats"""
-
 import os
 from os.path import split
 import warnings
@@ -107,6 +106,7 @@ def test_fcs_all_open():
         assert data
 
 
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_fcs_channel_names():
     """Test arbitrary channel names (instead of just "1" and "2"
 
