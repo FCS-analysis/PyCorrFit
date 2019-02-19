@@ -19,6 +19,7 @@ from .. import misc
 # Menu entry name
 MENUINFO = ["&Statistics view", "Show some session statistics."]
 
+
 def run_once(f):
     def wrapper(*args, **kwargs):
         if not wrapper.has_run:
@@ -31,7 +32,7 @@ def run_once(f):
 class Stat(wx.Frame):
     # This tool is derived from a wx.frame.
     def __init__(self, parent):
-        self.MyName="STATISTICS"
+        self.MyName = "STATISTICS"
         # parent is the main frame of PyCorrFit
         self.boxsizerlist = list()
         self.parent = parent
@@ -39,9 +40,9 @@ class Stat(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Statistics",
-                 pos=pos, size=(700,600),
-                 style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, size=(700, 600),
+                          style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         self.MyName = "STATISTICS"
@@ -50,13 +51,13 @@ class Stat(wx.Frame):
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
         # Pagenumbers
-        self.PageNumbers =range(1,1+self.parent.notebook.GetPageCount())
-        ## Splitter window. left side: checkboxes
-        ##                  right side: plot with parameters
+        self.PageNumbers = range(1, 1+self.parent.notebook.GetPageCount())
+        # Splitter window. left side: checkboxes
+        # right side: plot with parameters
         self.sp = wx.SplitterWindow(self, style=wx.SP_3DSASH)
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.sp.SetMinimumPaneSize(1)
-        ## Content
+        # Content
         # We will display a dialog that conains all the settings
         # - Which model we want statistics on
         # - What kind of parameters should be printed
@@ -74,38 +75,38 @@ class Stat(wx.Frame):
             self.panel.Disable()
         # A dropdown menu for the source Page:
         text = wx.StaticText(self.panel,
-                    label="Create a table with all the selected\n"+
-                          "variables below from pages with the\n"+
-                          "same model as the current page.")
-        ## Page selection as in average tool
+                             label="Create a table with all the selected\n" +
+                             "variables below from pages with the\n" +
+                             "same model as the current page.")
+        # Page selection as in average tool
         Pagetext = wx.StaticText(self.panel,
-                             label="Curves ")
+                                 label="Curves ")
         Psize = text.GetSize()[0]/2
         self.WXTextPages = wx.TextCtrl(self.panel, value="",
-                                       size=(Psize,-1))
+                                       size=(Psize, -1))
         # Set number of pages
         pagenumlist = list()
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)
             pagenumlist.append(int("".join(filter(lambda x: x.isdigit(),
-                                          Page.counter))))
-        valstring=misc.parsePagenum2String(pagenumlist)
+                                                  Page.counter))))
+        valstring = misc.parsePagenum2String(pagenumlist)
         self.WXTextPages.SetValue(valstring)
-        ## Plot parameter dropdown box
+        # Plot parameter dropdown box
         self.PlotParms = self.GetListOfPlottableParms()
         Parmlist = self.PlotParms
         DDtext = wx.StaticText(self.panel, label="Plot parameter ")
         self.WXDropdown = wx.ComboBox(self.panel, -1, "",
-                                size=(Psize,-1), choices=Parmlist,
-                                style=wx.CB_DROPDOWN|wx.CB_READONLY)
+                                      size=(Psize, -1), choices=Parmlist,
+                                      style=wx.CB_DROPDOWN | wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnDropDown, self.WXDropdown)
         self.Bind(wx.EVT_TEXT, self.OnDropDown, self.WXTextPages)
         self.WXDropdown.SetSelection(0)
-        ## Show Average and SD
+        # Show Average and SD
         textavg = wx.StaticText(self.panel, label="Average ")
         textsd = wx.StaticText(self.panel, label="Standard deviation ")
-        self.WXavg = wx.TextCtrl(self.panel, size=(Psize,-1))
-        self.WXsd = wx.TextCtrl(self.panel, size=(Psize,-1))
+        self.WXavg = wx.TextCtrl(self.panel, size=(Psize, -1))
+        self.WXsd = wx.TextCtrl(self.panel, size=(Psize, -1))
         self.WXavg.SetEditable(False)
         self.WXsd.SetEditable(False)
         # Create space for parameters
@@ -132,13 +133,13 @@ class Stat(wx.Frame):
         GridAll.Add(textsd)
         GridAll.Add(self.WXsd)
         #Psizer = wx.BoxSizer(wx.HORIZONTAL)
-        #Psizer.Add(Pagetext)
-        #Psizer.Add(self.WXTextPages)
+        # Psizer.Add(Pagetext)
+        # Psizer.Add(self.WXTextPages)
         #DDsizer = wx.BoxSizer(wx.HORIZONTAL)
-        #DDsizer.Add(DDtext)
-        #DDsizer.Add(self.WXDropdown)
-        #self.topSizer.Add(Psizer)
-        #self.topSizer.Add(DDsizer)
+        # DDsizer.Add(DDtext)
+        # DDsizer.Add(self.WXDropdown)
+        # self.topSizer.Add(Psizer)
+        # self.topSizer.Add(DDsizer)
         self.topSizer.Add(GridAll)
         self.topSizer.Add(self.masterboxsizer)
         self.topSizer.Add(self.btnSave)
@@ -147,19 +148,18 @@ class Stat(wx.Frame):
         self.topSizer.Fit(self.panel)
         px = self.topSizer.GetMinSize()[0]
 
-        ## Plotting panel
+        # Plotting panel
         self.canvas = plot.PlotCanvas(self.sp)
         self.canvas.enableZoom = True
         self.sp.SplitVertically(self.panel, self.canvas, px+5)
-        ## Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
         self.OnDropDown()
 
-
     def GetListOfAllParameters(self, e=None, return_std_checked=False,
-                                page=None):
+                               page=None):
         """ Returns sorted list of parameters.
             If return_std_checked is True, then a second list with
             standart checked parameters is returned.
@@ -203,7 +203,8 @@ class Stat(wx.Frame):
                 checked[ii] = True
         # A list with additional strings that should be default checked
         # if found somewhere in the data.
-        checklist = ["cpp", "duration", "bg rate", "avg.", "Model name", "filename/title"]
+        checklist = ["cpp", "duration", "bg rate",
+                     "avg.", "Model name", "filename/title"]
         for i in range(len(Info)):
             item = Info[i]
             for checkitem in checklist:
@@ -217,12 +218,10 @@ class Stat(wx.Frame):
                 if item[0].count(checkitem):
                     checked[i] = False
 
-
         if return_std_checked:
             return Info, checked
         else:
             return Info
-
 
     def GetListOfPlottableParms(self, e=None, return_values=False,
                                 page=None):
@@ -255,7 +254,6 @@ class Stat(wx.Frame):
         else:
             return parmlist
 
-
     def GetWantedParameters(self):
         """
         Updates self.SaveInfo with all the information that will be
@@ -286,9 +284,9 @@ class Stat(wx.Frame):
         # If pagenumber is larger than 10,
         # pagekeys.sort will not work, because we have strings
         # Define new compare function
-        cmp_func = lambda a: int(a.strip().strip("#"))
+        def cmp_func(a): return int(a.strip().strip("#"))
         pagekeys.sort(key=cmp_func)
-        #for Info in pagekeys:
+        # for Info in pagekeys:
         #    pageinfo = list()
         #    for item in AllInfo[Info]:
         #        for subitem in AllInfo[Info][item]:
@@ -319,7 +317,6 @@ class Stat(wx.Frame):
                     pageinfo.append([label, "NaN"])
             self.SaveInfo.append(pageinfo)
 
-
     def OnCheckboxChecked(self, e="restore"):
         """
             Write boolean data of checked checkboxes to Page variable
@@ -329,7 +326,7 @@ class Stat(wx.Frame):
         # What happens if a checkbox has been checked?
         # We write the data to the Page
         # (it will not be saved in the session).
-        if e=="restore":
+        if e == "restore":
             checklist = self.Page.StatisticsCheckboxes
             if checklist is not None:
                 if len(checklist) <= len(self.Checkboxes):
@@ -341,13 +338,12 @@ class Stat(wx.Frame):
                 checklist.append(cb.GetValue())
                 self.Page.StatisticsCheckboxes = checklist
 
-
     def OnChooseValues(self, event=None):
         """
             Plot the values for the parameter selected by the user.
         """
         Info, checked = self.GetListOfAllParameters(
-                                                return_std_checked=True)
+            return_std_checked=True)
         #headcounter = 0
         #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
@@ -363,10 +359,10 @@ class Stat(wx.Frame):
             #itemcount += 1
             #headcounter += 1
             checkbox = wx.CheckBox(self.panel, label=Info[i][0])
-            #if headcounter <= headlen:
+            # if headcounter <= headlen:
             #    checkbox.SetValue(True)
             # Additionally default checked items
-            #for checkitem in checklist:
+            # for checkitem in checklist:
             #    if item[0].count(checkitem):
             #        checkbox.SetValue(True)
             checkbox.SetValue(checked[i])
@@ -382,14 +378,12 @@ class Stat(wx.Frame):
         self.OnCheckboxChecked("restore")
         self.AllPlotParms = Info
 
-
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnDropDown(self, e=None):
         """ Plot the parameter selected in WXDropdown
@@ -403,7 +397,7 @@ class Stat(wx.Frame):
         strFull = self.WXTextPages.GetValue()
         try:
             PageNumbers = misc.parseString2Pagenum(self, strFull,
-                                                          nodialog=True)
+                                                   nodialog=True)
         except:
             PageNumbers = self.PageNumbers
         else:
@@ -425,12 +419,12 @@ class Stat(wx.Frame):
         plotcurve = list()
         for page in pages:
             pllabel, pldata = self.GetListOfPlottableParms(page=page,
-                                                     return_values=True)
+                                                           return_values=True)
             # Get the labels and make a plot of the parameters
             if len(pllabel)-1 >= DDselid and pllabel[DDselid] == label:
                 x = int(page.counter.strip("#: "))
                 y = pldata[DDselid]
-                plotcurve.append([x,y])
+                plotcurve.append([x, y])
             else:
                 # try to get the label by searching for the first
                 # instance
@@ -438,16 +432,16 @@ class Stat(wx.Frame):
                     if pllabel[k] == label:
                         x = int(page.counter.strip("#: "))
                         y = pldata[k]
-                        plotcurve.append([x,y])
+                        plotcurve.append([x, y])
         # Prepare plotting
         self.canvas.Clear()
         linesig = plot.PolyMarker(plotcurve, size=1.5, marker='circle')
         plotlist = [linesig]
         # average line
         try:
-            avg = np.average(np.array(plotcurve)[:,1])
-            maxpage =  int(np.max(np.array(plotcurve)[:,0]) +1)
-            minpage =  int(np.min(np.array(plotcurve)[:,0]) -1)
+            avg = np.average(np.array(plotcurve)[:, 1])
+            maxpage = int(np.max(np.array(plotcurve)[:, 0]) + 1)
+            minpage = int(np.min(np.array(plotcurve)[:, 0]) - 1)
         except:
             minpage = 0
             maxpage = 0
@@ -461,13 +455,13 @@ class Stat(wx.Frame):
             plotlist.append(lineclear)
             # Update Text control
             self.WXavg.SetValue(str(avg))
-            self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:,1])))
+            self.WXsd.SetValue(str(np.std(np.array(plotcurve)[:, 1])))
         # Draw
         # This causes a memory leak after this function has been
         # called several times with the same large data set.
         # This goes away if only linesig OR lineclear are plotted.
         #
-        #graphics = plot.PlotGraphics(plotlist,
+        # graphics = plot.PlotGraphics(plotlist,
         #                             xLabel='page number',
         #                             yLabel=label)
         graphics = plot.PlotGraphics([linesig],
@@ -477,8 +471,7 @@ class Stat(wx.Frame):
         # Correctly set x-axis
         minticks = 2
         self.canvas.SetXSpec(max(maxpage-minpage, minticks))
-        self.canvas.Draw(graphics, xAxis=(minpage,maxpage))
-
+        self.canvas.Draw(graphics, xAxis=(minpage, maxpage))
 
     def OnPageChanged(self, page, trigger=None):
         """
@@ -500,10 +493,10 @@ class Stat(wx.Frame):
             if self.Page.corr.fit_model.id == page.corr.fit_model.id:
                 return
         if (trigger in ["page_add_finalize"] and
-            self.WXTextPages.GetValue() == "1"):
+                self.WXTextPages.GetValue() == "1"):
             # We probably imported data with statistics window open
             self.PageNumbers = range(1,
-                                  1+self.parent.notebook.GetPageCount())
+                                     1+self.parent.notebook.GetPageCount())
             setstring = misc.parsePagenum2String(self.PageNumbers)
             self.WXTextPages.SetValue(setstring)
 
@@ -517,8 +510,8 @@ class Stat(wx.Frame):
             for i in np.arange(self.parent.notebook.GetPageCount()):
                 Page = self.parent.notebook.GetPage(i)
                 pagenumlist.append(int("".join(filter(lambda x: x.isdigit(),
-                                              Page.counter))))
-            valstring=misc.parsePagenum2String(pagenumlist)
+                                                      Page.counter))))
+            valstring = misc.parsePagenum2String(pagenumlist)
             self.WXTextPages.SetValue(valstring)
         DDselection = self.WXDropdown.GetValue()
         self.Page = page
@@ -536,7 +529,7 @@ class Stat(wx.Frame):
         for i in np.arange(len(self.Checkboxes)):
             self.Checkboxes[i].Destroy()
         del self.Checkboxes
-            #self.Checklabels[i].Destroy() # those cannot be destroyed.
+        # self.Checklabels[i].Destroy() # those cannot be destroyed.
         for i in np.arange(len(self.boxsizerlist)):
             self.boxsizer.Remove(0)
         self.boxsizer.Layout()
@@ -555,17 +548,16 @@ class Stat(wx.Frame):
         (px, py) = self.topSizer.GetMinSize()
         self.sp.SetSashPosition(px+5)
         self.SetMinSize((px+400, py))
-        self.SetSize((np.max([px+400,ax,oldsize[0]]),
-                      np.max([py,ay,oldsize[1]])))
+        self.SetSize((np.max([px+400, ax, oldsize[0]]),
+                      np.max([py, ay, oldsize[1]])))
         # Replot
         self.OnDropDown()
-
 
     def OnSaveTable(self, event=None):
         dirname = self.parent.dirname
         dlg = wx.FileDialog(self.parent, "Choose file to save", dirname,
-                "", "Text file (*.txt)|*.txt;*.TXT",
-                wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+                            "", "Text file (*.txt)|*.txt;*.TXT",
+                            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetPath()
@@ -646,18 +638,18 @@ class Stat(wx.Frame):
         """
 
         startswith_sort = [
-                           u"avg. signal",
-                           u"n",
-                           u"T",
-                           u"τ_trip",
-                           u"F",
-                           u"C",
-                           u"D",
-                           u"τ",
-                           u"τ_diff",
-                           u"alpha",
-                           u"SP",
-                           ]
+            u"avg. signal",
+            u"n",
+            u"T",
+            u"τ_trip",
+            u"F",
+            u"C",
+            u"D",
+            u"τ",
+            u"τ_diff",
+            u"alpha",
+            u"SP",
+        ]
 
         otherparms = list()
 
@@ -675,7 +667,6 @@ class Stat(wx.Frame):
         otherparms.sort()
         # special offsets to distinguish "T" and "Type":
         special_off_start = ["Type", "Fit"]
-
 
         def rate_tuple(item):
             x = item[0]
@@ -726,13 +717,12 @@ class Stat(wx.Frame):
                 if x.startswith(p):
                     r += 300
 
-            if r==0:
+            if r == 0:
                 r = 10000
 
             return r
 
-
-        def compare(x,y):
+        def compare(x, y):
             """
             rates x and y.
             returns -1, 0, 1 required for common list sort

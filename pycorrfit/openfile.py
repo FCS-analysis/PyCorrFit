@@ -16,8 +16,6 @@ import numpy as np
 import yaml
 
 # These imports are required for loading data
-from .readfiles import Filetypes  # @UnusedImport
-from .readfiles import BGFiletypes  # @UnusedImport
 from .trace import Trace
 
 from ._version import version as __version__
@@ -82,7 +80,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 # As of version 0.7.4 we save chi2 and shared pages -global fit
                 Infodict["Supplements"][idp[0]]["Chi sq"] = idp[2]
                 Infodict["Supplements"][idp[0]]["Global Share"] = idp[3]
-    ## Preferences: Reserved for a future version of PyCorrFit :)
+    # Preferences: Reserved for a future version of PyCorrFit :)
     prefname = "Preferences.yaml"
     try:
         Arc.getinfo(prefname)
@@ -104,19 +102,21 @@ def LoadSessionData(sessionfile, parameters_only=False):
             # No more functions to import
             key = 8000
         else:
-            funcfile =  Arc.open(funcfilename)
+            funcfile = Arc.open(funcfilename)
             Infodict["External Functions"][key] = funcfile.read()
             funcfile.close()
-            key=key+1
+            key = key+1
     # Get the correlation arrays
     Infodict["Correlations"] = dict()
     for i in np.arange(len(Infodict["Parameters"])):
         # The *number* is used to identify the correct file
-        number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+        number = str(Infodict["Parameters"][i][0]
+                     ).strip().strip(":").strip("#")
         pageid = int(number)
         expfilename = "data"+number+".csv"
         expfile = Arc.open(expfilename, 'r')
-        readdata = csv.reader(io.StringIO(expfile.read().decode()), delimiter=',')
+        readdata = csv.reader(io.StringIO(
+            expfile.read().decode()), delimiter=',')
         dataexp = list()
         tau = list()
         if str(readdata.__next__()[0]) == "# tau only":
@@ -132,7 +132,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 if (str(row[0])[0:1] != '#'):
                     dataexp.append((float(row[0]), float(row[1])))
             dataexp = np.array(dataexp)
-            tau = dataexp[:,0]
+            tau = dataexp[:, 0]
         Infodict["Correlations"][pageid] = [tau, dataexp]
         del readdata
         expfile.close()
@@ -140,7 +140,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
     Infodict["Traces"] = dict()
     for i in np.arange(len(Infodict["Parameters"])):
         # The *number* is used to identify the correct file
-        number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+        number = str(Infodict["Parameters"][i][0]
+                     ).strip().strip(":").strip("#")
         pageid = int(number)
         # Find out, if we have a cross correlation data type
         IsCross = False
@@ -154,7 +155,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
         else:
             # Cross correlation uses two traces
             tracefilenames = ["trace"+number+"A.csv",
-                              "trace"+number+"B.csv" ]
+                              "trace"+number+"B.csv"]
         thistrace = list()
         for tracefilename in tracefilenames:
             try:
@@ -163,7 +164,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
                 pass
             else:
                 tracefile = Arc.open(tracefilename, 'r')
-                traceread = csv.reader(io.StringIO(tracefile.read().decode()), delimiter=',')
+                traceread = csv.reader(io.StringIO(
+                    tracefile.read().decode()), delimiter=',')
                 singletrace = list()
                 for row in traceread:
                     # Exclude commentaries
@@ -190,7 +192,8 @@ def LoadSessionData(sessionfile, parameters_only=False):
         commentfile = Arc.open(commentfilename, 'r')
         Infodict["Comments"] = dict()
         for i in np.arange(len(Infodict["Parameters"])):
-            number = str(Infodict["Parameters"][i][0]).strip().strip(":").strip("#")
+            number = str(Infodict["Parameters"][i][0]
+                         ).strip().strip(":").strip("#")
             pageid = int(number)
             # Strip line ending characters for all the Pages.
             Infodict["Comments"][pageid] = commentfile.readline().strip()
@@ -211,19 +214,22 @@ def LoadSessionData(sessionfile, parameters_only=False):
         # Open the file
         Infodict["Backgrounds"] = list()
         bgfile = Arc.open(bgfilename, 'r')
-        bgread = csv.reader(io.StringIO(bgfile.read().decode()), delimiter='\t')
+        bgread = csv.reader(io.StringIO(
+            bgfile.read().decode()), delimiter='\t')
         i = 0
         for bgrow in bgread:
             bgtracefilename = "bg_trace"+str(i)+".csv"
             bgtracefile = Arc.open(bgtracefilename, 'r')
-            bgtraceread = csv.reader(io.StringIO(bgtracefile.read().decode()), delimiter=',')
+            bgtraceread = csv.reader(io.StringIO(
+                bgtracefile.read().decode()), delimiter=',')
             bgtrace = list()
             for row in bgtraceread:
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
                     bgtrace.append((np.float(row[0]), np.float(row[1])))
             bgtrace = np.array(bgtrace)
-            newbackground = Trace(trace=bgtrace, name=str(bgrow[1]), countrate=np.float(bgrow[0]))
+            newbackground = Trace(trace=bgtrace, name=str(
+                bgrow[1]), countrate=np.float(bgrow[0]))
             Infodict["Backgrounds"].append(newbackground)
             i = i + 1
         bgfile.close()
@@ -257,7 +263,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
                     Wdata.append(np.float(row[0]))
             Weightsdict[pageid][Nkey] = np.array(Wdata)
         Infodict["External Weights"] = Weightsdict
-    ## Preferences
+    # Preferences
     preferencesname = "preferences.cfg"
     try:
         # Raises KeyError, if file is not present:
@@ -276,7 +282,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
             key = key.strip()
             value = value.strip()
             if value.count(","):
-                value = [ v.strip() for v in value.split(",")]
+                value = [v.strip() for v in value.split(",")]
             prefdict[key] = value
         Infodict["Preferences"] = prefdict
     Arc.close()
@@ -320,7 +326,7 @@ def SaveSessionData(sessionfile, Infodict):
     parmsfilename = "Parameters.yaml"
     # Parameters have to be floats in lists
     # in order for yaml.safe_load to work.
-    Parms =  Infodict["Parameters"]
+    Parms = Infodict["Parameters"]
     ParmsKeys = list(Parms.keys())
     ParmsKeys.sort()
     Parmlist = list()
@@ -328,11 +334,11 @@ def SaveSessionData(sessionfile, Infodict):
         # Make sure we do not accidently save arrays.
         # This would not work correctly with yaml.
         # Parameters
-        Parms[idparm][2] = np.array(Parms[idparm][2],dtype="float").tolist()
+        Parms[idparm][2] = np.array(Parms[idparm][2], dtype="float").tolist()
         # Parameter varied
-        Parms[idparm][3] = np.array(Parms[idparm][3],dtype="bool").tolist()
+        Parms[idparm][3] = np.array(Parms[idparm][3], dtype="bool").tolist()
         # Channel selection
-        Parms[idparm][4] = np.array(Parms[idparm][4],dtype="int").tolist()
+        Parms[idparm][4] = np.array(Parms[idparm][4], dtype="int").tolist()
         # Background selection
         for ii in range(len(Parms[idparm][6])):
             if Parms[idparm][6][ii] is not None:
@@ -341,7 +347,7 @@ def SaveSessionData(sessionfile, Infodict):
         if Parms[idparm][8] is not None:
             Parms[idparm][8] = int(Parms[idparm][8])
         # Fit parameter range
-        Parms[idparm][9] = np.array(Parms[idparm][9],dtype="float").tolist()
+        Parms[idparm][9] = np.array(Parms[idparm][9], dtype="float").tolist()
         Parmlist.append(Parms[idparm])
 
     try:
@@ -365,7 +371,7 @@ def SaveSessionData(sessionfile, Infodict):
     os.remove(os.path.join(tempdir, parmsfilename))
     # Supplementary data (errors of fit)
     errsfilename = "Supplements.yaml"
-    Sups =  Infodict["Supplements"]
+    Sups = Infodict["Supplements"]
     SupKeys = list(Sups.keys())
     SupKeys.sort()
     Suplist = list()
@@ -381,7 +387,7 @@ def SaveSessionData(sessionfile, Infodict):
     # Save external functions
     for key in Infodict["External Functions"].keys():
         funcfilename = "model_"+str(key)+".txt"
-        funcfile =  codecs.open(funcfilename, 'w', encoding="utf-8")
+        funcfile = codecs.open(funcfilename, 'w', encoding="utf-8")
         funcfile.write(Infodict["External Functions"][key])
         funcfile.close()
         Arc.write(funcfilename)
@@ -404,9 +410,9 @@ def SaveSessionData(sessionfile, Infodict):
             # Otherwise, the experimental data will not be saved entirely,
             # if it has been cropped. Because tau might be smaller, than
             # exp[:,0] --> tau = exp[startcrop:endcrop,0]
-            for j in np.arange(len(exp[:,0])):
-                dataWriter.writerow(["%.20e" % exp[j,0],
-                                     "%.20e" % exp[j,1]])
+            for j in np.arange(len(exp[:, 0])):
+                dataWriter.writerow(["%.20e" % exp[j, 0],
+                                     "%.20e" % exp[j, 1]])
         else:
             # Only write tau
             dataWriter.writerow(['# tau'+' only'])
@@ -425,12 +431,12 @@ def SaveSessionData(sessionfile, Infodict):
         if Infodict["Traces"][pageid] is not None and len(Infodict["Traces"][pageid]) != 0:
             if Parms[pageid][7] is True:
                 # We have cross correlation: save two traces
-                ## A
+                # A
                 tracefilenamea = "trace"+number+"A.csv"
                 tracefile = open(tracefilenamea, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = Infodict["Traces"][pageid][0][:,0]
-                rate = Infodict["Traces"][pageid][0][:,1]
+                time = Infodict["Traces"][pageid][0][:, 0]
+                rate = Infodict["Traces"][pageid][0][:, 1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
@@ -441,7 +447,7 @@ def SaveSessionData(sessionfile, Infodict):
                 # Add to archive
                 Arc.write(tracefilenamea)
                 os.remove(os.path.join(tempdir, tracefilenamea))
-                ## B (only if it exists...)
+                # B (only if it exists...)
                 try:
                     _ = Infodict["Traces"][pageid][1]
                 except IndexError:
@@ -450,8 +456,8 @@ def SaveSessionData(sessionfile, Infodict):
                     tracefilenameb = "trace"+number+"B.csv"
                     tracefile = open(tracefilenameb, 'w')
                     traceWriter = csv.writer(tracefile, delimiter=',')
-                    time = Infodict["Traces"][pageid][1][:,0]
-                    rate = Infodict["Traces"][pageid][1][:,1]
+                    time = Infodict["Traces"][pageid][1][:, 0]
+                    rate = Infodict["Traces"][pageid][1][:, 1]
                     # Names of Columns
                     traceWriter.writerow(['# time', 'count rate'])
                     # Actual Data
@@ -467,8 +473,8 @@ def SaveSessionData(sessionfile, Infodict):
                 tracefilename = "trace"+number+".csv"
                 tracefile = open(tracefilename, 'w')
                 traceWriter = csv.writer(tracefile, delimiter=',')
-                time = Infodict["Traces"][pageid][0][:,0]
-                rate = Infodict["Traces"][pageid][0][:,1]
+                time = Infodict["Traces"][pageid][0][:, 0]
+                rate = Infodict["Traces"][pageid][0][:, 1]
                 # Names of Columns
                 traceWriter.writerow(['# time', 'count rate'])
                 # Actual Data
@@ -496,7 +502,7 @@ def SaveSessionData(sessionfile, Infodict):
     commentfile.close()
     Arc.write(commentfilename)
     os.remove(os.path.join(tempdir, commentfilename))
-    ## Save Background information:
+    # Save Background information:
     Background = Infodict["Backgrounds"]
     if len(Background) > 0:
         # We do not use a comma separated, but a tab separated file,
@@ -505,15 +511,16 @@ def SaveSessionData(sessionfile, Infodict):
         bgfile = open(bgfilename, 'w')
         bgwriter = csv.writer(bgfile, delimiter='\t')
         for i in np.arange(len(Background)):
-            bgwriter.writerow([str(Background[i].countrate), Background[i].name])
+            bgwriter.writerow(
+                [str(Background[i].countrate), Background[i].name])
             # Traces
             bgtracefilename = "bg_trace"+str(i)+".csv"
             bgtracefile = open(bgtracefilename, 'w')
             bgtraceWriter = csv.writer(bgtracefile, delimiter=',')
             bgtraceWriter.writerow(['# time', 'count rate'])
             # Actual Data
-            time = Background[i][:,0]
-            rate = Background[i][:,1]
+            time = Background[i][:, 0]
+            rate = Background[i][:, 1]
             for j in np.arange(len(time)):
                 bgtraceWriter.writerow(["%.20e" % time[j],
                                         "%.20e" % rate[j]])
@@ -524,7 +531,7 @@ def SaveSessionData(sessionfile, Infodict):
         bgfile.close()
         Arc.write(bgfilename)
         os.remove(os.path.join(tempdir, bgfilename))
-    ## Save External Weights information
+    # Save External Weights information
     WeightedPageID = list(Infodict["External Weights"].keys())
     WeightedPageID.sort()
     WeightFilename = "externalweights.txt"
@@ -539,7 +546,7 @@ def SaveSessionData(sessionfile, Infodict):
         for Nkey in NestWeights:
             WeightWriter.writerow([number, str(Nkey).strip()])
             # Add data to a File
-            WeightDataFilename = "externalweights_data"+number+\
+            WeightDataFilename = "externalweights_data"+number +\
                                  "_"+str(Nkey).strip()+".csv"
             WeightDataFile = open(WeightDataFilename, 'w')
             WeightDataWriter = csv.writer(WeightDataFile)
@@ -552,7 +559,7 @@ def SaveSessionData(sessionfile, Infodict):
     WeightFile.close()
     Arc.write(WeightFilename)
     os.remove(os.path.join(tempdir, WeightFilename))
-    ## Preferences
+    # Preferences
     preferencesname = "preferences.cfg"
     with codecs.open(preferencesname, 'w', encoding="utf-8") as fd:
         for key in Infodict["Preferences"]:
@@ -564,7 +571,7 @@ def SaveSessionData(sessionfile, Infodict):
             fd.write("{} = {}\n".format(key, value))
     Arc.write(preferencesname)
     os.remove(os.path.join(tempdir, preferencesname))
-    ## Readme
+    # Readme
     rmfilename = "Readme.txt"
     rmfile = codecs.open(rmfilename, 'w', encoding="utf-8")
     rmfile.write(ReadmeSession)
@@ -575,7 +582,7 @@ def SaveSessionData(sessionfile, Infodict):
     Arc.close()
     # Move archive to destination directory
     shutil.move(os.path.join(tempdir, filename),
-                os.path.join(dirname, filename) )
+                os.path.join(dirname, filename))
     # Go to destination directory
     os.chdir(returnWD)
     os.rmdir(tempdir)
@@ -607,7 +614,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     the total particle number `n`.
     """
     openedfile = codecs.open(exportfile, 'w', encoding='utf-8')
-    ## First, some doc text
+    # First, some doc text
     openedfile.write(ReadmeCSV.replace('\n', '\r\n'))
     # The info
     for line in page_info.splitlines():
@@ -616,13 +623,13 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     # Get all the data we need from the Page
     # Modeled data
     corr = correlation
-    mod = corr.modeled_plot[:,1]
+    mod = corr.modeled_plot[:, 1]
 
     if corr.correlation is not None:
         # Experimental data
-        tau = corr.correlation_plot[:,0]
-        exp = corr.correlation_plot[:,1]
-        res = corr.residuals_plot[:,0]
+        tau = corr.correlation_plot[:, 0]
+        exp = corr.correlation_plot[:, 1]
+        res = corr.residuals_plot[:, 0]
 
         # Plotting! Because we only export plotted area.
         if corr.is_weighted_fit:
@@ -636,9 +643,9 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
                 pass
 
             elif len(weight) != len(exp):
-                text = "Weights have not been calculated for the "+\
-                       "area you want to export. Pressing 'Fit' "+\
-                       "again should solve this issue. Weights will "+\
+                text = "Weights have not been calculated for the " +\
+                       "area you want to export. Pressing 'Fit' " +\
+                       "again should solve this issue. Weights will " +\
                        "not be saved."
                 warnings.warn(text)
                 weight = None
@@ -653,22 +660,22 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
     # PyCorrFit thinks in [ms], but we will save as [s]
     timefactor = 0.001
     tau = [timefactor * t for t in tau]
-    ## Now we want to write all that data into the file
+    # Now we want to write all that data into the file
     # This is for csv writing:
-    ## Correlation curve
+    # Correlation curve
     dataWriter = csv.writer(openedfile, delimiter='\t')
     if exp is not None:
-        header = '# Lag time [s]'+"\t"+ \
-                 'Experimental correlation'+"\t"+ \
-                 'Fitted correlation'+ "\t"+ \
+        header = '# Lag time [s]'+"\t" + \
+                 'Experimental correlation'+"\t" + \
+                 'Fitted correlation' + "\t" + \
                  'Residuals'+"\r\n"
         data = [tau, exp, mod, res]
         if corr.is_weighted_fit and weight is not None:
             header = "{} \t Weights [{}] \r\n".format(
-                      header.strip(), weightname)
+                header.strip(), weightname)
             data.append(weight)
     else:
-        header = '# Lag time [s]'+"\t"+ \
+        header = '# Lag time [s]'+"\t" + \
                  'Correlation function'+"\r\n"
         data = [tau, mod]
     # Write header
@@ -681,7 +688,7 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             rowcoli = "{:.10e}".format(data[j][i])
             datarow.append(rowcoli)
         dataWriter.writerow(datarow)
-    ## Trace
+    # Trace
     # Only save the trace if user wants us to:
     if savetrace:
         # We will also save the trace in [s]
@@ -690,11 +697,11 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace
             openedfile.write('#\r\n#\r\n# BEGIN TRACE\r\n#\r\n')
             # Columns
-            time = corr.traces[0][:,0] * timefactor
-            intensity = corr.traces[0][:,1]
+            time = corr.traces[0][:, 0] * timefactor
+            intensity = corr.traces[0][:, 1]
             # Write
             openedfile.write('# Time [s]'+"\t"
-                                 'Intensity trace [kHz]'+" \r\n")
+                             'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
                 dataWriter.writerow(["{:.10e}".format(time[i]),
                                      "{:.10e}".format(intensity[i])])
@@ -703,12 +710,12 @@ def ExportCorrelation(exportfile, correlation, page_info, savetrace=True):
             # Mark beginning of Trace B
             openedfile.write('#\r\n#\r\n# BEGIN SECOND TRACE\r\n#\r\n')
             # Columns
-            time = corr.traces[1][:,0] * timefactor
-            intensity = corr.traces[1][:,1]
+            time = corr.traces[1][:, 0] * timefactor
+            intensity = corr.traces[1][:, 1]
 
             # Write
             openedfile.write('# Time [s]'+"\t"
-                                 'Intensity trace [kHz]'+" \r\n")
+                             'Intensity trace [kHz]'+" \r\n")
             for i in np.arange(len(time)):
                 dataWriter.writerow(["{:.10e}".format(time[i]),
                                      "{:.10e}".format(intensity[i])])

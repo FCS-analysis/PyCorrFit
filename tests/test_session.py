@@ -16,10 +16,11 @@ examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_basic():
     """This is a very rudimentary test for the session handling"""
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],
@@ -32,7 +33,7 @@ def test_basic():
     # crop triplet data
     corr.fit_ival[0] = 8
     pcf.Fit(corr)
-    
+
     tmpdir = tempfile.mkdtemp(prefix="pycorrfit_tests_")
     path = pathlib.Path(tmpdir) / "session.pcfs"
 
@@ -64,22 +65,22 @@ def test_basic():
             1: {"FitErr": fiterr,
                 "Chi sq": float(corr.fit_results["chi2"]),
                 "Global Share": [],
-            }},
+                }},
         "External Functions": {},
         "Traces": {},
         "Comments": {"Session": "No comment."},
         "Backgrounds": {},
         "External Weights": {},
         "Preferences": {},
-        }
-    
+    }
+
     pcf.openfile.SaveSessionData(sessionfile=str(path),
                                  Infodict=Infodict)
-    
+
     ldt = pcf.openfile.LoadSessionData(str(path))
-    
+
     # lag time only, shape (N,)
-    assert np.allclose(data["Correlation"][0][:,0], ldt["Correlations"][1][0])
+    assert np.allclose(data["Correlation"][0][:, 0], ldt["Correlations"][1][0])
     # lag time and correlation, shape (N, 2)
     assert np.allclose(corr.correlation, ldt["Correlations"][1][1])
     # parameters
@@ -87,7 +88,7 @@ def test_basic():
     assert np.allclose(corr.fit_parameters, ldt["Parameters"][0][2])
     assert np.allclose(corr.fit_parameters_variable, ldt["Parameters"][0][3])
     assert np.allclose(corr.fit_ival, ldt["Parameters"][0][4])
-    
+
     shutil.rmtree(tmpdir, ignore_errors=True)
 
 

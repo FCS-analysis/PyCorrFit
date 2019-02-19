@@ -7,7 +7,7 @@ from .cp_mix import double_pnum
 
 
 # 2D + 2D + Triplet Gauß
-    # Model 6031
+# Model 6031
 def CF_Gxyz_gauss_2D2DT(parms, tau):
     u""" Two-component, two-dimensional diffusion with a Gaussian laser
         profile, including a triplet component.
@@ -37,24 +37,24 @@ def CF_Gxyz_gauss_2D2DT(parms, tau):
         [7] offset
         *tau* - lag time
     """
-    n=parms[0]
-    taud1=parms[1]
-    taud2=parms[2]
-    F=parms[3]
-    alpha=parms[4]
-    tautrip=parms[5]
-    T=parms[6]
-    off=parms[7]
+    n = parms[0]
+    taud1 = parms[1]
+    taud2 = parms[2]
+    F = parms[3]
+    alpha = parms[4]
+    tautrip = parms[5]
+    T = parms[6]
+    off = parms[7]
 
     g = double_pnum(n=n,
                     F1=F,
                     alpha=alpha,
                     comp1=twod,
                     comp2=twod,
-                    kwargs1={"tau":tau,
-                             "taudiff":taud1},
-                    kwargs2={"tau":tau,
-                             "taudiff":taud2},
+                    kwargs1={"tau": tau,
+                             "taudiff": taud1},
+                    kwargs2={"tau": tau,
+                             "taudiff": taud2},
                     )
 
     tr = trip(tau=tau, T=T, tautrip=tautrip)
@@ -84,65 +84,65 @@ def supplements(parms, countrate=None):
 
 
 parms = [
-            25,      # n
-            5,       # taud1
-            1000,    # taud2
-            0.5,     # F
-            1.0,     # alpha
-            0.001,   # tautrip
-            0.01,    # T
-            0.0      # offset
-            ] 
+    25,      # n
+    5,       # taud1
+    1000,    # taud2
+    0.5,     # F
+    1.0,     # alpha
+    0.001,   # tautrip
+    0.01,    # T
+    0.0      # offset
+]
 
-## Boundaries
+# Boundaries
 # strictly positive
 boundaries = [[0, np.inf]]*len(parms)
 # F
-boundaries[3] = [0,.9999999999999]
+boundaries[3] = [0, .9999999999999]
 # T
-boundaries[6] = [0,.9999999999999]
+boundaries[6] = [0, .9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6031,
-             name="Separate 2D diffusion with triplet (confocal)",
-             comp="T+2D+2D",
-             mtype="Confocal (Gaussian) and triplet",
-             fctn=CF_Gxyz_gauss_2D2DT,
-             par_labels=[
-                            u"n",
-                            u"τ"+u"\u2081"+u" [ms]",
-                            u"τ"+u"\u2082"+u" [ms]",
-                            u"F"+u"\u2081", 
-                            u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                            u"τ_trip [ms]",
-                            u"T",
-                            u"offset"
-                            ],
-             par_values=parms,
-             par_vary=[True, True, True, True, False, False, False, False],
-             par_boundaries=boundaries,
-             par_constraints=[[2, ">", 1], [5, "<", 1]],
-             par_hr_labels=[
-                            u"n",
-                            u"τ"+u"\u2081"+u" [ms]",
-                            u"τ"+u"\u2082"+u" [ms]",
-                            u"F"+u"\u2081", 
-                            u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                            u"τ_trip [µs]",
-                            u"T",
-                            u"offset"
-                            ],
-             par_hr_factors=[
-                            1.,     # "n",
-                            1.,     # "τ"+u"\u2081"+" [ms]",
-                            1.,     # "τ"+u"\u2082"+" [ms]",
-                            1.,     # "F"+u"\u2081", 
-                            1.,     # u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")", 
-                            1000.,  # "τ_trip [µs]",
-                            1.,     # "T",
-                            1.      # "offset"
-                            ],
-             supplementary_method=supplements
-            )
+    modelid=6031,
+    name="Separate 2D diffusion with triplet (confocal)",
+    comp="T+2D+2D",
+    mtype="Confocal (Gaussian) and triplet",
+    fctn=CF_Gxyz_gauss_2D2DT,
+    par_labels=[
+        u"n",
+        u"τ"+u"\u2081"+u" [ms]",
+        u"τ"+u"\u2082"+u" [ms]",
+        u"F"+u"\u2081",
+        u"\u03b1"+u" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+        u"τ_trip [ms]",
+        u"T",
+        u"offset"
+    ],
+    par_values=parms,
+    par_vary=[True, True, True, True, False, False, False, False],
+    par_boundaries=boundaries,
+    par_constraints=[[2, ">", 1], [5, "<", 1]],
+    par_hr_labels=[
+        u"n",
+        u"τ"+u"\u2081"+u" [ms]",
+        u"τ"+u"\u2082"+u" [ms]",
+        u"F"+u"\u2081",
+        u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+        u"τ_trip [µs]",
+        u"T",
+        u"offset"
+    ],
+    par_hr_factors=[
+        1.,     # "n",
+        1.,     # "τ"+u"\u2081"+" [ms]",
+        1.,     # "τ"+u"\u2082"+" [ms]",
+        1.,     # "F"+u"\u2081",
+        1.,     # u"\u03b1"+" (q"+u"\u2082"+"/q"+u"\u2081"+")",
+        1000.,  # "τ_trip [µs]",
+        1.,     # "T",
+        1.      # "offset"
+    ],
+    supplementary_method=supplements
+)

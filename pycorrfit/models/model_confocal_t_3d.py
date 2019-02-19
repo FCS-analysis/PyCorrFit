@@ -40,7 +40,7 @@ def CF_Gxyz_blink(parms, tau):
 
     AA = trip(tau, tautrip, T)
     BB = threed(tau, taudiff, SP)
-    
+
     G = off + 1/n * AA * BB
     return G
 
@@ -58,37 +58,37 @@ def supplements(parms, countrate=None):
 
 parms = [4.0, 0.2, 0.001, 0.4, 5.0, 0.0]
 
-## Boundaries
+# Boundaries
 boundaries = [[0, np.inf]]*len(parms)
 # T
-boundaries[1] = [0,.9999999999999]
+boundaries[1] = [0, .9999999999999]
 boundaries[-1] = [-np.inf, np.inf]
 
 
 model_setup(
-             modelid=6011,
-             name="3D diffusion with triplet (confocal)",
-             comp="T+3D",
-             mtype="Confocal (Gaussian) and triplet",
-             fctn=CF_Gxyz_blink,
-             par_labels=[
-                            u"n",
-                            u"T",
-                            u"τ_trip [ms]",
-                            u"τ_diff [ms]",
-                            u"SP",
-                            u"offset"],
-             par_values=parms,
-             par_vary=[True, True, True, True, False, False],
-             par_boundaries=boundaries,
-             par_constraints=[[3, ">", 2]],
-             par_hr_labels=[
-                            u"n",
-                            u"T",
-                            u"τ_trip [µs]",
-                            u"τ_diff [ms]",
-                            u"SP",
-                            u"offset"],
-             par_hr_factors=[1., 1., 1000., 1., 1., 1.],
-             supplementary_method=supplements
-            )
+    modelid=6011,
+    name="3D diffusion with triplet (confocal)",
+    comp="T+3D",
+    mtype="Confocal (Gaussian) and triplet",
+    fctn=CF_Gxyz_blink,
+    par_labels=[
+        u"n",
+        u"T",
+        u"τ_trip [ms]",
+        u"τ_diff [ms]",
+        u"SP",
+        u"offset"],
+    par_values=parms,
+    par_vary=[True, True, True, True, False, False],
+    par_boundaries=boundaries,
+    par_constraints=[[3, ">", 2]],
+    par_hr_labels=[
+        u"n",
+        u"T",
+        u"τ_trip [µs]",
+        u"τ_diff [ms]",
+        u"SP",
+        u"offset"],
+    par_hr_factors=[1., 1., 1000., 1., 1., 1.],
+    supplementary_method=supplements
+)

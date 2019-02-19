@@ -24,6 +24,11 @@ import sys
 
 import numpy as np
 
+from .parmrange import RangeSelector
+from .comment import EditComment
+from .chooseimport import ChooseImportTypesModel
+from .chooseimport import ChooseImportTypes
+
 from . import datarange
 from . import background
 from . import overlaycurves
@@ -38,42 +43,37 @@ from . import trace
 # Load all of the classes
 # This also defines the order of the tools in the menu
 ImpA = [
-        ["datarange", "SelectChannels"],
-        ["overlaycurves", "Wrapper_Tools"],
-        ["batchcontrol", "BatchCtrl"],
-        ["globalfit", "GlobalFit"],
-        ["average", "Average"],
-        ["background", "BackgroundCorrection"]
-       ]
+    ["datarange", "SelectChannels"],
+    ["overlaycurves", "Wrapper_Tools"],
+    ["batchcontrol", "BatchCtrl"],
+    ["globalfit", "GlobalFit"],
+    ["average", "Average"],
+    ["background", "BackgroundCorrection"]
+]
 
 ImpB = [
-        ["trace", "ShowTrace"],
-        ["statistics", "Stat"],
-        ["info", "ShowInfo"],
-        ["simulation", "Slide"]
-       ]
+    ["trace", "ShowTrace"],
+    ["statistics", "Stat"],
+    ["info", "ShowInfo"],
+    ["simulation", "Slide"]
+]
 
 ModuleActive = list()
 ToolsActive = list()
 for i in np.arange(len(ImpA)):
     # We have to add "tools." because this is a relative import
-    ModuleActive.append(__import__(ImpA[i][0], globals(), locals(), [ImpA[i][1]], 1))
+    ModuleActive.append(__import__(
+        ImpA[i][0], globals(), locals(), [ImpA[i][1]], 1))
     ToolsActive.append(getattr(ModuleActive[i], ImpA[i][1]))
 
 ModulePassive = list()
 ToolsPassive = list()
 for i in np.arange(len(ImpB)):
-    ModulePassive.append(__import__(ImpB[i][0], globals(), locals(), [ImpB[i][1]], 1))
+    ModulePassive.append(__import__(
+        ImpB[i][0], globals(), locals(), [ImpB[i][1]], 1))
     ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
-    #ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
+    # ModulePassive.append(importlib.import_module("tools."+ImpB[i][0]))
     #ToolsPassive.append(getattr(ModulePassive[i], ImpB[i][1]))
-
-# This is in the file menu and not needed in the dictionaries below.
-from .chooseimport import ChooseImportTypes
-from .chooseimport import ChooseImportTypesModel
-from .comment import EditComment
-# the "special" tool RangeSelector
-from .parmrange import RangeSelector
 
 ToolDict = dict()
 ToolDict["A"] = ToolsActive
@@ -93,4 +93,3 @@ for i in np.arange(len(ImpB)):
 ToolName = dict()
 ToolName["A"] = NameActive
 ToolName["P"] = NamePassive
-

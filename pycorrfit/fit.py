@@ -7,9 +7,14 @@ import numpy as np
 import scipy.interpolate as spintp
 
 
+class StuckParameterWarning(UserWarning):
+    pass
+
+
 class Constraint(object):
     """ Class to translate fit constraints to lmfit syntax.
     """
+
     def __init__(self, constraint, fit_bool, fit_bounds, fit_values):
         """
         Parameters
@@ -45,7 +50,7 @@ class Constraint(object):
         """
         Returns list of dict for each parameter.
         """
-        parms = [ it for it in self.constraint if isinstance(it, int)]
+        parms = [it for it in self.constraint if isinstance(it, int)]
         id2 = self.constraint.index(parms[1])
 
         p1 = {"id": parms[0],
@@ -56,7 +61,7 @@ class Constraint(object):
 
         p2 = {"id": parms[1],
               "bool": self.fit_bool[parms[1]],
-              "sign": ( +1 if id2==2 else -1),
+              "sign": (+1 if id2 == 2 else -1),
               "value": self.fit_values[parms[1]]
               }
 
@@ -64,7 +69,7 @@ class Constraint(object):
 
     @property
     def operator(self):
-        strval = [ it for it in self.constraint if not isinstance(it, int)]
+        strval = [it for it in self.constraint if not isinstance(it, int)]
         return strval[0]
 
     @property
@@ -153,46 +158,51 @@ class Constraint(object):
 
         if p1["bool"] and p2["bool"]:
             if op == "<":
-                #p1 < (-)p2 + 1.2
-                #-> p1 = (-)p2 - d12 + 1.2
-                #-> d12 = (-)p2 - p1 + 1.2
-                #-> d12 > 0
+                # p1 < (-)p2 + 1.2
+                # -> p1 = (-)p2 - d12 + 1.2
+                # -> d12 = (-)p2 - p1 + 1.2
+                # -> d12 > 0
                 deltaname = "delta_{}_{}".format(p1["id"], p2["id"])
                 kwdelt = {}
                 kwdelt["name"] = deltaname
-                kwdelt["value"] = p2["bool"]*self.fit_values[p2["id"]] - self.fit_values[p1["id"]]
+                kwdelt["value"] = p2["bool"] * \
+                    self.fit_values[p2["id"]] - self.fit_values[p1["id"]]
                 kwdelt["vary"] = True
-                kwdelt["min"] = 0 # note: enforces "<=" (not "<")
+                kwdelt["min"] = 0  # note: enforces "<=" (not "<")
                 kwdelt["max"] = np.inf
 
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
                 # this condition deals with negative numbers
                 kwp1["expr"] = "{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
-                                COMP="{}*parm{:04d}-{}+{:.14f}".format(p2["sign"], p2["id"], deltaname, ofs),
-                                MIN=self.fit_bounds[p1["id"]][0],
-                                MAX=self.fit_bounds[p1["id"]][1])
+                    COMP="{}*parm{:04d}-{}+{:.14f}".format(
+                        p2["sign"], p2["id"], deltaname, ofs),
+                    MIN=self.fit_bounds[p1["id"]][0],
+                    MAX=self.fit_bounds[p1["id"]][1])
                 kwargs = [kwdelt, kwp1]
             elif op == ">":
-                #p1 > (-)p2 + 1.2
-                #-> p1 = (-)p2 + d12 + 1.2
-                #-> d12 = p1 - (-)p2  - 1.2
-                #-> d12 > 0
+                # p1 > (-)p2 + 1.2
+                # -> p1 = (-)p2 + d12 + 1.2
+                # -> d12 = p1 - (-)p2  - 1.2
+                # -> d12 > 0
                 deltaname = "delta_{}_{}".format(p1["id"], p2["id"])
                 kwdelt = {}
                 kwdelt["name"] = deltaname
-                kwdelt["value"] = self.fit_values[p1["id"]] - p2["bool"]*self.fit_values[p2["id"]]
+                kwdelt["value"] = self.fit_values[p1["id"]] - \
+                    p2["bool"]*self.fit_values[p2["id"]]
                 kwdelt["vary"] = True
-                kwdelt["min"] = 0 # note: enforces ">=" (not ">")
-                kwdelt["max"] = np.inf #self.fit_bounds[p1["id"]][1] + max(-p2["sign"]*self.fit_bounds[p2["id"]]) - ofs
+                kwdelt["min"] = 0  # note: enforces ">=" (not ">")
+                # self.fit_bounds[p1["id"]][1] + max(-p2["sign"]*self.fit_bounds[p2["id"]]) - ofs
+                kwdelt["max"] = np.inf
 
                 kwp1 = {}
                 kwp1["name"] = "parm{:04d}".format(p1["id"])
                 # this condition deals with negative numbers
                 kwp1["expr"] = "{MIN} if {COMP} < {MIN} else {MAX} if {COMP} > {MAX} else {COMP}".format(
-                                COMP="{}*parm{:04d}+{}+{:.14f}".format(p2["sign"], p2["id"], deltaname, ofs),
-                                MIN=self.fit_bounds[p1["id"]][0],
-                                MAX=self.fit_bounds[p1["id"]][1])
+                    COMP="{}*parm{:04d}+{}+{:.14f}".format(
+                        p2["sign"], p2["id"], deltaname, ofs),
+                    MIN=self.fit_bounds[p1["id"]][0],
+                    MAX=self.fit_bounds[p1["id"]][1])
 
                 kwargs = [kwdelt, kwp1]
 
@@ -202,10 +212,10 @@ class Constraint(object):
         return kwargs
 
 
-
 class Fit(object):
     """ Used for fitting FCS data to models.
     """
+
     def __init__(self, correlations=[], global_fit=False,
                  global_fit_variables=[],
                  uselatex=False, verbose=0):
@@ -250,16 +260,16 @@ class Fit(object):
                 # Set fitting options
                 self.fit_algorithm = corr.fit_algorithm
                 # Get the data required for fitting
-                self.x = corr.correlation_fit[:,0]
-                self.y = corr.correlation_fit[:,1]
+                self.x = corr.correlation_fit[:, 0]
+                self.y = corr.correlation_fit[:, 1]
                 # fit_bool: True for variable
                 self.fit_bool = corr.fit_parameters_variable.copy()
                 self.fit_parm = corr.fit_parameters.copy()
                 self.fit_bound = copy.copy(corr.fit_parameters_range)
                 self.is_weighted_fit = corr.is_weighted_fit
                 self.fit_weights = Fit.compute_weights(corr,
-                                                   verbose=verbose,
-                                                   uselatex=uselatex)
+                                                       verbose=verbose,
+                                                       uselatex=uselatex)
                 self.fit_parm_names = corr.fit_model.parameters[0]
                 self.func = corr.fit_model.function
                 self.check_parms = corr.check_parms
@@ -290,8 +300,8 @@ class Fit(object):
             varbound = []   # list of fitting boundaries
             self.is_weighted_fit = None
             for corr in self.correlations:
-                xtemp.append(corr.correlation_fit[:,0])
-                ytemp.append(corr.correlation_fit[:,1])
+                xtemp.append(corr.correlation_fit[:, 0])
+                ytemp.append(corr.correlation_fit[:, 1])
                 weights.append(Fit.compute_weights(corr))
                 ids.append(len(xtemp[-1])+ids[-1])
                 cmodels.append(corr.fit_model)
@@ -320,12 +330,12 @@ class Fit(object):
             self.fit_parm_names = varin
             self.fit_bound = varbound
             self.constraints = []
-            warnings.warn("Constraints are not supported yet for global fitting.")
-
+            warnings.warn(
+                "Constraints are not supported yet for global fitting.")
 
             def parameters_global_to_local(parameters, iicorr, varin=varin,
-                                          initpar=initpar,
-                                          correlations=correlations):
+                                           initpar=initpar,
+                                           correlations=correlations):
                 """
                 With global `parameters` and an id `iicorr` pointing at
                 the correlation in `self.correlations`, return the
@@ -337,7 +347,8 @@ class Fit(object):
                 for kk, pn in enumerate(mod.parameters[0]):
                     if pn in varin:
                         # edit that parameter
-                        fit_parm[kk] = parameters[np.where(np.array(varin)==pn)[0]]
+                        fit_parm[kk] = parameters[np.where(
+                            np.array(varin) == pn)[0]]
                 return fit_parm
 
             def parameters_local_to_global(parameters, iicorr, fit_parm,
@@ -351,7 +362,8 @@ class Fit(object):
                 for kk, pn in enumerate(mod.parameters[0]):
                     if pn in varin:
                         # edit that parameter
-                        parameters[np.where(np.array(varin)==pn)[0]] = fit_parm[kk]
+                        parameters[np.where(np.array(varin) == pn)[
+                            0]] = fit_parm[kk]
                 return parameters
 
             # Create function for fitting using ids
@@ -394,7 +406,6 @@ class Fit(object):
                 # save fit data in correlation class
                 corr.fit_results = self.get_fit_results(corr)
 
-
     def get_fit_results(self, correlation):
         """
         Return a dictionary with all information about the performed fit.
@@ -403,14 +414,14 @@ class Fit(object):
         """
         c = correlation
         d = {
-             "chi2" : self.chi_squared,
-             "chi2 type" : self.chi_squared_type,
-             "weighted fit" : c.is_weighted_fit,
-             "fit algorithm" : c.fit_algorithm,
-             "fit result" : 1*c.fit_parameters,
-             "fit parameters" : 1*np.where(c.fit_parameters_variable)[0],
-             "fit weights" : 1*self.compute_weights(c)
-             }
+            "chi2": self.chi_squared,
+            "chi2 type": self.chi_squared_type,
+            "weighted fit": c.is_weighted_fit,
+            "fit algorithm": c.fit_algorithm,
+            "fit result": 1*c.fit_parameters,
+            "fit parameters": 1*np.where(c.fit_parameters_variable)[0],
+            "fit weights": 1*self.compute_weights(c)
+        }
 
         if c.is_weighted_fit:
             d["weighted fit type"] = c.fit_weight_type
@@ -421,7 +432,6 @@ class Fit(object):
             d["fit error estimation"] = self.parmoptim_error
 
         return d
-
 
     @property
     def chi_squared(self):
@@ -445,11 +455,10 @@ class Fit(object):
             variance = self.fit_weights**2
             chi2 = np.sum((self.y-fitted)**2/variance) / dof
         else:
-            chi2 = self.fit_function_scalar(self.fit_parm, self.x, self.y, self.fit_weights)
-
+            chi2 = self.fit_function_scalar(
+                self.fit_parm, self.x, self.y, self.fit_weights)
 
         return chi2
-
 
     @property
     def chi_squared_type(self):
@@ -469,7 +478,6 @@ class Fit(object):
             return "reduced expected sum of squares"
         else:
             raise ValueError("Unknown weight type!")
-
 
     @staticmethod
     def compute_weights(correlation, verbose=0, uselatex=False):
@@ -492,9 +500,9 @@ class Fit(object):
         if cdat is None:
             raise ValueError("Cannot compute weights; No correlation given!")
         cdatfit = corr.correlation_fit
-        x_full = cdat[:,0]
-        y_full = cdat[:,1]
-        x_fit = cdatfit[:,0]
+        x_full = cdat[:, 0]
+        y_full = cdat[:, 1]
+        x_fit = cdatfit[:, 0]
         #y_fit = cdatfit[:,1]
 
         dataweights = np.ones_like(x_fit)
@@ -503,7 +511,8 @@ class Fit(object):
             weight_spread = int(weight_data)
         except:
             if verbose > 1:
-                warnings.warn("Could not get weight spread for spline. Setting it to 3.")
+                warnings.warn(
+                    "Could not get weight spread for spline. Setting it to 3.")
             weight_spread = 3
 
         if weight_type[:6] == "spline":
@@ -541,13 +550,13 @@ class Fit(object):
                 ys = spintp.splev(xs, tck, der=0)
             except:
                 if verbose > 0:
-                    raise ValueError("Could not find spline fit with "+\
+                    raise ValueError("Could not find spline fit with " +
                                      "{} knots.".format(knotnumber))
                 return
             if verbose > 0:
-                ## If plotting module is available:
+                # If plotting module is available:
                 #name = "spline fit: "+str(knotnumber)+" knots"
-                #plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
+                # plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
                 #                         dirname=".",
                 #                         uselatex=uselatex)
                 # use matplotlib.pylab
@@ -560,7 +569,7 @@ class Fit(object):
                     # Tell the user to install matplotlib
                     print("Couldn't import pylab! - not Plotting")
 
-            ## Calculation of variance
+            # Calculation of variance
             # In some cases, the actual cropping interval from ival[0]
             # to ival[1] is chosen, such that the dataweights must be
             # calculated from unknown datapoints.
@@ -571,7 +580,7 @@ class Fit(object):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
-                if  i + ival[0] <  weight_spread:
+                if i + ival[0] < weight_spread:
                     # The offset that occurs
                     offsetstart = weight_spread - i - ival[0]
                     offsetcrop = 0
@@ -596,7 +605,7 @@ class Fit(object):
                     dataweights[i] *= reference/dividor
                 # Do not substitute len(y[start:end]) with end-start!
                 # It is not the same!
-                backset =  2*weight_spread + 1 - len(y[start:end]) - offsetstart
+                backset = 2*weight_spread + 1 - len(y[start:end]) - offsetstart
                 if backset != 0:
                     reference = 2*weight_spread + 1
                     dividor = reference - backset
@@ -607,7 +616,7 @@ class Fit(object):
                 pmin = ival[0]
             else:
                 pmin = weight_spread
-            if x_full.shape[0] - ival[1] <  weight_spread:
+            if x_full.shape[0] - ival[1] < weight_spread:
                 pmax = x_full.shape[0] - ival[1]
             else:
                 pmax = weight_spread
@@ -618,7 +627,7 @@ class Fit(object):
                 # Define start and end positions of the sections from
                 # where we wish to calculate the dataweights.
                 # Offset at beginning:
-                if  i + ival[0] <  weight_spread:
+                if i + ival[0] < weight_spread:
                     # The offset that occurs
                     offsetstart = weight_spread - i - ival[0]
                     offsetcrop = 0
@@ -646,7 +655,8 @@ class Fit(object):
                     dataweights[i] *= reference/dividor
                 # Do not substitute len(diff[start:end]) with end-start!
                 # It is not the same!
-                backset =  2*weight_spread + 1 - len(diff[start:end]) - offsetstart
+                backset = 2*weight_spread + 1 - \
+                    len(diff[start:end]) - offsetstart
                 if backset != 0:
                     reference = 2*weight_spread + 1
                     dividor = reference - backset
@@ -673,7 +683,6 @@ class Fit(object):
 
         return dataweights
 
-
     def fit_function(self, params, x, y, weights=1):
         """
         objective function that returns the residual (difference between
@@ -684,9 +693,9 @@ class Fit(object):
         # Check dataweights for zeros and don't use these
         # values for the least squares method.
         with np.errstate(divide='ignore'):
-            tominimize = np.where(weights!=0,
+            tominimize = np.where(weights != 0,
                                   tominimize/weights, 0)
-        ## There might be NaN values because of zero weights:
+        # There might be NaN values because of zero weights:
         #tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
@@ -716,14 +725,14 @@ class Fit(object):
         for pp in range(len(self.fit_parm)):
             if not self.fit_bool[pp]:
                 if self.fit_bound[pp][0] == self.fit_bound[pp][1]:
-                    self.fit_bound[pp]=[-np.inf, np.inf]
+                    self.fit_bound[pp] = [-np.inf, np.inf]
                 params.add(lmfit.Parameter(name="parm{:04d}".format(pp),
                                            value=self.fit_parm[pp],
                                            vary=self.fit_bool[pp],
                                            min=self.fit_bound[pp][0],
                                            max=self.fit_bound[pp][1],
-                                            )
                                            )
+                           )
 
         # Second, summarize the constraints in a dictionary, where
         # keys are the parameter indexes of varied parameters.
@@ -743,7 +752,7 @@ class Fit(object):
         #   [1, 0, "<", "2.3"]] -> parm1 + parm0 < 2.3
         for pp in range(len(self.fit_parm)):
             if self.fit_bool[pp]:
-                inconstr = len([ cc for cc in self.constraints if pp in cc])
+                inconstr = len([cc for cc in self.constraints if pp in cc])
                 kwarglist = []
 
                 if inconstr:
@@ -760,10 +769,10 @@ class Fit(object):
                 if len(kwarglist) == 0:
                     # normal parameter
                     kwarglist += [{"name": "parm{:04d}".format(pp),
-                                  "value": self.fit_parm[pp],
-                                  "vary": True,
-                                  "min": self.fit_bound[pp][0],
-                                  "max": self.fit_bound[pp][1],
+                                   "value": self.fit_parm[pp],
+                                   "vary": True,
+                                   "min": self.fit_bound[pp][0],
+                                   "max": self.fit_bound[pp][1],
                                    }]
                 for kw in kwarglist:
                     params.add(lmfit.Parameter(**kw))
@@ -833,9 +842,9 @@ class Fit(object):
             result = lmfit.minimize(fcn=self.fit_function,
                                     params=params,
                                     method=method,
-                                    kws={"x":self.x,
-                                            "y":self.y,
-                                            "weights":self.fit_weights},
+                                    kws={"x": self.x,
+                                         "y": self.y,
+                                         "weights": self.fit_weights},
                                     **methodkwargs
                                     )
             params = result.params
@@ -851,16 +860,17 @@ class Fit(object):
                 # the parameters that are varied during fitting
                 parmsbool = Fit.lmfitparm2array(params, attribute="vary")
                 # The parameters that are stuck
-                parmstuck = parmsbool * (parmsinit==parmsres)
+                parmstuck = parmsbool * (parmsinit == parmsres)
                 parmsres[parmstuck] *= multby
                 # write changes
                 self.fit_parm = parmsres
                 params = self.get_lmfitparm()
-                warnings.warn(u"PyCorrFit detected problems in fitting, "+\
-                              u"detected a stuck parameter, multiplied "+\
-                              u"it by {}, and fitted again. ".format(multby)+\
+                warnings.warn(u"PyCorrFit detected problems in fitting, " +
+                              u"detected a stuck parameter, multiplied " +
+                              u"it by {}, and fitted again. ".format(multby) +
                               u"The stuck parameters are: {}".format(
-                                np.array(self.fit_parm_names)[parmstuck]))
+                                  np.array(self.fit_parm_names)[parmstuck]),
+                              StuckParameterWarning)
             elif diff < 1e-8:
                 # Experience tells us this is good enough.
                 break
@@ -876,22 +886,21 @@ class Fit(object):
             # - lmfit <= 0.9.10: result.covar is None
             # - lmfit >= 0.9.11: result.covar is not set
             and hasattr(result, "covar")
-            and result.covar is not None):
+                and result.covar is not None):
             # This is the standard way to minimize the data. Therefore,
             # we are a little bit more verbose.
             covar = result.covar
             try:
                 self.parmoptim_error = np.diag(covar)
             except:
-                warnings.warn("PyCorrFit Warning: Error estimate not "+\
-                              "possible, because we could not "+\
-                              "calculate covariance matrix. Please "+\
-                              "try reducing the number of fitting "+\
+                warnings.warn("PyCorrFit Warning: Error estimate not " +
+                              "possible, because we could not " +
+                              "calculate covariance matrix. Please " +
+                              "try reducing the number of fitting " +
                               "parameters.")
                 self.parmoptim_error = None
         else:
             self.parmoptim_error = None
-
 
 
 def GetAlgorithmStringList():
@@ -920,10 +929,10 @@ Algorithms = dict()
 # the original one is the least squares fit "leastsq"
 Algorithms["Lev-Mar"] = ["leastsq",
                          "Levenberg-Marquardt",
-                         {"ftol" : 1.49012e-08,
-                          "xtol" : 1.49012e-08,
+                         {"ftol": 1.49012e-08,
+                          "xtol": 1.49012e-08,
                           }
-                        ]
+                         ]
 
 # simplex
 Algorithms["Nelder-Mead"] = ["nelder",

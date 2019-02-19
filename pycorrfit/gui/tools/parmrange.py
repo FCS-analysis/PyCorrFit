@@ -18,21 +18,20 @@ class RangeSelector(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Parameter Range",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
         self.topSizer = wx.BoxSizer(wx.VERTICAL)
 
         self.WXboxsizerlist = list()
         self.WXparmlist = list()
         self.OnPageChanged(self.Page)
-        #Icon
+        # Icon
         if self.parent.MainIcon is not None:
             wx.Frame.SetIcon(self, self.parent.MainIcon)
         self.Show(True)
-
 
     def FillPanel(self):
         """ Fill the panel with parameters from the page
@@ -40,7 +39,7 @@ class RangeSelector(wx.Frame):
         corr = self.Page.corr
         self.parameter_range = np.zeros_like(corr.fit_parameters_range)
         leftbound = []
-        for item in corr.fit_parameters_range[:,0]:
+        for item in corr.fit_parameters_range[:, 0]:
             if item is None:
                 leftbound.append(-np.inf)
             else:
@@ -48,7 +47,7 @@ class RangeSelector(wx.Frame):
         labels, parmleft = mdls.GetHumanReadableParms(corr.fit_model.id,  # @UnusedVariable
                                                       leftbound)
         rightbound = []
-        for item in corr.fit_parameters_range[:,1]:
+        for item in corr.fit_parameters_range[:, 1]:
             if item is None:
                 rightbound.append(np.inf)
             else:
@@ -56,11 +55,12 @@ class RangeSelector(wx.Frame):
 
         labels, parmright = mdls.GetHumanReadableParms(corr.fit_model.id,
                                                        rightbound)
-        self.parameter_range[:,0] = np.array(parmleft)
-        self.parameter_range[:,1] = np.array(parmright)
+        self.parameter_range[:, 0] = np.array(parmleft)
+        self.parameter_range[:, 1] = np.array(parmright)
         # create line
 
-        self.WXboxsizer = wx.FlexGridSizer(rows=len(labels), cols=5, vgap=5, hgap=5)
+        self.WXboxsizer = wx.FlexGridSizer(
+            rows=len(labels), cols=5, vgap=5, hgap=5)
         for i in range(len(labels)):
             left = wxutils.PCFFloatTextCtrl(self.panel)
             right = wxutils.PCFFloatTextCtrl(self.panel)
@@ -97,7 +97,6 @@ class RangeSelector(wx.Frame):
         self.parent.RangeSelector = None
         self.Destroy()
 
-
     def OnPageChanged(self, page=None, trigger=None):
         """
             This function is called, when something in the panel
@@ -122,18 +121,16 @@ class RangeSelector(wx.Frame):
         except:
             pass
         for i in np.arange(len(self.WXparmlist)):
-            self.WXparmlist[i][0].Destroy() #start
-            self.WXparmlist[i][1][0].Destroy() #pname
-            self.WXparmlist[i][1][1].Destroy() #pname
-            self.WXparmlist[i][2].Destroy() #end
+            self.WXparmlist[i][0].Destroy()  # start
+            self.WXparmlist[i][1][0].Destroy()  # pname
+            self.WXparmlist[i][1][1].Destroy()  # pname
+            self.WXparmlist[i][2].Destroy()  # end
         del self.WXparmlist
         for i in np.arange(len(self.WXboxsizerlist)):
             self.WXboxsizer.Remove(0)
         self.WXboxsizerlist = list()
         self.WXparmlist = list()
         self.FillPanel()
-
-
 
     def OnSetParmRange(self, e):
         """ Called whenever something is edited in this frame.
@@ -145,13 +142,14 @@ class RangeSelector(wx.Frame):
             self.parameter_range[i][0] = self.WXparmlist[i][0].GetValue()
             self.parameter_range[i][1] = self.WXparmlist[i][2].GetValue()
             if self.parameter_range[i][0] > self.parameter_range[i][1]:
-                self.parameter_range[i][1] = 1.01*np.abs(self.parameter_range[i][0])
+                self.parameter_range[i][1] = 1.01 * \
+                    np.abs(self.parameter_range[i][0])
                 self.WXparmlist[i][2].SetValue(self.parameter_range[i][1])
         # Set parameters
         parm0 = mdls.GetInternalFromHumanReadableParm(corr.fit_model.id,
-                                                     self.parameter_range[:,0])[1]
+                                                      self.parameter_range[:, 0])[1]
         parm1 = mdls.GetInternalFromHumanReadableParm(corr.fit_model.id,
-                                                     self.parameter_range[:,1])[1]
+                                                      self.parameter_range[:, 1])[1]
         corr.fit_parameters_range = np.dstack((parm0, parm1))[0]
 
         if self.parent.MenuAutocloseTools.IsChecked():

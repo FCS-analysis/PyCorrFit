@@ -16,13 +16,13 @@ class Tool(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Example tool",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page - the currently active page of the notebook.
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Content
+        # Content
         self.panel = wx.Panel(self)
         btncopy = wx.Button(self.panel, wx.ID_ANY, 'Example button')
         # Binds the button to the function - close the tool
@@ -37,14 +37,12 @@ class Tool(wx.Frame):
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
 
-
     def OnClose(self, event=None):
         # This is a necessary function for PyCorrFit.
         # Do not change it.
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnPageChanged(self, page, trigger=None):
         """
@@ -64,5 +62,3 @@ class Tool(wx.Frame):
             return
         self.panel.Enable()
         self.Page = page
-
-

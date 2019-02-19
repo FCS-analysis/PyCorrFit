@@ -1,6 +1,7 @@
 """ALV .ASC files"""
 import csv
-import os
+import pathlib
+import warnings
 
 import numpy as np
 
@@ -9,16 +10,20 @@ class LoadALVError(BaseException):
     pass
 
 
-def openASC(dirname, filename):
+def openASC(path, filename=None):
     """
     Read data from a ALV .ASC files.
     """
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as openfile:
-        Alldata = openfile.readlines()
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+
+    with path.open("r", encoding="iso8859_15") as openfile:
+        first = openfile.readline()
 
     # Open special format?
-    filetype = Alldata[0].strip()
+    filetype = first.strip()
     if filetype.count("ALV-7004"):
         return openASC_ALV_7004(path)
     else:
@@ -105,21 +110,21 @@ def openASC_old(path):
          from the file. Elements can be names and must be convertible to
          strings.
     """
-    filename = os.path.basename(path)
-    with open(path, "r", encoding="iso8859_15") as openfile:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
     # End of trace
     EndT = Alldata.__len__()
-    ## Correlation function
+    # Correlation function
     # Find out where the correlation function is
     for i in np.arange(len(Alldata)):
         if Alldata[i].startswith('Mode'):
             mode = Alldata[i][5:].strip(' ":').strip().strip('"')
             single_strings = ["a-ch0", "a-ch1", "auto ch0", "auto ch1",
                               "fast auto ch0", "fast auto ch1",
-                               ]
+                              ]
             if (mode.lower().count('single') or
-                mode.lower().strip() in single_strings):
+                    mode.lower().strip() in single_strings):
                 single = True
                 channel = mode.split(" ")[-1]
             else:
@@ -134,7 +139,7 @@ def openASC_old(path):
             # This tells us if there is only one curve or if there are
             # multiple curves with an average.
             if (Alldata[i].strip().lower() ==
-                '"correlation (multi, averaged)"' ):
+                    '"correlation (multi, averaged)"'):
                 multidata = True
             else:
                 multidata = False
@@ -155,7 +160,7 @@ def openASC_old(path):
             EndT = i-1
     # Get the header
     Namedata = Alldata[StartC-1: StartC]
-    ## Define *curvelist*
+    # Define *curvelist*
     curvelist = csv.reader(Namedata, delimiter='\t').__next__()
     if len(curvelist) <= 2:
         # Then we have just one single correlation curve
@@ -167,7 +172,7 @@ def openASC_old(path):
         curvelist.remove(curvelist[0])
         # Last column is empty
         curvelist.remove(curvelist[-1])
-    ## Correlation function
+    # Correlation function
     Truedata = Alldata[StartC: EndC]
     readdata = csv.reader(Truedata, delimiter='\t')
     # Add lists to *data* according to the length of *curvelist*
@@ -176,14 +181,14 @@ def openASC_old(path):
     for row in readdata:
         for i in np.arange(len(curvelist)):
             if len(row) > 0:
-                data[i].append( (np.float(row[0]), np.float(row[i+1])) )
-    ## Trace
+                data[i].append((np.float(row[0]), np.float(row[i+1])))
+    # Trace
     # Trace is stored in two columns
     # 1st column: time [s]
     # 2nd column: trace [kHz]
     # Get the trace
     Tracedata = Alldata[StartT: EndT]
-    timefactor = 1000 # because we want ms instead of s
+    timefactor = 1000  # because we want ms instead of s
     readtrace = csv.reader(Tracedata, delimiter='\t')
     trace = list()
     trace2 = list()
@@ -268,7 +273,7 @@ def openASC_old(path):
         channel = "CH1"
         splittrace2 = mysplit(trace2[0], len(curvelist)/2-nav)
         i = 0
-        for t in range(int(len(curvelist)/2),int(len(curvelist))):
+        for t in range(int(len(curvelist)/2), int(len(curvelist))):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
@@ -295,7 +300,7 @@ def openASC_old(path):
                 typelist.append("{} average".format(channel))
                 corrlist.append(np.array(data[t]))
                 tracelist.append([np.array(trace[0]),
-                                  np.array(trace2[0])  ])
+                                  np.array(trace2[0])])
             else:
                 typelist.append("{} {}".format(accc, channel))
                 corrlist.append(np.array(data[t]))
@@ -304,14 +309,14 @@ def openASC_old(path):
         # CHANNEL 1
         channel = "CC10"
         i = 0
-        for t in range(int(len(curvelist)/2),int(len(curvelist))):
+        for t in range(int(len(curvelist)/2), int(len(curvelist))):
             typ = curvelist[t]
             if typ.lower()[:7] == "average":
                 typelist.append("{} average".format(channel))
                 corrlist.append(np.array(data[t]))
                 # order must be the same as above
                 tracelist.append([np.array(trace[0]),
-                                  np.array(trace2[0])  ])
+                                  np.array(trace2[0])])
             else:
                 typelist.append("{} {}".format(accc, channel))
                 corrlist.append(np.array(data[t]))
@@ -374,8 +379,8 @@ def openASC_ALV_7004(path):
 
 
     """
-    filename = os.path.basename(path)
-    with open(path, "r", encoding="iso8859_15") as openfile:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as openfile:
         Alldata = openfile.readlines()
 
     # Find the different arrays
@@ -383,7 +388,7 @@ def openASC_ALV_7004(path):
     # trace array: "       "
     allcorr = []
     alltrac = []
-    i=0
+    i = 0
     intrace = False
     mode = False
     for item in Alldata:
@@ -396,41 +401,41 @@ def openASC_ALV_7004(path):
         if item.count("\t") == 4:
             if intrace:
                 it = item.split("\t")
-                it = [ float(t.strip()) for t in it ]
+                it = [float(t.strip()) for t in it]
                 alltrac.append(it)
             else:
                 ic = item.split("\t")
-                ic = [ float(c.strip()) for c in ic ]
+                ic = [float(c.strip()) for c in ic]
                 allcorr.append(ic)
     allcorr = np.array(allcorr)
     alltrac = np.array(alltrac)
 
-    tau = allcorr[:,0]
-    time = alltrac[:,0] * 1000
+    tau = allcorr[:, 0]
+    time = alltrac[:, 0] * 1000
     lenc = allcorr.shape[0]
     lent = alltrac.shape[0]
 
     # Traces
     trace1 = np.zeros((lent, 2), dtype=np.float_)
-    trace1[:,0] = time
-    trace1[:,1] = alltrac[:,1]
+    trace1[:, 0] = time
+    trace1[:, 1] = alltrac[:, 1]
     trace2 = trace1.copy()
-    trace2[:,1] = alltrac[:,2]
+    trace2[:, 1] = alltrac[:, 2]
     trace3 = trace1.copy()
-    trace3[:,1] = alltrac[:,3]
+    trace3[:, 1] = alltrac[:, 3]
     trace4 = trace1.copy()
-    trace4[:,1] = alltrac[:,4]
+    trace4[:, 1] = alltrac[:, 4]
 
     # Correlations
     corr1 = np.zeros((lenc, 2), dtype=np.float_)
-    corr1[:,0] = tau
-    corr1[:,1] = allcorr[:,1]
+    corr1[:, 0] = tau
+    corr1[:, 1] = allcorr[:, 1]
     corr2 = corr1.copy()
-    corr2[:,1] = allcorr[:,2]
+    corr2[:, 1] = allcorr[:, 2]
     corr3 = corr1.copy()
-    corr3[:,1] = allcorr[:,3]
+    corr3[:, 1] = allcorr[:, 3]
     corr4 = corr1.copy()
-    corr4[:,1] = allcorr[:,4]
+    corr4[:, 1] = allcorr[:, 4]
 
     typelist = []
     corrlist = []
@@ -445,69 +450,69 @@ def openASC_ALV_7004(path):
         if not (np.allclose(trace1, trace3, rtol=.01) and
                 np.allclose(trace2, trace4, rtol=.01)):
             raise LoadALVError("Unexpected data format: {}".format(path))
-        if not np.allclose(corr1[:,1], 0):
+        if not np.allclose(corr1[:, 1], 0):
             corrlist.append(corr1)
             filelist.append(filename)
             tracelist.append(trace1)
             typelist.append("AC1")
-        if not np.allclose(corr2[:,1], 0):
+        if not np.allclose(corr2[:, 1], 0):
             corrlist.append(corr2)
             filelist.append(filename)
             tracelist.append(trace2)
             typelist.append("AC2")
-        if not np.allclose(corr3[:,1], 0):
+        if not np.allclose(corr3[:, 1], 0):
             corrlist.append(corr3)
             filelist.append(filename)
             tracelist.append([trace1, trace2])
             typelist.append("CC12")
-        if not np.allclose(corr4[:,1], 0):
+        if not np.allclose(corr4[:, 1], 0):
             corrlist.append(corr4)
             filelist.append(filename)
             tracelist.append([trace1, trace2])
             typelist.append("CC21")
     elif mode in ["a-ch0", "a-ch0 a-"]:
-        if not (np.allclose(trace2[:,1], 0) and
-                np.allclose(trace3[:,1], 0) and
-                np.allclose(trace4[:,1], 0) and
-                np.allclose(corr2[:,1], 0) and
-                np.allclose(corr3[:,1], 0) and
-                np.allclose(corr4[:,1], 0)):
+        if not (np.allclose(trace2[:, 1], 0) and
+                np.allclose(trace3[:, 1], 0) and
+                np.allclose(trace4[:, 1], 0) and
+                np.allclose(corr2[:, 1], 0) and
+                np.allclose(corr3[:, 1], 0) and
+                np.allclose(corr4[:, 1], 0)):
             raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr1)
         filelist.append(filename)
         tracelist.append(trace1)
         typelist.append("AC")
     elif mode in ["a-ch1", "a-ch1 a-"]:
-        if not (np.allclose(trace1[:,1], 0) and
-                np.allclose(trace3[:,1], 0) and
-                np.allclose(trace4[:,1], 0) and
-                np.allclose(corr1[:,1], 0) and
-                np.allclose(corr3[:,1], 0) and
-                np.allclose(corr4[:,1], 0)):
+        if not (np.allclose(trace1[:, 1], 0) and
+                np.allclose(trace3[:, 1], 0) and
+                np.allclose(trace4[:, 1], 0) and
+                np.allclose(corr1[:, 1], 0) and
+                np.allclose(corr3[:, 1], 0) and
+                np.allclose(corr4[:, 1], 0)):
             raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr2)
         filelist.append(filename)
         tracelist.append(trace2)
         typelist.append("AC")
     elif mode in ["a-ch2", "a- a-ch2"]:
-        if not (np.allclose(trace1[:,1], 0) and
-                np.allclose(trace2[:,1], 0) and
-                np.allclose(trace4[:,1], 0) and
-                np.allclose(corr1[:,1], 0) and
-                np.allclose(corr2[:,1], 0) and
-                np.allclose(corr4[:,1], 0)):
+        if not (np.allclose(trace1[:, 1], 0) and
+                np.allclose(trace2[:, 1], 0) and
+                np.allclose(trace4[:, 1], 0) and
+                np.allclose(corr1[:, 1], 0) and
+                np.allclose(corr2[:, 1], 0) and
+                np.allclose(corr4[:, 1], 0)):
             raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr3)
         filelist.append(filename)
         tracelist.append(trace3)
         typelist.append("AC")
     elif mode in ["a-ch3", "a- a-ch3"]:
-        if not (np.allclose(trace1[:,1], 0) and
-                np.allclose(trace2[:,1], 0) and
-                np.allclose(trace3[:,1], 0) and
-                np.allclose(corr1[:,1], 0) and
-                np.allclose(corr2[:,1], 0) and
-                np.allclose(corr3[:,1], 0)):
+        if not (np.allclose(trace1[:, 1], 0) and
+                np.allclose(trace2[:, 1], 0) and
+                np.allclose(trace3[:, 1], 0) and
+                np.allclose(corr1[:, 1], 0) and
+                np.allclose(corr2[:, 1], 0) and
+                np.allclose(corr3[:, 1], 0)):
             raise LoadALVError("Unexpected data format: {}".format(path))
         corrlist.append(corr4)
         filelist.append(filename)
@@ -538,24 +543,23 @@ def mysplit(a, n):
     lensplit = np.int(np.ceil(N/n))
 
     # xp is actually rounded -> recalculate
-    xp = np.linspace(a[:,0][0], a[:,0][-1], N,  endpoint=True)
+    xp = np.linspace(a[:, 0][0], a[:, 0][-1], N,  endpoint=True)
 
     # let xp start at zero
-    xp -= a[:,0][0]
-    yp = a[:,1]
+    xp -= a[:, 0][0]
+    yp = a[:, 1]
 
     # time frame for each new curve
     #dx = xp[-1]/n
 
     # perform interpolation of new trace
     x, newstep = np.linspace(0, xp[-1], lensplit*n,
-                        endpoint=True, retstep=True)
+                             endpoint=True, retstep=True)
     # interpolating reduces the variance and possibly changes the avg
-    y = np.interp(x,xp,yp)
+    y = np.interp(x, xp, yp)
 
-    data = np.zeros((lensplit*n,2))
-    data[:,0] = x + newstep
+    data = np.zeros((lensplit*n, 2))
+    data[:, 0] = x + newstep
     # make sure that the average stays the same:
-    data[:,1] = y - np.average(y) + np.average(yp)
-    return np.split(data,n)
-
+    data[:, 1] = y - np.average(y) + np.average(yp)
+    return np.split(data, n)

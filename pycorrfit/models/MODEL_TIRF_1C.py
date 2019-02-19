@@ -14,8 +14,9 @@ def wixi(x):
     wixi = sps.wofz(z)
     # We should have a real solution. Make sure nobody complains about
     # some zero-value imaginary numbers.
-    
+
     return np.real_if_close(wixi)
+
 
 def CF_Gxy_TIR_square(parms, tau):
     # Model 6000
@@ -33,7 +34,7 @@ def CF_Gxy_TIR_square(parms, tau):
 
         Please refer to the documentation of PyCorrFit
         for further information on this model function.
-        
+
         Returns: Normalized Lateral correlation function w/square pinhole.
     """
     D = parms[0]
@@ -61,7 +62,7 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
         detection area taking into account the size of the
         point spread function; and an exponential decaying profile
         in axial direction.
-        
+
         *parms* - a list of parameters.
         Parameters (parms[i]):
         [0] D      Diffusion coefficient
@@ -74,7 +75,7 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
 
         Please refer to the documentation of PyCorrFit
         for further information on this model function.
-        
+
         Returns: 3D correlation function for TIR-FCS w/square pinhole
     """
     D = parms[0]
@@ -82,18 +83,18 @@ def CF_Gxyz_TIR_square(parms, tau, wixi=wixi):
     a = parms[2]
     kappa = 1/parms[3]
     Conc = parms[4]
-    ### Calculate gxy
+    # Calculate gxy
 
-    # Axial correlation    
+    # Axial correlation
     x = np.sqrt(D*tau)*kappa
     w_ix = wixi(x)
     gz = np.sqrt(D*tau/np.pi) - (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix
 
     # Lateral correlation
     gx1 = 2/(a**2*np.sqrt(np.pi)) * np.sqrt(sigma**2+D*tau) * \
-          ( np.exp(-a**2/(4*(sigma**2+D*tau))) -1 )
-    gx2 = 1/a * sps.erf( a / (2*np.sqrt(sigma**2 + D*tau))) 
-    gx =  gx1 + gx2
+        (np.exp(-a**2/(4*(sigma**2+D*tau))) - 1)
+    gx2 = 1/a * sps.erf(a / (2*np.sqrt(sigma**2 + D*tau)))
+    gx = gx1 + gx2
     gxy = gx**2
 
     # Non normalized correlation function
@@ -120,10 +121,10 @@ def MoreInfo_6000(parms, countrate=None):
     #sigma = parms[1]
     a = parms[2]
     Conc = parms[3]
-    Info=list()
+    Info = list()
 
     # Detection area:
-    Aeff = a**2 
+    Aeff = a**2
     # Particel number
     Neff = Aeff * Conc
     # Correlation function at tau = 0
@@ -188,7 +189,6 @@ def MoreInfo_6010(parms, countrate):
     return Info
 
 
-
 # 2D Model Square
 m_twodsq6000 = [6000, u"2D", u"2D diffusion w/ square pinhole",
                 CF_Gxy_TIR_square]
@@ -196,7 +196,7 @@ labels_6000 = [u"D [10 µm²/s]",
                u"σ [100 nm]",
                u"a [100 nm]",
                u"C_2D [100 /µm²]"]
-values_6000 = [0.054, 2.3, 7.5, .6] # [D,lamb,NA,a,conc]
+values_6000 = [0.054, 2.3, 7.5, .6]  # [D,lamb,NA,a,conc]
 # For user comfort we add values that are human readable.
 # Theese will be used for output that only humans can read.
 labels_human_readable_6000 = [u"D [µm²/s]",
@@ -228,7 +228,6 @@ values_factor_human_readable_6010 = [10, 100, 100, 100, 1000]
 valuestofit_6010 = [True, False, False, False, True]
 parms_6010 = [labels_6010, values_6010, valuestofit_6010,
               labels_human_readable_6010, values_factor_human_readable_6010]
-
 
 
 # Pack the models

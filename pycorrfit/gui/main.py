@@ -1,12 +1,17 @@
 """Main execution script"""
 from distutils.version import LooseVersion
-import os
 import sys
+import warnings
+
+import yaml
+import numpy as np
+import scipy
 
 
 class Fake(object):
     """ Fake module.
     """
+
     def __init__(self):
         self.__version__ = "0.0 unknown"
         self.version = "0.0 unknown"
@@ -20,13 +25,10 @@ try:
 except ImportError:
     matplotlib = Fake()
 # We do catch warnings about performing this before matplotlib.backends stuff
-#matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
-import warnings
+# matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    matplotlib.use('WXAgg') # Tells matplotlib to use WxWidgets for dialogs
-import numpy as np                  # NumPy
-import scipy
+    matplotlib.use('WXAgg')  # Tells matplotlib to use WxWidgets for dialogs
 
 
 # Sympy is optional:
@@ -38,16 +40,14 @@ except ImportError:
     # We create a fake module sympy with a __version__ property.
     # This way users can run PyCorrFit without having installed sympy.
     sympy = Fake()
+
 # We must not import wx here. frontend/gui does that. If we do import wx here,
 # somehow unicode characters will not be displayed correctly on windows.
 # import wx
-import yaml
 
-## Continue with the import:
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from . import doc
-from . import frontend as gui              # The actual program
+# Continue with the import:
+from . import frontend as gui  # noqa: E402
+from . import doc  # noqa: E402
 
 
 def CheckVersion(given, required, name):
@@ -62,22 +62,22 @@ def CheckVersion(given, required, name):
         print(" WARNING: Could not verify version of "+name+".")
         return
     if req > giv:
-        print(" WARNING: You are using "+name+" v. "+given+\
-              " | Required: "+name+" "+ required)
+        print(" WARNING: You are using "+name+" v. "+given +
+              " | Required: "+name+" " + required)
     else:
         print(" OK: "+name+" v. "+given+" | "+required+" required")
 
 
-## Start gui
+# Start gui
 def Main():
 
-    ## VERSION
+    # VERSION
     version = doc.__version__
     __version__ = version
 
     print(gui.doc.info(version))
 
-    ## Check important module versions
+    # Check important module versions
     print("\n\nChecking module versions...")
     CheckVersion(matplotlib.__version__, "2.2.2", "matplotlib")
     CheckVersion(np.__version__, "1.14.2", "NumPy")
@@ -86,7 +86,7 @@ def Main():
     CheckVersion(sympy.__version__, "1.1.1", "sympy")
     CheckVersion(gui.wx.__version__, "4.0.1", "wxPython")
 
-    ## Start gui
+    # Start gui
     app = gui.MyApp(False)
 
     frame = gui.MyFrame(None, -1, version)

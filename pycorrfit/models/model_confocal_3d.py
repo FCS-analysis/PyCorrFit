@@ -4,6 +4,8 @@ from .control import model_setup
 from .cp_confocal import threed
 
 # 3D simple gauss
+
+
 def CF_Gxyz_gauss(parms, tau):
     # Model 6012
     u""" Three-dimanesional free diffusion with a Gaussian laser profile
@@ -36,7 +38,7 @@ def CF_Gxyz_gauss(parms, tau):
     off = parms[3]
 
     BB = threed(tau, taudiff, SP)
-    
+
     G = off + 1/n * BB
     return G
 
@@ -57,18 +59,18 @@ boundaries = [[0, np.inf]]*len(parms)
 boundaries[-1] = [-np.inf, np.inf]
 
 model_setup(
-             modelid=6012,
-             name="3D diffusion (confocal)",
-             comp="3D",
-             mtype="Confocal (Gaussian)",
-             fctn=CF_Gxyz_gauss,
-             par_labels=[
-                            u"n",
-                            u"τ_diff [ms]",
-                            u"SP",
-                            u"offset"],
-             par_values=parms,
-             par_vary=[True, True, False, False],
-             par_boundaries=boundaries,
-             supplementary_method=supplements
-            )
+    modelid=6012,
+    name="3D diffusion (confocal)",
+    comp="3D",
+    mtype="Confocal (Gaussian)",
+    fctn=CF_Gxyz_gauss,
+    par_labels=[
+        u"n",
+        u"τ_diff [ms]",
+        u"SP",
+        u"offset"],
+    par_values=parms,
+    par_vary=[True, True, False, False],
+    par_boundaries=boundaries,
+    supplementary_method=supplements
+)

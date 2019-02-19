@@ -44,6 +44,7 @@ def create_corr():
 
     return corrs, initparms
 
+
 def test_globalfit():
     corrs, initparms = create_corr()
     # commence global fit

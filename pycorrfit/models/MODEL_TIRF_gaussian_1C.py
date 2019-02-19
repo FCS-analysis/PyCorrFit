@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.special as sps
 
+
 def wixi(x):
     """ Complex Error Function (Faddeeva/Voigt).
         w(i*x) = exp(x**2) * ( 1-erf(x) )
@@ -13,8 +14,9 @@ def wixi(x):
     wixi = sps.wofz(z)
     # We should have a real solution. Make sure nobody complains about
     # some zero-value imaginary numbers.
-    
+
     return np.real_if_close(wixi)
+
 
 def CF_Gxyz_TIR_gauss(parms, tau):
     u""" Three-dimensional free diffusion with a Gaussian lateral 
@@ -50,16 +52,17 @@ def CF_Gxyz_TIR_gauss(parms, tau):
     taudiff = r0**2/(4*D)
     # 2D gauss component
     # G2D = 1/N2D * g2D = 1/(Aeff*Conc.2D) * g2D
-    g2D = 1 / ( (1.+tau/taudiff) )
+    g2D = 1 / ((1.+tau/taudiff))
 
     # 1d TIR component
-    # Axial correlation    
+    # Axial correlation
     kappa = 1/deva
     x = np.sqrt(D*tau)*kappa
     w_ix = wixi(x)
 
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
-    gz = kappa * (np.sqrt(D*tau/np.pi) - (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
+    gz = kappa * (np.sqrt(D*tau/np.pi) -
+                  (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
 
     # gz * g2D * 1/( deva *A2D) * 1 / Conc3D
 
@@ -69,7 +72,6 @@ def CF_Gxyz_TIR_gauss(parms, tau):
     # 1 / (Conc * deva * np.pi * r0) * gz * g2D
 
     return 1 / (Neff) * g2D * gz
-    
 
 
 def CF_Gxyz_TIR_gauss_trip(parms, tau):
@@ -102,8 +104,8 @@ def CF_Gxyz_TIR_gauss_trip(parms, tau):
     r0 = parms[1]
     deva = parms[2]
     Conc = parms[3]
-    tautrip=parms[4]
-    T=parms[5]
+    tautrip = parms[4]
+    T = parms[5]
 
     # Calculate sigma: width of the gaussian approximation of the PSF
     Veff = np.pi * r0**2 * deva
@@ -112,18 +114,19 @@ def CF_Gxyz_TIR_gauss_trip(parms, tau):
     taudiff = r0**2/(4*D)
     # 2D gauss component
     # G2D = 1/N2D * g2D = 1/(Aeff*Conc.2D) * g2D
-    g2D = 1 / ( (1.+tau/taudiff) )
+    g2D = 1 / ((1.+tau/taudiff))
 
     # 1d TIR component
-    # Axial correlation    
+    # Axial correlation
     kappa = 1/deva
     x = np.sqrt(D*tau)*kappa
     w_ix = wixi(x)
 
     # Gz = 1/N1D * gz = kappa / Conc.1D * gz
-    gz = kappa * (np.sqrt(D*tau/np.pi) - (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
+    gz = kappa * (np.sqrt(D*tau/np.pi) -
+                  (2*D*tau*kappa**2 - 1)/(2*kappa) * w_ix)
 
-    ### triplet
+    # triplet
     if tautrip == 0 or T == 0:
         triplet = 1
     else:
@@ -135,7 +138,6 @@ def CF_Gxyz_TIR_gauss_trip(parms, tau):
     # 1 / (Conc * deva * np.pi * r0) * gz * g2D
 
     return 1 / (Neff) * g2D * gz * triplet
-
 
 
 def MoreInfo_6013(parms, countrate=None):
@@ -152,7 +154,7 @@ def MoreInfo_6013(parms, countrate=None):
     r0 = parms[1]
     deva = parms[2]
     Conc = parms[3]
-    Info=list()
+    Info = list()
     # Detection area:
     Veff = np.pi * r0**2 * deva
     Neff = Conc * Veff
@@ -182,7 +184,7 @@ def MoreInfo_6014(parms, countrate=None):
     r0 = parms[1]
     deva = parms[2]
     Conc = parms[3]
-    Info=list()
+    Info = list()
     # Detection area:
     Veff = np.pi * r0**2 * deva
     Neff = Conc * Veff
@@ -204,6 +206,7 @@ def get_boundaries_6014(parms):
     boundaries[5] = [0, 1]
     return boundaries
 
+
 def get_boundaries_6013(parms):
     # strictly positive
     boundaries = [[0, None]]*len(parms)
@@ -211,7 +214,7 @@ def get_boundaries_6013(parms):
 
 
 # 3D Model TIR gaussian
-m_3dtirsq6013 = [6013, "3D","Simple 3D diffusion w/ TIR",
+m_3dtirsq6013 = [6013, "3D", "Simple 3D diffusion w/ TIR",
                  CF_Gxyz_TIR_gauss]
 labels_6013 = [u"D [10 µm²/s]",
                u"r₀ [100 nm]",
@@ -227,13 +230,13 @@ labels_human_readable_6013 = [u"D [µm²/s]",
                               u"r₀ [nm]",
                               u"d_eva [nm]",
                               u"C_3D [1/µm³]"]
-values_factor_human_readable_6013 = [10, 
+values_factor_human_readable_6013 = [10,
                                      100,
                                      100,
                                      1000]
 valuestofit_6013 = [True, False, False, True]
 parms_6013 = [labels_6013, values_6013, valuestofit_6013,
-          labels_human_readable_6013, values_factor_human_readable_6013]
+              labels_human_readable_6013, values_factor_human_readable_6013]
 
 # Pack the models
 model1 = dict()
@@ -244,7 +247,7 @@ model1["Boundaries"] = get_boundaries_6013(values_6013)
 
 
 # 3D Model TIR gaussian + triplet
-m_3dtirsq6014 = [6014, "T+3D","Simple 3D diffusion + triplet w/ TIR",
+m_3dtirsq6014 = [6014, "T+3D", "Simple 3D diffusion + triplet w/ TIR",
                  CF_Gxyz_TIR_gauss_trip]
 labels_6014 = [u"D [10 µm²/s]",
                u"r₀ [100 nm]",
@@ -272,7 +275,7 @@ values_factor_human_readable_6014 = [10,
                                      1]
 valuestofit_6014 = [True, False, False, True, False, False]
 parms_6014 = [labels_6014, values_6014, valuestofit_6014,
-          labels_human_readable_6014, values_factor_human_readable_6014]
+              labels_human_readable_6014, values_factor_human_readable_6014]
 
 # Pack the models
 model2 = dict()

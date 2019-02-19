@@ -10,13 +10,13 @@ matrix:
     - os: osx
   include:
     - os: linux
-      dist: trusty
+      dist: xenial
       language: python
       python: 3.6
       services: docker
       env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
     - os: linux
-      dist: trusty
+      dist: xenial
       language: python
       python: 3.6
       services: docker

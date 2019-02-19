@@ -1,5 +1,5 @@
 """PyCorrFit - update checking"""
-from distutils.version import LooseVersion # For version checking
+from distutils.version import LooseVersion  # For version checking
 import os
 import tempfile
 import traceback
@@ -18,7 +18,6 @@ from . import doc                          # Documentation/some texts
 from . import misc
 
 
-
 class UpdateDlg(wx.Frame):
     def __init__(self, parent, valuedict):
 
@@ -29,7 +28,7 @@ class UpdateDlg(wx.Frame):
         pos = parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title="Update",
-                          size=(230,240), pos=pos)
+                          size=(230, 240), pos=pos)
         self.changelog = changelog
         # Fill html content
         html = wxHTML(self)
@@ -45,14 +44,13 @@ class UpdateDlg(wx.Frame):
 
         if changelog:
             string = string + \
-                     '<a href="{}">Change Log</a>'.format(changelog)
+                '<a href="{}">Change Log</a>'.format(changelog)
         string += '</b></p>'
         html.SetPage(string)
         self.Bind(wx.EVT_CLOSE, self.Close)
         # Set window icon
         ico = misc.getMainIcon()
         wx.Frame.SetIcon(self, ico)
-
 
     def Close(self, event):
         if len(self.changelog) != 0:
@@ -93,11 +91,13 @@ def update(parent):
     delayedresult.startWorker(_update_consumer, _update_worker,
                               wargs=(parent,), cargs=(parent,))
 
+
 def _update_consumer(delayedresult, parent):
     results = delayedresult.get()
     dlg = UpdateDlg(parent, results)
     dlg.Show()
-    parent.StatusBar.SetStatusText("...update status: "+results["Description"][2])
+    parent.StatusBar.SetStatusText(
+        "...update status: "+results["Description"][2])
 
 
 def _update_worker(parent):
@@ -110,7 +110,7 @@ def _update_worker(parent):
     else:
         changelog = responseVer.read()
 
-    ghrepo="FCS-analysis/PyCorrFit"
+    ghrepo = "FCS-analysis/PyCorrFit"
     if hasattr(pcf_version, "repo_tag"):
         old = LooseVersion(pcf_version.repo_tag)
     else:
@@ -132,7 +132,7 @@ def _update_worker(parent):
         clfile.write(changelog)
         clfile.close()
     else:
-        changelogfile=doc.StaticChangeLog
+        changelogfile = doc.StaticChangeLog
     results = dict()
     results["Description"] = description
     results["Homepage"] = doc.HomePage

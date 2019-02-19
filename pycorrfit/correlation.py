@@ -12,6 +12,7 @@ from .trace import Trace
 class Correlation(object):
     """ unifies correlation curve handling
     """
+
     def __init__(self, backgrounds=[], correlation=None, corr_type="AC",
                  filename=None, fit_algorithm="Lev-Mar",
                  fit_model=6000, fit_ival=(0, 0),
@@ -93,7 +94,7 @@ class Correlation(object):
         else:
             c = "CC"
         text = "{} correlation '{}' with {} traces".format(
-                c, self.title, len(self._traces))
+            c, self.title, len(self._traces))
         return text
 
     def background_replace(self, channel, background):
@@ -144,7 +145,8 @@ class Correlation(object):
             elif isinstance(v, Trace):
                 backgrounds.append(v)
             else:
-                raise ValueError("Each background must be instance of Trace or ndarray")
+                raise ValueError(
+                    "Each background must be instance of Trace or ndarray")
         self._backgrounds = backgrounds
 
     @property
@@ -321,12 +323,13 @@ class Correlation(object):
         else:
             raise NotImplementedError("Unknown model identifier")
 
-        if newmodel != self._fit_model :
+        if newmodel != self._fit_model:
             self._fit_model = newmodel
             # overwrite fitting parameters
             self._fit_parameters = self._fit_model.default_values
             self._fit_parameters_variables = self._fit_model.default_variables
-            self._fit_parameters_range = np.zeros((len(self._fit_parameters), 2))
+            self._fit_parameters_range = np.zeros(
+                (len(self._fit_parameters), 2))
             self.normparm = None
 
     @property
@@ -390,8 +393,8 @@ class Correlation(object):
         expect_shape = (self.fit_parameters.shape[0], 2)
         if value.shape != expect_shape:
             msg = "Expected shape of fit parameters: {} (vs {})".format(
-                                        expect_shape, value.shape
-                                        )
+                expect_shape, value.shape
+            )
             raise ValueError(msg)
         self._fit_parameters_range = value
 
@@ -399,7 +402,8 @@ class Correlation(object):
     def fit_parameters_variable(self):
         """which parameters are variable during fitting"""
         if self._fit_parameters_variable is None:
-            self._fit_parameters_variable = np.array(self.fit_model.default_variables, dtype=bool)
+            self._fit_parameters_variable = np.array(
+                self.fit_model.default_variables, dtype=bool)
         return self._fit_parameters_variable
 
     @fit_parameters_variable.setter
@@ -408,7 +412,7 @@ class Correlation(object):
         expect_size = self.fit_parameters.shape[0]
         if value.shape[0] != expect_size:
             msg = "Fit parameter variables must have size {}!".format(
-                                                            expect_size)
+                expect_size)
             raise ValueError(msg)
         self._fit_parameters_variable = value
 
@@ -416,17 +420,18 @@ class Correlation(object):
     def lag_time(self):
         """logarithmic lag time axis"""
         if self.correlation is not None:
-            return self._correlation[:,0].copy()
+            return self._correlation[:, 0].copy()
         elif self._lag_time is not None:
             return self._lag_time
         else:
             # some default lag time
-            return 10**np.linspace(-6,8,1001)
+            return 10**np.linspace(-6, 8, 1001)
 
     @lag_time.setter
     def lag_time(self, value):
         if self.correlation is not None:
-            warnings.warn("Setting lag time not possible, because of existing correlation")
+            warnings.warn(
+                "Setting lag time not possible, because of existing correlation")
         else:
             self._lag_time = value
 
@@ -441,8 +446,8 @@ class Correlation(object):
         # perform parameter normalization
         lag = self.lag_time
         modeled = np.zeros((lag.shape[0], 2))
-        modeled[:,0] = lag
-        modeled[:,1] = self.fit_model(self.fit_parameters, lag)
+        modeled[:, 0] = lag
+        modeled[:, 1] = self.fit_model(self.fit_parameters, lag)
         return modeled.copy()
 
     @property
@@ -455,7 +460,7 @@ class Correlation(object):
     def modeled_plot(self):
         """fitted data values, same shape as self.correlation_fit"""
         toplot = self.modeled_fit
-        toplot[:,1] *= self.normalize_factor
+        toplot[:, 1] *= self.normalize_factor
         return toplot
 
     @property
@@ -479,14 +484,14 @@ class Correlation(object):
         if self.correlation is None:
             raise ValueError("Cannot compute residuals; No correlation given!")
         residuals = self.correlation.copy()
-        residuals[:,1] -= self.modeled[:,1]
+        residuals[:, 1] -= self.modeled[:, 1]
         return residuals
 
     @property
     def residuals_fit(self):
         """fit residuals, same shape as self.correlation_fit"""
         residuals_fit = self.correlation_fit.copy()
-        residuals_fit[:,1] -= self.modeled_fit[:,1]
+        residuals_fit[:, 1] -= self.modeled_fit[:, 1]
         return residuals_fit
 
     @property
@@ -495,7 +500,7 @@ class Correlation(object):
         cp = self.correlation_plot
         if cp is not None:
             residuals_plot = self.correlation_plot.copy()
-            residuals_plot[:,1] -= self.modeled_plot[:,1]
+            residuals_plot[:, 1] -= self.modeled_plot[:, 1]
             return residuals_plot
 
     def set_weights(self, type_name, data):
@@ -532,7 +537,8 @@ class Correlation(object):
             elif isinstance(v, Trace):
                 traces.append(v)
             else:
-                raise ValueError("Each trace must be instance of Trace or ndarray")
+                raise ValueError(
+                    "Each trace must be instance of Trace or ndarray")
         self._traces = traces
 
         if len(self._traces) == 2:

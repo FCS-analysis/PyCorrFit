@@ -1,11 +1,8 @@
 """Constraints of model functions"""
+import os
 
 import numpy as np
-import os
-from os.path import abspath, dirname, split
 import pytest
-import sys
-
 
 import data_file_dl
 import pycorrfit as pcf
@@ -16,11 +13,12 @@ examplefile = "Zeiss_Confocor3_LSM780_FCCS_HeLa_2015/019_cp_KIND+BFA.fcs"
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_constraint_simple_inequality():
     """ Check "smaller than" relation during fitting.
     """
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],
@@ -50,11 +48,12 @@ multiplying by two to see if relation holds")
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_constraint_sum_smaller_one():
     """ Check "a+b<c" relation during fitting.
     """
     dfile = data_file_dl.get_data_file(examplefile)
-    data = pcf.readfiles.openAny(dfile)
+    data = pcf.readfiles.open_any(dfile)
     corr = pcf.Correlation(correlation=data["Correlation"][0],
                            traces=data["Trace"][0],
                            corr_type=data["Type"][0],
@@ -65,19 +64,19 @@ def test_fit_constraint_sum_smaller_one():
     pcf.Fit(corr)
     assert corr.fit_parameters[4] + corr.fit_parameters[5] < 1
     parms0 = np.array([
-                       1.13827592342,  # n
-                       3.0918704e-05,  # τ₁ [ms]
-                       1.98835792339,  # τ₂ [ms]
-                       2000.0,  # τ₃ [ms]
-                       0.972264423555,  # F₁
-                       0.021400173882,  # F₂
-                       5.0,  # SP
-                       1.0,  # α₂₁
-                       1.0,  # α₃₁
-                       1e-08,  # τ_trip [ms]
-                       0.0,  # T
-                       0.0,  # offset
-                        ])
+        1.13827592342,  # n
+        3.0918704e-05,  # τ₁ [ms]
+        1.98835792339,  # τ₂ [ms]
+        2000.0,  # τ₃ [ms]
+        0.972264423555,  # F₁
+        0.021400173882,  # F₂
+        5.0,  # SP
+        1.0,  # α₂₁
+        1.0,  # α₃₁
+        1e-08,  # τ_trip [ms]
+        0.0,  # T
+        0.0,  # offset
+    ])
     corr.fit_parameters = parms0
 
     vary = [False] * 12

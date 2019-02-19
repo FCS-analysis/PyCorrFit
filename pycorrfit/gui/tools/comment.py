@@ -4,26 +4,27 @@ import wx
 
 class EditComment(wx.Frame):
     """ Little Dialog to edit the comment on the session. """
+
     def __init__(self, parent):
-        ## Variables
+        # Variables
         # parent is main frame
         self.parent = parent
         # Get the window positioning correctly
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=parent, title="Session comment",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        initial_size = (400,300)
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        initial_size = (400, 300)
         initial_sizec = (initial_size[0], initial_size[1]-50)
         self.SetSize(initial_size)
-        self.SetMinSize((400,300))
-        ## Content
+        self.SetMinSize((400, 300))
+        # Content
         self.panel = wx.Panel(self)
         self.control = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE,
-                        size=initial_sizec, value=self.parent.SessionComment)
+                                   size=initial_sizec, value=self.parent.SessionComment)
         self.Bind(wx.EVT_TEXT, self.OnTextChanged, self.control)
         text = wx.StaticText(self.panel,
-                   label="Session comments will be saved in the  session file.")
+                             label="Session comments will be saved in the  session file.")
         # buttons
         btnsave = wx.Button(self.panel, wx.ID_SAVE, 'Save Comment')
         self.Bind(wx.EVT_BUTTON, self.OnSave, btnsave)

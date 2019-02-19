@@ -17,7 +17,7 @@ at the `issues page <https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-n
 
 
 .. |PyCorrFit| image:: https://raw.github.com/FCS-analysis/PyCorrFit/master/doc/Images/PyCorrFit_logo_dark.png
-.. |PyPI Version| image:: http://img.shields.io/pypi/v/PyCorrFit.svg
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/PyCorrFit.svg
    :target: https://pypi.python.org/pypi/pycorrfit
 .. |Build Status Win| image:: https://img.shields.io/appveyor/ci/paulmueller/PyCorrFit/master.svg?label=win
    :target: https://ci.appveyor.com/project/paulmueller/pycorrfit

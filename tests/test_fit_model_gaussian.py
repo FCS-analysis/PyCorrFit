@@ -1,11 +1,4 @@
 """Check known model parameters and cross-check across models"""
-
-from os.path import abspath, dirname, split
-import sys
-
-import numpy as np
-
-import pycorrfit
 from pycorrfit import models as mdls
 
 # GLOBAL PARAMETERS FOR THIS TEST:
@@ -104,11 +97,11 @@ def test_6030():
               0.00028,     # tautrip
               0.1682,      # T
               0.0053]      # offset
-    assert  abs(model(parms1, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
+    assert abs(model(parms1, tau=TAU) - model2(parms2, tau=TAU)) < 1e-14
 
 
 def test_6032():
-    #T+3D+2D
+    # T+3D+2D
     model = mdls.modeldict[6032]
     parms = [1.58,      # n
              3548,      # taud2D

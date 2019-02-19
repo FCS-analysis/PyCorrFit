@@ -37,10 +37,11 @@ from . import usermodel
 ########################################################################
 class ExceptionDialog(wx.MessageDialog):
     """"""
+
     def __init__(self, msg):
         """Constructor"""
         wx.MessageDialog.__init__(self, None, msg, "Error",
-                                          wx.OK|wx.ICON_ERROR)
+                                  wx.OK | wx.ICON_ERROR)
 
 
 ########################################################################
@@ -48,17 +49,18 @@ class FlatNotebook(fnb.FlatNotebook):
     """
     Flatnotebook class
     """
+
     def __init__(self, parent):
         """Constructor"""
-        style = fnb.FNB_SMART_TABS|fnb.FNB_NO_NAV_BUTTONS|\
-              fnb.FNB_DROPDOWN_TABS_LIST|fnb.FNB_NODRAG|\
-              fnb.FNB_TABS_BORDER_SIMPLE|\
-              fnb.FNB_X_ON_TAB|fnb.FNB_NO_X_BUTTON
+        style = fnb.FNB_SMART_TABS | fnb.FNB_NO_NAV_BUTTONS |\
+            fnb.FNB_DROPDOWN_TABS_LIST | fnb.FNB_NODRAG |\
+            fnb.FNB_TABS_BORDER_SIMPLE |\
+            fnb.FNB_X_ON_TAB | fnb.FNB_NO_X_BUTTON
         # Bugfix for Mac
         if platform.system().lower() in ["windows", "linux"]:
-            style = style|fnb.FNB_HIDE_ON_SINGLE_TAB
+            style = style | fnb.FNB_HIDE_ON_SINGLE_TAB
         self.fnb = fnb.FlatNotebook.__init__(self, parent, wx.ID_ANY,
-        agwStyle=style)
+                                             agwStyle=style)
 
 
 class MyApp(wx.App):
@@ -68,7 +70,7 @@ class MyApp(wx.App):
         # http://anonscm.debian.org/cgit/collab-maint/wx-migration-tools.git/tree/README#n30
         self.SetAssertMode(wx.APP_ASSERT_SUPPRESS)
 
-    def MacOpenFile(self,filename):
+    def MacOpenFile(self, filename):
         """
         """
         if filename.endswith(".pcfs"):
@@ -85,17 +87,18 @@ class MyApp(wx.App):
 class MyFrame(wx.Frame):
     def __init__(self, parent, anid, version):
         sys.excepthook = MyExceptionHook
-        ## Set initial variables that make sense
+        # Set initial variables that make sense
         self.version = version
 
-        ## Init of the superClass
-        super(MyFrame, self).__init__(parent, anid, "PyCorrFit " + self.version)
+        # Init of the superClass
+        super(MyFrame, self).__init__(
+            parent, anid, "PyCorrFit " + self.version)
 
-        self.CreateStatusBar() # A Statusbar in the bottom of the window
-        self.StatusBar.SetStatusText("Find help and updates online:"+
+        self.CreateStatusBar()  # A Statusbar in the bottom of the window
+        self.StatusBar.SetStatusText("Find help and updates online:" +
                                      " 'Help > Update'")
-        ## Properties of the Frame
-        initial_size = (768,700)
+        # Properties of the Frame
+        initial_size = (768, 700)
         self.SetSize(initial_size)
         self.SetMinSize(initial_size)
 
@@ -108,7 +111,7 @@ class MyFrame(wx.Frame):
         self.SessionComment = "This is a session comment. It will be saved" +\
                               " as the session is saved."
 
-        ## Set variables
+        # Set variables
         # The model module that can be changed by importing user defined
         # functions.
         # These are only for compatibility.
@@ -136,7 +139,7 @@ class MyFrame(wx.Frame):
         # New as of 0.7.9
         self.RangeSelector = None
 
-        ## Setting up the menus.
+        # Setting up the menus.
         # models, modeldict, modeltypes only for compatibility!
         # I should use mdls for anything, since it's globally imported
         # and modified by this program (e.g. adding new function)
@@ -147,16 +150,16 @@ class MyFrame(wx.Frame):
         self.modelmenudict = dict()
         self.MakeMenu()
 
-        ## Create the Flatnotebook (Tabs Tabs Tabs!)
+        # Create the Flatnotebook (Tabs Tabs Tabs!)
         panel = wx.Panel(self)
         self.panel = panel
 
         self.notebook = FlatNotebook(panel)
         self.notebook.SetRightClickMenu(self.curmenu)
 
-        #self.notebook.SetAGWWindowStyleFlag(FNB_X_ON_TAB)
+        # self.notebook.SetAGWWindowStyleFlag(FNB_X_ON_TAB)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(self.notebook, 1, wx.ALL | wx.EXPAND, 5)
         panel.SetSizer(sizer)
         self.Layout()
 
@@ -187,7 +190,6 @@ class MyFrame(wx.Frame):
         # Display support dialog
         if hasattr(sys, "frozen"):
             self.OnSupport()
-
 
     def add_fitting_tab(self, event=None, modelid=None, counter=None,
                         select=False):
@@ -222,14 +224,14 @@ class MyFrame(wx.Frame):
         model = mdls.modeldict[modelid][1]
         # Create New Tab
         Newtab = page.FittingPanel(self, counter, modelid, active_parms)
-        #self.Freeze()
+        # self.Freeze()
         self.notebook.AddPage(Newtab, counter+model, select=select)
         if select:
             # A hack to have the last page displayed in the tab menu:
             Npag = self.notebook.GetPageCount()
             self.notebook.SetSelection(Npag-1)
 
-        #self.Thaw()
+        # self.Thaw()
         self.tabcounter = self.tabcounter + 1
         # Enable the "Current" Menu
         self.EnableToolCurrent(True)
@@ -243,7 +245,7 @@ class MyFrame(wx.Frame):
         # Find Tool Statistics
         # Get open tools
         #toolkeys = self.ToolsOpen.keys()
-        #for key in toolkeys:
+        # for key in toolkeys:
         #    tool = self.ToolsOpen[key]
         #    try:
         #        if tool.MyName=="STATISTICS":
@@ -252,7 +254,6 @@ class MyFrame(wx.Frame):
         #    except:
         #        pass
         return Newtab
-
 
     def EnableToolCurrent(self, enabled):
         """ Independent on order of menus, enable or disable tools and
@@ -263,7 +264,6 @@ class MyFrame(wx.Frame):
         # self.menuBar.EnableTop(tid, enabled)
         cid = self.menuBar.FindMenu("Current &Page")
         self.menuBar.EnableTop(cid, enabled)
-
 
     def MakeMenu(self):
         self.filemenu = wx.Menu()
@@ -279,44 +279,44 @@ class MyFrame(wx.Frame):
         # wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         # self.filemenu
         menuAddModel = self.filemenu.Append(wx.ID_ANY,
-                          "&Import model", "Add a user defined model.")
+                                            "&Import model", "Add a user defined model.")
         menuLoadBatch = self.filemenu.Append(wx.ID_ANY,
-                         "&Load data\tCtrl+O", "Loads one or multiple data files")
+                                             "&Load data\tCtrl+O", "Loads one or multiple data files")
         menuOpen = self.filemenu.Append(wx.ID_OPEN, "&Open session\tCtrl+Shift+O",
-                                           "Restore a previously saved session")
+                                        "Restore a previously saved session")
         self.filemenu.AppendSeparator()
         self.menuComm = self.filemenu.Append(wx.ID_ANY, "Co&mment session",
-                           "Add a comment to this session", kind=wx.ITEM_CHECK)
+                                             "Add a comment to this session", kind=wx.ITEM_CHECK)
         self.filemenu.Check(self.menuComm.GetId(), False)
         menuClear = self.filemenu.Append(wx.ID_ANY, "&Clear session\tAlt+C",
-                          "Remove all pages but keep imported model functions.")
+                                         "Remove all pages but keep imported model functions.")
         menuSave = self.filemenu.Append(wx.ID_SAVE, "&Save session\tCtrl+S",
-                                   "Save entire Session")
+                                        "Save entire Session")
         self.filemenu.AppendSeparator()
-        menuExit = self.filemenu.Append(wx.ID_EXIT,"E&xit\tCtrl+Q",
-                                                        "Terminate the program")
+        menuExit = self.filemenu.Append(wx.ID_EXIT, "E&xit\tCtrl+Q",
+                                        "Terminate the program")
         # prefmenu
         self.MenuUseLatex = prefmenu.Append(wx.ID_ANY, "Use Latex",
-                            "Enables/Disables usage of Latex for image saving.",
-                            kind=wx.ITEM_CHECK)
+                                            "Enables/Disables usage of Latex for image saving.",
+                                            kind=wx.ITEM_CHECK)
         self.MenuVerbose = prefmenu.Append(wx.ID_ANY, "Verbose mode",
-                           "Enables/Disables output of additional information.",
-                            kind=wx.ITEM_CHECK)
+                                           "Enables/Disables output of additional information.",
+                                           kind=wx.ITEM_CHECK)
         self.MenuShowWeights = prefmenu.Append(wx.ID_ANY, "Show weights",
-                           "Enables/Disables displaying weights of fit.",
-                            kind=wx.ITEM_CHECK)
+                                               "Enables/Disables displaying weights of fit.",
+                                               kind=wx.ITEM_CHECK)
         self.MenuShowWeights.Check()
         self.MenuAutocloseTools = prefmenu.Append(wx.ID_ANY, "Autoclose tools",
-                            "Automatically close tools after usage.",
-                            kind=wx.ITEM_CHECK)
+                                                  "Automatically close tools after usage.",
+                                                  kind=wx.ITEM_CHECK)
         # toolmenu
         toolkeys = list(tools.ToolDict.keys())
         toolkeys.sort()
         for ttype in toolkeys:
             for tool in np.arange(len(tools.ToolDict[ttype])):
                 menu = self.toolmenu.Append(wx.ID_ANY,
-                       tools.ToolName[ttype][tool][0],
-                       tools.ToolName[ttype][tool][1], kind=wx.ITEM_CHECK)
+                                            tools.ToolName[ttype][tool][0],
+                                            tools.ToolName[ttype][tool][1], kind=wx.ITEM_CHECK)
                 self.toolmenu.Check(menu.GetId(), False)
                 # Append tool to list of tools with menu ID
                 self.Tools[menu.GetId()] = tools.ToolDict[ttype][tool]
@@ -333,12 +333,12 @@ class MyFrame(wx.Frame):
                                            "Save data (comma separated values)")
 
         menuSavePlotCorr = self.curmenu.Append(wx.ID_ANY,
-                                     "&Save correlation as image",
-                                     "Export current plot as image.")
+                                               "&Save correlation as image",
+                                               "Export current plot as image.")
 
         menuSavePlotTrace = self.curmenu.Append(wx.ID_ANY,
-                                     "&Save trace as image",
-                                     "Export current trace as image.")
+                                                "&Save trace as image",
+                                                "Export current trace as image.")
         self.curmenu.AppendSeparator()
         menuClPa = self.curmenu.Append(wx.ID_ANY, "&Close Page",
                                        "Close Current Page")
@@ -358,25 +358,25 @@ class MyFrame(wx.Frame):
                 model = mdls.modeldict[modelid]
                 if platform.system().lower() == "darwin" and hasattr(sys, 'frozen'):
                     ###
-                    ### Work-around for freezed mac version
+                    # Work-around for freezed mac version
                     ###
-                    ### (strange UTF-8 decoding error,
-                    ###  would work with misc.removewrongUTF8)
+                    # (strange UTF-8 decoding error,
+                    # would work with misc.removewrongUTF8)
                     b = model[1].split("(")[0].strip()
                     c = misc.removewrongUTF8(model[2])
-                    menuentry = submenu.Append(model[0],b,c)
+                    menuentry = submenu.Append(model[0], b, c)
                 else:
                     menuentry = submenu.Append(model[0], model[1], model[2])
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
         # help menu
         menuSupport = helpmenu.Append(wx.ID_ANY, "&Support",
-                                    "How to (get) support (for) PyCorrFit")
+                                      "How to (get) support (for) PyCorrFit")
         menuDocu = helpmenu.Append(wx.ID_ANY, "&Documentation",
-                                    "PyCorrFit documentation")
+                                   "PyCorrFit documentation")
         menuWiki = helpmenu.Append(wx.ID_ANY, "&Wiki",
-                          "PyCorrFit wiki pages by users for users (online)")
+                                   "PyCorrFit wiki pages by users for users (online)")
         menuUpdate = helpmenu.Append(wx.ID_ANY, "&Update",
-                                    "Check for new version"+
+                                     "Check for new version" +
                                      " (Web access required)")
         helpmenu.AppendSeparator()
         menuShell = helpmenu.Append(wx.ID_ANY, "S&hell",
@@ -389,16 +389,17 @@ class MyFrame(wx.Frame):
         # Create the menubar.
         self.menuBar = wx.MenuBar()
         # Adding all the menus to the MenuBar
-        self.menuBar.Append(self.filemenu,"&File")
-        self.menuBar.Append(self.toolmenu,"&Tools")
-        self.menuBar.Append(self.curmenu,"Current &Page")
-        self.menuBar.Append(modelmenu,"&Model")
-        self.menuBar.Append(prefmenu,"&Preferences")
-        self.menuBar.Append(helpmenu,"&Help")
-        self.SetMenuBar(self.menuBar) # Adding the MenuBar to the Frame content.
+        self.menuBar.Append(self.filemenu, "&File")
+        self.menuBar.Append(self.toolmenu, "&Tools")
+        self.menuBar.Append(self.curmenu, "Current &Page")
+        self.menuBar.Append(modelmenu, "&Model")
+        self.menuBar.Append(prefmenu, "&Preferences")
+        self.menuBar.Append(helpmenu, "&Help")
+        # Adding the MenuBar to the Frame content.
+        self.SetMenuBar(self.menuBar)
         self.EnableToolCurrent(False)
-        ## Set events
-        #File
+        # Set events
+        # File
         #self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
         self.Bind(wx.EVT_MENU, self.OnLoadBatch, menuLoadBatch)
         self.Bind(wx.EVT_MENU, self.OnAddModel, menuAddModel)
@@ -427,26 +428,38 @@ class MyFrame(wx.Frame):
         # Add the shortcuts
         # # For Tools first.
         toolsitems = self.toolmenu.GetMenuItems()
-        avg = filter(lambda x: x.GetItemLabelText() == 'Average data', toolsitems).__next__()
+        avg = filter(lambda x: x.GetItemLabelText() ==
+                     'Average data', toolsitems).__next__()
         avg.SetItemLabel("{}\tAlt+A".format(avg.GetItemLabel()))
-        bat = filter(lambda x: x.GetItemLabelText() == 'Batch control', toolsitems).__next__()
+        bat = filter(lambda x: x.GetItemLabelText() ==
+                     'Batch control', toolsitems).__next__()
         bat.SetItemLabel("{}\tAlt+B".format(bat.GetItemLabel()))
-        stat = filter(lambda x: x.GetItemLabelText() == 'Statistics view', toolsitems).__next__()
+        stat = filter(lambda x: x.GetItemLabelText() ==
+                      'Statistics view', toolsitems).__next__()
         stat.SetItemLabel("{}\tAlt+S".format(stat.GetItemLabel()))
-        view = filter(lambda x: x.GetItemLabelText() == 'Trace view', toolsitems).__next__()
+        view = filter(lambda x: x.GetItemLabelText() ==
+                      'Trace view', toolsitems).__next__()
         view.SetItemLabel("{}\tAlt+V".format(view.GetItemLabel()))
 
         self.accel_tbl = wx.AcceleratorTable([
-                                                (wx.ACCEL_ALT, ord('A'), avg.GetId()),
-                                                (wx.ACCEL_ALT, ord('B'), bat.GetId()),
-                                                (wx.ACCEL_ALT, ord('V'), view.GetId()),
-                                                (wx.ACCEL_ALT, ord('S'), stat.GetId()),
-                                                (wx.ACCEL_CTRL, ord('O'), menuLoadBatch.GetId()),
-                                                (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('O'), menuOpen.GetId()),
-                                                (wx.ACCEL_CTRL, ord('S'), menuSave.GetId()),
-                                                (wx.ACCEL_ALT, ord('C'), menuClear.GetId()),
-                                                (wx.ACCEL_CTRL, ord('Q'), menuExit.GetId())
-                                            ])
+            (wx.ACCEL_ALT, ord('A'), avg.GetId()),
+            (wx.ACCEL_ALT, ord(
+                'B'), bat.GetId()),
+            (wx.ACCEL_ALT, ord(
+                'V'), view.GetId()),
+            (wx.ACCEL_ALT, ord(
+                'S'), stat.GetId()),
+            (wx.ACCEL_CTRL, ord('O'),
+             menuLoadBatch.GetId()),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord(
+                'O'), menuOpen.GetId()),
+            (wx.ACCEL_CTRL, ord('S'),
+             menuSave.GetId()),
+            (wx.ACCEL_ALT, ord('C'),
+             menuClear.GetId()),
+            (wx.ACCEL_CTRL, ord(
+                'Q'), menuExit.GetId())
+        ])
         self.SetAcceleratorTable(self.accel_tbl)
 
     def OnAbout(self, event=None):
@@ -494,19 +507,19 @@ class MyFrame(wx.Frame):
 
         NewModel = usermodel.UserModel(self)
         try:
-            NewModel.GetCode( os.path.join(dirname, filename) )
+            NewModel.GetCode(os.path.join(dirname, filename))
         except NameError:
             # sympy is probably not installed
             # Warn the user
-            text = ("SymPy not found.\n"+
-                    "In order to import user defined model\n"+
-                    "functions, please install Sympy\n"+
+            text = ("SymPy not found.\n" +
+                    "In order to import user defined model\n" +
+                    "functions, please install Sympy\n" +
                     "version 0.7.2 or higher.\nhttp://sympy.org/")
             if platform.system().lower() == 'linux':
-                text += ("\nSymPy is included in the package:\n"+
+                text += ("\nSymPy is included in the package:\n" +
                          "   'python-sympy'")
             dlg = wx.MessageDialog(None, text, 'SymPy not found',
-                            wx.OK | wx.ICON_EXCLAMATION)
+                                   wx.OK | wx.ICON_EXCLAMATION)
             dlg.ShowModal()
             return
         except:
@@ -519,7 +532,7 @@ class MyFrame(wx.Frame):
             for tb_item in traceback.format_tb(info[2]):
                 errstr += tb_item
             dlg = wx.MessageDialog(self, errstr, "Error",
-                style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                                   style=wx.ICON_ERROR | wx.OK | wx.STAY_ON_TOP)
             dlg.ShowModal()
             return
         # Test the code for sympy compatibility.
@@ -530,14 +543,14 @@ class MyFrame(wx.Frame):
         except:
             # This means that the imported model file could be
             # contaminated. Ask the user how to proceed.
-            text = "The model parsing check raised an Error.\n"+\
-                   "This could be the result of a wrong Syntax\n"+\
-                   "or an error of the parser.\n"+\
-                   "This might be dangerous. Procceed\n"+\
-                   "only, if you trust the source of the file.\n"+\
+            text = "The model parsing check raised an Error.\n" +\
+                   "This could be the result of a wrong Syntax\n" +\
+                   "or an error of the parser.\n" +\
+                   "This might be dangerous. Procceed\n" +\
+                   "only, if you trust the source of the file.\n" +\
                    "Try and import offensive file: "+filename+"?"
             dlg2 = wx.MessageDialog(self, text, "Unsafe Operation",
-                    style=wx.ICON_EXCLAMATION|wx.YES_NO|wx.STAY_ON_TOP)
+                                    style=wx.ICON_EXCLAMATION | wx.YES_NO | wx.STAY_ON_TOP)
             if dlg2.ShowModal() == wx.ID_YES:
                 NewModel.ImportModel()
             else:
@@ -546,9 +559,7 @@ class MyFrame(wx.Frame):
             # The model was loaded correctly
             NewModel.ImportModel()
 
-
         self.dirname = dirname
-
 
     def OnClearSession(self, e=None, clearmodels=False):
         """
@@ -563,9 +574,9 @@ class MyFrame(wx.Frame):
         # Ask, if user wants to save current session.
         if numtabs > 0:
             dial = wx.MessageDialog(self,
-                'Do you wish to save this session first?',
-                'Save current session?',
-                 wx.ICON_QUESTION | wx.CANCEL | wx.YES_NO | wx.NO_DEFAULT )
+                                    'Do you wish to save this session first?',
+                                    'Save current session?',
+                                    wx.ICON_QUESTION | wx.CANCEL | wx.YES_NO | wx.NO_DEFAULT)
 #            dial = edclasses.MyYesNoAbortDialog(self,
 #                    'Do you wish to save this session first?',
 #                    'Save current session?')
@@ -589,7 +600,7 @@ class MyFrame(wx.Frame):
         self.SetTitleFCS(None)
         self.SessionComment = "You may enter some information here."
         self.Background = list()
-        ## Do we want to keep user defined models after session clearing?
+        # Do we want to keep user defined models after session clearing?
         if clearmodels == True:
             # Also reset user defined models
             for modelid in mdls.modeltypes["User"]:
@@ -599,13 +610,12 @@ class MyFrame(wx.Frame):
                 del mdls.modeldict[modelid]
             mdls.modeltypes["User"] = list()
             # Model Menu
-            menu=self.modelmenudict["User"]
-            for item in  menu.GetMenuItems():
+            menu = self.modelmenudict["User"]
+            for item in menu.GetMenuItems():
                 menu.RemoveItem(item)
         return "clear"
 
-
-    def OnCommSession(self,e=None):
+    def OnCommSession(self, e=None):
         """ Dialog for commenting on session. """
         try:
             self.EditCommentDlg.IsEnabled()
@@ -638,7 +648,6 @@ class MyFrame(wx.Frame):
             if self.notebook.GetPageCount() == 0:
                 self.OnFNBPageChanged()
 
-
     def OnDocumentation(self, e=None):
         """ Get the documentation and view it with browser"""
         path = doc.GetLocationOfDocumentation()
@@ -659,8 +668,7 @@ class MyFrame(wx.Frame):
                 cmd = 'xdg-open "{}" &'.format(path)
             os.system(cmd)
 
-
-    def OnExit(self,e=None):
+    def OnExit(self, e=None):
         """
             Kindly asks the user if he wants to save the session and
             then exit the program.
@@ -669,13 +677,13 @@ class MyFrame(wx.Frame):
         # Ask, if user wants to save current session.
         if numtabs > 0:
             dial = wx.MessageDialog(self,
-                'Do you wish to save this session first?',
-                'Save current session?',
-                 wx.ICON_QUESTION | wx.CANCEL | wx.YES_NO | wx.NO_DEFAULT )
+                                    'Do you wish to save this session first?',
+                                    'Save current session?',
+                                    wx.ICON_QUESTION | wx.CANCEL | wx.YES_NO | wx.NO_DEFAULT)
             result = dial.ShowModal()
             dial.Destroy()
             if result == wx.ID_CANCEL:
-                return # stop this function - do nothing.
+                return  # stop this function - do nothing.
             elif result == wx.ID_YES:
                 filename = self.OnSaveSession()
                 if filename is None:
@@ -685,14 +693,11 @@ class MyFrame(wx.Frame):
         # Exit the Program
         self.Destroy()
 
-
-    def OnFNBClosedPage(self,e=None):
+    def OnFNBClosedPage(self, e=None):
         """ Called, when a page has been closed """
         if self.notebook.GetPageCount() == 0:
             # Grey out tools
             self.EnableToolCurrent(False)
-
-
 
     def OnFNBPageChanged(self, e=None, Page=None, trigger=None):
         """ Called, when
@@ -705,8 +710,8 @@ class MyFrame(wx.Frame):
         """
 
         if (e is not None and
-            e.GetEventType()==fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED.typeId
-            and trigger is None):
+            e.GetEventType() == fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED.typeId
+                and trigger is None):
             trigger = "tab_browse"
         # Get the Page
         if Page is None:
@@ -729,17 +734,15 @@ class MyFrame(wx.Frame):
             else:
                 self.notebook.Show()
 
-
-
-    def OnImportData(self,e=None):
+    def OnImportData(self, e=None):
         """Import experimental data from all filetypes specified in
-           *opf.Filetypes*.
+           *readfiles.filetypes_dict*.
            Is called by the curmenu and applies to currently opened model.
            Calls self.ImportData.
         """
         # Open a data file
         # Get Data
-        SupFiletypes = list(opf.Filetypes.keys())
+        SupFiletypes = list(readfiles.filetypes_dict.keys())
         SupFiletypes.sort()
         filters = ""
         for i in np.arange(len(SupFiletypes)):
@@ -750,7 +753,7 @@ class MyFrame(wx.Frame):
                 # This is wx widgets stuff.
                 filters = filters+"|"
         dlg = wx.FileDialog(self, "Open data file",
-            self.dirname, "", filters, wx.FD_OPEN)
+                            self.dirname, "", filters, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             # The filename the page will get
             path = dlg.GetPath()            # Workaround since 0.7.5
@@ -758,7 +761,7 @@ class MyFrame(wx.Frame):
             #self.filename = dlg.GetFilename()
             #self.dirname = dlg.GetDirectory()
             try:
-                Stuff = readfiles.openAny(self.dirname, self.filename)
+                Stuff = readfiles.open_any(self.dirname, self.filename)
             except:
                 # The file format is not supported.
                 info = sys.exc_info()
@@ -769,7 +772,7 @@ class MyFrame(wx.Frame):
                 for tb_item in traceback.format_tb(info[2]):
                     errstr += tb_item
                 wx.MessageDialog(self, errstr, "Error",
-                    style=wx.ICON_ERROR|wx.OK|wx.STAY_ON_TOP)
+                                 style=wx.ICON_ERROR | wx.OK | wx.STAY_ON_TOP)
                 return
             else:
                 dataexp = Stuff["Correlation"]
@@ -839,18 +842,18 @@ class MyFrame(wx.Frame):
                 # pages title.
                 num = len(curvelist)
                 # Show a nice progress dialog:
-                style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
-                        wx.PD_CAN_ABORT
+                style = wx.PD_REMAINING_TIME | wx.PD_SMOOTH | wx.PD_AUTO_HIDE |\
+                    wx.PD_CAN_ABORT
                 dlg = wx.ProgressDialog("Import", "Loading pages...",
-                                        maximum = num, parent=self, style=style)
+                                        maximum=num, parent=self, style=style)
                 # Get current page and populate
                 CurPage = self.notebook.GetCurrentPage()
                 for i in np.arange(num):
                     # Fill Page with data
                     self.ImportData(CurPage, dataexp[i], trace[i],
-                                   curvetype=curvelist[i], filename=filename[i],
-                                   weights=Weight[i], weight_type=WeightName[i],
-                                   curveid=i)
+                                    curvetype=curvelist[i], filename=filename[i],
+                                    weights=Weight[i], weight_type=WeightName[i],
+                                    curveid=i)
                     # Let the user abort, if he wants to:
                     # We want to do this here before an empty page is added
                     # to the notebok.
@@ -861,8 +864,8 @@ class MyFrame(wx.Frame):
                         # Create new page.
                         # (Add n-1 pages while importing.)
                         CurPage = self.add_fitting_tab(event=None,
-                                             modelid=CurPage.corr.fit_model.id,
-                                             counter=None)
+                                                       modelid=CurPage.corr.fit_model.id,
+                                                       counter=None)
                 # We are finished here:
                 dlg.Destroy()
                 return
@@ -871,7 +874,6 @@ class MyFrame(wx.Frame):
             self.dirname = dlg.GetDirectory()
             dlg.Destroy()
             return
-
 
     def OnMyLeftUp(self, event):
         """
@@ -907,7 +909,6 @@ class MyFrame(wx.Frame):
             # Call what should have been called.
             pc.OnLeftUp(event)
 
-
     def ImportData(self, Page, dataexp, trace, curvetype="",
                    filename="", curveid="", run="0",
                    weights=None, weight_type=None, trigger=None):
@@ -932,7 +933,7 @@ class MyFrame(wx.Frame):
         # It might be possible, that we want the channels to be
         # fixed to some interval. This is the case if the
         # checkbox on the "Channel selection" dialog is checked.
-        #self.OnFNBPageChanged()
+        # self.OnFNBPageChanged()
         # Enable Fitting Button
         CurPage.Fit_enable_fitting()
         # Set new tabtitle value and strip leading or trailing
@@ -960,10 +961,9 @@ class MyFrame(wx.Frame):
         # Call this function to allow the "Channel Selection" window that
         # might be open to update itself.
         # We are aware of the fact, that we just did that
-        #self.OnFNBPageChanged()
+        # self.OnFNBPageChanged()
 
-
-    def OnLatexCheck(self,e):
+    def OnLatexCheck(self, e):
         """ Checks if we can use latex. If not, create a pop-up window
             stating so.
         """
@@ -971,34 +971,33 @@ class MyFrame(wx.Frame):
         if uselatex == False:
             # do nothing
             return
-        ## Check if we can use latex for plotting:
+        # Check if we can use latex for plotting:
         r1 = meta.find_program("latex")[0]
         r2 = meta.find_program("dvipng")[0]
         # Ghostscript
         r31 = meta.find_program("gs")[0]
-        r32 = meta.find_program("mgs")[0] # from miktex
-        r3 = max(r31,r32)
+        r32 = meta.find_program("mgs")[0]  # from miktex
+        r3 = max(r31, r32)
         if r1+r2+r3 < 3:
             # Warn the user
             if platform.system().lower() == 'windows':
-                text = ("Latex plotting features will not work.\n"+
-                        "Please install MiKTeX.\n"+
+                text = ("Latex plotting features will not work.\n" +
+                        "Please install MiKTeX.\n" +
                         "http://miktex.org/")
             elif platform.system().lower() == 'darwin':
-                text = ("Latex plotting features will not work.\n"+
-                        "Please install MacTeX.\n"+
+                text = ("Latex plotting features will not work.\n" +
+                        "Please install MacTeX.\n" +
                         "http://tug.org/mactex/")
             else:
-                text = ("Latex plotting features will not work.\n"+
-                        "Make sure you have these packages installed:\n"+
-                        "  - dvipng\n"+
-                        "  - ghostscript\n"+
-                        "  - texlive-latex-base\n"+
+                text = ("Latex plotting features will not work.\n" +
+                        "Make sure you have these packages installed:\n" +
+                        "  - dvipng\n" +
+                        "  - ghostscript\n" +
+                        "  - texlive-latex-base\n" +
                         "  - texlive-science\n")
             dlg = wx.MessageDialog(None, text, 'Latex not found',
-                            wx.OK | wx.ICON_EXCLAMATION)
+                                   wx.OK | wx.ICON_EXCLAMATION)
             dlg.ShowModal()
-
 
     def OnLoadBatch(self, e=None, dataname=None):
         """ Open multiple data files and apply a single model to them
@@ -1006,8 +1005,8 @@ class MyFrame(wx.Frame):
             model to use.
         """
         if dataname is None:
-            ## Browse the file system
-            SupFiletypes = list(opf.Filetypes.keys())
+            # Browse the file system
+            SupFiletypes = list(readfiles.filetypes_dict.keys())
             # Sort them so we have "All suported filetypes" up front
             SupFiletypes.sort()
             filters = ""
@@ -1018,7 +1017,7 @@ class MyFrame(wx.Frame):
                     # Add a separator if item is not last item
                     filters = filters+"|"
             dlg = wx.FileDialog(self, "Open data files",
-                self.dirname, "", filters, wx.FD_OPEN|wx.FD_MULTIPLE)
+                                self.dirname, "", filters, wx.FD_OPEN | wx.FD_MULTIPLE)
             if dlg.ShowModal() == wx.ID_OK:
                 Datafiles = dlg.GetFilenames()
                 # We rely on sorted filenames
@@ -1044,8 +1043,8 @@ class MyFrame(wx.Frame):
                 self.dirname = os.path.split(dataname)[0]
             Datafiles.sort()
 
-        ## Get information from the data files and let the user choose
-        ## which type of curves to load and the corresponding model.
+        # Get information from the data files and let the user choose
+        # which type of curves to load and the corresponding model.
         # List of filenames that could not be opened
         BadFiles = list()
         Exceptions = list()
@@ -1054,26 +1053,26 @@ class MyFrame(wx.Frame):
         Trace = list()
         Type = list()
         Filename = list()   # there might be zipfiles with additional name info
-        #Run = list()        # Run number connecting AC1 AC2 CC12 CC21
+        # Run = list()        # Run number connecting AC1 AC2 CC12 CC21
         Curveid = list()    # Curve ID of each curve in a file
         Weight = list()
         WeightName = list()
 
         # Display a progress dialog for file import
         N = len(Datafiles)
-        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
-                wx.PD_CAN_ABORT
+        style = wx.PD_REMAINING_TIME | wx.PD_SMOOTH | wx.PD_AUTO_HIDE |\
+            wx.PD_CAN_ABORT
         dlgi = wx.ProgressDialog("Import", "Loading data...",
-                                maximum = N, parent=self, style=style)
+                                 maximum=N, parent=self, style=style)
         for j in np.arange(N):
-            afile=Datafiles[j]
+            afile = Datafiles[j]
             # Let the user abort, if he wants to:
             if dlgi.Update(j, "Loading data: "+afile)[0] == False:
                 dlgi.Destroy()
                 return
             #Stuff = readfiles.openAny(self.dirname, afile)
             try:
-                Stuff = readfiles.openAny(self.dirname, afile)
+                Stuff = readfiles.open_any(self.dirname, afile)
             except Exception as excpt:
                 # The file does not seem to be what it seems to be.
                 BadFiles.append(afile)
@@ -1081,8 +1080,8 @@ class MyFrame(wx.Frame):
                 # Print exception
                 trb = traceback.format_exc(excpt)
                 trb = "..." + trb.replace("\n", "\n...")
-                warnings.warn("Problem processing a file."+\
-                  " Reason:\n{}".format(trb))
+                warnings.warn("Problem processing a file." +
+                              " Reason:\n{}".format(trb))
             else:
                 for i in np.arange(len(Stuff["Type"])):
                     Correlation.append(Stuff["Correlation"][i])
@@ -1095,7 +1094,7 @@ class MyFrame(wx.Frame):
                     else:
                         Weight.append(None)
                         WeightName.append(None)
-                        #Curveid.append(str(i+1))
+                        # Curveid.append(str(i+1))
         dlgi.Destroy()
 
         # Add number of the curve within a file.
@@ -1119,7 +1118,7 @@ class MyFrame(wx.Frame):
                 trb = "   " + trb.replace("\n", "\n   ")
                 errstr += " " + item + "\n" + trb
             dlg = wx.MessageDialog(self, errstr, "Error",
-                style=wx.ICON_WARNING|wx.OK|wx.CANCEL|wx.STAY_ON_TOP)
+                                   style=wx.ICON_WARNING | wx.OK | wx.CANCEL | wx.STAY_ON_TOP)
             if dlg.ShowModal() == wx.ID_CANCEL:
                 return
         # Abort, if there are no curves left
@@ -1182,7 +1181,7 @@ class MyFrame(wx.Frame):
         # to import.
         keys = curvetypes.keys()
         # Start the dialog for choosing types and model functions
-        labels=list()
+        labels = list()
         for i in np.arange(len(Filename)):
             if Run[i] != "":
                 labels.append("{} r{:03d}-{}".format(Filename[i],
@@ -1236,22 +1235,22 @@ class MyFrame(wx.Frame):
         else:
             return
         Chosen.Destroy()
-        ## Import the data into new pages
+        # Import the data into new pages
         # curvelist is a list of numbers or labels that correspond
         # to each item in dataexp or trace. Each curvelist/filename
         # item will be converted to a string and then added to the
         # pages title.
         num = len(Type)
         # Show a nice progress dialog:
-        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
-                wx.PD_CAN_ABORT
-        dlg = wx.ProgressDialog("Import", "Loading pages..."
-        , maximum = num, parent=self, style=style)
+        style = wx.PD_REMAINING_TIME | wx.PD_SMOOTH | wx.PD_AUTO_HIDE |\
+            wx.PD_CAN_ABORT
+        dlg = wx.ProgressDialog(
+            "Import", "Loading pages...", maximum=num, parent=self, style=style)
         for i in np.arange(num):
             # create a new page
             CurPage = self.add_fitting_tab(event=None,
-                                     modelid=modelList[i],
-                                     counter=None)
+                                           modelid=modelList[i],
+                                           counter=None)
             # Fill Page with data
             self.ImportData(CurPage, Correlation[i], Trace[i],
                             curvetype=Type[i], filename=Filename[i],
@@ -1267,7 +1266,6 @@ class MyFrame(wx.Frame):
         # If the user did not select curves but chose a model, destroy
         # the dialog.
         dlg.Destroy()
-
 
     def OnOpenSession(self, e=None, sessionfile=None):
         """ Displays a dialog for opening PyCorrFit sessions
@@ -1288,8 +1286,8 @@ class MyFrame(wx.Frame):
             # the session. Therefore, we cannot open a new session.
             return "abort"
 
-        ## Create user dialog
-        wc = [ "*{}".format(w) for w in opf.session_wildcards ]
+        # Create user dialog
+        wc = ["*{}".format(w) for w in opf.session_wildcards]
         wcstring = "PyCorrFit session (*.pcfs)|{}".format(";".join(wc))
         if sessionfile is None:
             dlg = wx.FileDialog(self, "Open session file",
@@ -1298,7 +1296,7 @@ class MyFrame(wx.Frame):
             if dlg.ShowModal() == wx.ID_OK:
                 sessionfile = dlg.GetPath()
                 (self.dirname, self.filename) = os.path.split(
-                                                            sessionfile)
+                    sessionfile)
             else:
                 # User did not press OK
                 # stop this function
@@ -1307,17 +1305,17 @@ class MyFrame(wx.Frame):
             dlg.Destroy()
         Infodict = opf.LoadSessionData(sessionfile)
 
-        ## Check for correct version
+        # Check for correct version
         try:
             arcv = LooseVersion(Infodict["Version"])
             thisv = LooseVersion(self.version.strip())
             if arcv > thisv:
-                errstring = "Your version of Pycorrfit ("+str(thisv)+\
-                       ") is too old to open this session ("+\
-                       str(arcv).strip()+").\n"+\
-                       "Please download the lates version of "+\
-                       " PyCorrFit from \n"+doc.HomePage+".\n"+\
-                       "Continue opening this session?"
+                errstring = "Your version of Pycorrfit ("+str(thisv) +\
+                    ") is too old to open this session (" +\
+                    str(arcv).strip()+").\n" +\
+                    "Please download the lates version of " +\
+                    " PyCorrFit from \n"+doc.HomePage+".\n" +\
+                    "Continue opening this session?"
                 dlg = edclasses.MyOKAbortDialog(self, errstring, "Warning")
                 returns = dlg.ShowModal()
                 if returns == wx.ID_OK:
@@ -1329,14 +1327,14 @@ class MyFrame(wx.Frame):
             pass
 
         self.SetTitleFCS(self.filename)
-        ## Background traces
+        # Background traces
         try:
             self.Background = Infodict["Backgrounds"]
         except:
             pass
-        ## Preferences
-        ## if Preferences is Not None:
-        ## add them!
+        # Preferences
+        # if Preferences is Not None:
+        # add them!
         # External functions
         for key in Infodict["External Functions"].keys():
             NewModel = usermodel.UserModel(self)
@@ -1351,10 +1349,10 @@ class MyFrame(wx.Frame):
         # Reset tabcounter
         self.tabcounter = 1
         # Show a nice progress dialog:
-        style = wx.PD_REMAINING_TIME|wx.PD_SMOOTH|wx.PD_AUTO_HIDE|\
-                wx.PD_CAN_ABORT
+        style = wx.PD_REMAINING_TIME | wx.PD_SMOOTH | wx.PD_AUTO_HIDE |\
+            wx.PD_CAN_ABORT
         dlg = wx.ProgressDialog("Import", "Loading pages...",
-                                maximum = N, parent=self, style=style)
+                                maximum=N, parent=self, style=style)
         for i in np.arange(N):
             # Let the user abort, if he wants to:
             if dlg.Update(i+1, "Loading pages...")[0] == False:
@@ -1381,7 +1379,8 @@ class MyFrame(wx.Frame):
             # As of 0.7.3: Add external weights to page
             try:
                 for key in Infodict["External Weights"][pageid].keys():
-                    Newtab.corr.set_weights(key, Infodict["External Weights"][pageid][key])
+                    Newtab.corr.set_weights(
+                        key, Infodict["External Weights"][pageid][key])
             except KeyError:
                 pass
 
@@ -1410,7 +1409,7 @@ class MyFrame(wx.Frame):
             try:
                 Newtab.tabtitle.SetValue(Infodict["Comments"][pageid])
             except:
-                pass # no page title
+                pass  # no page title
 
             # Parameters
             self.UnpackParameters(Infodict["Parameters"][i], Newtab,
@@ -1438,7 +1437,8 @@ class MyFrame(wx.Frame):
                 except:
                     pass
                 # also set fit parameters
-                fit_results["fit parameters"] = np.where(Infodict["Parameters"][i][3])[0]
+                fit_results["fit parameters"] = np.where(
+                    Infodict["Parameters"][i][3])[0]
                 # set fit weights for plotting
                 if fit_results["weighted fit"]:
                     # these were already imported:
@@ -1480,8 +1480,7 @@ class MyFrame(wx.Frame):
             # Disable some menus and close some dialogs
             self.EnableToolCurrent(False)
 
-
-    def OnSaveData(self,e=None):
+    def OnSaveData(self, e=None):
         """ Opens a dialog for saving correlation data of a Page
 
         Also saves the parameters that are accessible in the Info
@@ -1493,16 +1492,15 @@ class MyFrame(wx.Frame):
         filename = "#{:04d}_{}".format(int(Page.counter.strip(":# ")),
                                        Page.title.strip())
         dlg = wx.FileDialog(self, "Save curve", self.dirname, filename,
-              "Correlation with trace (*.csv)|*.csv;*.*"+\
-              "|Correlation only (*.csv)|*.csv;*.*",
-               wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+                            "Correlation with trace (*.csv)|*.csv;*.*" +
+                            "|Correlation only (*.csv)|*.csv;*.*",
+                            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         # user cannot do anything until he clicks "OK"
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()            # Workaround since 0.7.5
             if not path.lower().endswith(".csv"):
                 path += ".csv"
             (self.dirname, self.filename) = os.path.split(path)
-
 
             if dlg.GetFilterIndex() == 0:
                 savetrace = True
@@ -1516,7 +1514,6 @@ class MyFrame(wx.Frame):
 
         dlg.Destroy()
 
-
     def OnSavePlotCorr(self, e=None):
         """ make some output """
         # Saving dialog box.
@@ -1526,12 +1523,11 @@ class MyFrame(wx.Frame):
         Page = self.notebook.GetCurrentPage()
         try:
             plotting.savePlotCorrelation(self, self.dirname, Page, uselatex,
-                                     verbose, show_weights)
+                                         verbose, show_weights)
         except NameError as excpt:
             trb = traceback.format_exc(excpt)
             trb = "   " + trb.replace("\n", "\n   ")
             raise NameError("Please make sure matplotlib is installed:\n"+trb)
-
 
     def OnSavePlotTrace(self, e=None):
         """ make some output """
@@ -1546,8 +1542,7 @@ class MyFrame(wx.Frame):
             trb = "   " + trb.replace("\n", "\n   ")
             raise NameError("Please make sure matplotlib is installed:\n"+trb)
 
-
-    def OnSaveSession(self,e=None):
+    def OnSaveSession(self, e=None):
         """ Displays a dialog for saving PyCorrFit sessions
 
 
@@ -1563,15 +1558,17 @@ class MyFrame(wx.Frame):
         """
         # Parameters are all in one dictionary:
         Infodict = dict()
-        Infodict["Backgrounds"] = self.Background # Background list
-        Infodict["Comments"] = dict() # Session comment "Session" and Pages int
-        Infodict["Correlations"] = dict() # all correlation curves
-        Infodict["External Functions"] = dict() # external model functions
-        Infodict["External Weights"] = dict() # additional weights for the pages
-        Infodict["Parameters"] = dict() # all parameters of all pages
-        Infodict["Preferences"] = dict() # not used
-        Infodict["Supplements"] = dict() # error estimates for fitting
-        Infodict["Traces"] = dict() # all traces
+        Infodict["Backgrounds"] = self.Background  # Background list
+        # Session comment "Session" and Pages int
+        Infodict["Comments"] = dict()
+        Infodict["Correlations"] = dict()  # all correlation curves
+        Infodict["External Functions"] = dict()  # external model functions
+        # additional weights for the pages
+        Infodict["External Weights"] = dict()
+        Infodict["Parameters"] = dict()  # all parameters of all pages
+        Infodict["Preferences"] = dict()  # not used
+        Infodict["Supplements"] = dict()  # error estimates for fitting
+        Infodict["Traces"] = dict()  # all traces
         # Save each Page
         N = self.notebook.GetPageCount()
         # External functions
@@ -1579,7 +1576,7 @@ class MyFrame(wx.Frame):
             # Those models belong to external user functions.
             doc = mdls.modeldict[usermodelid][-1].__doc__
             doc = doc.splitlines()
-            docnew=""
+            docnew = ""
             for line in doc:
                 docnew = docnew+line.strip()+"\r\n"
             Infodict["External Functions"][usermodelid] = docnew
@@ -1596,7 +1593,8 @@ class MyFrame(wx.Frame):
             if hasattr(corr, "fit_results"):
                 Infodict["Supplements"][counter] = dict()
                 if "chi2" in corr.fit_results:
-                    Infodict["Supplements"][counter]["Chi sq"] = float(corr.fit_results["chi2"])
+                    Infodict["Supplements"][counter]["Chi sq"] = float(
+                        corr.fit_results["chi2"])
                 else:
                     Infodict["Supplements"][counter]["Chi sq"] = 0
                 PageList = list()
@@ -1606,21 +1604,24 @@ class MyFrame(wx.Frame):
 
                 # optimization error
                 Alist = list()
-                if (# there is an error key
+                if (  # there is an error key
                     "fit error estimation" in corr.fit_results and
                     # the errors were computed
                     len(corr.fit_results["fit error estimation"]) != 0 and
                     # len(errors) matches len(fit parameters)
-                    len(corr.fit_results["fit error estimation"]) == len(corr.fit_results["fit parameters"])
-                    ):
+                    len(corr.fit_results["fit error estimation"]) == len(
+                        corr.fit_results["fit parameters"])
+                ):
                     for ii, fitpid in enumerate(corr.fit_results["fit parameters"]):
                         Alist.append([int(fitpid),
-                                      float(corr.fit_results["fit error estimation"][ii])
-                                     ])
+                                      float(
+                                          corr.fit_results["fit error estimation"][ii])
+                                      ])
                 Infodict["Supplements"][counter]["FitErr"] = Alist
 
             # Set exp data
-            Infodict["Correlations"][counter] = [corr.lag_time, corr.correlation]
+            Infodict["Correlations"][counter] = [
+                corr.lag_time, corr.correlation]
             # Also save the trace
             Infodict["Traces"][counter] = corr.traces
             # Append title to Comments
@@ -1651,7 +1652,7 @@ class MyFrame(wx.Frame):
         # File dialog
         dlg = wx.FileDialog(self, "Save session file", self.dirname, "",
                             "PyCorrFit session (*.pcfs)|*.pcfs|All files (*.*)|*.*",
-                            wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+                            wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_OK:
             # Save everything
             path = dlg.GetPath()            # Workaround since 0.7.5
@@ -1662,34 +1663,30 @@ class MyFrame(wx.Frame):
             self.filename = None
             # Set title of our window
         if (self.filename is not None and
-            not self.filename.endswith(".pcfs")):
+                not self.filename.endswith(".pcfs")):
             self.filename += ".pcfs"
         dlg.Destroy()
         self.SetTitleFCS(self.filename)
         return self.filename
 
-
     def OnShell(self, e=None):
         Shell = wx.py.shell.ShellFrame(self, title="PyCorrFit Shell",
-                 style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT,
-                 locals=locals())
+                                       style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT,
+                                       locals=locals())
         # Set window icon
         if self.MainIcon is not None:
             wx.Frame.SetIcon(Shell, self.MainIcon)
         Shell.Show(True)
-
 
     def OnSoftware(self, event=None):
         # Show About Information
         text = doc.SoftwareUsed()
         wx.MessageBox(text, 'Software', wx.OK | wx.ICON_INFORMATION)
 
-
     def OnSupport(self, event=None):
         # Show About Information
         text = doc.support
         wx.MessageBox(text, 'Support PyCorrFit', wx.OK | wx.ICON_INFORMATION)
-
 
     def OnTool(self, event):
         eid = event.GetId()
@@ -1707,15 +1704,12 @@ class MyFrame(wx.Frame):
             # We close it then
             self.ToolsOpen[eid].OnClose()
 
-
     def OnUpdate(self, event):
         update.update(self)
-
 
     def OnWiki(self, e=None):
         """ Go to the GitHub Wiki page"""
         webbrowser.open(doc.GitWiki)
-
 
     def PackParameters(self, Page):
         """ Gets all parameters from a page and returns a list object,
@@ -1734,7 +1728,7 @@ class MyFrame(wx.Frame):
         # Additional parameters as of v.0.2.0
         # Splines and model function:
         # Additional parameters as of v.6.4.0
-        #self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2,
+        # self.Fitbox=[ fitbox, weightedfitdrop, fittext, fittext2,
         #              fittextvar, fitspin, buttonfit ]
         # Some fits like Spline have a number of knots of the spline
         # that is important for fitting. If there is a number in the
@@ -1763,7 +1757,6 @@ class MyFrame(wx.Frame):
         # Parameter ranges
         Parms.append(Page.corr.fit_parameters_range)
         return Parms
-
 
     def UnpackParameters(self, Parms, Page, init=False):
         """ Apply the given parameters to the Page in question.
@@ -1804,7 +1797,7 @@ class MyFrame(wx.Frame):
             NA = active_values[lindex+1]
             sigma = 0.21*lamb/NA
             active_values[lindex] = sigma
-            active_values = np.delete(active_values,lindex+1)
+            active_values = np.delete(active_values, lindex+1)
             active_fitting = np.delete(active_fitting, lindex+1)
         # Cropping: What part of the correlation should be displayed.
         Page.corr.fit_ival = Parms[4]
@@ -1871,13 +1864,11 @@ class MyFrame(wx.Frame):
             Page.OnAmplitudeCheck("init")
         if len(Parms) >= 10:
             Page.corr.fit_parameters_range = np.array(Parms[9])
-        ## If we want to add more stuff, we should do something like:
-        ##   if len(Parms) >= 11:
+        # If we want to add more stuff, we should do something like:
+        # if len(Parms) >= 11:
         ##       nextvalue = Parms[10]
-        ## Such that we are compatible to earlier versions of
-        ## PyCorrFit sessions.
-
-
+        # Such that we are compatible to earlier versions of
+        # PyCorrFit sessions.
 
     def SetTitleFCS(self, title):
         if title is not None and len(title) != 0:

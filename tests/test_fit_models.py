@@ -2,15 +2,11 @@
 Go through each model, vary one parameter and fit it back to the
 default value of that model.
 """
-import sys
-from os.path import abspath, dirname, split
-
 import numpy as np
-
 import pycorrfit
 from pycorrfit.correlation import Correlation
 from pycorrfit.fit import Fit
-
+import pytest
 
 # GLOBAL PARAMETERS FOR THIS TEST:
 TAUMIN = 1e-3
@@ -62,13 +58,14 @@ def deviate_parameter(model, parmid):
     return val
 
 
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_single_parameter():
     """
     Deviate a single parameter and fit it back.
     """
     allow_fail = [
-                  [6082, "SP"],
-                  ]
+        [6082, "SP"],
+    ]
     faillist = list()
     for model in pycorrfit.models.models:
         fullparms = model.default_values
@@ -106,18 +103,21 @@ def fit_single_parameter_with_noise(noise=0.005):
     return succlist, faillist
 
 
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_single_parameter_with_noise_one_permille():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.001)
     if len(faillist)/len(succlist) > .01:
         raise ValueError("Model tests failed for:\n", faillist)
 
 
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_single_parameter_with_noise_two_percent():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.02)
     if len(faillist)/len(succlist) > .05:
         raise ValueError("Model tests failed for:\n", faillist)
 
 
+@pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_single_parameter_with_noise_five_percent():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.05)
     if len(faillist)/len(succlist) > .10:

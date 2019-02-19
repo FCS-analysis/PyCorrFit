@@ -15,13 +15,13 @@ class ShowTrace(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=self.parent, title="Trace view",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
         # Page
         self.Page = self.parent.notebook.GetCurrentPage()
-        ## Canvas
+        # Canvas
         self.canvas = plot.PlotCanvas(self)
         self.canvas.enableZoom = True
         if self.parent.notebook.GetPageCount() == 0:
@@ -29,20 +29,18 @@ class ShowTrace(wx.Frame):
             pass
         else:
             self.OnDraw()
-        initial_size = (780,250)
+        initial_size = (780, 250)
         self.SetSize(initial_size)
         self.SetMinSize(initial_size)
-        ## Icon
+        # Icon
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
         self.Show(True)
-
 
     def OnClose(self, event=None):
         self.parent.toolmenu.Check(self.MyID, False)
         self.parent.ToolsOpen.__delitem__(self.MyID)
         self.Destroy()
-
 
     def OnDraw(self):
         traces = self.Page.corr.traces
@@ -50,32 +48,35 @@ class ShowTrace(wx.Frame):
         if len(traces) == 1:
             self.trace = 1*traces[0].trace
             # We want to have the trace in [s] here.
-            self.trace[:,0] = self.trace[:,0]/1000
+            self.trace[:, 0] = self.trace[:, 0]/1000
             line = plot.PolyLine(self.trace,
-                    legend='{:.2f}kHz'.format(traces[0].countrate),
-                    colour='blue', width=1)
+                                 legend='{:.2f}kHz'.format(
+                                     traces[0].countrate),
+                                 colour='blue', width=1)
             lines = [line]
-            xmax = np.max(self.trace[:,0])
-            xmin = np.min(self.trace[:,0])
-            ymax = np.max(self.trace[:,1])
-            ymin = np.min(self.trace[:,1])
+            xmax = np.max(self.trace[:, 0])
+            xmin = np.min(self.trace[:, 0])
+            ymax = np.max(self.trace[:, 1])
+            ymin = np.min(self.trace[:, 1])
         elif len(traces) == 2:
             # This means that we have two (CC) traces to plot
             self.tracea = 1*traces[0].trace
-            self.tracea[:,0] = self.tracea[:,0]/1000
+            self.tracea[:, 0] = self.tracea[:, 0]/1000
             self.traceb = 1*traces[1].trace
-            self.traceb[:,0] = self.traceb[:,0]/1000
+            self.traceb[:, 0] = self.traceb[:, 0]/1000
             linea = plot.PolyLine(self.tracea,
-                    legend='channel 1 {:.2f}kHz'.format(traces[0].countrate),
-                    colour='blue', width=1)
+                                  legend='channel 1 {:.2f}kHz'.format(
+                                      traces[0].countrate),
+                                  colour='blue', width=1)
             lineb = plot.PolyLine(self.traceb,
-                    legend='channel 2 {:.2f}kHz'.format(traces[1].countrate),
-                    colour='red', width=1)
+                                  legend='channel 2 {:.2f}kHz'.format(
+                                      traces[1].countrate),
+                                  colour='red', width=1)
             lines = [linea, lineb]
-            xmax = max(np.max(self.tracea[:,0]), np.max(self.traceb[:,0]))
-            xmin = min(np.min(self.tracea[:,0]), np.min(self.traceb[:,0]))
-            ymax = max(np.max(self.tracea[:,1]), np.max(self.traceb[:,1]))
-            ymin = min(np.min(self.tracea[:,1]), np.min(self.traceb[:,1]))
+            xmax = max(np.max(self.tracea[:, 0]), np.max(self.traceb[:, 0]))
+            xmin = min(np.min(self.tracea[:, 0]), np.min(self.traceb[:, 0]))
+            ymax = max(np.max(self.tracea[:, 1]), np.max(self.traceb[:, 1]))
+            ymin = min(np.min(self.tracea[:, 1]), np.min(self.traceb[:, 1]))
 
         else:
             self.canvas.Clear()
@@ -84,9 +85,8 @@ class ShowTrace(wx.Frame):
         self.canvas.Draw(plot.PlotGraphics(lines,
                                            xLabel='time [s]',
                                            yLabel='count rate [kHz]'),
-                                           xAxis=(xmin,xmax),
-                                           yAxis=(ymin,ymax))
-
+                         xAxis=(xmin, xmax),
+                         yAxis=(ymin, ymax))
 
     def OnPageChanged(self, page=None, trigger=None):
         """
@@ -108,4 +108,3 @@ class ShowTrace(wx.Frame):
                 pass
             return
         self.OnDraw()
-

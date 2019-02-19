@@ -1,6 +1,6 @@
 """Confocor .fcs files"""
 import csv
-import os
+import pathlib
 import warnings
 
 import numpy as np
@@ -8,7 +8,7 @@ import numpy as np
 from . import util
 
 
-def openFCS(dirname, filename):
+def openFCS(path, filename=None):
     """
         Load data from Zeiss Confocor3
         Data is imported sequenially from the file.
@@ -24,16 +24,21 @@ def openFCS(dirname, filename):
         This function is a wrapper combining *openFCS_Single* and
         *openFCS_Multiple*
     """
-    openfile = open(os.path.join(dirname, filename), 'r')
-    identitystring = openfile.readline().strip()[:20]
-    openfile.close()
+    path = pathlib.Path(path)
+    if filename is not None:
+        warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
+        path = path / filename
+
+    with path.open('r') as fd:
+        identitystring = fd.readline().strip()[:20]
+
     if identitystring == "Carl Zeiss ConfoCor3":
-        return openFCS_Multiple(dirname, filename)
+        return openFCS_Multiple(path)
     else:
-        return openFCS_Single(dirname, filename)
+        return openFCS_Single(path)
 
 
-def openFCS_Multiple(dirname, filename):
+def openFCS_Multiple(path):
     """ Load data from Zeiss Confocor3
         Data is imported sequenially from the file.
         PyCorrFit will give each curve an id which corresponds to the
@@ -42,12 +47,12 @@ def openFCS_Multiple(dirname, filename):
         This works with files from the Confocor2, Confocor3 (AIM) and
         files created from the newer ZEN Software.
     """
-    ### TODO:
+    filename = path.name
+    # TODO:
     # match curves with their timestamp
     # (actimelist and cctimelist)
     #
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as fd:
+    with path.open("r", encoding="iso8859_15") as fd:
         Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
@@ -58,77 +63,89 @@ def openFCS_Multiple(dirname, filename):
     # and should import something
     fcsset = False
     # The names of the traces
-    aclist = list()     # All autocorrelation functions
-    cclist = list()     # All cross-correlation functions
+    aclist = []     # All autocorrelation functions
+    cclist = []     # All cross-correlation functions
     # The intensity traces
-    traces = list()
+    traces = []
     # we use "AcquisitionTime" to match up curves
     thistime = None
-    actimelist = list()
-    cctimelist = list()
+    actimelist = []
+    cctimelist = []
     # The correlation curves
-    ac_correlations = list()
-    cc_correlations = list()
+    ac_correlations = []
+    cc_correlations = []
+    # The names of the correlation channels
+    channels = {}
+    ac_count = 0
     while i <= len(Alldata)-1:
         if Alldata[i].count("FcsDataSet") == 1:
             # We are in a "FcsDataSet" section
             fcsset = True
             gottrace = False
         if fcsset == True:
-            if Alldata[i].partition("=")[0].strip() == "AcquisitionTime":
-                thistime = Alldata[i].partition("=")[2].strip()
-            if Alldata[i].partition("=")[0].strip() == "Channel":
+            # Check key-value
+            if Alldata[i].count("="):
+                current_key = Alldata[i].split("=")[0].strip()
+                current_value = Alldata[i].split("=")[1].strip()
+            else:
+                i = i + 1
+                continue
+            # Extract data
+            if  current_key == "AcquisitionTime":
+                thistime = current_value
+            elif current_key == "Channel":
                 # Find out what type of correlation curve we have.
                 # Might be interesting to the user.
-                FCStype = Alldata[i].partition("=")[2].strip()
+                FCStype = current_value
                 FoundType = False
-                for chnum in np.arange(4)+1:
-                    if FCStype == "Auto-correlation detector "+str(chnum):
-                        FoundType = "AC"+str(chnum)
-                        aclist.append(FoundType)
-                    elif FCStype == "Auto-correlation detector Meta"+str(chnum):
-                        FoundType = "AC"+str(chnum)
-                        aclist.append(FoundType)
+                idauto = "Auto-correlation detector"
+                idcross = "Cross-correlation detector"
+
+                if FCStype.startswith(idauto):
+                    chid = FCStype.rsplit(" ", 1)[1]
+                    if chid not in channels:
+                        ac_count += 1
+                        channels[chid] = ac_count
+                    FoundType = "AC"+str(channels[chid])
+                    aclist.append(FoundType)
+                    actimelist.append(thistime)
+                elif FCStype.startswith(idcross):
+                    chid1, chid2 = FCStype[len(idcross):].strip().split(
+                        " versus detector ")
+                    if chid1 in channels:
+                        chnum1 = channels[chid1]
                     else:
-                        for ch2num in np.arange(4)+1:
-                            if FCStype == "Cross-correlation detector "+\
-                                          str(chnum)+" versus detector "+\
-                                          str(ch2num):
-                                FoundType = "CC"+str(chnum)+str(ch2num)
-                                cclist.append(FoundType)
-                            elif FCStype == "Cross-correlation detector Meta"+\
-                                          str(chnum)+" versus detector Meta"+\
-                                          str(ch2num):
-                                FoundType = "CC"+str(chnum)+str(ch2num)
-                                cclist.append(FoundType)
-                if FoundType is False:
+                        raise NotImplementedError("AC must come before CC!")
+                    if chid2 in channels:
+                        chnum2 = channels[chid2]
+                    else:
+                        raise NotImplementedError("AC must come before CC!")
+                    FoundType = "CC"+str(chnum1)+str(chnum2)
+                    cclist.append(FoundType)
+                    cctimelist.append(thistime)
+                else:
                     # Jump out of this set. We will continue at
                     # the next "FcsDataSet"-section.
-                    print("Unknown channel configuration in .fcs file: "+FCStype)
+                    warnings.warn("Unknown channel configuration "
+                                  "'{}' in '{}'!".format(FCStype, path))
                     fcsset = False
-                elif FoundType[:2] == "CC":
-                    cctimelist.append(thistime)
-                elif FoundType[:2] == "AC":
-                    actimelist.append(thistime)
-
-            if Alldata[i].partition("=")[0].strip() == "CountRateArray":
+            elif current_key == "CountRateArray":
                 # Start importing the trace. This is a little difficult, since
                 # traces in those files are usually very large. We will bin
                 # the trace and import a lighter version of it.
-                tracelength = \
-                     int(Alldata[i].partition("=")[2].strip().partition(" ")[0])
+                tracelength = int(current_value.split()[0])
                 if tracelength != 0:
-                    tracedata = Alldata[i+1 : i+tracelength+1]
+                    tracedata = Alldata[i+1: i+tracelength+1]
                     # Jump foward in the index
                     i = i + tracelength
                     readtrace = csv.reader(tracedata, delimiter='\t')
 
-                    trace = list()
+                    trace = []
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append( (np.float(row[3])*1000,
-                                       np.float(row[4])/1000) )
+                        trace.append((np.float(row[3])*1000,
+                                      np.float(row[4])/1000))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -136,27 +153,27 @@ def openFCS_Multiple(dirname, filename):
                     traces.append(newtrace)
                     if FoundType[:2] != "AC":
                         # For every trace there is an entry in aclist
-                        print("Trace data saved in CC section."+ \
+                        print("Trace data saved in CC section." +
                               "I cannot handle that.")
                     gottrace = True
-            if Alldata[i].partition("=")[0].strip() == "CorrelationArraySize":
+            elif current_key == "CorrelationArraySize":
                 # Get the correlation information
-                corrlength = int(Alldata[i].partition("=")[2].strip())
-                if corrlength !=0:
+                corrlength = int(current_value)
+                if corrlength != 0:
                     # For cross correlation or something sometimes
                     # there is no trace information.
-                    if gottrace == False and FoundType[:2] =="AC":
+                    if gottrace == False and FoundType[:2] == "AC":
                         # We think we know that there is no trace in CC curves
                         traces.append(None)
-                    corrdata = Alldata[i + 2 : i + corrlength + 2]
+                    corrdata = Alldata[i + 2: i + corrlength + 2]
                     # Jump foward
                     i = i + corrlength
                     readcorr = csv.reader(corrdata, delimiter='\t')
-                    corr = list()
+                    corr = []
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append( (np.float(row[3])*1000,
-                                      np.float(row[4])-1)    )
+                        corr.append((np.float(row[3])*1000,
+                                     np.float(row[4])-1))
                     if FoundType[:2] == "AC":
                         ac_correlations.append(np.array(corr))
                     elif FoundType[:2] == "CC":
@@ -198,18 +215,18 @@ def openFCS_Multiple(dirname, filename):
     # These "None" type items should be at the end of these lists.
     # If the user created .fcs files with averages between the curves,
     # the *traces* contains *None* values at those positions.
-    ## We now create:
+    # We now create:
     #  curvelist: All actually used data
     #  tracelist: Traces brought into right form (also for CCs)
     #  corrlist: Correlation curves
     #  Index in curvelist defines index in trace and correlation.
-    curvelist = list()
-    tracelist = list()
-    corrlist = list()
+    curvelist = []
+    tracelist = []
+    corrlist = []
 
     # match up curves with their timestamps
     # (actimelist and cctimelist)
-    knowntimes = list()
+    knowntimes = []
     for tid in actimelist:
         if tid not in knowntimes:
             knowntimes.append(tid)
@@ -228,7 +245,8 @@ def openFCS_Multiple(dirname, filename):
                     corrlist.append(ac_correlations[actids[0]])
                 else:
                     if traces[actids[0]] is not None:
-                        warnings.warn("File {} curve {} does not contain AC data.".format(filename, tid))
+                        warnings.warn(
+                            "File {} curve {} does not contain AC data.".format(filename, tid))
             elif len(actids) == 2:
                 # Get AC data
                 if aclist[actids[0]] == "AC1":
@@ -242,16 +260,17 @@ def openFCS_Multiple(dirname, filename):
                     acdat2 = ac_correlations[actids[0]]
                     trace2 = traces[actids[0]]
                 else:
-                    warnings.warn("File {} curve {}: unknown AC data.".format(filename, tid))
+                    warnings.warn(
+                        "File {} curve {}: unknown AC data.".format(filename, tid))
                     continue
 
                 if acdat1 is not None:
-                    #AC1
+                    # AC1
                     curvelist.append("AC1")
                     tracelist.append(trace1)
                     corrlist.append(acdat1)
                 if acdat2 is not None:
-                    #AC2
+                    # AC2
                     curvelist.append("AC2")
                     tracelist.append(trace2)
                     corrlist.append(acdat2)
@@ -265,17 +284,18 @@ def openFCS_Multiple(dirname, filename):
                         ccdat12 = cc_correlations[cctids[1]]
                         ccdat21 = cc_correlations[cctids[0]]
                     else:
-                        warnings.warn("File {} curve {}: unknown CC data.".format(filename, tid))
+                        warnings.warn(
+                            "File {} curve {}: unknown CC data.".format(filename, tid))
                         continue
 
                     tracecc = [trace1, trace2]
                     if ccdat12 is not None:
-                        #CC12
+                        # CC12
                         curvelist.append("CC12")
                         tracelist.append(tracecc)
                         corrlist.append(ccdat12)
                     if ccdat21 is not None:
-                        #CC21
+                        # CC21
                         curvelist.append("CC21")
                         tracelist.append(tracecc)
                         corrlist.append(ccdat21)
@@ -284,22 +304,22 @@ def openFCS_Multiple(dirname, filename):
     dictionary["Correlation"] = corrlist
     dictionary["Trace"] = tracelist
     dictionary["Type"] = curvelist
-    filelist = list()
+    filelist = []
     for i in curvelist:
         filelist.append(filename)
     dictionary["Filename"] = filelist
     return dictionary
 
 
-def openFCS_Single(dirname, filename):
+def openFCS_Single(path):
     """
         Load data from Zeiss Confocor3 files containing only one curve.
 
         This works with files from the Confocor2, Confocor3 (AIM) and
         files created from the newer ZEN Software.
     """
-    path = os.path.join(dirname, filename)
-    with open(path, "r", encoding="iso8859_15") as fd:
+    filename = path.name
+    with path.open("r", encoding="iso8859_15") as fd:
         Alldata = fd.readlines()
     # Start progressing through the file. i is the line index.
     # We are searching for "FcsDataSet" sections that contain
@@ -313,7 +333,7 @@ def openFCS_Single(dirname, filename):
         if Alldata[i].partition("=")[0].strip() == "##DATA TYPE":
             # Find out what type of correlation curve we have.
             # Might be interesting to the user.
-            Type  = Alldata[i].partition("=")[2].strip()
+            Type = Alldata[i].partition("=")[2].strip()
             if Type == "FCS Correlogram":
                 fcscurve = True
                 tracecurve = False
@@ -336,11 +356,11 @@ def openFCS_Single(dirname, filename):
                     # Jump foward in the index
                     i = i + tracelength
                     readtrace = csv.reader(tracedata, delimiter=',')
-                    trace = list()
+                    trace = []
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append( (np.float(row[0])*1000, np.float(row[1])) )
+                        trace.append((np.float(row[0])*1000, np.float(row[1])))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -350,15 +370,15 @@ def openFCS_Single(dirname, filename):
                 # Get the correlation information
                 corrlength = int(Alldata[i].partition("=")[2].strip())
                 i = i + 2
-                if corrlength !=0:
+                if corrlength != 0:
                     corrdata = Alldata.__getslice__(i, i+corrlength)
                     # Jump foward
                     i = i + corrlength
                     readcorr = csv.reader(corrdata, delimiter=',')
-                    corr = list()
+                    corr = []
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append( (np.float(row[0]), np.float(row[1])-1) )
+                        corr.append((np.float(row[0]), np.float(row[1])-1))
                     corr = np.array(corr)
                 fcscurve = False
 

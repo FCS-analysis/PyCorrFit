@@ -22,19 +22,19 @@ class BatchCtrl(wx.Frame):
         pos = self.parent.GetPosition()
         pos = (pos[0]+100, pos[1]+100)
         wx.Frame.__init__(self, parent=parent, title="Batch control",
-                 pos=pos, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        ## MYID
+                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.FRAME_FLOAT_ON_PARENT)
+        # MYID
         # This ID is given by the parent for an instance of this class
         self.MyID = None
-        ## Misc
+        # Misc
         try:
             self.curpage = self.parent.notebook.GetCurrentPage()
         except:
             self.curpage = None
-        ## Controls
+        # Controls
         panel = wx.Panel(self)
         self.panel = panel
-        #Icon
+        # Icon
         self.Redraw()
         if parent.MainIcon is not None:
             wx.Frame.SetIcon(self, parent.MainIcon)
@@ -64,7 +64,7 @@ class BatchCtrl(wx.Frame):
         """ The model parameters that are protected from batch control
 
         """
-        pbool = [ not cb.GetValue() for cb in self.wxParameterCheckBoxes ]
+        pbool = [not cb.GetValue() for cb in self.wxParameterCheckBoxes]
         return np.array(pbool, dtype=bool)
 
     def OnApply(self, event):
@@ -75,7 +75,7 @@ class BatchCtrl(wx.Frame):
         for i in np.arange(self.parent.notebook.GetPageCount()):
             OtherPage = self.parent.notebook.GetPage(i)
             if (OtherPage.corr.fit_model.id == modelid and
-                OtherPage.corr.correlation is not None):
+                    OtherPage.corr.correlation is not None):
                 # create a copy of the fitting parameters in
                 # case we want to protect them
                 proparms = OtherPage.corr.fit_parameters
@@ -116,7 +116,7 @@ class BatchCtrl(wx.Frame):
         for ii in np.arange(self.parent.notebook.GetPageCount()):
             pageii = self.parent.notebook.GetPage(ii)
             if (pageii.corr.fit_model.id == modelid and
-                pageii.corr.correlation is not None):
+                    pageii.corr.correlation is not None):
                 fit_page_list.append(pageii)
 
         FitProgressDlg(self, fit_page_list, trigger="fit_batch")
@@ -124,7 +124,6 @@ class BatchCtrl(wx.Frame):
         if self.parent.MenuAutocloseTools.IsChecked():
             # Autoclose
             self.OnClose()
-
 
     def OnPageChanged(self, Page=None, trigger=None):
         """
@@ -176,7 +175,7 @@ class BatchCtrl(wx.Frame):
         # to be changed.
         wc = opf.session_wildcards
         wcstring = "PyCorrFit session (*.pcfs)|*{};*{}".format(
-                                                           wc[0], wc[1])
+            wc[0], wc[1])
         dlg = wx.FileDialog(self.parent, "Open session file",
                             self.parent.dirname, "", wcstring, wx.FD_OPEN)
         # user cannot do anything until he clicks "OK"
@@ -184,7 +183,7 @@ class BatchCtrl(wx.Frame):
             sessionfile = dlg.GetPath()
             self.dirname = os.path.split(sessionfile)[0]
         else:
-            self.parent.dirname=dlg.GetDirectory()
+            self.parent.dirname = dlg.GetDirectory()
             self.rbtnhere.SetValue(True)
             return
 
@@ -208,14 +207,14 @@ class BatchCtrl(wx.Frame):
             panel.RemoveChild(child)
             child.Destroy()
 
-        ## Parameter source selection
+        # Parameter source selection
         boxleft = wx.StaticBox(panel, label="Parameter source")
         self.rbtnhere = wx.RadioButton(panel, -1, 'This session',
-                                        style = wx.RB_GROUP)
+                                       style=wx.RB_GROUP)
         self.rbtnhere.SetValue(True)
         self.rbtnthere = wx.RadioButton(panel, -1, 'Other session')
         self.dropdown = wx.ComboBox(panel, -1, "Current page", (15, 30),
-                         wx.DefaultSize, [], wx.CB_DROPDOWN|wx.CB_READONLY)
+                                    wx.DefaultSize, [], wx.CB_DROPDOWN | wx.CB_READONLY)
         # Create the dropdownlist
         text2 = wx.StaticText(panel, label="""Only data sets that have the
 same model as the parameter
@@ -241,27 +240,27 @@ check box.""")
         leftSizer.Add(text2)
         leftSizer.AddSpacer(5)
 
-        ## Parameter selection
+        # Parameter selection
         boxright = wx.StaticBox(panel, label="Selected parameters")
         rightSizer = wx.StaticBoxSizer(boxright, wx.VERTICAL)
         self.parameter_sizer = rightSizer
         self.RedrawParameterBox()
 
-        ## Buttons
+        # Buttons
         btnapply = wx.Button(panel, wx.ID_ANY, 'Apply to applicable pages')
         btnfit = wx.Button(panel, wx.ID_ANY, 'Fit applicable pages')
         # Bindings
         self.Bind(wx.EVT_BUTTON, self.OnApply, btnapply)
         self.Bind(wx.EVT_BUTTON, self.OnFit, btnfit)
 
-        ## Sizers
+        # Sizers
         sizer_bag = wx.GridBagSizer(hgap=5, vgap=5)
-        sizer_bag.Add(leftSizer, (0,0))
-        sizer_bag.Add(rightSizer, (0,1))
+        sizer_bag.Add(leftSizer, (0, 0))
+        sizer_bag.Add(rightSizer, (0, 1))
         horsizer = wx.BoxSizer(wx.HORIZONTAL)
         horsizer.Add(btnapply)
         horsizer.Add(btnfit)
-        sizer_bag.Add(horsizer, (1,0), span=wx.GBSpan(1,2))
+        sizer_bag.Add(horsizer, (1, 0), span=wx.GBSpan(1, 2))
 
         panel.SetSizer(sizer_bag)
         sizer_bag.Fit(panel)
@@ -292,7 +291,7 @@ for batch modification.""")
             parms = self.GetParameters()
             modelid = parms[1]
             ptext, _pval = mdls.GetHumanReadableParms(modelid, parms[2])
-            ptext = [ p.split()[0] for p in ptext ]
+            ptext = [p.split()[0] for p in ptext]
             self.wxParameterCheckBoxes = []
             for p in ptext:
                 cb = wx.CheckBox(panel, label=p)
@@ -316,6 +315,7 @@ for batch modification.""")
         except:
             pass
 
+
 class FitProgressDlg(ThreadedProgressDlg):
     def __init__(self, parent, pages, trigger=None):
         """ A progress dialog for fitting in PyCorrFit
@@ -337,11 +337,12 @@ class FitProgressDlg(ThreadedProgressDlg):
         self.pages = pages
         self.trigger = trigger
         title = "Fitting data"
-        messages = [ "Fitting page #{}.".format(pi.counter.strip("# :")) for pi in pages ]
+        messages = ["Fitting page #{}.".format(
+            pi.counter.strip("# :")) for pi in pages]
         targets = [Fit]*len(pages)
         args = [pi.corr for pi in pages]
         # write parameters from page instance to correlation
-        [ pi.apply_parameters() for pi in self.pages ]
+        [pi.apply_parameters() for pi in self.pages]
         super(FitProgressDlg, self).__init__(parent, targets, args,
                                              title=title,
                                              messages=messages)
@@ -351,8 +352,8 @@ class FitProgressDlg(ThreadedProgressDlg):
         cleanup of non-fitted pages.
         """
         if self.aborted:
-            ## we need to cleanup
-            fin_index = max(0,self.index_aborted-1)
+            # we need to cleanup
+            fin_index = max(0, self.index_aborted-1)
             pab = self.pages[self.index_aborted]
             pab.fit_results = None
             pab.apply_parameters()
@@ -360,4 +361,5 @@ class FitProgressDlg(ThreadedProgressDlg):
             fin_index = len(self.pages)
 
         # finalize fitting
-        [ pi.Fit_finalize(trigger=self.trigger) for pi in self.pages[:fin_index] ]
+        [pi.Fit_finalize(trigger=self.trigger)
+         for pi in self.pages[:fin_index]]

@@ -134,6 +134,7 @@ def GetModelType(modelid):
                     warnings.warn("No shorttype defined for `{}`.".format(key))
                     return key
 
+
 def GetModelFunctionFromId(modelid):
     return modeldict[modelid][3]
 
@@ -144,6 +145,7 @@ def GetModelParametersFromId(modelid):
 
 def GetModelFitBoolFromId(modelid):
     return valuedict[modelid][2]
+
 
 def GetMoreInfo(modelid, Page):
     """ This functino is called by someone who has already calculated
@@ -160,16 +162,16 @@ def GetMoreInfo(modelid, Page):
     Info = list()
     corr = Page.corr
     if corr.is_ac:
-        if len(corr.traces)==1:
+        if len(corr.traces) == 1:
             countrate = corr.traces[0].countrate
         else:
             countrate = None
-        ## First import the supplementary parameters of the model
-        ## The order is important for plot normalization and session
-        ## saving as of version 0.7.8
+        # First import the supplementary parameters of the model
+        # The order is important for plot normalization and session
+        # saving as of version 0.7.8
         # Try to get the dictionary entry of a model
         # Background information
-        if len(corr.backgrounds)==1:
+        if len(corr.backgrounds) == 1:
             bgaverage = corr.backgrounds[0].countrate
             # Now set the correct countrate
             # We already printed the countrate, so there's no harm done.
@@ -199,12 +201,12 @@ def GetMoreInfo(modelid, Page):
             # Background might overwrite countrate.
             Info.append(["avg. signal [kHz]", corr.traces[0].countrate])
     else:
-        ## Cross correlation curves usually have two traces. Since we
-        ## do not know how to compute the cpp, we will pass the argument
-        ## "None" as the countrate.
-        ## First import the supplementary parameters of the model
-        ## The order is important for plot normalization and session
-        ## saving as of version 0.7.8
+        # Cross correlation curves usually have two traces. Since we
+        # do not know how to compute the cpp, we will pass the argument
+        # "None" as the countrate.
+        # First import the supplementary parameters of the model
+        # The order is important for plot normalization and session
+        # saving as of version 0.7.8
         # Try to get the dictionary entry of a model
         try:
             # This function should return all important information
@@ -216,7 +218,7 @@ def GetMoreInfo(modelid, Page):
         except KeyError:
             # No information available
             pass
-        if len(corr.traces)==2:
+        if len(corr.traces) == 2:
             # Measurement time
             duration = corr.traces[0].duration/1000
             Info.append(["duration [s]", duration])

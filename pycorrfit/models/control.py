@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ pycorrfit.models.control
 
 Controls which fitting models are imported an in which order.
@@ -6,6 +5,7 @@ Controls which fitting models are imported an in which order.
 import numpy as np
 
 from .classes import Model
+
 
 def append_model(modelarray):
     """ Append a new model from a modelarray. *Modelarray* has to be a list
@@ -118,7 +118,8 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
               par_hr_factors,
               ]:
         if p is not None:
-            assert len(p) == len(par_values), "Number of parameters must match!"
+            assert len(p) == len(
+                par_values), "Number of parameters must match!"
 
     if par_hr_factors is None or par_hr_labels is None:
         assert par_hr_factors is None, "human readable requires two parameter"
@@ -134,7 +135,7 @@ def model_setup(modelid, name, comp, mtype, fctn, par_labels, par_values,
         par_hr_labels = par_labels
         par_hr_factors = np.ones_like(par_values)
 
-    model={}
+    model = {}
 
     model["Parameters"] = [par_labels, par_values, par_vary,
                            par_hr_labels, par_hr_factors]
@@ -201,14 +202,12 @@ from . import model_confocal_tt_2d
 from . import model_confocal_tt_2d_2d
 from . import model_confocal_tt_3d_2d
 
-
 # These lines can be removed once all models are converted
 # from `MODEL_*` to `model_` syntax.
 modeltypes[u"TIR (Gaussian/Exp.)"] = [6014, 6034, 6033]
 modeltypes[u"TIR (□xσ/Exp.)"] = [6010, 6023, 6000, 6022, 6020, 6021]
 
-
-## Models
+# Old models
 from . import MODEL_TIRF_gaussian_1C
 from . import MODEL_TIRF_gaussian_3D2D
 from . import MODEL_TIRF_gaussian_3D3D
