@@ -24,6 +24,7 @@ from pycorrfit import meta
 
 
 # PyCorrFit modules
+from . import contribute
 from . import doc
 from . import edclasses
 from . import misc
@@ -189,7 +190,7 @@ class MyFrame(wx.Frame):
 
         # Display support dialog
         if hasattr(sys, "frozen"):
-            self.OnSupport()
+            self.OnContribute()
 
     def add_fitting_tab(self, event=None, modelid=None, counter=None,
                         select=False):
@@ -369,8 +370,8 @@ class MyFrame(wx.Frame):
                     menuentry = submenu.Append(model[0], model[1], model[2])
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
         # help menu
-        menuSupport = helpmenu.Append(wx.ID_ANY, "&Support",
-                                      "How to (get) support (for) PyCorrFit")
+        menuContribute = helpmenu.Append(wx.ID_ANY, "&Contribute",
+                                      "How to contribute to PyCorrFit")
         menuDocu = helpmenu.Append(wx.ID_ANY, "&Documentation",
                                    "PyCorrFit documentation")
         menuWiki = helpmenu.Append(wx.ID_ANY, "&Wiki",
@@ -418,7 +419,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnLatexCheck, self.MenuUseLatex)
         # Help
         self.Bind(wx.EVT_MENU, self.OnSoftware, menuSoftw)
-        self.Bind(wx.EVT_MENU, self.OnSupport, menuSupport)
+        self.Bind(wx.EVT_MENU, self.OnContribute, menuContribute)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_MENU, self.OnUpdate, menuUpdate)
         self.Bind(wx.EVT_MENU, self.OnDocumentation, menuDocu)
@@ -630,6 +631,11 @@ class MyFrame(wx.Frame):
         else:
             # Close Dialog
             self.EditCommentDlg.OnClose()
+
+    def OnContribute(self, event=None):
+        # Show About Information
+        dlg = contribute.ContributeDialog(self)
+        dlg.ShowModal()
 
     def OnDeletePage(self, event=None):
         """
@@ -1682,11 +1688,6 @@ class MyFrame(wx.Frame):
         # Show About Information
         text = doc.SoftwareUsed()
         wx.MessageBox(text, 'Software', wx.OK | wx.ICON_INFORMATION)
-
-    def OnSupport(self, event=None):
-        # Show About Information
-        text = doc.support
-        wx.MessageBox(text, 'Support PyCorrFit', wx.OK | wx.ICON_INFORMATION)
 
     def OnTool(self, event):
         eid = event.GetId()

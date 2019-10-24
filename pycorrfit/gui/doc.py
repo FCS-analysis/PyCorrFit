@@ -103,7 +103,8 @@ def SoftwareUsed():
            "\n - wxPython "+wx.__version__
     # Other software
     text += "\n\nOther software:" +\
-            "\n - FCS_point_correlator ({})".format(read_pt3_scripts.version) +\
+            "\n - FCS_point_correlator ({})".format(
+                read_pt3_scripts.version) +\
             "\n    PicoQuant file format for Python by Dominic Waithe"
     if hasattr(sys, 'frozen'):
         pyinst = "\n\nThis executable has been created using PyInstaller."
@@ -112,41 +113,6 @@ def SoftwareUsed():
             conda = "\n\nPowered by Anaconda"
             text += conda
     return text
-
-
-support = """
-PyCorrFit has no funding and a vanishingly small developer community.
-My personal objective is to keep PyCorrFit operational on Linux and
-Windows which is currently limited by the free time I have available.
-
-An active community is very important for an open source project such
-as PyCorrFit. You can help this community grow (and thus help improve
-PyCorrFit) in numerous ways:
-
-1. \tTell your colleagues and peers about PyCorrFit. One of them might
-   \tbe able to contribute to the project.
-
-2. \tIf you need a new feature in PyCorrFit, publicly announce a bounty
-   \tfor its implementation.
-
-3. \tIf your research heavily relies on FCS, please consider diverting
-   \tsome of your resources to the development of PyCorrFit.
-
-4. \tYou don't have to be a Python programmer to contribute. If you are
-   \tfamiliar with reStrucuredText or LaTeX, you might be able to help
-   \tout with the online documentation.
-
-5. \tPlease cite: Müller et al. Bioinformatics 30(17): 2532–2533, 2014
-
-If you are planning to contribute to PyCorrFit, please contact me via
-the PyCorrFit issue page on GitHub such that we may coordinate a pull
-request.
-
-
-Thank you!
-
-Paul Müller (May 2018)
-"""
 
 
 # Standard homepage
