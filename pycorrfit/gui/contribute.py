@@ -77,5 +77,5 @@ Paul Müller (October 2019)
 contribute_links = [
     "https://dx.doi.org/10.1093/bioinformatics/btu328",
     "https://github.com/sponsors/paulmueller",
-    "https://liberapay.com/paulmueller,"
+    "https://liberapay.com/paulmueller",
     ]
