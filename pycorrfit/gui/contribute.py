@@ -46,20 +46,22 @@ An active community is very important for an open source project such
 as PyCorrFit. You can help this community grow (and thus help improve
 PyCorrFit) in numerous ways:
 
-1. \tTell your colleagues and peers about PyCorrFit. One of them might
-   \tbe able to contribute to the project.
+1. \tTell your colleagues and peers about PyCorrFit. One of them
+   \tmight be able to contribute to the project.
 
-2. \tIf you need a new feature in PyCorrFit, publicly announce a bounty
-   \tfor its implementation.
+2. \tIf you need a new feature in PyCorrFit, publicly announce a
+   \tbounty for its implementation.
 
-3. \tIf your research heavily relies on FCS, please consider diverting
-   \tsome of your resources to the development of PyCorrFit.
+3. \tIf your research heavily relies on FCS, please consider
+   \tdiverting some of your resources to the development
+   \tof PyCorrFit.
 
-4. \tYou don't have to be a Python programmer to contribute. If you are
-   \tfamiliar with reStrucuredText or LaTeX, you might be able to help
-   \tout with the online documentation.
+4. \tYou don't have to be a Python programmer to contribute. If
+   \tyou are familiar with reStrucuredText or LaTeX, you might
+   \tbe able to help out with the online documentation.
 
-5. \tPlease cite: Müller et al. Bioinformatics 30(17): 2532–2533, 2014 [1].
+5. \tPlease cite: Müller et al. Bioinformatics 30(17): 2532–2533,
+   \t2014 [1].
 
 6. \tSponsor me on GitHub [2] or donate via Liberapay [3].
 
