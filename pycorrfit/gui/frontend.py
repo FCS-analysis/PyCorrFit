@@ -371,7 +371,7 @@ class MyFrame(wx.Frame):
                 self.Bind(wx.EVT_MENU, self.add_fitting_tab, menuentry)
         # help menu
         menuContribute = helpmenu.Append(wx.ID_ANY, "&Contribute",
-                                      "How to contribute to PyCorrFit")
+                                         "How to contribute to PyCorrFit")
         menuDocu = helpmenu.Append(wx.ID_ANY, "&Documentation",
                                    "PyCorrFit documentation")
         menuWiki = helpmenu.Append(wx.ID_ANY, "&Wiki",
@@ -633,7 +633,7 @@ class MyFrame(wx.Frame):
             self.EditCommentDlg.OnClose()
 
     def OnContribute(self, event=None):
-        # Show About Information
+        # Show contribute dialog
         dlg = contribute.ContributeDialog(self)
         dlg.ShowModal()
 
