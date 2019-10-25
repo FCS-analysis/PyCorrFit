@@ -26,7 +26,12 @@ PyCorrFit) in numerous ways:
    familiar with reStrucuredText or LaTeX, you might be able to help
    out with the online documentation.
 
-5. Please cite: Müller et al. Bioinformatics 30(17): 2532–2533, 2014
+5. Please cite: Müller et al. Bioinformatics 30(17): 2532–2533, 2014,
+   `DOI:10.1093/bioinformatics/btu328
+   <https://dx.doi.org/10.1093/bioinformatics/btu328>`_
+
+6. Sponsor me on `GitHub <https://github.com/sponsors/paulmueller>`_
+   or donate via `Liberapay <https://liberapay.com/paulmueller>`_.
 
 If you are planning to contribute to PyCorrFit, please contact me via
 the PyCorrFit issue page on GitHub such that we may coordinate a pull

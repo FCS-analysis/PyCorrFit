@@ -84,7 +84,6 @@ test_script:
 after_test:
   # If tests are successful, create a whl package for the project.
   - "appveyor-retry pip install twine wheel"
-  # If tests are successful, create a whl package for the project.
   - "python setup.py bdist_wheel"
   - "python setup.py sdist"
   - ps: "ls dist"
