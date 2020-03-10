@@ -1,6 +1,7 @@
 1.1.7
  - docs: add sponsor links to contribute section
  - docs: add gallery with all images in docs/gallery
+ - docs: fix typo in legacy PDF (#195)
 1.1.6
  - fix: improve support for Confocor FCS file format
    (see discussion in #37)
