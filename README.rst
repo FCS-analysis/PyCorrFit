@@ -22,7 +22,7 @@ at the `issues page <https://github.com/FCS-analysis/PyCorrFit/wiki/Creating-a-n
 .. |Build Status Win| image:: https://img.shields.io/appveyor/ci/paulmueller/PyCorrFit/master.svg?label=win
    :target: https://ci.appveyor.com/project/paulmueller/pycorrfit
 .. |Build Status Travis| image:: https://img.shields.io/travis/FCS-analysis/PyCorrFit/master.svg?label=linux_osx
-   :target: https://travis-ci.org/FCS-analysis/PyCorrFit
+   :target: https://travis-ci.com/FCS-analysis/PyCorrFit
 .. |Coverage Status| image:: https://img.shields.io/codecov/c/github/FCS-analysis/PyCorrFit/master.svg
    :target: https://codecov.io/gh/FCS-analysis/PyCorrFit
 .. |Docs Status| image:: https://readthedocs.org/projects/pycorrfit/badge/?version=latest
