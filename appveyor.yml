@@ -18,7 +18,7 @@ notifications:
 environment:
   PYPI_USR: ci_fcs
   PYPI_PWD:
-    secure: 4SIAE2AzZLvjiPvgPpU8VYI0pSksE+PZ5CrG3Wz0moMShiFtjXZSkQMe0RrgLvYp
+    secure: EKcG8PgUSje7gsGc7AT7+Hk7c5MRH8nVgqIA9JvBV0oW0uU5FlxGjw5S+dUk1X1D
   matrix:
     - PYTHON: "C:\\Miniconda36"
       PYTHON_VERSION: "3.6"
@@ -112,7 +112,7 @@ on_success:
 deploy:
   provider: GitHub
   auth_token:
-    secure: /b5SfmYssAfLaWi0qkPhxR5CruSVBZUurSQLEL3RAaRlHn6HTPrkIqvrLDk/8JxB
+    secure: u94ePbzUmuyh5jZU+1xvST73Ueuxepu86/XQsGx/15AnSd4NhQHKE1UXIe1vBIwf
   artifact: /.*\.exe/
   draft: true
   prerelease: true
