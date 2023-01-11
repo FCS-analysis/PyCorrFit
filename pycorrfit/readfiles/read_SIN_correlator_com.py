@@ -274,29 +274,29 @@ def openSIN_old(path):
         corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata.append((np.float(row[0])*timefactor, np.float(row[1])-1))
+            corrdata.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
         correlations.append(np.array(corrdata))
         trace = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace.append((np.float(row[0])*timefactor,
-                          np.float(row[1])/timedivfac))
+            trace.append((np.float64(row[0])*timefactor,
+                          np.float64(row[1])/timedivfac))
         traces.append(np.array(trace))
     elif Mode == "Single Cross":
         curvelist.append("CC")
         corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata.append((np.float(row[0])*timefactor, np.float(row[1])-1))
+            corrdata.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
         correlations.append(np.array(corrdata))
         trace1 = []
         trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor,
-                           np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor,
-                           np.float(row[2])/timedivfac))
+            trace1.append((np.float64(row[0])*timefactor,
+                           np.float64(row[1])/timedivfac))
+            trace2.append((np.float64(row[0])*timefactor,
+                           np.float64(row[2])/timedivfac))
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Dual Auto":
         curvelist.append("AC1")
@@ -305,18 +305,18 @@ def openSIN_old(path):
         corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
-            corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
+            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         trace1 = []
         trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor,
-                           np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor,
-                           np.float(row[2])/timedivfac))
+            trace1.append((np.float64(row[0])*timefactor,
+                           np.float64(row[1])/timedivfac))
+            trace2.append((np.float64(row[0])*timefactor,
+                           np.float64(row[2])/timedivfac))
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
     elif Mode == "Dual Cross":
@@ -326,18 +326,18 @@ def openSIN_old(path):
         corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
-            corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
+            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         trace1 = []
         trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor,
-                           np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor,
-                           np.float(row[2])/timedivfac))
+            trace1.append((np.float64(row[0])*timefactor,
+                           np.float64(row[1])/timedivfac))
+            trace2.append((np.float64(row[0])*timefactor,
+                           np.float64(row[2])/timedivfac))
         traces.append([np.array(trace1), np.array(trace2)])
         traces.append([np.array(trace1), np.array(trace2)])
     elif Mode == "Quad":
@@ -351,12 +351,12 @@ def openSIN_old(path):
         corrdata21 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float(row[0])*timefactor, np.float(row[1])-1))
-            corrdata2.append((np.float(row[0])*timefactor, np.float(row[2])-1))
+            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
             corrdata12.append(
-                (np.float(row[0])*timefactor, np.float(row[3])-1))
+                (np.float64(row[0])*timefactor, np.float64(row[3])-1))
             corrdata21.append(
-                (np.float(row[0])*timefactor, np.float(row[4])-1))
+                (np.float64(row[0])*timefactor, np.float64(row[4])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         correlations.append(np.array(corrdata12))
@@ -365,10 +365,10 @@ def openSIN_old(path):
         trace2 = []
         for row in readtrace:
             # tau in ms, corr-function minus "1"
-            trace1.append((np.float(row[0])*timefactor,
-                           np.float(row[1])/timedivfac))
-            trace2.append((np.float(row[0])*timefactor,
-                           np.float(row[2])/timedivfac))
+            trace1.append((np.float64(row[0])*timefactor,
+                           np.float64(row[1])/timedivfac))
+            trace2.append((np.float64(row[0])*timefactor,
+                           np.float64(row[2])/timedivfac))
         traces.append(np.array(trace1))
         traces.append(np.array(trace2))
         traces.append([np.array(trace1), np.array(trace2)])

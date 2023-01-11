@@ -144,8 +144,8 @@ def openFCS_Multiple(path):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append((np.float(row[3])*1000,
-                                      np.float(row[4])/1000))
+                        trace.append((np.float64(row[3])*1000,
+                                      np.float64(row[4])/1000))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -172,8 +172,8 @@ def openFCS_Multiple(path):
                     corr = []
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append((np.float(row[3])*1000,
-                                     np.float(row[4])-1))
+                        corr.append((np.float64(row[3])*1000,
+                                     np.float64(row[4])-1))
                     if FoundType[:2] == "AC":
                         ac_correlations.append(np.array(corr))
                     elif FoundType[:2] == "CC":
@@ -360,7 +360,7 @@ def openFCS_Single(path):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append((np.float(row[0])*1000, np.float(row[1])))
+                        trace.append((np.float64(row[0])*1000, np.float64(row[1])))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)
@@ -378,7 +378,7 @@ def openFCS_Single(path):
                     corr = []
                     for row in readcorr:
                         # tau in ms, corr-function
-                        corr.append((np.float(row[0]), np.float(row[1])-1))
+                        corr.append((np.float64(row[0]), np.float64(row[1])-1))
                     corr = np.array(corr)
                 fcscurve = False
 

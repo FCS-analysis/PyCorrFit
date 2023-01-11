@@ -87,7 +87,7 @@ class FittingPanel(wx.Panel):
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.spcanvas.SetMinimumPaneSize(1)
         # y difference in pixels between Auocorrelation and Residuals
-        cupsizey = size[1]*4/5
+        cupsizey = (size[1]*4)//5
         # Calculate initial data
         self.calculate_corr()
         # Draw the settings section

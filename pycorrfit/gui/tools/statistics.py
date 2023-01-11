@@ -348,7 +348,7 @@ class Stat(wx.Frame):
         #headlen = len(head)
         # We will sort the checkboxes in more than one column if there
         # are more than *maxitemsincolumn*
-        maxitemsincolumn = np.float(19)
+        maxitemsincolumn = np.float64(19)
         Sizernumber = int(np.ceil(len(Info)/maxitemsincolumn))
         self.boxsizerlist = list()
         for i in np.arange(Sizernumber):
