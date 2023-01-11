@@ -72,16 +72,15 @@ The easiest way to run PyCorrFit from source on Windows is
 - ``pip install cython wheel simplejson sympy lmfit``
 - ``pip install -e .  # in the root directory of the repository`` 
 
-Ubuntu 17.10
+Ubuntu Linux
 ~~~~~~~~~~~~
 PyCorrFit requires wxPython >= 4.0.1 which is not available as a binary
-wheel on PyPI and thus must be built from the .tar.gz.
-Install all dependencies (https://github.com/wxWidgets/Phoenix/blob/master/README.rst):
+wheel on PyPI. However, the wxPython people have wheels specific to
+certain Ubuntu versions (https://www.wxpython.org/pages/downloads/):
 
-- ``pip install cython matplotlib lmfit numpy scipy sympy``
-- ``sudo apt-get install -qq libgtk2.0 libgtk2.0-dev libwebkitgtk-dev dpkg-dev build-essential python3.6-dev libjpeg-dev libtiff-dev libsdl1.2-dev libnotify-dev freeglut3 freeglut3-dev libsm-dev libgtk-3-dev libwebkit2gtk-4.0-dev libxtst-dev libgstreamer-plugins-base1.0-dev``
-- ``pip install wxPython  # this will take some time``
-- ``pip install -e .  # in the root directory of the repository`` 
+- ``sudo apt-get install -qq build-essential python3.10-dev``
+- ``pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-22.04 wxPython``
+- ``pip install -e .[GUI]  # in the root directory of the repository``
 
 Testing
 -------
@@ -91,14 +90,15 @@ run all tests by issuing:
 
 ::
 
-    python setup.py test
+    pip install -r tests/requirements
+    pytest tests
 
 
 Pull request guidelines
 -----------------------
 Please fork PyCorrFit and create a pull request (PR) introducing your changes.
 
-- A new PR should always be made into the `develop` branch.
+- A new PR should always be made into the `main` branch.
 - If a PR introduces a new functionality or fixes a bug, it should provide
   a test case, i.e. a new file or function in the `tests` directory
   (see `here <https://github.com/FCS-analysis/PyCorrFit/tree/develop/tests>`_
@@ -111,13 +111,3 @@ Please fork PyCorrFit and create a pull request (PR) introducing your changes.
   to check the files you changed or created.
 - New code should be documented well.
 - Make sure to update the `changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/CHANGELOG>`_. 
-
-
-Windows test binaries
----------------------
-After each commit to the PyCorrFit repository, a binary installer is created
-by `Appveyor <https://ci.appveyor.com/project/paulmueller/PyCorrFit>`_. Click
-on a build and navigate to ``ARTIFACTS`` (upper right corner right under
-the running time of the build). From there you can download the Windows
-installer for the commit.
-
