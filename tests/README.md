@@ -1,17 +1,14 @@
 ### Test Scripts
 
 
-Execute all tests using `setup.py` in the parent directory:
+Execute all tests from the repository root:
 
-    python setup.py test
+    pip install -r tests/requirements.txt
+    pytest tests
 
 
 ### Running single tests
 
 Directly execute the scripts, e.g.
 
-
-    python test_simple.py
-
-
-
+    pytest tests/test_simple.py

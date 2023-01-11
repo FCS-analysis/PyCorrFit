@@ -2,6 +2,8 @@
  - enh: add support for PicoQuant cor file format
  - ref: code cleanup
  - setup: modernize build pipeline
+ - tests: remove deprecated pytest-runner
+ - setup: require Python 3.10
 1.1.8
  - docs: fix typo in legacy PDF (#195)
 1.1.7

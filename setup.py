@@ -83,8 +83,7 @@ setup(
              "wxPython >= 4.0.1",
              ],
     },
-    setup_requires=["cython", 'numpy', 'pytest-runner'],
-    tests_require=["pytest", "urllib3", "simplejson"],
+    setup_requires=["cython", 'numpy'],
     python_requires='>=3.10, <4',
     # scripts
     entry_points={
