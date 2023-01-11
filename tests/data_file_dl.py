@@ -3,10 +3,10 @@ Download experimental data files from https://github.com/FCS-analysis/FCSdata
 
 This module establishes
 """
+import json
 import os
 from os.path import abspath, dirname, join, exists
 
-import simplejson as json
 import urllib3
 import warnings
 

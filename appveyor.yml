@@ -20,11 +20,8 @@ environment:
   PYPI_PWD:
     secure: EKcG8PgUSje7gsGc7AT7+Hk7c5MRH8nVgqIA9JvBV0oW0uU5FlxGjw5S+dUk1X1D
   matrix:
-    - PYTHON: "C:\\Miniconda36"
-      PYTHON_VERSION: "3.6"
-      PYTHON_ARCH: "32"
     - PYTHON: "C:\\Miniconda36-x64"
-      PYTHON_VERSION: "3.6"
+      PYTHON_VERSION: "3.10"
       PYTHON_ARCH: "64"
 
 cache:
@@ -77,7 +74,7 @@ test_script:
   - 'python -c "import pycorrfit; print(pycorrfit.__version__)"'
   - "pip install coverage"
   - "pip install codecov"
-  - "coverage run --source=pycorrfit ./setup.py test"
+  - "coverage run --source=pycorrfit -m pytest tests"
   - "coverage report -m"
   - "codecov || exit 0"
 
@@ -93,7 +90,7 @@ after_test:
   - cmd: "echo password: %PYPI_PWD% >> %USERPROFILE%\\.pypirc"
   # Run pyinstaller
   # This will create the "win7_innosetup.iss" file
-  - "pyinstaller -y --log-level=WARN .appveyor\\PyCorrFit_win7.spec"
+  - "pyinstaller -y --log-level=WARN build-recipes\\win_PyCorrFit_win7.spec"
   # Create InnoSetup installers
   # Set InnoSetup path here, because Cython complained about it.
   - set PATH=%PATH%;"C:\\Program Files (x86)\\Inno Setup 5"

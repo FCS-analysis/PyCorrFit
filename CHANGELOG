@@ -1,3 +1,7 @@
+1.2.0
+ - enh: add support for PicoQuant cor file format
+ - ref: code cleanup
+ - setup: modernize build pipeline
 1.1.8
  - docs: fix typo in legacy PDF (#195)
 1.1.7

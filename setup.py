@@ -85,7 +85,7 @@ setup(
     },
     setup_requires=["cython", 'numpy', 'pytest-runner'],
     tests_require=["pytest", "urllib3", "simplejson"],
-    python_requires='>=3.6, <4',
+    python_requires='>=3.10, <4',
     # scripts
     entry_points={
        "gui_scripts": ["pycorrfit=pycorrfit.gui.main:Main"]

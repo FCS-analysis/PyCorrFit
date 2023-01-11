@@ -1,4 +1,0 @@
-1.1.0
-- The changelog has moved. This file will be removed eventually,
-  but is kept to allow older versions of PyCorrFit to be notified
-  that a new version has been released.
