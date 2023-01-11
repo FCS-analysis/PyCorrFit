@@ -57,16 +57,16 @@ def tttr2xfcs(y, num, NcascStart, NcascEnd, Nsub):
         diffArr1[1:] = cs[0, k1].reshape(-1)
         diffArr2[1:] = cs[1, k1].reshape(-1)
 
-        #del k1
-        #del cs
+        # del k1
+        # del cs
         num = np.zeros((k1shape, 2))
 
         # Finds the total photons in each bin. and represents as count.
         # This is achieved because we have the indices of each unique time photon and cumulative total at each point.
         num[:, 0] = np.diff(diffArr1)
         num[:, 1] = np.diff(diffArr2)
-        #diffArr1 = [];
-        #diffArr2 = [];
+        # diffArr1 = [];
+        # diffArr2 = [];
 
         for k in range(0, Nsub):
             shift = shift + delta
@@ -76,8 +76,8 @@ def tttr2xfcs(y, num, NcascStart, NcascEnd, Nsub):
             if j >= NcascStart:
 
                 # Old method
-                #i1= np.in1d(y,y+lag,assume_unique=True)
-                #i2= np.in1d(y+lag,y,assume_unique=True)
+                # i1= np.in1d(y,y+lag,assume_unique=True)
+                # i2= np.in1d(y+lag,y,assume_unique=True)
 
                 # New method, cython
                 i1, i2 = dividAndConquer(y, y+lag, y.shape[0])
@@ -130,6 +130,6 @@ def delayTime2bin(dTimeArr, chanArr, chanNum, winInt):
     # bins are valued as half their span.
     decayScale = bins[:-1]+(winInt/2)
 
-    #decayScale =  np.arange(0,decayTimeCh.shape[0])
+    # decayScale =  np.arange(0,decayTimeCh.shape[0])
 
     return list(photonsInBin), list(decayScale)

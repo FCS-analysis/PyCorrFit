@@ -245,7 +245,7 @@ class MyFrame(wx.Frame):
         # window is open.
         # Find Tool Statistics
         # Get open tools
-        #toolkeys = self.ToolsOpen.keys()
+        # toolkeys = self.ToolsOpen.keys()
         # for key in toolkeys:
         #    tool = self.ToolsOpen[key]
         #    try:
@@ -401,7 +401,7 @@ class MyFrame(wx.Frame):
         self.EnableToolCurrent(False)
         # Set events
         # File
-        #self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
+        # self.Bind(wx.EVT_MENU, self.OnLoadSingle, menuLoadSingle)
         self.Bind(wx.EVT_MENU, self.OnLoadBatch, menuLoadBatch)
         self.Bind(wx.EVT_MENU, self.OnAddModel, menuAddModel)
         self.Bind(wx.EVT_MENU, self.OnCommSession, self.menuComm)
@@ -494,8 +494,8 @@ class MyFrame(wx.Frame):
             if dlg.ShowModal() == wx.ID_OK:
                 # Workaround since 0.7.5
                 (dirname, filename) = os.path.split(dlg.GetPath())
-                #filename = dlg.GetFilename()
-                #dirname = dlg.GetDirectory()
+                # filename = dlg.GetFilename()
+                # dirname = dlg.GetDirectory()
                 self.dirname = dirname
                 # Try to import a selected .txt file
             else:
@@ -764,8 +764,8 @@ class MyFrame(wx.Frame):
             # The filename the page will get
             path = dlg.GetPath()            # Workaround since 0.7.5
             (self.dirname, self.filename) = os.path.split(path)
-            #self.filename = dlg.GetFilename()
-            #self.dirname = dlg.GetDirectory()
+            # self.filename = dlg.GetFilename()
+            # self.dirname = dlg.GetDirectory()
             try:
                 Stuff = readfiles.open_any(self.dirname, self.filename)
             except:
@@ -1076,7 +1076,7 @@ class MyFrame(wx.Frame):
             if dlgi.Update(j, "Loading data: "+afile)[0] == False:
                 dlgi.Destroy()
                 return
-            #Stuff = readfiles.openAny(self.dirname, afile)
+            # Stuff = readfiles.openAny(self.dirname, afile)
             try:
                 Stuff = readfiles.open_any(self.dirname, afile)
             except Exception as excpt:
@@ -1178,7 +1178,7 @@ class MyFrame(wx.Frame):
                         coords[k] = WorkType.index(keys[k])
                         WorkType[coords[k]] = None
                     Run[coords] = i + 1
-                #del WorkType
+                # del WorkType
         else:
             Run = [""] * len(Curveid)
         # Now we have a dictionary curvetypes with keys that name
@@ -1867,7 +1867,7 @@ class MyFrame(wx.Frame):
             Page.corr.fit_parameters_range = np.array(Parms[9])
         # If we want to add more stuff, we should do something like:
         # if len(Parms) >= 11:
-        ##       nextvalue = Parms[10]
+        # nextvalue = Parms[10]
         # Such that we are compatible to earlier versions of
         # PyCorrFit sessions.
 

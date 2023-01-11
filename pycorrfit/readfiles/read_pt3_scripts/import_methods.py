@@ -180,12 +180,12 @@ def pt3import(filepath):
     syncperiod = 1e9/CntRate0
     # outfile stuff here.
     # fpout.
-    #T3RecordArr = [];
+    # T3RecordArr = [];
 
     chanArr = [0]*Records
     trueTimeArr = [0]*Records
     dTimeArr = [0]*Records
-    #f1=open('./testfile', 'w+')
+    # f1=open('./testfile', 'w+')
     for b in range(0, Records):
         T3Record = struct.unpack('I', f.read(4))[0]
 
@@ -193,7 +193,7 @@ def pt3import(filepath):
         nsync = T3Record & 65535
         chan = ((T3Record >> 28) & 15)
         chanArr[b] = chan
-        #f1.write(str(i)+" "+str(T3Record)+" "+str(nsync)+" "+str(chan)+" ")
+        # f1.write(str(i)+" "+str(T3Record)+" "+str(nsync)+" "+str(chan)+" ")
         dtime = 0
 
         if chan == 1:
@@ -214,17 +214,17 @@ def pt3import(filepath):
             if markers == 0:
                 ofltime = ofltime + WRAPAROUND
                 cnt_Ofl = cnt_Ofl+1
-                #f1.write("Ofl "+" ")
+                # f1.write("Ofl "+" ")
             else:
                 cnt_M = cnt_M+1
-                #f1.write("MA:%1u "+markers+" ")
+                # f1.write("MA:%1u "+markers+" ")
 
         truensync = ofltime + nsync
         truetime = (truensync * syncperiod) + (dtime*Resolution)
         trueTimeArr[b] = truetime
         dTimeArr[b] = dtime
 
-        #f1.write(str(truensync)+" "+str(truetime)+"\n")
+        # f1.write(str(truensync)+" "+str(truetime)+"\n")
     f.close()
     # f1.close();
 

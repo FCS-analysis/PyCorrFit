@@ -132,10 +132,10 @@ class Stat(wx.Frame):
         GridAll.Add(self.WXavg)
         GridAll.Add(textsd)
         GridAll.Add(self.WXsd)
-        #Psizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Psizer = wx.BoxSizer(wx.HORIZONTAL)
         # Psizer.Add(Pagetext)
         # Psizer.Add(self.WXTextPages)
-        #DDsizer = wx.BoxSizer(wx.HORIZONTAL)
+        # DDsizer = wx.BoxSizer(wx.HORIZONTAL)
         # DDsizer.Add(DDtext)
         # DDsizer.Add(self.WXDropdown)
         # self.topSizer.Add(Psizer)
@@ -344,8 +344,8 @@ class Stat(wx.Frame):
         """
         Info, checked = self.GetListOfAllParameters(
             return_std_checked=True)
-        #headcounter = 0
-        #headlen = len(head)
+        # headcounter = 0
+        # headlen = len(head)
         # We will sort the checkboxes in more than one column if there
         # are more than *maxitemsincolumn*
         maxitemsincolumn = np.float64(19)
@@ -354,10 +354,10 @@ class Stat(wx.Frame):
         for i in np.arange(Sizernumber):
             self.boxsizerlist.append(wx.BoxSizer(wx.VERTICAL))
         # Start at -1 so the indexes will start at 0 (see below).
-        #itemcount = -1
+        # itemcount = -1
         for i in range(len(Info)):
-            #itemcount += 1
-            #headcounter += 1
+            # itemcount += 1
+            # headcounter += 1
             checkbox = wx.CheckBox(self.panel, label=Info[i][0])
             # if headcounter <= headlen:
             #    checkbox.SetValue(True)
@@ -405,7 +405,7 @@ class Stat(wx.Frame):
 
         # Get plot parameters
         DDselid = self.WXDropdown.GetSelection()
-        #[label, key] = self.PlotParms[DDselid]
+        # [label, key] = self.PlotParms[DDselid]
         label = self.PlotParms[DDselid]
         # Get potential pages
         pages = list()
@@ -450,7 +450,7 @@ class Stat(wx.Frame):
         else:
             # Plot data
             plotavg = [[0.5, avg], [maxpage+.5, avg]]
-            #lineclear = plot.PolyLine(plotavg, colour="black")
+            # lineclear = plot.PolyLine(plotavg, colour="black")
             lineclear = plot.PolyMarker(plotavg, colour="black")
             plotlist.append(lineclear)
             # Update Text control

@@ -21,7 +21,7 @@ import copy
 
 
 def initialise_fcs(int_obj):
-        # default options for the fitting.
+    # default options for the fitting.
     int_obj.def_options = {}
 
     int_obj.def_options['Diff_eq'] = 1
@@ -40,13 +40,13 @@ def initialise_fcs(int_obj):
     # The offset
     offset = {'alias': 'offset', 'value': 0.01, 'minv': -1.0,
               'maxv': 1.0, 'vary': True, 'to_show': True, 'calc': False}
-    #int_obj.defin.add('offset', value=0.0, min=-1.0,max=5.0,vary=False)
+    # int_obj.defin.add('offset', value=0.0, min=-1.0,max=5.0,vary=False)
     # The amplitude
     GN0 = {'alias': 'GN0', 'minv': 0.001, 'value': 1,
            'maxv': 1.0, 'vary': True, 'to_show': True, 'calc': False}
-    #int_obj.def_param.add('GN0', value=1.0, vary=True)
+    # int_obj.def_param.add('GN0', value=1.0, vary=True)
     # The alpha value
-    #int_obj.def_param.add('alpha', value=1.0, min=0,max=1.0, vary=True)
+    # int_obj.def_param.add('alpha', value=1.0, min=0,max=1.0, vary=True)
     # lateral diffusion coefficent
     txy1 = {'alias': 'txy1', 'value': 0.01, 'minv': 0.001,
             'maxv': 2000.0, 'vary': True, 'to_show': True, 'calc': False}
@@ -162,7 +162,7 @@ def decide_which_to_show(int_obj):
                     int_obj.objId_sel.param['AR'+str(i)]['to_show'] = True
 
         if int_obj.def_options['Triplet_eq'] == 2:
-                # Triplet State equation1
+            # Triplet State equation1
             for i in range(1, int_obj.tripNumSpecSpin.value()+1):
                 int_obj.objId_sel.param['B'+str(i)]['to_show'] = True
                 int_obj.objId_sel.param['tauT'+str(i)]['to_show'] = True
@@ -270,8 +270,8 @@ def equation_(param, tc, options):
     offset = param['offset'].value
     GN0 = param['GN0'].value
 
-    if(options['Dimen'] == 2):
-        if(options['Diff_eq'] == 1):
+    if (options['Dimen'] == 2):
+        if (options['Diff_eq'] == 1):
             # Equation 1A with 3D term.
             if (options['Diff_species'] == 1):
                 A1 = param['A1'].value
@@ -314,7 +314,7 @@ def equation_(param, tc, options):
                 # For three diffusing species
                 GDiff = (A1*(((1+((tc/txy1)**alpha1))**-1)*((1+(tc/tz1))**-0.5))) + (A2*(((1+((tc/txy2)**alpha2))
                                                                                           ** -1)*((1+(tc/tz2))**-0.5))) + (A3*(((1+((tc/txy3)**alpha3))**-1)*((1+(tc/tz3))**-0.5)))
-        elif(options['Diff_eq'] == 2):
+        elif (options['Diff_eq'] == 2):
             if (options['Diff_species'] == 1):
                 A1 = param['A1'].value
                 txy1 = param['txy1'].value
@@ -360,7 +360,7 @@ def equation_(param, tc, options):
                 GDiff = (A1*(((1+((tc/txy1)**alpha1))**-1)*(((1+(tc/((AR1**2)*txy1)))**-0.5))))+(A2*(((1+((tc/txy2)**alpha2))**-1)
                                                                                                      * (((1+(tc/((AR2**2)*txy2)))**-0.5))))+(A3*(((1+((tc/txy3)**alpha3))**-1)*(((1+(tc/((AR3**2)*txy3)))**-0.5))))
 
-    if(options['Dimen'] == 1):
+    if (options['Dimen'] == 1):
         # Equation 1A with 2D term.
         if (options['Diff_species'] == 1):
             A1 = param['A1'].value
@@ -404,10 +404,10 @@ def equation_(param, tc, options):
             GDiff = (A1*(((1+(tc/txy1)**alpha1)**-1)))+(A2 *
                                                         (((1+(tc/txy2)**alpha2)**-1)))+(A3*(((1+(tc/txy3)**alpha3)**-1)))
 
-    if(options['Triplet_eq'] == 1):
+    if (options['Triplet_eq'] == 1):
         # For no triplets.
         GT = 1
-    elif(options['Triplet_eq'] == 2):
+    elif (options['Triplet_eq'] == 2):
         # Equation (2) 1st equation.
         if (options['Triplet_species'] == 1):
             B1 = param['B1'].value
@@ -432,7 +432,7 @@ def equation_(param, tc, options):
             GT = 1 + (B1*np.exp(-tc/tauT1)) + \
                 (B2*np.exp(-tc/tauT2))+(B3*np.exp(-tc/tauT3))
 
-    elif(options['Triplet_eq'] == 3):
+    elif (options['Triplet_eq'] == 3):
         # Equation (2) 2nd equation.
         if (options['Triplet_species'] == 1):
             T1 = param['T1'].value

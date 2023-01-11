@@ -386,7 +386,7 @@ class Slide(wx.Frame):
         self.valueB = ParmValues[idB]
         # Operator
         idop = self.dropop.GetSelection()
-        #keys = self.opdict.keys()
+        # keys = self.opdict.keys()
         opkey = self.oplist[idop]
         self.opfunc = self.opdict[opkey]
         # Parameter A

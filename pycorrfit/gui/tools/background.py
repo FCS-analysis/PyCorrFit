@@ -248,8 +248,8 @@ class BackgroundCorrection(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             # Workaround since 0.7.5
             (dirname, filename) = os.path.split(dlg.GetPath())
-            #filename = dlg.GetFilename()
-            #dirname = dlg.GetDirectory()
+            # filename = dlg.GetFilename()
+            # dirname = dlg.GetDirectory()
             # Set parent dirname for user comfort
             self.parent.dirname = dirname
             try:
@@ -368,7 +368,7 @@ class BackgroundCorrection(wx.Frame):
         self.parent.Background.append(
             Trace(trace=self.trace, name=self.bgname.GetValue()))
         # Next two lines are taken care of by UpdateDropdown
-        #name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
+        # name = "{} ({:.2f} kHz)".format(self.bgname.GetValue(), self.average)
         # self.BGlist.append(name)
         self.UpdateDropdown()
         self.btnremyall.Enable(True)
@@ -465,7 +465,7 @@ class BackgroundCorrection(wx.Frame):
             # an error message.
             return
         # BG number
-        #item = self.dropdown.GetSelection()
+        # item = self.dropdown.GetSelection()
         # Apply to corresponding pages
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)

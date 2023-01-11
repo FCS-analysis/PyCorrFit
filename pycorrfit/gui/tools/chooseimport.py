@@ -185,12 +185,12 @@ class ChooseImportTypesModel(wx.Dialog):
         # Set new button label
         for i in np.arange(len(keep)):
             keep[i] = int(keep[i])
-        #button = self.Buttons[self.buttonindex]
+        # button = self.Buttons[self.buttonindex]
         label = " ("+str(len(keep))+" curves)"
         # button.SetLabel(label)
         # Add new content to selected key
         SelectedKey = self.curvekeys[self.buttonindex]
-        #self.kept_curvedict[SelectedKey] = keep
+        # self.kept_curvedict[SelectedKey] = keep
         # If there are keys with the same amount of correlations,
         # these are assumed to be AC2, CC12, CC21 etc., so we will remove
         # items from them accordingly.

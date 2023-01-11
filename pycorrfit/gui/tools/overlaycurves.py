@@ -291,7 +291,7 @@ class UserSelectCurves(wx.Frame):
                    np.array((300, 30)))
         self.SetMinSize(minsize)
         # self.SetSize(minsize)
-        #self.SetMaxSize((9999, self.boxSizer.GetMinSize()[1]))
+        # self.SetMaxSize((9999, self.boxSizer.GetMinSize()[1]))
         # Canvas
         self.canvas = plot.PlotCanvas(self.bottom_sp)
         self.canvas.logScale = (True, False)

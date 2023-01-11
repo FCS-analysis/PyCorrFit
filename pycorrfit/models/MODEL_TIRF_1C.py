@@ -117,8 +117,8 @@ def MoreInfo_6000(parms, countrate=None):
         Effective particle number in detection area:
         [6] N_eff = A_eff * C_2D
     """
-    #D = parms[0]
-    #sigma = parms[1]
+    # D = parms[0]
+    # sigma = parms[1]
     a = parms[2]
     Conc = parms[3]
     Info = list()
@@ -158,7 +158,7 @@ def MoreInfo_6010(parms, countrate):
     # 3D Model TIR square
     # 3D TIR (□xσ/exp),Simple 3D diffusion w/ TIR, fct.CF_Gxyz_square_tir
     # D [10 µm²/s],σ [100 nm],a [100 nm],d_eva [100 nm],[conc.] [1000 /µm³]
-    #sigma = parms[1]
+    # sigma = parms[1]
     a = parms[2]
     d_eva = parms[3]
     conc = parms[4]

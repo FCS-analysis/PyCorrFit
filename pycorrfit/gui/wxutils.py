@@ -133,11 +133,11 @@ class PCFFloatTextCtrl(wx.TextCtrl):
         string = wx.TextCtrl.GetValue(self)
         if string == PCFFloatTextCtrl.float2string(self._PCFvalue):
             # use internal value: more accurate
-            #print("internal", self._PCFvalue)
+            # print("internal", self._PCFvalue)
             return self._PCFvalue
         else:
             # new value
-            #print("external", string)
+            # print("external", string)
             return PCFFloatTextCtrl.string2float(string)
 
     @staticmethod

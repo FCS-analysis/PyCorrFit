@@ -99,7 +99,7 @@ def save_figure(self, evt=None):
         if not filename.endswith(wildcard):
             filename += "."+wildcard
         dirname = dlg.GetDirectory()
-        #savename = os.path.join(dirname, filename)
+        # savename = os.path.join(dirname, filename)
         savename = filename
         try:
             self.canvas.figure.savefig(savename)
@@ -166,7 +166,7 @@ class MyYesNoAbortDialog(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL)
         btnsizer = wx.BoxSizer()
         btn1 = wx.Button(self, wx.ID_YES)
-        #btn1.Bind(wx.EVT_BTN, self.YES)
+        # btn1.Bind(wx.EVT_BTN, self.YES)
         btnsizer.Add(btn1, 0, wx.ALL, 5)
         btnsizer.Add((1, -1), 0, wx.ALL, 5)
         btn2 = wx.Button(self, wx.ID_NO)

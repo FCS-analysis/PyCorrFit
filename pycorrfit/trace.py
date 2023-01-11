@@ -53,7 +53,7 @@ class Trace(object):
     @property
     def countrate(self):
         if self._countrate is None:
-            #self._countrate = np.average(self._trace[:,1])
+            # self._countrate = np.average(self._trace[:,1])
             # Take into account traces that have arbitrary sampling
             self._countrate = spintg.simps(
                 self._trace[:, 1], self._trace[:, 0]) / self.duration

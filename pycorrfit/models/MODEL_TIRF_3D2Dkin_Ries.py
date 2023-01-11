@@ -82,10 +82,10 @@ def CF_gz_CC(parms, tau, wixi=wixi):
         *tau* - lag time
     """
     D = parms[0]
-    #D_2D = parms[1]
-    #sigma = parms[2]
+    # D_2D = parms[1]
+    # sigma = parms[2]
     # a = parms[3]
-    #d_eva = parms[4]
+    # d_eva = parms[4]
     Conc_3D = parms[5]      # ligand concentration in solution
     Conc_2D = parms[6]
     eta_3D = parms[7]
@@ -95,7 +95,7 @@ def CF_gz_CC(parms, tau, wixi=wixi):
     # Define some other constants:
     K = k_a/k_d              # equilibrium constant
     Beta = 1/(1 + K*Conc_3D)  # This is wrong in the Ries paper
-    #Re = D / d_eva**2
+    # Re = D / d_eva**2
     Rt = D * (Conc_3D / (Beta * Conc_2D))**2
     Rr = k_a * Conc_3D + k_d
     # Define even more constants:
@@ -135,8 +135,8 @@ def CF_gz_AC(parms, tau, wixi=wixi):
         *tau* - lag time
     """
     D = parms[0]
-    #D_2D = parms[1]
-    #sigma = parms[2]
+    # D_2D = parms[1]
+    # sigma = parms[2]
     # a = parms[3]
     d_eva = parms[4]
     Conc_3D = parms[5]      # ligand concentration in solution
@@ -159,8 +159,8 @@ def CF_gz_AC(parms, tau, wixi=wixi):
     # And even more more:
     sqrtR3 = sqrtR1 + nps.sqrt(Re)
     sqrtR4 = sqrtR2 + nps.sqrt(Re)
-    #R3 = sqrtR3 **2
-    #R4 = sqrtR4 **2
+    # R3 = sqrtR3 **2
+    # R4 = sqrtR4 **2
     # Calculate return function
     A1 = eta_2D * Conc_2D * k_d / (eta_3D * Conc_3D)
     A2 = sqrtR4*wixi(-nps.sqrt(tau*R1)) - sqrtR3*wixi(-nps.sqrt(tau*R2))
@@ -194,8 +194,8 @@ def CF_gz_AA(parms, tau, wixi=wixi):
         *tau* - lag time
     """
     D = parms[0]
-    #D_2D = parms[1]
-    #sigma = parms[2]
+    # D_2D = parms[1]
+    # sigma = parms[2]
     # a = parms[3]
     d_eva = parms[4]
     Conc_3D = parms[5]      # ligand concentration in solution
@@ -286,8 +286,8 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
     Conc_2D = parms[6]
     eta_3D = parms[7]
     eta_2D = parms[8]
-    #k_a = parms[9]
-    #k_d = parms[10]
+    # k_a = parms[9]
+    # k_d = parms[10]
     # We now need to copmute a real beast:
     # Inter species non-normalized correlation functions
     # gAA = gAAz * gxy(D_3D)
@@ -323,8 +323,8 @@ def CF_Gxyz_TIR_square_ubibi(parms, tau,
     # There are some below numerical errors-imaginary numbers.
     # We do not want them.
     return G.real
-    #FNEW = eta_3D * Conc_3D / kappa
-    #GNEW = eta_3D * Conc_3D * gCCz(parms, tau) / FNEW**2
+    # FNEW = eta_3D * Conc_3D / kappa
+    # GNEW = eta_3D * Conc_3D * gCCz(parms, tau) / FNEW**2
     # return GNEW.real
 
 

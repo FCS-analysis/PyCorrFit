@@ -39,7 +39,7 @@ class picoObject():
         self.fit_obj = fit_obj
         self.type = 'mainObject'
 
-        #self.PIE = 0
+        # self.PIE = 0
         self.filepath = str(filepath)
         self.nameAndExt = os.path.basename(self.filepath).split('.')
         self.name = self.nameAndExt[0]
@@ -288,9 +288,9 @@ class subPicoObject():
         self.par_obj.subObjectRef.append(self)
         self.unqID = self.par_obj.subNum
         self.parentUnqID = self.parentId.unqID
-        #self.chanArr = parentObj.chanArr
-        #self.trueTimeArr = self.parentId.trueTimeArr
-        #self.dTimeArr = self.parentId.dTimeArr
+        # self.chanArr = parentObj.chanArr
+        # self.trueTimeArr = self.parentId.trueTimeArr
+        # self.dTimeArr = self.parentId.dTimeArr
         self.color = self.parentId.color
         self.numOfCH = self.parentId.numOfCH
         self.ch_present = self.parentId.ch_present
@@ -317,7 +317,7 @@ class subPicoObject():
         self.Nsub = self.par_obj.Nsub
         self.winInt = self.par_obj.winInt
 
-        #self.subChanArr, self.trueTimeArr, self.dTimeArr,self.resolution = pt3import(self.filepath)
+        # self.subChanArr, self.trueTimeArr, self.dTimeArr,self.resolution = pt3import(self.filepath)
         if self.ext == 'pt3':
             self.subChanArr, self.trueTimeArr, self.dTimeArr, self.resolution = pt3import(
                 self.filepath)
@@ -328,7 +328,7 @@ class subPicoObject():
             # if self.subChanArr == None:
             # Undoes any preparation of resource.
             #    self.par_obj.subObjectRef.pop(-1)
-            #self.exit = True
+            # self.exit = True
             #    return
 
         self.subArrayGeneration(self.xmin, self.xmax)
@@ -414,11 +414,11 @@ class subPicoObject():
         del self.dTimeArr
 
     def subArrayGeneration(self, xmin, xmax):
-        if(xmax < xmin):
+        if (xmax < xmin):
             xmin1 = xmin
             xmin = xmax
             xmax = xmin1
-        #self.subChanArr = np.array(self.chanArr)
+        # self.subChanArr = np.array(self.chanArr)
         # Finds those photons which arrive above certain time or below certain time.
         photonInd = np.logical_and(
             self.dTimeArr >= xmin, self.dTimeArr <= xmax).astype(np.bool)
@@ -516,7 +516,7 @@ class corrObject():
 
         # Populate param for lmfit.
         param = Parameters()
-        #self.def_param.add('A1', value=1.0, min=0,max=1.0, vary=False)
+        # self.def_param.add('A1', value=1.0, min=0,max=1.0, vary=False)
         for art in self.param:
 
             if self.param[art]['to_show'] == True:
@@ -542,12 +542,12 @@ class corrObject():
                 self.param[art]['stderr'] = float(param[art].stderr)
 
         # Extra parameters, which are not fit or inherited.
-        #self.param['N_FCS']['value'] = np.round(1/self.param['GN0']['value'],4)
+        # self.param['N_FCS']['value'] = np.round(1/self.param['GN0']['value'],4)
 
         self.residualVar = res.residual
         output = fit_report(param)
         print('residual', res.chisqr)
-        if(res.chisqr > 0.05):
+        if (res.chisqr > 0.05):
             print('CAUTION DATA DID NOT FIT WELL CHI^2 >0.05', res.chisqr)
             self.goodFit = False
         else:
@@ -563,7 +563,7 @@ class corrObject():
         self.model_autotime = scale[self.indx_L:self.indx_R+1]
         # self.parentFn.on_show()
 
-        #self.parentFn.axes.plot(model_autotime,model_autoNorm, 'o-')
+        # self.parentFn.axes.plot(model_autotime,model_autoNorm, 'o-')
         # self.parentFn.canvas.draw();
 
     def load_from_file(self, channel):

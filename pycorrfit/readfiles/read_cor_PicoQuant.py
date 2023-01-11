@@ -5,16 +5,20 @@ import warnings
 
 import numpy as np
 
+
 class LoadCORError(BaseException):
     pass
+
 
 def get_header_index(L, elem):
     try:
         index = L.index(elem)
     except ValueError:
-        raise ValueError(f'Expected {elem} in the data header, but found only {L}')
+        raise ValueError(
+            f'Expected {elem} in the data header, but found only {L}')
 
     return index
+
 
 def openCOR(path, filename=None):
     """
@@ -61,8 +65,8 @@ def openCOR(path, filename=None):
         warnings.warn("Using `filename` is deprecated.", DeprecationWarning)
         path = path / filename
     filename = path.name
-    
-    s_to_ms = 1000 # cor provides seconds, we want ms
+
+    s_to_ms = 1000  # cor provides seconds, we want ms
 
     corfile = path.open('r', encoding='utf-8')
     header = list()
@@ -72,14 +76,15 @@ def openCOR(path, filename=None):
             break
 
     if header[0] != 'TTTR Correlator Export':
-        raise ValueError(f'Error while reading {path.name}. Expected the first line to be "TTTR Correlator Export"')        
+        raise ValueError(
+            f'Error while reading {path.name}. Expected the first line to be "TTTR Correlator Export"')
 
     data_header = next(corfile).split()
     data = np.loadtxt(corfile)
-    
+
     tau = data[:, get_header_index(data_header, 'tau/s')]*s_to_ms
     correlation_names = ['G(A,A)', 'G(A,B)', 'G(B,B)']
-    correlation_types = ['AC',     'CC',     'AC'    ]
+    correlation_types = ['AC',     'CC',     'AC']
     correlations = list()
 
     for correlation_name in correlation_names:
@@ -88,7 +93,7 @@ def openCOR(path, filename=None):
         cor[:, 0] = tau
         cor[:, 1] = correlation
         correlations.append(cor)
-        
+
     dictionary = dict()
     dictionary['Correlation'] = correlations
     dictionary['Trace'] = [[] for _ in dictionary['Correlation']]

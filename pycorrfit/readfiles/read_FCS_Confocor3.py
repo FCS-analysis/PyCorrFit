@@ -91,7 +91,7 @@ def openFCS_Multiple(path):
                 i = i + 1
                 continue
             # Extract data
-            if  current_key == "AcquisitionTime":
+            if current_key == "AcquisitionTime":
                 thistime = current_value
             elif current_key == "Channel":
                 # Find out what type of correlation curve we have.
@@ -230,7 +230,7 @@ def openFCS_Multiple(path):
     for tid in actimelist:
         if tid not in knowntimes:
             knowntimes.append(tid)
-            #n = actimelist.count(tid)
+            # n = actimelist.count(tid)
             actids = np.where(np.array(actimelist) == tid)[0]
             cctids = np.where(np.array(cctimelist) == tid)[0]
 
@@ -360,7 +360,8 @@ def openFCS_Single(path):
                     for row in readtrace:
                         # tau in ms, trace in kHz
                         # So we need to put some factors here
-                        trace.append((np.float64(row[0])*1000, np.float64(row[1])))
+                        trace.append(
+                            (np.float64(row[0])*1000, np.float64(row[1])))
                     trace = np.array(trace)
                     # If the trace is too big. Wee need to bin it.
                     newtrace = util.downsample_trace(trace)

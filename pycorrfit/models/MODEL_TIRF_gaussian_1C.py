@@ -150,7 +150,7 @@ def MoreInfo_6013(parms, countrate=None):
         Effective particle concentration:
         [6] C_3D [nM] = C_3D [1000/µm³] * 10000/6.0221415
     """
-    #D = parms[0]
+    # D = parms[0]
     r0 = parms[1]
     deva = parms[2]
     Conc = parms[3]
@@ -180,7 +180,7 @@ def MoreInfo_6014(parms, countrate=None):
         Effective particle concentration:
         [8] C_3D [nM] = C_3D [1000/µm³] * 10000/6.0221415
     """
-    #D = parms[0]
+    # D = parms[0]
     r0 = parms[1]
     deva = parms[2]
     Conc = parms[3]

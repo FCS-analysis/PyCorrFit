@@ -98,7 +98,7 @@ class Average(wx.Frame):
             self.panel.Disable()
             return
 
-        #idsel = self.WXDropSelMod.GetSelection()
+        # idsel = self.WXDropSelMod.GetSelection()
         self.SetValues()
         # Set back user selection:
         # self.WXDropSelMod.SetSelection(idsel)
@@ -116,7 +116,7 @@ class Average(wx.Frame):
         pages = list()
         UsedPagenumbers = list()
         # Reference page is the first page of the selection!
-        #referencePage = self.parent.notebook.GetCurrentPage()
+        # referencePage = self.parent.notebook.GetCurrentPage()
         referencePage = None
         for i in np.arange(self.parent.notebook.GetPageCount()):
             Page = self.parent.notebook.GetPage(i)

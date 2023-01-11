@@ -274,7 +274,8 @@ def openSIN_old(path):
         corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata.append(
+                (np.float64(row[0])*timefactor, np.float64(row[1])-1))
         correlations.append(np.array(corrdata))
         trace = []
         for row in readtrace:
@@ -287,7 +288,8 @@ def openSIN_old(path):
         corrdata = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata.append(
+                (np.float64(row[0])*timefactor, np.float64(row[1])-1))
         correlations.append(np.array(corrdata))
         trace1 = []
         trace2 = []
@@ -305,8 +307,10 @@ def openSIN_old(path):
         corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
-            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
+            corrdata1.append(
+                (np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append(
+                (np.float64(row[0])*timefactor, np.float64(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         trace1 = []
@@ -326,8 +330,10 @@ def openSIN_old(path):
         corrdata2 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
-            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
+            corrdata1.append(
+                (np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append(
+                (np.float64(row[0])*timefactor, np.float64(row[2])-1))
         correlations.append(np.array(corrdata1))
         correlations.append(np.array(corrdata2))
         trace1 = []
@@ -351,8 +357,10 @@ def openSIN_old(path):
         corrdata21 = []
         for row in readcorr:
             # tau in ms, corr-function minus "1"
-            corrdata1.append((np.float64(row[0])*timefactor, np.float64(row[1])-1))
-            corrdata2.append((np.float64(row[0])*timefactor, np.float64(row[2])-1))
+            corrdata1.append(
+                (np.float64(row[0])*timefactor, np.float64(row[1])-1))
+            corrdata2.append(
+                (np.float64(row[0])*timefactor, np.float64(row[2])-1))
             corrdata12.append(
                 (np.float64(row[0])*timefactor, np.float64(row[3])-1))
             corrdata21.append(

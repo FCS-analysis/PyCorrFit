@@ -492,9 +492,9 @@ class Fit(object):
         ival = corr.fit_ival
         weight_data = corr.fit_weight_data
         weight_type = corr.fit_weight_type
-        #parameters = corr.fit_parameters
-        #parameters_range = corr.fit_parameters_range
-        #parameters_variable = corr.fit_parameters_variable
+        # parameters = corr.fit_parameters
+        # parameters_range = corr.fit_parameters_range
+        # parameters_variable = corr.fit_parameters_variable
 
         cdat = corr.correlation
         if cdat is None:
@@ -503,7 +503,7 @@ class Fit(object):
         x_full = cdat[:, 0]
         y_full = cdat[:, 1]
         x_fit = cdatfit[:, 0]
-        #y_fit = cdatfit[:,1]
+        # y_fit = cdatfit[:,1]
 
         dataweights = np.ones_like(x_fit)
 
@@ -555,7 +555,7 @@ class Fit(object):
                 return
             if verbose > 0:
                 # If plotting module is available:
-                #name = "spline fit: "+str(knotnumber)+" knots"
+                # name = "spline fit: "+str(knotnumber)+" knots"
                 # plotting.savePlotSingle(name, 1*x, 1*y, 1*ys,
                 #                         dirname=".",
                 #                         uselatex=uselatex)
@@ -641,8 +641,8 @@ class Fit(object):
                 # start: counter on correlation array
                 start = i - weight_spread + offsetstart + ival[0] - offsetcrop
                 end = start + 2*weight_spread + 1 - offsetstart
-                #start = ival[0] - weight_spread + i
-                #end = ival[0] + weight_spread + i + 1
+                # start = ival[0] - weight_spread + i
+                # end = ival[0] + weight_spread + i + 1
                 diff = y - model(model_parms, x)
                 dataweights[i] = diff[start:end].std()
                 # The standard deviation at the end and the start of the
@@ -696,7 +696,7 @@ class Fit(object):
             tominimize = np.where(weights != 0,
                                   tominimize/weights, 0)
         # There might be NaN values because of zero weights:
-        #tominimize = tominimize[~np.isinf(tominimize)]
+        # tominimize = tominimize[~np.isinf(tominimize)]
         return tominimize
 
     def fit_function_scalar(self, parms, x, y, weights=1):

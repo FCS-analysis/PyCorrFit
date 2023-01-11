@@ -27,7 +27,7 @@ from ..meta import find_program
 
 def greek2tex(char):
     """ Converts greek UTF-8 letters to latex """
-    #decchar = codecs.decode(char, "UTF-8")
+    # decchar = codecs.decode(char, "UTF-8")
     decchar = char
     repres = unicodedata.name(decchar).split(" ")
     # GREEK SMALL LETTER ALPHA
@@ -42,7 +42,7 @@ def greek2tex(char):
 
 def escapechars(string):
     """ For latex output, some characters have to be escaped with a "\\" """
-    #string = codecs.decode(string, "UTF-8")
+    # string = codecs.decode(string, "UTF-8")
     escapechars = ["#", "$", "%", "&", "~", "_", "\\", "{", "}"]
     retstr = r""
     for char in string:
@@ -64,20 +64,20 @@ def latexmath(string):
         return r"\mathrm{offset}"
     elif string == "SP":
         return r"\mathrm{SP}"
-    #string = codecs.decode(string, "UTF-8")
+    # string = codecs.decode(string, "UTF-8")
     unicodechars = dict()
-    #unicodechars["τ"] = r"\tau"
-    #unicodechars["µ"] = r"\mu"
+    # unicodechars["τ"] = r"\tau"
+    # unicodechars["µ"] = r"\mu"
     unicodechars["²"] = r"^2"
     unicodechars["³"] = r"^3"
     unicodechars["₁"] = r"_1"
     unicodechars["₂"] = r"_2"
     unicodechars["₃"] = r"_3"
     unicodechars["₀"] = r"_0"
-    #unicodechars["α"] = r"\alpha"
+    # unicodechars["α"] = r"\alpha"
     # We need lambda in here, because unicode names it lamda sometimes.
     unicodechars["λ"] = r"\lambda"
-    #unicodechars["η"] = r'\eta'
+    # unicodechars["η"] = r'\eta'
     unitchars = dict()
     unitchars["µ"] = r"\micro "
     items = string.split(" ", 1)
@@ -269,7 +269,7 @@ def savePlotCorrelation(parent, dirname, Page, uselatex=False,
     plt.text(xt, yt, text, size=12)
     if resid is not None:
         ax2 = plt.subplot(gs[1])
-        #ax2 = plt.axes()
+        # ax2 = plt.axes()
         ax2.semilogx()
         if Page.corr.is_weighted_fit:
             if uselatex == True:

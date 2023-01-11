@@ -78,7 +78,7 @@ class FittingPanel(wx.Panel):
         # This is necessary to prevent "Unsplit" of the SplitterWindow:
         self.sp.SetMinimumPaneSize(1)
         # Settings Section (left side)
-        #self.panelsettings = wx.Panel(self.sp, size=sizepanel)
+        # self.panelsettings = wx.Panel(self.sp, size=sizepanel)
         self.panelsettings = scrolled.ScrolledPanel(self.sp, size=sizepanel)
         self.panelsettings.SetupScrolling(scroll_x=False)
         # Setting up Plot (correlation + chi**2)
@@ -620,7 +620,7 @@ class FittingPanel(wx.Panel):
                     # if weights are from average or other, make sure that the
                     # dimensions are correct
                     if weights.shape[0] == self.corr.correlation.shape[0]:
-                        weights = weights[self.corr.fit_ival[0]                                          :self.corr.fit_ival[1]]
+                        weights = weights[self.corr.fit_ival[0]:self.corr.fit_ival[1]]
 
                     # perform some checks
                     if np.allclose(weights, np.ones_like(weights)):
