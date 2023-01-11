@@ -243,7 +243,7 @@ ALL_SUP_STRING = " All supported files"
 # The wildcards point to the appropriate functions.
 filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
                   "ALV (*.ASC)|*.ASC;*.asc": openASC,
-                  "cor (*.cor)|*.cor": openCOR,
+                  "PicoQuant cor (*.cor)|*.cor": openCOR,
                   "PyCorrFit (*.csv)|*.csv": openCSV,
                   "Matlab 'Ries (*.mat)|*.mat": openMAT,
                   "PicoQuant (*.pt3)|*.pt3": openPT3,
@@ -257,7 +257,7 @@ add_all_supported_filetype_entry(filetypes_dict)
 # Dictionary with filetypes we can open that have intensity traces in them.
 filetypes_bg_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
                      "ALV (*.ASC)|*.ASC": openASC,
-                     "cor (*.cor)|*.cor": openCOR,
+                     "PicoQuant cor (*.cor)|*.cor": openCOR,
                      "PyCorrFit (*.csv)|*.csv": openCSV,
                      "PicoQuant (*.pt3)|*.pt3": openPT3,
                      "Zeiss ConfoCor3 (*.fcs)|*.fcs": openFCS,
