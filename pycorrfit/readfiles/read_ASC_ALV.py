@@ -181,7 +181,7 @@ def openASC_old(path):
     for row in readdata:
         for i in np.arange(len(curvelist)):
             if len(row) > 0:
-                data[i].append((np.float(row[0]), np.float(row[i+1])))
+                data[i].append((np.float64(row[0]), np.float64(row[i+1])))
     # Trace
     # Trace is stored in two columns
     # 1st column: time [s]
@@ -196,12 +196,12 @@ def openASC_old(path):
     for row in readtrace:
         # time in ms, countrate
         trace.append(list())
-        trace[0].append((np.float(row[0])*timefactor,
-                         np.float(row[1])))
+        trace[0].append((np.float64(row[0])*timefactor,
+                         np.float64(row[1])))
         # Only trace[0] contains the trace!
         for i in np.arange(len(curvelist)-1):
             trace.append(list())
-            trace[i+1].append((np.float(row[0])*timefactor, 0))
+            trace[i+1].append((np.float64(row[0])*timefactor, 0))
         if not single:
             k = len(curvelist)/2
             if int(k) != k:
@@ -209,12 +209,12 @@ def openASC_old(path):
             # presumably dual mode. There is a second trace
             # time in ms, countrate
             trace2.append(list())
-            trace2[0].append((np.float(row[0])*timefactor,
-                              np.float(row[2])))
+            trace2[0].append((np.float64(row[0])*timefactor,
+                              np.float64(row[2])))
             # Only trace2[0] contains the trace!
             for i in np.arange(len(curvelist)-1):
                 trace2.append(list())
-                trace2[i+1].append((np.float(row[0])*timefactor, 0))
+                trace2[i+1].append((np.float64(row[0])*timefactor, 0))
 
     # group the resulting curves
     corrlist = list()

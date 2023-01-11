@@ -123,11 +123,11 @@ def openCSV(path, filename=None):
             # separated values as well
             if len(row) == 1:
                 row = row[0].split()
-            data.append((np.float(row[0].strip())*timefactor,
-                         np.float(row[1].strip())))
+            data.append((np.float64(row[0].strip())*timefactor,
+                         np.float64(row[1].strip())))
             if len(row) == 5:
                 # this has to be correlation with weights
-                weights.append(np.float(row[4].strip()))
+                weights.append(np.float64(row[4].strip()))
                 if weightname == "external":
                     try:
                         weightname = "ext. " + \

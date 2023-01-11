@@ -1168,8 +1168,8 @@ class MyFrame(wx.Frame):
             # the Nth occurence of the keys in Types correspond to the
             # matching curves.
             # Also make sure that number starts at one for each selected file.
-            coords = np.zeros(len(keys), dtype=np.int)
-            Run = np.zeros(len(Curveid), dtype=np.int)
+            coords = np.zeros(len(keys), dtype=np.int64)
+            Run = np.zeros(len(Curveid), dtype=np.int64)
             WorkType = 1*Type
             for fname in np.unique(Filename):
                 # unique returns sorted file names.

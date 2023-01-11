@@ -14,6 +14,7 @@ import yaml
 # To add a filetype add it here and in the
 # dictionaries at the end of this file.
 from .read_ASC_ALV import openASC
+from .read_cor_PicoQuant import openCOR
 from .read_CSV_PyCorrFit import openCSV
 from .read_SIN_correlator_com import openSIN
 from .read_FCS_Confocor3 import openFCS
@@ -242,6 +243,7 @@ ALL_SUP_STRING = " All supported files"
 # The wildcards point to the appropriate functions.
 filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
                   "ALV (*.ASC)|*.ASC;*.asc": openASC,
+                  "PicoQuant cor (*.cor)|*.cor": openCOR,
                   "PyCorrFit (*.csv)|*.csv": openCSV,
                   "Matlab 'Ries (*.mat)|*.mat": openMAT,
                   "PicoQuant (*.pt3)|*.pt3": openPT3,
@@ -255,6 +257,7 @@ add_all_supported_filetype_entry(filetypes_dict)
 # Dictionary with filetypes we can open that have intensity traces in them.
 filetypes_bg_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
                      "ALV (*.ASC)|*.ASC": openASC,
+                     "PicoQuant cor (*.cor)|*.cor": openCOR,
                      "PyCorrFit (*.csv)|*.csv": openCSV,
                      "PicoQuant (*.pt3)|*.pt3": openPT3,
                      "Zeiss ConfoCor3 (*.fcs)|*.fcs": openFCS,

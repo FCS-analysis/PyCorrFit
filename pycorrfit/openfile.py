@@ -226,10 +226,10 @@ def LoadSessionData(sessionfile, parameters_only=False):
             for row in bgtraceread:
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
-                    bgtrace.append((np.float(row[0]), np.float(row[1])))
+                    bgtrace.append((np.float64(row[0]), np.float64(row[1])))
             bgtrace = np.array(bgtrace)
             newbackground = Trace(trace=bgtrace, name=str(
-                bgrow[1]), countrate=np.float(bgrow[0]))
+                bgrow[1]), countrate=np.float64(bgrow[0]))
             Infodict["Backgrounds"].append(newbackground)
             i = i + 1
         bgfile.close()
@@ -260,7 +260,7 @@ def LoadSessionData(sessionfile, parameters_only=False):
             for row in Wdatareader:
                 # Exclude commentaries
                 if (str(row[0])[0:1] != '#'):
-                    Wdata.append(np.float(row[0]))
+                    Wdata.append(np.float64(row[0]))
             Weightsdict[pageid][Nkey] = np.array(Wdata)
         Infodict["External Weights"] = Weightsdict
     # Preferences
