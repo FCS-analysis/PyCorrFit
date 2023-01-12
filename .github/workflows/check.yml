@@ -44,6 +44,9 @@ jobs:
         pip install -e .
         # show installed packages
         pip freeze
+    - name: Test
+      run: |
+        pytest tests
     - name: Submit code coverage
       run: |
         coverage report -m
