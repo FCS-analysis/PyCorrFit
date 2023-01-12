@@ -46,7 +46,7 @@ jobs:
         pip freeze
     - name: Test
       run: |
-        pytest tests
+        coverage run --source=pycorrfit -m pytest tests
     - name: Submit code coverage
       run: |
         coverage report -m
