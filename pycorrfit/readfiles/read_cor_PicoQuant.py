@@ -53,7 +53,7 @@ def openCOR(path, filename=None):
 
     Returns:
     A dictionary containing:
-       Trace: list of 2d np.array containing two columns:
+       Correlation: list of 2d np.array containing two columns:
               1st: tau in ms
               2nd: corresponding correlation signal
        Type: list of strings indictating the type of each correlation
