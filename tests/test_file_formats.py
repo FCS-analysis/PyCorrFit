@@ -79,7 +79,19 @@ def test_asc_alv7004usb():
     assert data4["Type"][0] == "AC"
     assert len(data4["Trace"][0]) == 254
 
-
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_cor_all_open():
+    f1 = data_file_dl.get_data_file(
+        "1_nM_Great_Correlation_Curve_121622.cor")
+    data = pycorrfit.readfiles.open_any(f1)
+    assert(len(data['Filename']) == 3)
+    assert(data['Filename'][0] == '1_nM_Great_Correlation_Curve_121622.cor')
+    assert(len(data['Trace']) == 3)
+    assert(data['Trace'][0] == [])
+    assert(data['Type'] == ['AC',     'CC',     'AC'])
+    assert(len(data['Correlation']) == 3)
+    assert(all(map(lambda x: x.shape == (145, 2), data['Correlation'])))
+    
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_csv_all_open():
     # get list of supported file extensions
