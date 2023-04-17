@@ -38,7 +38,7 @@ jobs:
       run: |
         # prerequisites
         python -m pip install --upgrade pip wheel
-        python -m pip install codecov coverage flake8 pytest
+        python -m pip install coverage flake8 pytest
         python -m pip install -r tests/requirements.txt
         # install dependencies
         pip install -e .
@@ -47,10 +47,8 @@ jobs:
     - name: Test
       run: |
         coverage run --source=pycorrfit -m pytest tests
-    - name: Submit code coverage
-      run: |
-        coverage report -m
-        codecov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
     - name: Create app and check if it runs (macOS)
       if: runner.os == 'macOS'
       working-directory: ./build-recipes
