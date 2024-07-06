@@ -1,7 +1,7 @@
 include CHANGELOG
 include LICENSE
 include README.rst
-recursive-include examples *.txt
+recursive-include examples *.txt *.pcfs
 recursive-include doc *.tex *.bib *.pdf *.md *.png *.svg
 recursive-include docs *.py *.md *.txt *.rst *.bib *.gif *.jpg *.png
 recursive-include tests *.py *.md
