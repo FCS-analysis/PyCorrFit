@@ -1,3 +1,5 @@
+1.2.1
+ - fix: compatibility with newer versions of scipy (#211)
 1.2.0
  - enh: add support for PicoQuant cor file format
  - ref: code cleanup
