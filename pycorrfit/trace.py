@@ -4,6 +4,10 @@ import hashlib
 import numpy as np
 import scipy.integrate as spintg
 
+# forward compatibility patch for scipy >= 1.10
+# aliasing simpson as simps
+if not hasattr(spintg, "simps"):
+        spintg.simps = spintg.simpson
 
 class Trace(object):
     """ unifies trace handling
