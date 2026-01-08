@@ -2,6 +2,8 @@ import struct
 import numpy as np
 import csv
 
+from ptufile import PtuFile
+
 
 """FCS Bulk Correlation Software
 
@@ -229,3 +231,28 @@ def pt3import(filepath):
     # f1.close();
 
     return np.array(chanArr), np.array(trueTimeArr), np.array(dTimeArr), Resolution
+
+
+def ptuimport(path):
+    """Load the t3 data or t2 data. If t2 mimic the t3 format so we can reuse that object"""
+    ptu = PtuFile(path)
+    
+    records = ptu.decode_records()
+    records = records[records["channel"] >= 0] # remove all markers
+
+    # either convert our t3 data to t2 or load the t2 data directly
+    # time is in units of ns
+    if ptu.is_t3:
+        channel = records["channel"]
+        dtime = records["dtime"]
+        sync_time = (1e9 / ptu.syncrate)
+        resolution = ptu.tcspc_resolution
+        time = (records["time"] * sync_time) + (dtime * resolution)
+    else:
+        channel = records["channel"]
+        dtime = np.zeros_like(channel, dtype=np.uint32)
+        resolution = ptu.global_resolution
+        time = records["time"] * 1e9 * resolution
+
+    return channel, time, dtime, resolution
+

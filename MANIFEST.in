@@ -5,6 +5,6 @@ recursive-include examples *.txt *.pcfs
 recursive-include doc *.tex *.bib *.pdf *.md *.png *.svg
 recursive-include docs *.py *.md *.txt *.rst *.bib *.gif *.jpg *.png
 recursive-include tests *.py *.md
-recursive-include pycorrfit LICENCE README
+recursive-include pycorrfit LICENSE README
 prune docs/_build
 exclude docs/_version_save.py

@@ -1,5 +1,5 @@
 """PyCorrFit - update checking"""
-from distutils.version import LooseVersion  # For version checking
+from looseversion import LooseVersion  # For version checking
 import os
 import tempfile
 import traceback

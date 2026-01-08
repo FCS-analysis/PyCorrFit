@@ -8,7 +8,7 @@ https://github.com/dwaithe/FCS_point_correlator
 
 The following changes were performed:
 - `fib4.pyx`
-  A doc string was inserted.
+  Removed and replaced with fib4.py
 - `correlation_objects.py`
   Line 7 was commented out:
   #from lmfit import minimize, Parameters,report_fit,report_errors, fit_report
