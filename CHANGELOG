@@ -1,3 +1,8 @@
+[unreleased]
+ - enh: add support for PicoQuant ptu file format
+ - setup: require Python 3.11 (due to ptufile)
+ - tests: set up tox for all supported python version
+ - tests: add placeholder ruff/ty/codespell configuration for gradual improvements
 1.2.1
  - fix: compatibility with newer versions of scipy (#211)
 1.2.0

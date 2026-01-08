@@ -6,6 +6,7 @@ This module establishes
 import json
 import os
 from os.path import abspath, dirname, join, exists
+import pathlib
 
 import urllib3
 import warnings
@@ -112,8 +113,15 @@ def get_data_files_ext(extension, dldir=dldir, pool_manager=pool_manager,
         # Get file list and download
         files = get_data_tree_remote(
             pool_manager=pool_manager, api_origin=api_origin)
+        # also grab the local files that are in development
+        files += list(map(
+            lambda p: str(p.relative_to(pathlib.Path(dldir))), 
+            filter(
+                lambda p: p.is_file(),  
+                pathlib.Path(dldir).rglob(f"*{ext}"))))
         extfiles = [f for f in files if f.lower().startswith(
             ext[1:]+"/") and f.lower().endswith(ext)]
+        extfiles = list(set(extfiles))
         extfiles.sort()
 
         dl_files = []

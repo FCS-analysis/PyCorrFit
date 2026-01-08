@@ -273,7 +273,7 @@ class FittingPanel(wx.Panel):
         # Write parameters to the form on the Page
         for i in np.arange(len(self.active_parms[1])):
             self.spincontrol[i].SetValue(parameters[i])
-            self.checkboxes[i].SetValue(parameters_variable[i])
+            self.checkboxes[i].SetValue(bool(parameters_variable[i]))
         # Fitting parameters
         self.Fitbox[5].SetValue(self.weighted_nuvar)
         idf = self.weighted_fittype_id
@@ -735,7 +735,7 @@ class FittingPanel(wx.Panel):
         parameterstofit = self.active_parms[2]
         # Set initial values given by user/programmer for Diffusion Model
         for i in np.arange(len(labels)):
-            self.checkboxes[i].SetValue(parameterstofit[i])
+            self.checkboxes[i].SetValue(bool(parameterstofit[i]))
             self.spincontrol[i].SetValue(parameters[i])
         # Put everything together
         self.panelsettings.sizer = wx.BoxSizer(wx.VERTICAL)

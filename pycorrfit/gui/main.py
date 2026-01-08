@@ -1,5 +1,5 @@
 """Main execution script"""
-from distutils.version import LooseVersion
+from looseversion import LooseVersion
 import sys
 import warnings
 

@@ -416,7 +416,7 @@ def openASC_ALV_7004(path):
     lent = alltrac.shape[0]
 
     # Traces
-    trace1 = np.zeros((lent, 2), dtype=np.float_)
+    trace1 = np.zeros((lent, 2), dtype=np.float64)
     trace1[:, 0] = time
     trace1[:, 1] = alltrac[:, 1]
     trace2 = trace1.copy()
@@ -427,7 +427,7 @@ def openASC_ALV_7004(path):
     trace4[:, 1] = alltrac[:, 4]
 
     # Correlations
-    corr1 = np.zeros((lenc, 2), dtype=np.float_)
+    corr1 = np.zeros((lenc, 2), dtype=np.float64)
     corr1[:, 0] = tau
     corr1[:, 1] = allcorr[:, 1]
     corr2 = corr1.copy()

@@ -5,6 +5,7 @@ saving PyCorrFit correlation curves.
 """
 import codecs
 import csv
+from importlib.metadata import version, PackageNotFoundError
 import io
 import os
 import shutil
@@ -18,7 +19,11 @@ import yaml
 # These imports are required for loading data
 from .trace import Trace
 
-from ._version import version as __version__
+try:
+    __version__ = version("your_package_name")
+except PackageNotFoundError:
+    # package is not installed
+    __version__ = "unknown"
 
 
 def LoadSessionData(sessionfile, parameters_only=False):
