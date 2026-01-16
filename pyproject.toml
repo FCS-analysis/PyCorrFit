@@ -22,10 +22,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Visualization",
   "Intended Audience :: Science/Research",
 ]
-keywords = [
-  "fluorescence correlation spectroscopy (FCS)",
-  "dynamic light scattering (DLS)",
-]
+keywords = ["fluorescence correlation spectroscopy (FCS)"]
 
 [project.urls]
 repository = "https://github.com/FCS-analysis/PyCorrFit"
@@ -44,7 +41,7 @@ GUI = [
 pycorrfit = "pycorrfit.gui.main:Main"
 
 [build-system]
-requires = ["setuptools>=80", "setuptools-scm>=9", "wheel", "cython", "numpy"]
+requires = ["setuptools>=80", "setuptools-scm>=9"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
@@ -68,4 +65,4 @@ select = ["E", "F", "W", "I", "B"]
 exclude = ["docs", "pycorrfit", "tests", "setup.py"]
 
 [tool.codespell]
-skip = "./CHANGELOG,./build*,./doc*,./examples,./pycorrfit,./setup.py,./tests"
+skip = "./CHANGELOG,./build*,./*egg-info,./doc*,./examples,./pycorrfit,./setup.py,./tests"
