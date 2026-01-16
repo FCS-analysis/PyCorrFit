@@ -20,7 +20,7 @@ import yaml
 from .trace import Trace
 
 try:
-    __version__ = version("your_package_name")
+    __version__ = version("pycorrfit")
 except PackageNotFoundError:
     # package is not installed
     __version__ = "unknown"
