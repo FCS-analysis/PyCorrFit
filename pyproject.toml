@@ -1,5 +1,9 @@
 [project]
-authors = [{ name = "Paul Müller", email = "dev@craban.de" }]
+authors = [
+  # In alphabetical order
+  { name = "Paul Müller", email = "dev@craban.de" },
+  { name = "Thomas Bischof" },
+]
 description = "Scientific tool for fitting correlation curves on a logarithmic plot."
 name = "pycorrfit"
 readme = "README.rst"
