@@ -2,15 +2,21 @@
 PyCorrFit is a tool to fit fluorescence correlation spectroscopy
 data on a logarithmic scale.
 """
-from . import meta
-from . import models
-from . import openfile
-from . import readfiles
 
+from importlib.metadata import PackageNotFoundError, version
+
+from . import meta, models, openfile, readfiles
 from .correlation import Correlation
 from .fit import Fit
 from .trace import Trace
-from ._version import version as __version__
 
-__author__ = u"Paul Müller"
+try:
+    __version__ = version("pycorrfit")
+except PackageNotFoundError:
+    # package is not installed
+    __version__ = "unknown"
+
+
+__author__ = "Paul Müller"
 __license__ = "GPL v2"
+__all__ = ["meta", "models", "openfile", "readfiles", "Fit", "Trace", "Correlation"]

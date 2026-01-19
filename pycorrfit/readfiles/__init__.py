@@ -20,6 +20,7 @@ from .read_SIN_correlator_com import openSIN
 from .read_FCS_Confocor3 import openFCS
 from .read_mat_ries import openMAT
 from .read_pt3_PicoQuant import openPT3
+from .read_ptu_PicoQuant import openPTU
 
 
 def add_all_supported_filetype_entry(adict):
@@ -247,6 +248,7 @@ filetypes_dict = {"Correlator.com (*.SIN)|*.SIN;*.sin": openSIN,
                   "PyCorrFit (*.csv)|*.csv": openCSV,
                   "Matlab 'Ries (*.mat)|*.mat": openMAT,
                   "PicoQuant (*.pt3)|*.pt3": openPT3,
+                  "PicoQuant PTU T2/T3 (*.ptu)|*.ptu": openPTU,
                   "Zeiss ConfoCor3 (*.fcs)|*.fcs": openFCS,
                   "Zip file (*.zip)|*.zip": openZIP,
                   "PyCorrFit session (*.pcfs)|*.pcfs": openZIP

@@ -1,4 +1,5 @@
 """Test support for FCS file formats"""
+
 import os
 from os.path import split
 import warnings
@@ -18,8 +19,9 @@ NOAPITOKEN = "GITHUB_API_TOKEN" not in os.environ
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_asc_all_open():
     # get list of supported file extensions
-    ext = "asc"
+    ext = "ASC"
     files = data_file_dl.get_data_files_ext(ext)
+    assert files
     for f in files:
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
@@ -34,14 +36,10 @@ def test_asc_alv7004usb():
     f1 = data_file_dl.get_data_file("ALV-7004USB_ac01_cc01_10.ASC")
     data = pycorrfit.readfiles.open_any(f1)
     assert data["Type"] == ["AC1", "AC2", "CC12", "CC21"]
-    assert np.allclose(data["Correlation"][0][10],
-                       np.array([0.000275, 0.11208]))
-    assert np.allclose(data["Correlation"][1][12],
-                       np.array([0.000325, 0.0900233]))
-    assert np.allclose(data["Correlation"][2][18],
-                       np.array([0.00055, 0.0582773]))
-    assert np.allclose(data["Correlation"][3][120],
-                       np.array([3.6864, 0.0224212]))
+    assert np.allclose(data["Correlation"][0][10], np.array([0.000275, 0.11208]))
+    assert np.allclose(data["Correlation"][1][12], np.array([0.000325, 0.0900233]))
+    assert np.allclose(data["Correlation"][2][18], np.array([0.00055, 0.0582773]))
+    assert np.allclose(data["Correlation"][3][120], np.array([3.6864, 0.0224212]))
     assert len(data["Trace"][0]) == 253
     assert len(data["Trace"][1]) == 253
     assert len(data["Trace"][2]) == 2
@@ -58,8 +56,7 @@ def test_asc_alv7004usb():
     # There are empty AC2 and CC12/CC21 curves in this file that should
     # be removed by pycorrfit.
     assert data2["Type"] == ["AC1"]
-    assert np.allclose(data2["Correlation"][0][56],
-                       np.array([0.0144, 0.0513857]))
+    assert np.allclose(data2["Correlation"][0][56], np.array([0.0144, 0.0513857]))
     assert len(data2["Trace"][0]) == 254
     assert np.allclose(data2["Trace"][0][210], np.array([49453.13, 165.41434]))
 
@@ -68,10 +65,8 @@ def test_asc_alv7004usb():
     assert len(data3["Type"]) == 1
     assert len(data3["Trace"][0]) == 66
     assert data3["Type"][0] == "AC"
-    assert np.allclose(data3["Correlation"][0][56],
-                       np.array([0.0144, 0.38757]))
-    assert np.allclose(data3["Trace"][0][60],
-                       np.array([1.21523440e5, 5.11968700e1]))
+    assert np.allclose(data3["Correlation"][0][56], np.array([0.0144, 0.38757]))
+    assert np.allclose(data3["Trace"][0][60], np.array([1.21523440e5, 5.11968700e1]))
 
     f4 = data_file_dl.get_data_file("ALV-7004USB_ac3.ASC")
     data4 = pycorrfit.readfiles.open_any(f4)
@@ -79,24 +74,26 @@ def test_asc_alv7004usb():
     assert data4["Type"][0] == "AC"
     assert len(data4["Trace"][0]) == 254
 
+
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_cor_all_open():
-    f1 = data_file_dl.get_data_file(
-        "1_nM_Great_Correlation_Curve_121622.cor")
+    f1 = data_file_dl.get_data_file("1_nM_Great_Correlation_Curve_121622.cor")
     data = pycorrfit.readfiles.open_any(f1)
-    assert(len(data['Filename']) == 3)
-    assert(data['Filename'][0] == '1_nM_Great_Correlation_Curve_121622.cor')
-    assert(len(data['Trace']) == 3)
-    assert(data['Trace'][0] == [])
-    assert(data['Type'] == ['AC',     'CC',     'AC'])
-    assert(len(data['Correlation']) == 3)
-    assert(all(map(lambda x: x.shape == (145, 2), data['Correlation'])))
-    
+    assert len(data["Filename"]) == 3
+    assert data["Filename"][0] == "1_nM_Great_Correlation_Curve_121622.cor"
+    assert len(data["Trace"]) == 3
+    assert data["Trace"][0] == []
+    assert data["Type"] == ["AC", "CC", "AC"]
+    assert len(data["Correlation"]) == 3
+    assert all(map(lambda x: x.shape == (145, 2), data["Correlation"]))
+
+
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_csv_all_open():
     # get list of supported file extensions
     ext = "csv"
     files = data_file_dl.get_data_files_ext(ext)
+    assert files
     for f in files:
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
@@ -110,6 +107,7 @@ def test_fcs_all_open():
     # get list of supported file extensions
     ext = "fcs"
     files = data_file_dl.get_data_files_ext(ext)
+    assert files
     for f in files:
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
@@ -148,6 +146,7 @@ def test_pt3_all_open():
     # get list of supported file extensions
     ext = "pt3"
     files = data_file_dl.get_data_files_ext(ext)
+    assert files
     for f in files:
         if [ex for ex in exclude if f.endswith(ex)]:
             continue
@@ -158,8 +157,7 @@ def test_pt3_all_open():
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
 def test_pt3_basic():
-    f1 = data_file_dl.get_data_file(
-        "PicoQuant_SymphoTime32_A42F-4jul2014/Point_1.pt3")
+    f1 = data_file_dl.get_data_file("PicoQuant_SymphoTime32_A42F-4jul2014/Point_1.pt3")
     data = pycorrfit.readfiles.open_any(f1)
 
     trace = data["Trace"][0][0]
@@ -173,6 +171,54 @@ def test_pt3_basic():
     assert corr.shape == (150, 2)
     assert np.allclose(corr[40], np.array([0.000698, 0.58007174877053136]))
     assert np.allclose(corr[100], np.array([0.72089, 0.019201608388821567]))
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_ptu_all_open():
+    ext = "ptu"
+    files = data_file_dl.get_data_files_ext(ext)
+    assert files
+    for f in files:
+        if [ex for ex in exclude if f.endswith(ex)]:
+            continue
+        data = pycorrfit.readfiles.open_any(f)
+        assert data
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_ptu_hydraharp_t2_basic():
+    f1 = data_file_dl.get_data_file("hydraharp/v20_t2.ptu")
+    data = pycorrfit.readfiles.open_any(f1)
+
+    trace = data["Trace"][0][0]
+    assert trace.shape == (199, 2)
+
+    corr = data["Correlation"][0]
+    assert corr.shape == (150, 2)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_ptu_hydraharp_t3_basic():
+    f1 = data_file_dl.get_data_file("hydraharp/v20_t3.ptu")
+    data = pycorrfit.readfiles.open_any(f1)
+
+    trace = data["Trace"][0][0]
+    assert trace.shape == (399, 2)
+
+    corr = data["Correlation"][0]
+    assert corr.shape == (150, 2)
+
+
+@pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")
+def test_ptu_picoharp_v30_t2_basic():
+    f1 = data_file_dl.get_data_file("picoharp/v30_t2.ptu")
+    data = pycorrfit.readfiles.open_any(f1)
+
+    trace = data["Trace"][0][0]
+    assert trace.shape == (306, 2)
+
+    corr = data["Correlation"][0]
+    assert corr.shape == (150, 2)
 
 
 @pytest.mark.xfail(NOAPITOKEN, reason="Restrictions to GitHub API")

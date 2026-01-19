@@ -73,6 +73,9 @@ class picoObject():
         if self.ext == 'pt3':
             self.subChanArr, self.trueTimeArr, self.dTimeArr, self.resolution = pt3import(
                 self.filepath)
+        if self.ext == 'ptu':
+            self.subChanArr, self.trueTimeArr, self.dTimeArr, self.resolution = ptuimport(
+                self.filepath)
         if self.ext == 'csv':
             self.subChanArr, self.trueTimeArr, self.dTimeArr, self.resolution = csvimport(
                 self.filepath)
@@ -256,13 +259,13 @@ class picoObject():
                 (auto[:, 0, 1]*maxY)/(self.count0*self.count1))-1
 
         # Normalisaation of the decay functions.
-        self.photonDecayCh1Min = self.photonDecayCh1 - \
-            np.min(self.photonDecayCh1)
+        self.photonDecayCh1Min = np.array(self.photonDecayCh1) - \
+            (np.min(self.photonDecayCh1) if len(self.photonDecayCh1) > 0 else 0)
         self.photonDecayCh1Norm = self.photonDecayCh1Min / \
-            np.max(self.photonDecayCh1Min)
+            (np.max(self.photonDecayCh1Min) if len(self.photonDecayCh1) > 0 else 1)
 
         if self.numOfCH == 2:
-            self.photonDecayCh2Min = self.photonDecayCh2 - \
+            self.photonDecayCh2Min = np.array(self.photonDecayCh2) - \
                 np.min(self.photonDecayCh2)
             self.photonDecayCh2Norm = self.photonDecayCh2Min / \
                 np.max(self.photonDecayCh2Min)
@@ -421,9 +424,9 @@ class subPicoObject():
         # self.subChanArr = np.array(self.chanArr)
         # Finds those photons which arrive above certain time or below certain time.
         photonInd = np.logical_and(
-            self.dTimeArr >= xmin, self.dTimeArr <= xmax).astype(np.bool)
+            self.dTimeArr >= xmin, self.dTimeArr <= xmax).astype(bool)
 
-        self.subChanArr[np.invert(photonInd).astype(np.bool)] = 16
+        self.subChanArr[np.invert(photonInd).astype(bool)] = 16
 
         self.crossAndAuto()
 

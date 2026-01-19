@@ -348,7 +348,7 @@ class Fit(object):
                     if pn in varin:
                         # edit that parameter
                         fit_parm[kk] = parameters[np.where(
-                            np.array(varin) == pn)[0]]
+                            np.array(varin) == pn)[0]][0]
                 return fit_parm
 
             def parameters_local_to_global(parameters, iicorr, fit_parm,

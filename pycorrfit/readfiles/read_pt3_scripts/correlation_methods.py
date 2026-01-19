@@ -80,11 +80,11 @@ def tttr2xfcs(y, num, NcascStart, NcascEnd, Nsub):
                 # i2= np.in1d(y+lag,y,assume_unique=True)
 
                 # New method, cython
-                i1, i2 = dividAndConquer(y, y+lag, y.shape[0])
+                i1, i2 = dividAndConquer(y, y+lag)
 
                 # If the weights (num) are one as in the first Ncasc round, then the correlation is equal to np.sum(i1)
-                i1 = np.where(i1.astype(np.bool))[0]
-                i2 = np.where(i2.astype(np.bool))[0]
+                i1 = np.where(i1.astype(bool))[0]
+                i2 = np.where(i2.astype(bool))[0]
 
                 # Now we want to weight each photon corectly.
                 # Faster dot product method, faster than converting to matrix.

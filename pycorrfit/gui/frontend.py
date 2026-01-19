@@ -3,7 +3,7 @@
 The frontend displays the GUI (Graphic User Interface). All necessary
 functions and modules are called from here.
 """
-from distutils.version import LooseVersion  # For version checking
+from looseversion import LooseVersion  # For version checking
 import os
 import pathlib
 import platform

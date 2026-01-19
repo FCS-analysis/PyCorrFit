@@ -192,7 +192,7 @@ class Stat(wx.Frame):
         Info = Stat.SortParameters(parms)
 
         # List of default checked parameters:
-        checked = np.zeros(len(Info), dtype=np.bool)
+        checked = np.zeros(len(Info), dtype=bool)
         # Fit parameters
         pbool = page.corr.fit_parameters_variable
         model = mdls.modeldict[page.corr.fit_model.id]
