@@ -51,10 +51,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 root = "."
 version_file = "pycorrfit/_version.py"
-
-[tool.setuptools_scm.scm.git]
-# ensures that we find the x.y.z (no v prefix) tags
-describe_command = "git describe --dirty --tags --long --match '[0-9]*'"
+version_scheme = "post-release"
 
 [tool.setuptools.package-data]
 pycorrfit_doc = ["CHANGELOG", "doc/PyCorrFit_doc.pdf"]
