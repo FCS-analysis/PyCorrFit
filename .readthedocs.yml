@@ -1,5 +1,17 @@
+version: 2
 formats:
  - pdf
-requirements_file: docs/requirements.txt
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+  jobs:
+    post_checkout:
+      - git fetch --unshallow || true
+sphinx:
+  configuration: docs/conf.py
 python:
-   version: 3
+  install:
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .

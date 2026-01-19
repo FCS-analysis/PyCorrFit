@@ -1,4 +1,4 @@
-[unreleased]
+1.3.0
  - enh: add support for PicoQuant ptu file format
  - setup: drop support for Python <3.11 (due to ptufile)
  - tests: set up tox for all supported python version
