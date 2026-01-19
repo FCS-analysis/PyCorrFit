@@ -107,7 +107,7 @@ Please fork PyCorrFit and create a pull request (PR) introducing your changes.
   interface code.
 - New code should follow the
   `style guide for Python <https://www.python.org/dev/peps/pep-0008/>`_.
-  Please use `flake8 --exclude _version.py .http://flake8.pycqa.org/en/latest/index.html#quickstart>`_
+  Please use ``flake8 --exclude _version.py .`` (http://flake8.pycqa.org/en/latest/index.html#quickstart)
   to check the files you changed or created.
 - New code should be documented well.
 - Make sure to update the `changelog <https://github.com/FCS-analysis/PyCorrFit/blob/develop/CHANGELOG>`_. 
