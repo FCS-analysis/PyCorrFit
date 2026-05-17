@@ -113,7 +113,7 @@ def test_fit_single_parameter_with_noise_one_permille():
 @pytest.mark.filterwarnings('ignore::pycorrfit.fit.StuckParameterWarning')
 def test_fit_single_parameter_with_noise_two_percent():
     succlist, faillist = fit_single_parameter_with_noise(noise=0.02)
-    if len(faillist)/len(succlist) > .05:
+    if len(faillist) / (len(succlist) + len(faillist)) > 0.05:
         raise ValueError("Model tests failed for:\n", faillist)
 
 
